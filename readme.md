@@ -1,8 +1,4 @@
 # fixxx-looplijsten
-
-[![Build Status](https://travis-ci.org/petercuret/fixxx-looplijsten.svg?branch=master)](https://travis-ci.org/petercuret/fixxx-looplijsten)
-[![Built with](https://img.shields.io/badge/Built_with-Cookiecutter_Django_Rest-F7B633.svg)](https://github.com/agconti/cookiecutter-django-rest)
-
 plannen en inzien van efficiëntere looplijsten, bedoeld voor toezichthouders en handhavers van illegaal vakantieverhuur. Check out the project's [documentation](http://petercuret.github.io/fixxx-looplijsten/).
 
 # Prerequisites
