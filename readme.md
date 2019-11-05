@@ -12,6 +12,11 @@ Start the dev server for local development:
 docker-compose up
 ```
 
+To rebuild (for example, when dependencies are added requirements.txt):
+```bash
+docker-compose build
+```
+
 Run a command inside the docker container:
 
 ```bash
