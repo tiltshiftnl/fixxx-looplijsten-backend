@@ -1,15 +1,10 @@
-from django.views import View
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
 from .models import Itinerary, ItineraryItem
 from .serializers import ItinerarySerializer
 from utils.mock_readers import get_data_from_id
 
-
-@permission_classes([AllowAny])
 class ItineraryViewSet(
         mixins.ListModelMixin,
         viewsets.GenericViewSet):
@@ -19,7 +14,6 @@ class ItineraryViewSet(
     queryset = Itinerary.objects.all()
     serializer_class = ItinerarySerializer
 
-@permission_classes([AllowAny])
 class ItineraryItemViewSet(viewsets.ViewSet):
     """
     A temporary viewset for the CSV mock dump data

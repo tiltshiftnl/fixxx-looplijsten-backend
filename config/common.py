@@ -15,6 +15,7 @@ class Common(Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
+        'corsheaders',
 
 
         # Third party apps
@@ -30,16 +31,16 @@ class Common(Configuration):
 
     # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
     MIDDLEWARE = (
+        'corsheaders.middleware.CorsMiddleware',
+        'django.middleware.common.CommonMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
-        'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
     )
 
-    ALLOWED_HOSTS = ["*"]
     ROOT_URLCONF = 'apps.urls'
     SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
     WSGI_APPLICATION = 'apps.wsgi.application'
