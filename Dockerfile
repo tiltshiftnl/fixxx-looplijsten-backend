@@ -1,17 +1,24 @@
-FROM python:3.6
+FROM amsterdam/python3.6
+LABEL maintainer="datapunt@amsterdam.nl"
+
 ENV PYTHONUNBUFFERED 1
 
-# Allows docker to cache installed dependencies between builds
-COPY ./requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN adduser --system datapunt
 
-# Adds our application code to the image
-COPY . code
-WORKDIR code
+RUN mkdir -p /static && chown datapunt /static
+RUN mkdir -p /app && chown datapunt /app
+RUN mkdir -p /downloads && chown datapunt /downloads
+RUN mkdir -p /certificates && chown datapunt /certificates
+RUN mkdir -p /deploy && chown datapunt /deploy
+RUN mkdir -p /var/log/uwsgi && chown datapunt /var/log/uwsgi
 
-EXPOSE 8000
+WORKDIR /app
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+USER datapunt
 
-# Migrates the database, uploads staticfiles, and runs the production server
-CMD ./manage.py migrate && \
-  ./manage.py collectstatic --noinput && \
-  run-program gunicorn --bind 0.0.0.0:$PORT --access-logfile - apps.wsgi:application
+COPY . /app/
+#COPY deploy /deploy/
+COPY /app/deploy /deploy/
+
+CMD ["/deploy/docker-run.sh"]
