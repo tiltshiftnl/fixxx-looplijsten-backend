@@ -3,7 +3,7 @@ LABEL maintainer="datapunt@amsterdam.nl"
 
 ENV PYTHONUNBUFFERED 1
 
-#RUN adduser --system datapunt
+RUN adduser --system datapunt
 
 RUN mkdir -p /static && chown datapunt /static
 RUN mkdir -p /app && chown datapunt /app
