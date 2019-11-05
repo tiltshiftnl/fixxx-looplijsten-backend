@@ -6,5 +6,6 @@ def get_postal_code(text):
         'address': items[0].strip(),
         'postal_code_area': items[1],
         'postal_code_street': items[2],
+        'stadium': items[3]
     }
     return postal_code_dict

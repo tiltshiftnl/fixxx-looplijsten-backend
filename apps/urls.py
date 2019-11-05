@@ -6,16 +6,20 @@ from django.views.generic.base import RedirectView
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 
-from .itinerary.views import ItineraryViewSet
+from .itinerary.views import ItineraryViewSet, ItineraryItemViewSet
 
 router = DefaultRouter()
 router.register(r'itineraries', ItineraryViewSet)
+router.register(r'case', ItineraryItemViewSet, basename='case')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(router.urls)),
+
+    # authentication endpoints
     path('api-token-auth/', views.obtain_auth_token),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
 
     # the 'api-root' from django rest-frameworks default router
     re_path(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'), permanent=False)),
