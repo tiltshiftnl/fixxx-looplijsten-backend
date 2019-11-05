@@ -1,5 +1,5 @@
 # fixxx-looplijsten
-plannen en inzien van efficiëntere looplijsten, bedoeld voor toezichthouders en handhavers van illegaal vakantieverhuur. Check out the project's [documentation](http://petercuret.github.io/fixxx-looplijsten/).
+plannen en inzien van efficiëntere looplijsten, bedoeld voor toezichthouders en handhavers van illegaal vakantieverhuur.
 
 # Prerequisites
 
