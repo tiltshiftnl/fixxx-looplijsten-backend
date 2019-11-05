@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 USER datapunt
 
 COPY . /app/
-#COPY deploy /deploy/
-COPY /app/deploy /deploy/
+COPY deploy /deploy/
+#COPY /app/deploy /deploy/
 
 CMD ["/deploy/docker-run.sh"]
