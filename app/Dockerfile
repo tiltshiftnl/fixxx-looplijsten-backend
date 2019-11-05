@@ -19,6 +19,5 @@ USER datapunt
 
 COPY . /app/
 COPY deploy /deploy/
-#COPY /app/deploy /deploy/
 
 CMD ["/deploy/docker-run.sh"]
