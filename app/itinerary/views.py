@@ -1,4 +1,3 @@
-from django.views import View
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins
