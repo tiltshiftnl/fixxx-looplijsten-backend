@@ -29,13 +29,13 @@ class ItineraryItemViewSet(viewsets.ViewSet):
 
         return JsonResponse({
             # Data using the wng_id
-            'bwv_hotline_bevinding': get_data_from_id('mock/bwv_hotline_bevinding.csv', wng_id, 'wng_id'),
-            'bwv_hotline_melding': get_data_from_id('mock/bwv_hotline_melding.csv', wng_id, 'wng_id'),
-            'bwv_vakantieverhuur': get_data_from_id('mock/bwv_vakantieverhuur.csv', wng_id, 'wng_id'),
-            'import_adres': get_data_from_id('mock/import_adres.csv', wng_id, 'wng_id')[0],
+            'bwv_hotline_bevinding': get_data_from_id('/app/datasets/bwv_hotline_bevinding.csv', wng_id, 'wng_id'),
+            'bwv_hotline_melding': get_data_from_id('/app/datasets/bwv_hotline_melding.csv', wng_id, 'wng_id'),
+            'bwv_vakantieverhuur': get_data_from_id('/app/datasets/bwv_vakantieverhuur.csv', wng_id, 'wng_id'),
+            'import_adres': get_data_from_id('/app/datasets/import_adres.csv', wng_id, 'wng_id')[0],
             # Data using the adres_id
-            'bwv_personen_hist': get_data_from_id('mock/bwv_personen_hist.csv', adres_id, 'ads_id'),
-            'bwv_personen': get_data_from_id('mock/bwv_personen.csv', adres_id, 'ads_id_wa'),
-            'import_stadia': get_data_from_id('mock/import_stadia.csv', adres_id, 'adres_id'),
-            'import_wvs': get_data_from_id('mock/import_wvs.csv', adres_id, '\ufeff"adres_id"')
+            'bwv_personen_hist': get_data_from_id('/app/datasets/bwv_personen_hist.csv', adres_id, 'ads_id'),
+            'bwv_personen': get_data_from_id('/app/datasets/bwv_personen.csv', adres_id, 'ads_id_wa'),
+            'import_stadia': get_data_from_id('/app/datasets/import_stadia.csv', adres_id, 'adres_id'),
+            'import_wvs': get_data_from_id('/app/datasets/import_wvs.csv', adres_id, '\ufeff"adres_id"')
         })

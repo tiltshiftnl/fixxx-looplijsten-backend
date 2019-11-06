@@ -7,7 +7,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.encoding import python_2_unicode_compatible
 
-from apps.users.user_manager import UserManager
+from api.users.user_manager import UserManager
 from rest_framework.authtoken.models import Token
 
 

@@ -1,21 +1,45 @@
 version: '2'
 
 services:
-  postgres:
-    image: postgres:9.6
-  web:
-    restart: always
+  database:
+    image: amsterdam/postgres11
+    shm_size: '512m'
+    ports:
+      - "5409:5432"
     environment:
-      - DJANGO_SECRET_KEY=local
-    image: web
-    build: ./
-    command: >
-      bash -c "python wait_for_postgres.py &&
-               ./manage.py migrate &&
-               ./manage.py runserver 0.0.0.0:8000"
-    volumes:
-      - ./:/code
+      POSTGRES_DB: fixxx
+      POSTGRES_USER: fixxx
+      POSTGRES_PASSWORD: insecure    
+  api:
+    build: ./app/
     ports:
       - "8000:8000"
-    depends_on:
-      - postgres
+    links:
+      - database
+    environment:
+      - DJANGO_SETTINGS_MODULE=settings.settings
+      - DJANGO_SECRET_KEY=local
+      - DJANGO_DEBUG=True
+      - DJANGO_ALLOWED_HOSTS=0.0.0.0,localhost
+      - CORS_ORIGIN_WHITELIST=http://0.0.0.0:3000,http://localhost:3000
+      - DATABASE_NAME=fixxx
+      - DATABASE_USER=fixxx
+      - DATABASE_PASSWORD=insecure
+      - UWSGI_HTTP=0.0.0.0:8000
+      - UWSGI_MASTER=1
+      - UWSGI_STATIC_INDEX=index.html
+      - UWSGI_STATIC_MAP=/static=/static
+      - UWSGI_CALLABLE=application
+      - UWSGI_VACUUM=1
+      - UWSGI_STATIC_EXPIRES=/* 3600
+      - UWSGI_OFFLOAD_THREADS=1
+      - UWSGI_HARAKIRI=15
+      - UWSGI_DIE_ON_TERM=1
+      - UWSGI_MODULE=wsgi:application
+    volumes:
+      - ./app:/app
+      - ./api/deploy:/deploy
+    command: bash -c "
+      python /app/manage.py collectstatic --noinput &&
+      python /app/manage.py migrate --noinput &&
+      uwsgi --py-auto-reload=1"

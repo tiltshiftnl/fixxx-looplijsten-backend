@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
 from utils import helpers, mock_readers
 
 class Itinerary(models.Model):
@@ -10,7 +9,6 @@ class Itinerary(models.Model):
     def __str__(self):
         return self.title
 
-   # this is not needed if small_image is created at set_image
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 

@@ -1,4 +1,6 @@
 import csv
+import os
+from os.path import join
 
 def get_address_from_csv_row(row):
     street = row['sttnaam']
@@ -12,7 +14,9 @@ def get_adress_ids(address, postal_code):
     Temporary function for extracting IDs from CSV dumps.
     This will be removed once we have a real database dump
     """
-    with open('mock/import_adres.csv', newline='') as csvfile:
+    path = '/app/datasets/import_adres.csv'
+
+    with open(path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             csv_address = get_address_from_csv_row(row)
