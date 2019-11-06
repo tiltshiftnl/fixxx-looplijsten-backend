@@ -11,4 +11,5 @@ ls -al /static/
 chmod -R 777 /static
 
 # run uwsgi
+cd /app/
 exec uwsgi --ini settings/uwsgi.ini >> /var/log/uwsgi/uwsgi.log 2>&1
