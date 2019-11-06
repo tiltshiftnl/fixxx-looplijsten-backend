@@ -22,11 +22,11 @@ node {
     }
 
 
-    stage('Test') {
-        tryStep "Test", {
-            sh "app/deploy/test/jenkins-script.sh"
-        }
-    }
+    // stage('Test') {
+    //     tryStep "Test", {
+    //         sh "app/deploy/test/jenkins-script.sh"
+    //     }
+    // }
 
 
     stage("Build develop image") {
