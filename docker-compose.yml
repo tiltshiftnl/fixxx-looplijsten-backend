@@ -7,8 +7,8 @@ services:
     ports:
       - "5409:5432"
     environment:
-      POSTGRES_DB: fixxx
-      POSTGRES_USER: fixxx
+      POSTGRES_DB: looplijsten
+      POSTGRES_USER: looplijsten
       POSTGRES_PASSWORD: insecure    
   api:
     build: ./app/
@@ -22,8 +22,8 @@ services:
       - DJANGO_DEBUG=True
       - DJANGO_ALLOWED_HOSTS=0.0.0.0,localhost
       - CORS_ORIGIN_WHITELIST=http://0.0.0.0:3000,http://localhost:3000
-      - DATABASE_NAME=fixxx
-      - DATABASE_USER=fixxx
+      - DATABASE_NAME=looplijsten
+      - DATABASE_USER=looplijsten
       - DATABASE_PASSWORD=insecure
       - UWSGI_HTTP=0.0.0.0:8000
       - UWSGI_MASTER=1
