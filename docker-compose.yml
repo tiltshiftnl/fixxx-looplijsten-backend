@@ -17,10 +17,14 @@ services:
     links:
       - database
     environment:
+      - DJANGO_SETTINGS_MODULE=settings.settings
       - DJANGO_SECRET_KEY=local
+      - DJANGO_DEBUG=True
+      - DJANGO_ALLOWED_HOSTS=0.0.0.0,localhost
+      - CORS_ORIGIN_WHITELIST=http://0.0.0.0:3000,http://localhost:3000
       - DATABASE_NAME=fixxx
       - DATABASE_USER=fixxx
-      - DATABASE_PASSWORD=insecure     
+      - DATABASE_PASSWORD=insecure
       - UWSGI_HTTP=0.0.0.0:8000
       - UWSGI_MASTER=1
       - UWSGI_STATIC_INDEX=index.html
@@ -32,7 +36,6 @@ services:
       - UWSGI_HARAKIRI=15
       - UWSGI_DIE_ON_TERM=1
       - UWSGI_MODULE=wsgi:application
-      - DJANGO_SETTINGS_MODULE=settings.settings
     volumes:
       - ./app:/app
       - ./api/deploy:/deploy

@@ -10,8 +10,7 @@ from .settings_databases import (
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -47,7 +46,7 @@ MIDDLEWARE = (
 ROOT_URLCONF = 'api.urls'
 
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Email
@@ -61,25 +60,25 @@ ADMINS = (
 DATABASE_OPTIONS = {
     LocationKey.docker: {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DATABASE_NAME', 'fixxx'),
-        'USER': os.getenv('DATABASE_USER', 'fixxx'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'insecure'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST': 'database',
         'PORT': '5432',
     },
     LocationKey.local: {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DATABASE_NAME', 'fixxx'),
-        'USER': os.getenv('DATABASE_USER', 'fixxx'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'insecure'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST': get_docker_host(),
         'PORT': '5409',
     },
     LocationKey.override: {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DATABASE_NAME', 'fixxx'),
-        'USER': os.getenv('DATABASE_USER', 'fixxx'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'insecure'),
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST': os.getenv(OVERRIDE_HOST_ENV_VAR),
         'PORT': os.getenv(OVERRIDE_PORT_ENV_VAR, '5432'),
     },
@@ -173,8 +172,6 @@ EMAIL_PORT = 1025
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # CORS and allowed hosts
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-)
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
+CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
 CORS_ORIGIN_ALLOW_ALL = False
