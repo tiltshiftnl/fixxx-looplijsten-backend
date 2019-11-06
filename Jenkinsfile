@@ -22,11 +22,11 @@ node {
     }
 
 
-    // stage('Test') {
-    //     tryStep "Test", {
-    //         sh "app/deploy/test/jenkins-script.sh"
-    //     }
-    // }
+    stage('Test') {
+        tryStep "Test", {
+            sh "app/deploy/test/jenkins-script.sh"
+        }
+    }
 
 
     stage("Build develop image") {
@@ -57,7 +57,7 @@ if (BRANCH == "master") {
                         parameters: [
                                 [$class: 'StringParameterValue', name: 'INFRASTRUCTURE', value: 'secure'],
                                 [$class: 'StringParameterValue', name: 'INVENTORY', value: 'acceptance'],
-                                [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-looplijsten.yml'],
+                                [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-looplijsten-backend.yml'],
                         ]
             }
         }
@@ -86,7 +86,7 @@ if (BRANCH == "master") {
                         parameters: [
                                 [$class: 'StringParameterValue', name: 'INFRASTRUCTURE', value: 'secure'],
                                 [$class: 'StringParameterValue', name: 'INVENTORY', value: 'production'],
-                                [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-looplijsten.yml'],
+                                [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-looplijsten-backend.yml'],
                         ]
             }
         }
