@@ -7,6 +7,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 
 from .itinerary.views import ItineraryViewSet, ItineraryItemViewSet
+from api.health.views import health
 
 router = DefaultRouter()
 router.register(r'itineraries', ItineraryViewSet)
@@ -14,6 +15,7 @@ router.register(r'case', ItineraryItemViewSet, basename='case')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('health', health),
     path('api/v1/', include(router.urls)),
 
     # authentication endpoints
