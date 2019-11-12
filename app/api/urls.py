@@ -13,6 +13,10 @@ from api.itinerary.views import ItineraryViewSet, CaseViewSet, TeamItineraryView
 from api.users.views import TeamsViewset
 from api.health.views import health
 
+admin.site.site_header = "Wonen looplijsten"
+admin.site.site_title = "Wonen looplijsten"
+admin.site.index_title = "Wonen looplijsten"
+
 schema_view = get_schema_view(
     openapi.Info(title="Looplijsten API", default_version='v1'),
     public=True,
@@ -26,18 +30,23 @@ router.register(r'team-itineraries', TeamItineraryViewset, basename='team-itiner
 router.register(r'cases', CaseViewSet, basename='case')
 
 urlpatterns = [
+    # Admin environment
     path('admin/', admin.site.urls),
+
+    # Health check url
     path('health', health),
+
+    # The API for requesting data
     path('api/v1/', include(router.urls)),
 
-    # authentication endpoints
+    # Authentication endpoints
     path('api-token-auth/', views.obtain_auth_token),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
-    # Swagger/OpenAPI
+    # Swagger/OpenAPI documentation
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-    # the 'api-root' from django rest-frameworks default router
+    # Redirects the root to the Swagger documentation
     re_path(r'^$', RedirectView.as_view(url=reverse_lazy('schema-swagger-ui'), permanent=False)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
