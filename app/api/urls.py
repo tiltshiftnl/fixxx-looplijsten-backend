@@ -7,14 +7,15 @@ from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 
 
-from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet
+from api.itinerary.views import ItineraryViewSet, CaseViewSet, TeamItineraryViewset
 from api.users.views import TeamsViewset
 from api.health.views import health
 
 router = DefaultRouter()
 router.register(r'itineraries', ItineraryViewSet)
 router.register(r'teams', TeamsViewset, basename='teams')
-router.register(r'cases', ItineraryItemViewSet, basename='case')
+router.register(r'team-itineraries', TeamItineraryViewset, basename='team-itineraries')
+router.register(r'cases', CaseViewSet, basename='case')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -1,9 +1,11 @@
 from django.http import JsonResponse
 # from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, mixins
-from .models import Itinerary
-from .serializers import ItinerarySerializer
-# from utils.mock_readers import get_data_from_id
+from rest_framework.response import Response
+
+from api.itinerary.models import Itinerary
+from api.itinerary.serializers import ItinerarySerializer
+# from api.user.models import Team
 
 
 class ItineraryViewSet(
@@ -15,9 +17,22 @@ class ItineraryViewSet(
     queryset = Itinerary.objects.all()
     serializer_class = ItinerarySerializer
 
-class ItineraryItemViewSet(viewsets.ViewSet):
+
+class TeamItineraryViewset(viewsets.ViewSet):
     """
-    A temporary viewset for the CSV mock dump data
+    A simple ViewSet for listing an itinerary of a team
+
+    """
+
+    def retrieve(self, request, pk=None):
+        queryset = Itinerary.objects.filter(team=pk)
+        serializer = ItinerarySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class CaseViewSet(viewsets.ViewSet):
+    """
+    A temporary viewset for cases with mock data
 
     """
 

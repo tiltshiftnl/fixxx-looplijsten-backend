@@ -8,6 +8,9 @@ class Itinerary(models.Model):
     plain_text_itinerary = models.TextField(max_length=4000, blank=True)
     date = models.DateField(blank=True)
 
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
         return '{} {}'.format(self.date, self.team)
 

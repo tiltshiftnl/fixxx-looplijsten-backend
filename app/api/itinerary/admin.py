@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Itinerary, ItineraryItem
+from api.itinerary.models import Itinerary, ItineraryItem
 
 class ItineraryItemInline(admin.StackedInline):
     model = ItineraryItem
