@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     'rest_framework',            # utilities for rest apis
     'rest_framework.authtoken',  # token authentication
     'django_filters',            # for filtering rest endpoints
+    'drf_yasg',                  # for generating real Swagger/OpenAPI 2.0 specifications
 
     # Your apps
     'api.users',
@@ -175,3 +176,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
 CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
 CORS_ORIGIN_ALLOW_ALL = False
+
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': '/admin/login/',
+    'LOGOUT_URL': '/admin/logout/'
+}
