@@ -24,7 +24,7 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register(r'itineraries', ItineraryViewSet)
+router.register(r'itineraries', ItineraryViewSet, basename='itineraries')
 router.register(r'teams', TeamsViewset, basename='teams')
 router.register(r'team-itineraries', TeamItineraryViewset, basename='team-itineraries')
 router.register(r'cases', CaseViewSet, basename='case')
