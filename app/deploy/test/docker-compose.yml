@@ -42,7 +42,5 @@ services:
       - DATABASE_HOST=database
       - DATABASE_PORT=5432
     volumes:
-      #- ./api/deploy:/deploy
       - ./test-run.sh:/app/test-run.sh
-    #command: bash -c "/deploy/docker-wait.sh"
     command: bash -c "/app/test-run.sh"
