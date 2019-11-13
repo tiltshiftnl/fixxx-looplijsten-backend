@@ -1,0 +1,46 @@
+version: '2'
+
+services:
+  database:
+    image: amsterdam/postgres11
+    shm_size: '512m'
+    ports:
+      - "5409:5432"
+    environment:
+      POSTGRES_DB: looplijsten
+      POSTGRES_USER: looplijsten
+      POSTGRES_PASSWORD: insecure
+
+  tests:
+    build: ../../
+    depends_on:
+      - database
+    ports:
+      - "8000:8000"
+    links:
+      - database
+    environment:
+      - DJANGO_SETTINGS_MODULE=settings.settings
+      - DJANGO_SECRET_KEY=local
+      - DJANGO_DEBUG=True
+      - DJANGO_ALLOWED_HOSTS=0.0.0.0,localhost
+      - CORS_ORIGIN_WHITELIST=http://0.0.0.0:3000,http://localhost:3000
+      - DATABASE_NAME=looplijsten
+      - DATABASE_USER=looplijsten
+      - DATABASE_PASSWORD=insecure
+      - UWSGI_HTTP=0.0.0.0:8000
+      - UWSGI_MASTER=1
+      - UWSGI_STATIC_INDEX=index.html
+      - UWSGI_STATIC_MAP=/static=/static
+      - UWSGI_CALLABLE=application
+      - UWSGI_VACUUM=1
+      - UWSGI_STATIC_EXPIRES=/* 3600
+      - UWSGI_OFFLOAD_THREADS=1
+      - UWSGI_HARAKIRI=15
+      - UWSGI_DIE_ON_TERM=1
+      - UWSGI_MODULE=wsgi:application
+      - DATABASE_HOST=database
+      - DATABASE_PORT=5432
+    volumes:
+      - ./test-run.sh:/app/test-run.sh
+    command: bash -c "/app/test-run.sh"
