@@ -1,13 +1,18 @@
 from django.db import models
-from utils import helpers, mock_readers
+from utils import helpers
+from api.users.models import Team
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
-    title = models.CharField(max_length=300, blank=False)
+    team = models.ForeignKey(to=Team, blank=True, null=True, on_delete=models.CASCADE)
     plain_text_itinerary = models.TextField(max_length=4000, blank=True)
+    date = models.DateField(blank=True)
+
+    class Meta:
+        ordering = ['-date']
 
     def __str__(self):
-        return self.title
+        return '{} {}'.format(self.date, self.team)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -35,11 +40,11 @@ class ItineraryItem(models.Model):
     def postal_code(self):
         return '{}{}'.format(self.postal_code_area, self.postal_code_street)
 
-    def save(self, *args, **kwargs):
-        ids = mock_readers.get_adress_ids(self.address, self.postal_code)
-        self.wng_id = ids['wng_id']
-        self.adres_id = ids['adres_id']
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+        # ids = mock_readers.get_adress_ids(self.address, self.postal_code)
+        # self.wng_id = ids['wng_id']
+        # self.adres_id = ids['adres_id']
+        # super().save(*args, **kwargs)
 
     def __str__(self):
         return self.address

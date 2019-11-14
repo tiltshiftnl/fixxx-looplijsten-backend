@@ -25,6 +25,9 @@ INSTALLED_APPS = (
     'rest_framework',            # utilities for rest apis
     'rest_framework.authtoken',  # token authentication
     'django_filters',            # for filtering rest endpoints
+    'drf_yasg',                  # for generating real Swagger/OpenAPI 2.0 specifications
+    'constance',
+    'constance.backends.database',  # for dynamic configurations in admin
 
     # Your apps
     'api.users',
@@ -175,3 +178,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
 CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
 CORS_ORIGIN_ALLOW_ALL = False
+
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': '/admin/login/',
+    'LOGOUT_URL': '/admin/logout/'
+}
+
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_CONFIG = {
+    'ALLOW_DATA_ACCESS': (True, 'Allow data to be accesible through the API'),
+}

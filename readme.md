@@ -23,6 +23,21 @@ Run a command inside the docker container:
 docker-compose run --rm api [command]
 ```
 
+Running migrations:
+```bash
+docker-compose run --rm api python manage.py migrate
+```
+
+To load some initial mock data run:
+```bash
+docker-compose run --rm api python manage.py loaddata /app/datasets/initial_data.json
+```
+
+To dump data into a mock data JSON, run:
+```bash
+run --rm api python manage.py dumpdata --format=json users itinerary > REPLACE_WITH_FILE_NAME.json
+```
+
 Creating a superuser:
 ```bash
 docker-compose run --rm api python manage.py createsuperuser

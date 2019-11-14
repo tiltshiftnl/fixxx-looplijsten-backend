@@ -1,41 +1,53 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, mixins
-from .models import Itinerary, ItineraryItem
-from .serializers import ItinerarySerializer
-from utils.mock_readers import get_data_from_id
+import json
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
-class ItineraryViewSet(
-        mixins.ListModelMixin,
-        viewsets.GenericViewSet):
+from api.itinerary.models import Itinerary
+from api.itinerary.serializers import ItinerarySerializer
+
+from utils.safety_lock import safety_lock
+
+
+class ItineraryViewSet(viewsets.ViewSet):
     """
     A simple ViewSet for listing itineraries.
     """
-    queryset = Itinerary.objects.all()
-    serializer_class = ItinerarySerializer
 
-class ItineraryItemViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @safety_lock
+    def list(self, request):
+        queryset = Itinerary.objects.all()
+        serializer = ItinerarySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class TeamItineraryViewset(viewsets.ViewSet):
     """
-    A temporary viewset for the CSV mock dump data
+    A simple ViewSet for listing an itinerary of a team
 
     """
 
+    permission_classes = [IsAuthenticated]
+
+    @safety_lock
+    def retrieve(self, request, pk=None):
+        queryset = Itinerary.objects.filter(team=pk)
+        serializer = ItinerarySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class CaseViewSet(viewsets.ViewSet):
+    """
+    A temporary viewset for cases with mock data
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    @safety_lock
     def retrieve(self, request, pk):
-        queryset = ItineraryItem.objects.all()
-        itinerary_item = get_object_or_404(queryset, wng_id=pk)
-
-        wng_id = itinerary_item.wng_id
-        adres_id = itinerary_item.adres_id
-
-        return JsonResponse({
-            # Data using the wng_id
-            'bwv_hotline_bevinding': get_data_from_id('/app/datasets/bwv_hotline_bevinding.csv', wng_id, 'wng_id'),
-            'bwv_hotline_melding': get_data_from_id('/app/datasets/bwv_hotline_melding.csv', wng_id, 'wng_id'),
-            'bwv_vakantieverhuur': get_data_from_id('/app/datasets/bwv_vakantieverhuur.csv', wng_id, 'wng_id'),
-            'import_adres': get_data_from_id('/app/datasets/import_adres.csv', wng_id, 'wng_id')[0],
-            # Data using the adres_id
-            'bwv_personen_hist': get_data_from_id('/app/datasets/bwv_personen_hist.csv', adres_id, 'ads_id'),
-            'bwv_personen': get_data_from_id('/app/datasets/bwv_personen.csv', adres_id, 'ads_id_wa'),
-            'import_stadia': get_data_from_id('/app/datasets/import_stadia.csv', adres_id, 'adres_id'),
-            'import_wvs': get_data_from_id('/app/datasets/import_wvs.csv', adres_id, '\ufeff"adres_id"')
-        })
+        with open('/app/datasets/case.json') as json_file:
+            data = json.load(json_file)
+            return JsonResponse(data)
