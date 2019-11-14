@@ -31,22 +31,19 @@ router.register(r'cases', CaseViewSet, basename='case')
 
 urlpatterns = [
     # Admin environment
-    path('admin/', admin.site.urls),
+    path('looplijsten/admin/', admin.site.urls),
 
     # Health check url
-    path('health', health),
+    path('looplijsten/health', health),
 
     # The API for requesting data
-    path('api/v1/', include(router.urls)),
+    path('looplijsten/api/v1/', include(router.urls)),
 
     # Authentication endpoints
-    path('api-token-auth/', views.obtain_auth_token),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('looplijsten/api-token-auth/', views.obtain_auth_token),
+    path('looplijsten/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
     # Swagger/OpenAPI documentation
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-
-    # Redirects the root to the Swagger documentation
-    re_path(r'^$', RedirectView.as_view(url=reverse_lazy('schema-swagger-ui'), permanent=False)),
+    path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
