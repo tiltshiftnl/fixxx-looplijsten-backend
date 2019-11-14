@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Itinerary, ItineraryItem
+from api.itinerary.models import Itinerary, ItineraryItem
 
 class ItineraryItemInline(admin.StackedInline):
     model = ItineraryItem
@@ -9,7 +9,7 @@ class ItineraryItemInline(admin.StackedInline):
 
 @admin.register(Itinerary)
 class ItineraryAdmin(admin.ModelAdmin):
-    list_display = ('__str__',)
+    list_display = ('date', 'team')
 
     inlines = [
         ItineraryItemInline,
