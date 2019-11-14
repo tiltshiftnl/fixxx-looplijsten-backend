@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from api.users.models import Team
 from api.users.serializers import TeamSerializer
@@ -10,6 +11,9 @@ class TeamsViewset(viewsets.ViewSet):
     """
     A simple ViewSet for listing teams
     """
+
+    permission_classes = [IsAuthenticated]
+
     @safety_lock
     def list(self, request):
         queryset = Team.objects.all()
