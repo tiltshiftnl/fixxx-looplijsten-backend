@@ -1,5 +1,7 @@
 import os
 from os.path import join
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from .settings_databases import (
     OVERRIDE_HOST_ENV_VAR,
@@ -189,3 +191,9 @@ CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = {
     'ALLOW_DATA_ACCESS': (True, 'Allow data to be accesible through the API'),
 }
+
+# Error logging through Sentry
+sentry_sdk.init(
+    dsn=os.environ.get('SENTRY_DSN'),
+    integrations=[DjangoIntegration()]
+)

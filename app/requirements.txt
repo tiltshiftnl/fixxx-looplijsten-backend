@@ -23,6 +23,7 @@ ipdb==0.11
 ipython==7.2.0
 mkdocs==1.0.4
 flake8==3.7.5
+sentry-sdk==0.7.10
 
 # Testing
 mock==2.0.0
