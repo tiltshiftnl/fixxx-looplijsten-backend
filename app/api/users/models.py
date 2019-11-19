@@ -36,14 +36,3 @@ class User(AbstractUser):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
-
-
-class Team(models.Model):
-    name = models.CharField(max_length=300, blank=False)
-    members = models.ManyToManyField(User)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name

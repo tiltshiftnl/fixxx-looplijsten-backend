@@ -3,13 +3,13 @@ from api.itinerary.models import Itinerary, ItineraryItem
 
 class ItineraryItemInline(admin.StackedInline):
     model = ItineraryItem
-    readonly_fields = ('wng_id', 'adres_id', 'address', 'postal_code_area', 'postal_code_street')
+    readonly_fields = ('pk', 'wng_id', 'adres_id', 'address', 'postal_code_area', 'postal_code_street')
     can_delete = False
     extra = 0
 
 @admin.register(Itinerary)
 class ItineraryAdmin(admin.ModelAdmin):
-    list_display = ('date', 'team')
+    list_display = ('user',)
 
     inlines = [
         ItineraryItemInline,

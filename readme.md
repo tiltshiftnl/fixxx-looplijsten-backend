@@ -35,7 +35,7 @@ docker-compose run --rm api python manage.py loaddata /app/datasets/initial_data
 
 To dump data into a mock data JSON, run:
 ```bash
-run --rm api python manage.py dumpdata --format=json users itinerary > REPLACE_WITH_FILE_NAME.json
+docker-compose run --rm api python manage.py dumpdata --format=json users itinerary > REPLACE_WITH_FILE_NAME.json
 ```
 
 Creating a superuser:

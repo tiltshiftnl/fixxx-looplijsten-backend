@@ -11,4 +11,4 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Itinerary
-        fields = ('id', 'date', 'team', 'items',)
+        fields = ('id', 'user', 'items',)

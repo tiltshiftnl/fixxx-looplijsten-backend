@@ -1,18 +1,17 @@
 from django.db import models
 from utils import helpers
-from api.users.models import Team
+from api.users.models import User
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
-    team = models.ForeignKey(to=Team, blank=True, null=True, on_delete=models.CASCADE)
     plain_text_itinerary = models.TextField(max_length=4000, blank=True)
-    date = models.DateField(blank=True)
-
-    class Meta:
-        ordering = ['-date']
+    user = models.ForeignKey(to=User, null=True, blank=False, on_delete=models.CASCADE, unique=True)
 
     def __str__(self):
-        return '{} {}'.format(self.date, self.team)
+        if(self.user):
+            return '{}'.format(self.user.email)
+        else:
+            return ''
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -39,12 +38,6 @@ class ItineraryItem(models.Model):
     @property
     def postal_code(self):
         return '{}{}'.format(self.postal_code_area, self.postal_code_street)
-
-    # def save(self, *args, **kwargs):
-        # ids = mock_readers.get_adress_ids(self.address, self.postal_code)
-        # self.wng_id = ids['wng_id']
-        # self.adres_id = ids['adres_id']
-        # super().save(*args, **kwargs)
 
     def __str__(self):
         return self.address
