@@ -49,3 +49,11 @@ Populate with mock/fake data:
 ```bash
 docker-compose run --rm api python manage.py populate
 ```
+
+Frontend steps when pulling new backend code:
+```bash
+docker-compose build
+docker-compose run --rm api python manage.py migrate
+docker-compose run --rm api python manage.py populate
+docker-compose up
+```
