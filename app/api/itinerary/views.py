@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 import json
+from random import randint
 from rest_framework.viewsets import ViewSet
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.generics import GenericAPIView
@@ -9,9 +10,27 @@ from rest_framework.permissions import IsAuthenticated
 
 from api.itinerary.models import Itinerary, ItineraryItem
 from api.users.models import User
-from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer
+from api.cases.models import Case
+from api.itinerary.serializers import ItinerarySerializer
+from api.itinerary.serializers import ItineraryItemCreateRemoveSerializer, CaseSerializer
 
 from utils.safety_lock import safety_lock
+
+class SearchViewSet(ViewSet, GenericAPIView):
+    """
+    A temporary search ViewSet for listing cases
+
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = CaseSerializer
+
+    @safety_lock
+    def list(self, request):
+        random_numer = randint(0, 5)
+        queryset = Case.objects.all().order_by('?')[:random_numer]
+        serializer = CaseSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class ItineraryViewSet(ViewSet, GenericAPIView):
     """
@@ -39,7 +58,7 @@ class ItineraryItemViewSet(
     A view for adding an item to a user's itinerary
     """
     permission_classes = [IsAuthenticated]
-    serializer_class = ItineraryItemSerializer
+    serializer_class = ItineraryItemCreateRemoveSerializer
 
     def get_object(self):
         user = self.request.user
@@ -53,7 +72,7 @@ class ItineraryItemViewSet(
 
     @safety_lock
     def create(self, request):
-        serializer = ItineraryItemSerializer(data=request.data)
+        serializer = ItineraryItemCreateRemoveSerializer(data=request.data)
         if serializer.is_valid():
             user = User.objects.get(id=request.user.id)
             itinerary = Itinerary.objects.get_or_create(user=user)[0]

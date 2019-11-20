@@ -43,3 +43,9 @@ Creating a superuser:
 docker-compose run --rm api python manage.py createsuperuser
 ```
 A superuser can be used to access the Django backend
+
+
+Populate with mock/fake data:
+```bash
+docker-compose run --rm api python manage.py populate
+```

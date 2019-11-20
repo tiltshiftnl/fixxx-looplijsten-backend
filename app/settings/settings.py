@@ -34,6 +34,8 @@ INSTALLED_APPS = (
     # Your apps
     'api.users',
     'api.itinerary',
+    'api.core',
+    'api.cases',
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/

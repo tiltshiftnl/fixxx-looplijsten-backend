@@ -8,7 +8,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from api.itinerary.views import ItineraryViewSet, CaseViewSet, ItineraryItemViewSet
+from api.itinerary.views import ItineraryViewSet, CaseViewSet, ItineraryItemViewSet, SearchViewSet
 from api.health.views import health
 
 admin.site.site_header = "Wonen looplijsten"
@@ -25,6 +25,7 @@ router = DefaultRouter()
 router.register(r'itineraries', ItineraryViewSet, basename='itinerary')
 router.register(r'itineraries/items', ItineraryItemViewSet, basename='itinerary-item')
 router.register(r'cases', CaseViewSet, basename='case')
+router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [
     # Admin environment
