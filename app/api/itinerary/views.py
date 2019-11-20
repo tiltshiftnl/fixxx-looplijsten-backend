@@ -1,4 +1,3 @@
-from random import randint
 from rest_framework.viewsets import ViewSet
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.generics import GenericAPIView
@@ -8,27 +7,9 @@ from django.shortcuts import get_object_or_404
 
 from api.itinerary.models import Itinerary, ItineraryItem
 from api.users.models import User
-from api.cases.models import Case
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer
-from api.itinerary.serializers import CaseSerializer
 
 from utils.safety_lock import safety_lock
-
-class SearchViewSet(ViewSet, GenericAPIView):
-    """
-    A temporary search ViewSet for listing cases
-
-    """
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = CaseSerializer
-
-    @safety_lock
-    def list(self, request):
-        random_numer = randint(0, 5)
-        queryset = Case.objects.all().order_by('?')[:random_numer]
-        serializer = CaseSerializer(queryset, many=True)
-        return Response(serializer.data)
 
 class ItineraryViewSet(ViewSet, GenericAPIView):
     """
