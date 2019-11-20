@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: looplijsten
       POSTGRES_USER: looplijsten
-      POSTGRES_PASSWORD: insecure    
+      POSTGRES_PASSWORD: insecure
   api:
     build: ./app/
     ports:
