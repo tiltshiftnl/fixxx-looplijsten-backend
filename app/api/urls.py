@@ -8,7 +8,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from api.itinerary.views import ItineraryViewSet, CaseViewSet, ItineraryItemViewSet, SearchViewSet
+from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, SearchViewSet
+from api.cases.views import CaseViewSet
 from api.health.views import health
 
 admin.site.site_header = "Wonen looplijsten"
