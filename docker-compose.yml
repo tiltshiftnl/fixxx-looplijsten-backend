@@ -1,4 +1,4 @@
-version: '2'
+version: '3.5'
 
 services:
   bwv_db:
@@ -56,3 +56,7 @@ services:
       python /app/manage.py collectstatic --noinput &&
       python /app/manage.py migrate --noinput &&
       uwsgi --py-auto-reload=1"
+
+networks:
+  default:
+    name: looplijsten_backend
