@@ -1,6 +1,14 @@
-version: '2'
+version: '3.5'
 
 services:
+  bwv_db:
+    build: ./bwv_db
+    ports:
+      - "5410:5432"
+    environment:
+      POSTGRES_DB: looplijsten_bwv
+      POSTGRES_USER: looplijsten_bwv
+      POSTGRES_PASSWORD: insecure
   database:
     image: amsterdam/postgres11
     shm_size: '512m'
@@ -9,13 +17,14 @@ services:
     environment:
       POSTGRES_DB: looplijsten
       POSTGRES_USER: looplijsten
-      POSTGRES_PASSWORD: insecure    
+      POSTGRES_PASSWORD: insecure
   api:
     build: ./app/
     ports:
       - "8000:8000"
     links:
       - database
+      - bwv_db
     environment:
       - DJANGO_SETTINGS_MODULE=settings.settings
       - DJANGO_SECRET_KEY=local
@@ -25,6 +34,9 @@ services:
       - DATABASE_NAME=looplijsten
       - DATABASE_USER=looplijsten
       - DATABASE_PASSWORD=insecure
+      - BWV_DB_NAME=looplijsten_bwv
+      - BWV_DB_USER=looplijsten_bwv
+      - BWV_DB_PASSWORD=insecure
       - UWSGI_HTTP=0.0.0.0:8000
       - UWSGI_MASTER=1
       - UWSGI_STATIC_INDEX=index.html
@@ -44,3 +56,7 @@ services:
       python /app/manage.py collectstatic --noinput &&
       python /app/manage.py migrate --noinput &&
       uwsgi --py-auto-reload=1"
+
+networks:
+  default:
+    name: looplijsten_backend
