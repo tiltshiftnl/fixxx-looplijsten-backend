@@ -3,7 +3,6 @@
 # Import BWV dump data into local bwv_db container.
 
 set -euo pipefail
-set -x
 
 if test $# -lt 1; then
   echo "Usage: $0 /path/to/dir/with/dumps" >/dev/stderr
