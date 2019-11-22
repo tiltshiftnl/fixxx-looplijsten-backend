@@ -15,7 +15,6 @@ def do_query(query):
     except Error:
         return {}
 
-
 def get_search_results(postal_code, street_number, suffix):
     suffix_query = ''
     if suffix:
@@ -138,4 +137,23 @@ def get_import_wvs(adres_id):
             FROM import_wvs WHERE adres_id = '{}'
             """.format(adres_id)
 
+    return do_query(query)[0]
+
+def get_case(case_id):
+    query = """
+              SELECT
+                import_wvs.zaak_id AS case_id,
+                import_adres.postcode AS postal_code,
+                import_adres.sttnaam AS street_name,
+                import_adres.hsnr AS street_number,
+                import_adres.toev AS suffix,
+                import_stadia.sta_oms AS stadium,
+                import_stadia.stadia_id AS stadium_id,
+                import_stadia.date_created
+              FROM import_wvs INNER JOIN import_adres ON import_wvs.adres_id = import_adres.adres_id
+              INNER JOIN import_stadia ON import_wvs.adres_id = import_stadia.adres_id
+              AND zaak_id = '{}'
+              ORDER BY import_stadia.date_created DESC
+              LIMIT 1
+            """.format(case_id)
     return do_query(query)[0]
