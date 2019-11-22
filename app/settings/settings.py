@@ -3,14 +3,6 @@ from os.path import join
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from .settings_databases import (
-    OVERRIDE_HOST_ENV_VAR,
-    OVERRIDE_PORT_ENV_VAR,
-    LocationKey,
-    get_database_key,
-    get_docker_host,
-)
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
 
@@ -64,8 +56,11 @@ ADMINS = (
 )
 
 # Database
-DATABASE_OPTIONS = {
-    LocationKey.docker: {
+DEFAULT_DATABASE_NAME = 'default'
+BWV_DATABASE_NAME = 'bwv'
+
+DATABASES = {
+    DEFAULT_DATABASE_NAME: {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('DATABASE_NAME'),
         'USER': os.environ.get('DATABASE_USER'),
@@ -73,27 +68,15 @@ DATABASE_OPTIONS = {
         'HOST': 'database',
         'PORT': '5432',
     },
-    LocationKey.local: {
+    BWV_DATABASE_NAME: {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('DATABASE_NAME'),
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': get_docker_host(),
-        'PORT': '5409',
-    },
-    LocationKey.override: {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('DATABASE_NAME'),
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': os.getenv(OVERRIDE_HOST_ENV_VAR),
-        'PORT': os.getenv(OVERRIDE_PORT_ENV_VAR, '5432'),
-    },
+        'NAME': os.environ.get('BWV_DB_NAME'),
+        'USER': os.environ.get('BWV_DB_USER'),
+        'PASSWORD': os.environ.get('BWV_DB_PASSWORD'),
+        'HOST': 'bwv_db',
+        'PORT': '5432',
+    }
 }
-DATABASES = {
-    'default': DATABASE_OPTIONS[get_database_key()]
-}
-
 
 # General
 APPEND_SLASH = False

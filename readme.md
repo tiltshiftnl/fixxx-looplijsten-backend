@@ -33,6 +33,11 @@ To load some initial mock data run:
 docker-compose run --rm api python manage.py loaddata /app/datasets/initial_data.json
 ```
 
+To load local *bwv* dumps into the local *bwv* database:
+```bash
+bwv_db/import.sh </path/to/local/dir/with/dumps>
+```
+
 To dump data into a mock data JSON, run:
 ```bash
 docker-compose run --rm api python manage.py dumpdata --format=json users itinerary > REPLACE_WITH_FILE_NAME.json
@@ -56,4 +61,3 @@ docker-compose build
 docker-compose run --rm api python manage.py migrate
 docker-compose run --rm api python manage.py populate
 docker-compose up
-```
