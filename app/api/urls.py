@@ -11,7 +11,7 @@ from drf_yasg import openapi
 
 from api.itinerary.views import ItineraryViewSet, CaseViewSet, TeamItineraryViewset
 from api.users.views import TeamsViewset
-from api.health.views import health
+from api.health.views import health_default, health_bwv
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -34,7 +34,8 @@ urlpatterns = [
     path('looplijsten/admin/', admin.site.urls),
 
     # Health check url
-    path('looplijsten/health', health),
+    path('looplijsten/health', health_default),
+    path('looplijsten/health_bwv', health_bwv),
 
     # The API for requesting data
     path('looplijsten/api/v1/', include(router.urls)),
