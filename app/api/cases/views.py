@@ -1,4 +1,3 @@
-import json
 from django.http import JsonResponse, HttpResponseBadRequest
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated

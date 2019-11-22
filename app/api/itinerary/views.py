@@ -57,7 +57,7 @@ class ItineraryItemViewSet(
         itinerary = Itinerary.objects.get_or_create(user=user)[0]
 
         # Create itinerary item if the case exists
-        case = get_object_or_404(Case, id=request.data['id'])
+        case = Case.objects.get_or_create(case_id=request.data['id'])[0]
         itinerary_item = ItineraryItem.objects.create(itinerary=itinerary, case=case)
         itinerary_item.save()
 
