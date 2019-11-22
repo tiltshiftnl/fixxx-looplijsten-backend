@@ -1,2 +1,3 @@
 app/datasets/*.csv
 *.pyc
+*.backup
