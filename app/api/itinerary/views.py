@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from api.itinerary.models import Itinerary, ItineraryItem
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer
+from api.cases.models import Case
 
 from utils.safety_lock import safety_lock
 
