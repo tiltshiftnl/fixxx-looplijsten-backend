@@ -65,7 +65,7 @@ DATABASES = {
         'NAME': os.environ.get('DATABASE_NAME'),
         'USER': os.environ.get('DATABASE_USER'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': 'database',
+        'HOST': os.environ.get('DATABASE_HOST', 'database'),
         'PORT': '5432',
     },
     BWV_DATABASE_NAME: {
@@ -73,7 +73,7 @@ DATABASES = {
         'NAME': os.environ.get('BWV_DB_NAME'),
         'USER': os.environ.get('BWV_DB_USER'),
         'PASSWORD': os.environ.get('BWV_DB_PASSWORD'),
-        'HOST': 'bwv_db',
+        'HOST': os.environ.get('BWV_DB_HOST', 'bwv_db'),
         'PORT': '5432',
     }
 }
