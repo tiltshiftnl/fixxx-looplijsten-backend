@@ -43,7 +43,7 @@ def get_search_results(postal_code, street_number, suffix):
 
     return do_query(query)
 
-def get_case_ids(case_id):
+def get_related_case_ids(case_id):
     query = """
             SELECT DISTINCT ON (import_wvs.zaak_id)
               import_adres.adres_id,
@@ -157,3 +157,38 @@ def get_case(case_id):
               LIMIT 1
             """.format(case_id)
     return do_query(query)[0]
+
+def get_open_cases(adres_id):
+    # Note: Our current bwv dump doesn't export the complete history of cases ever
+    # So this might not always be accurate (we'll have to check)
+    query = """
+            SELECT
+              COUNT(adres_id) as num_open_cases
+            FROM import_wvs
+            WHERE adres_id='{}' AND afs_code is NULL
+            """.format(adres_id)
+    return do_query(query)[0]
+
+def get_case_count(adres_id):
+    query = """
+              SELECT
+                MAX(wvs_nr) as num_cases
+              FROM import_wvs
+              WHERE adres_id='{}'
+            """.format(adres_id)
+    return do_query(query)[0]
+
+def get_case_basics(case_id):
+    query = """
+            SELECT
+              wvs_nr as case_number,
+              beh_oms as openings_reden
+            FROM import_wvs WHERE zaak_id='{}'
+            """.format(case_id)
+    return do_query(query)[0]
+
+def get_bwv_tmp(case_id, adres_id):
+    case_count = get_case_count(adres_id)
+    case_basics = get_case_basics(case_id)
+    open_cases = get_open_cases(adres_id)
+    return {**case_count, **case_basics, **open_cases}
