@@ -193,3 +193,23 @@ def get_bwv_tmp(case_id, adres_id):
     case_basics = get_case_basics(case_id)
     open_cases = get_open_cases(adres_id)
     return {**case_count, **case_basics, **open_cases}
+
+def get_bwv_vakantieverhuur(wng_id):
+    """
+    Returns the current year's notified rentals
+    """
+    query = """
+            SELECT
+              datum_aanvang_verhuur as check_in,
+              datum_einde_verhuur as check_out
+            FROM
+              bwv_vakantieverhuur
+            WHERE
+              date_part('year', datum_einde_verhuur) = date_part('year', CURRENT_DATE)
+            AND
+              wng_id = '{}'
+            AND
+              annuleer_date IS NULL
+            """.format(wng_id)
+
+    return do_query(query)

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from utils.safety_lock import safety_lock
 from utils.queries import get_search_results, get_related_case_ids
-from utils.queries import get_bwv_hotline_melding, get_bwv_hotline_bevinding
+from utils.queries import get_bwv_hotline_melding, get_bwv_hotline_bevinding, get_bwv_vakantieverhuur
 from utils.queries import get_bwv_personen, get_import_adres, get_import_stadia, get_import_wvs, get_bwv_tmp
 from api.itinerary.serializers import CaseSerializer
 
@@ -31,6 +31,7 @@ class CaseViewSet(ViewSet):
             'import_stadia': get_import_stadia(case_id),
             'import_wvs': get_import_wvs(adres_id),
             'bwv_tmp': get_bwv_tmp(case_id, adres_id),
+            'bwv_vakantieverhuur': get_bwv_vakantieverhuur(wng_id)
         }
         return JsonResponse(real_data)
 
