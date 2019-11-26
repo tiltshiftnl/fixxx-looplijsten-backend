@@ -114,17 +114,19 @@ def get_import_adres(wng_id):
 
     return do_query(query)[0]
 
-def get_import_stadia(adres_id):
+def get_import_stadia(case_id):
     query = """
             SELECT
-            sta_oms,
-            begindatum,
-            einddatum,
-            peildatum,
-            sta_nr
-          FROM import_stadia WHERE adres_id = '{}'
-          ORDER BY sta_nr DESC
-          """.format(adres_id)
+              sta_oms,
+              begindatum,
+              einddatum,
+              peildatum,
+              sta_nr
+            FROM
+              import_stadia
+            WHERE stadia_id LIKE '{}_%'
+            ORDER BY sta_nr DESC
+          """.format(case_id)
 
     return do_query(query)
 
@@ -132,8 +134,7 @@ def get_import_wvs(adres_id):
     query = """
             SELECT
               vloeroppervlak_totaal,
-              nuttig_woonoppervlak,
-              bedrag_huur
+              nuttig_woonoppervlak
             FROM import_wvs WHERE adres_id = '{}'
             """.format(adres_id)
 

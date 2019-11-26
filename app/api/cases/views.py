@@ -28,7 +28,7 @@ class CaseViewSet(ViewSet):
             'bwv_hotline_melding': get_bwv_hotline_melding(wng_id),
             'bwv_personen': get_bwv_personen(adres_id),
             'import_adres': get_import_adres(wng_id),
-            'import_stadia': get_import_stadia(adres_id),
+            'import_stadia': get_import_stadia(case_id),
             'import_wvs': get_import_wvs(adres_id),
             'bwv_tmp': get_bwv_tmp(case_id, adres_id),
         }
