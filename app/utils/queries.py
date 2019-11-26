@@ -1,19 +1,5 @@
-from django.conf import settings
-from django.db import Error, connections
-
-def query_to_list(cursor):
-    columns = [col[0] for col in cursor.description]
-    return [
-        dict(zip(columns, row)) for row in cursor.fetchall()
-    ]
-
-def do_query(query):
-    try:
-        with connections[settings.BWV_DATABASE_NAME].cursor() as cursor:
-            cursor.execute(query)
-            return query_to_list(cursor)
-    except Error:
-        return {}
+from utils.helpers import get_days_in_range
+from utils.query_helpers import do_query
 
 def get_search_results(postal_code, street_number, suffix):
     suffix_query = ''
@@ -194,6 +180,16 @@ def get_bwv_tmp(case_id, adres_id):
     open_cases = get_open_cases(adres_id)
     return {**case_count, **case_basics, **open_cases}
 
+
+def get_rented_days(notified_rentals):
+    days = 0
+    for notified_rental in notified_rentals:
+        check_in = notified_rental['check_in']
+        check_out = notified_rental['check_out']
+        days += get_days_in_range(check_in, check_out)
+    return days
+
+
 def get_bwv_vakantieverhuur(wng_id):
     """
     Returns the current year's notified rentals
@@ -212,4 +208,15 @@ def get_bwv_vakantieverhuur(wng_id):
               annuleer_date IS NULL
             """.format(wng_id)
 
-    return do_query(query)
+    query_results = do_query(query)
+    get_rented_days(query_results)
+    return query_results
+
+
+def get_rental_information(wng_id):
+    notified_rentals = get_bwv_vakantieverhuur(wng_id)
+    rented_days = get_rented_days(notified_rentals)
+    return {
+        'notified_rentals': notified_rentals,
+        'rented_days': rented_days
+    }
