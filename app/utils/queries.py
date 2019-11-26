@@ -18,8 +18,7 @@ def do_query(query):
 def get_search_results(postal_code, street_number, suffix):
     suffix_query = ''
     if suffix:
-        suffix_query = """AND toev = '{}'""".format(suffix)
-
+        suffix_query = """AND LOWER(toev) = LOWER('{}')""".format(suffix)
     query = """
               WITH results AS (
                 SELECT
@@ -28,15 +27,16 @@ def get_search_results(postal_code, street_number, suffix):
                   import_adres.hsnr AS street_number,
                   import_adres.toev AS suffix,
                   import_stadia.sta_oms AS stadium,
-                  import_stadia.stadia_id AS stadium_id,
                   import_wvs.zaak_id AS case_id,
-                  import_stadia.date_created
+                  import_wvs.afs_code,
+                  import_stadia.sta_nr
                 FROM import_adres INNER JOIN import_stadia ON import_adres.adres_id = import_stadia.adres_id
                 INNER JOIN import_wvs ON import_stadia.adres_id = import_wvs.adres_id
-                AND postcode = '{}'
+                AND import_wvs.afs_code is NULL
+                AND LOWER(postcode) = LOWER('{}')
                 AND hsnr = '{}'
                 {}
-                ORDER BY case_id ASC, import_stadia.date_created DESC
+                ORDER BY import_stadia.sta_nr DESC
               )
               SELECT DISTINCT ON (case_id) * FROM RESULTS
               """.format(postal_code, street_number, suffix_query)
