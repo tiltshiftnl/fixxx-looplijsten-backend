@@ -6,31 +6,28 @@ from utils.query_helpers import do_query
 def get_search_results(postal_code, street_number, suffix):
     suffix_query = ''
     if suffix:
-        suffix_query = """AND LOWER(toev) = LOWER('{}')""".format(suffix)
-    query = """
-              WITH results AS (
-                SELECT
-                  import_adres.postcode AS postal_code,
-                  import_adres.sttnaam AS street_name,
-                  import_adres.hsnr AS street_number,
-                  import_adres.hsltr AS suffix_letter,
-                  import_adres.toev AS suffix,
-                  import_stadia.sta_oms AS stadium,
-                  import_wvs.zaak_id AS case_id,
-                  import_wvs.afs_code,
-                  import_stadia.sta_nr
-                FROM import_adres INNER JOIN import_stadia ON import_adres.adres_id = import_stadia.adres_id
-                INNER JOIN import_wvs ON import_stadia.adres_id = import_wvs.adres_id
-                AND import_wvs.afs_code is NULL
-                AND LOWER(postcode) = LOWER('{}')
-                AND hsnr = '{}'
-                {}
-                ORDER BY import_stadia.sta_nr DESC
-              )
-              SELECT DISTINCT ON (case_id) * FROM RESULTS
-              """.format(postal_code, street_number, suffix_query)
+        suffix_query = """WHERE LOWER(toev) = LOWER('{}') OR LOWER(hsltr) = LOWER('{}')"""
+        suffix_query = suffix_query.format(suffix, suffix)
 
-    return do_query(query)
+    query = """
+            SELECT
+            import_wvs.zaak_id AS case_id
+            FROM
+              import_wvs
+            INNER JOIN
+              import_adres
+            ON import_wvs.adres_id = import_adres.adres_id
+            AND import_wvs.afs_code is NULL
+            AND LOWER(postcode) = LOWER('{}')
+            AND hsnr = '{}'
+            {}
+            """.format(postal_code, street_number, suffix_query)
+
+    case_ids = do_query(query)
+    case_ids = [case_id['case_id'] for case_id in case_ids]
+    cases = [get_case(case_id) for case_id in case_ids]
+
+    return cases
 
 def get_related_case_ids(case_id):
     query = """
@@ -132,22 +129,29 @@ def get_import_wvs(adres_id):
 
 def get_case(case_id):
     query = """
-              SELECT
-                import_wvs.zaak_id AS case_id,
-                import_adres.postcode AS postal_code,
-                import_adres.sttnaam AS street_name,
-                import_adres.hsnr AS street_number,
-                import_adres.hsltr AS suffix_letter,
-                import_adres.toev AS suffix,            
-                import_stadia.sta_oms AS stadium,
-                import_stadia.stadia_id AS stadium_id,
-                import_stadia.date_created
-              FROM import_wvs INNER JOIN import_adres ON import_wvs.adres_id = import_adres.adres_id
-              INNER JOIN import_stadia ON import_wvs.adres_id = import_stadia.adres_id
-              AND zaak_id = '{}'
-              ORDER BY import_stadia.date_created DESC
-              LIMIT 1
-            """.format(case_id)
+            SELECT
+              import_wvs.zaak_id AS case_id,
+              import_adres.postcode AS postal_code,
+              import_adres.sttnaam AS street_name,
+              import_adres.hsnr AS street_number,
+              import_adres.hsltr AS suffix_letter,
+              import_adres.toev AS suffix,
+              import_stadia.sta_oms AS stadium,
+              import_stadia.stadia_id AS stadium_id
+            FROM
+              import_wvs
+            INNER JOIN
+              import_adres ON import_wvs.adres_id = import_adres.adres_id
+            INNER JOIN
+              import_stadia ON import_wvs.adres_id = import_stadia.adres_id
+            AND
+              stadia_id LIKE '{}_%'
+            AND import_wvs.zaak_id = '{}'
+            ORDER BY
+              import_stadia.sta_nr DESC
+            LIMIT 1
+            """.format(case_id, case_id)
+
     return do_query(query)[0]
 
 def get_open_cases(adres_id):
