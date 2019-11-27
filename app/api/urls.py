@@ -1,16 +1,15 @@
 from django.conf import settings
-from django.urls import path, re_path, include, reverse_lazy
+from django.urls import path, include
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.views.generic.base import RedirectView
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from api.itinerary.views import ItineraryViewSet, CaseViewSet, TeamItineraryViewset
-from api.users.views import TeamsViewset
+from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet
+from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
 
 admin.site.site_header = "Wonen looplijsten"
@@ -24,10 +23,10 @@ schema_view = get_schema_view(
 )
 
 router = DefaultRouter()
-router.register(r'itineraries', ItineraryViewSet, basename='itineraries')
-router.register(r'teams', TeamsViewset, basename='teams')
-router.register(r'team-itineraries', TeamItineraryViewset, basename='team-itineraries')
+router.register(r'itineraries', ItineraryViewSet, basename='itinerary')
+router.register(r'itineraries/items', ItineraryItemViewSet, basename='itinerary-item')
 router.register(r'cases', CaseViewSet, basename='case')
+router.register(r'search', CaseSearchViewSet, basename='search')
 
 urlpatterns = [
     # Admin environment

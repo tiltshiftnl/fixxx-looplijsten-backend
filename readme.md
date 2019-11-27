@@ -40,7 +40,7 @@ bwv_db/import.sh </path/to/local/dir/with/dumps>
 
 To dump data into a mock data JSON, run:
 ```bash
-run --rm api python manage.py dumpdata --format=json users itinerary > REPLACE_WITH_FILE_NAME.json
+docker-compose run --rm api python manage.py dumpdata --format=json users itinerary > REPLACE_WITH_FILE_NAME.json
 ```
 
 Creating a superuser:
@@ -48,3 +48,16 @@ Creating a superuser:
 docker-compose run --rm api python manage.py createsuperuser
 ```
 A superuser can be used to access the Django backend
+
+
+Populate with mock/fake data:
+```bash
+docker-compose run --rm api python manage.py populate
+```
+
+Frontend steps when pulling new backend code:
+```bash
+docker-compose build
+docker-compose run --rm api python manage.py migrate
+docker-compose run --rm api python manage.py populate
+docker-compose up

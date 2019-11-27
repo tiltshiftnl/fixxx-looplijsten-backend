@@ -1,53 +1,65 @@
-from django.http import JsonResponse
-import json
-from rest_framework import viewsets
+from rest_framework.viewsets import ViewSet
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from api.itinerary.models import Itinerary
-from api.itinerary.serializers import ItinerarySerializer
+from api.itinerary.models import Itinerary, ItineraryItem
+from api.users.models import User
+from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer
+from api.cases.models import Case
 
 from utils.safety_lock import safety_lock
 
-
-class ItineraryViewSet(viewsets.ViewSet):
+class ItineraryViewSet(ViewSet, GenericAPIView):
     """
-    A simple ViewSet for listing itineraries.
+    A simple ViewSet for listing an itinerary of a user
+
     """
 
     permission_classes = [IsAuthenticated]
+    serializer_class = ItinerarySerializer
 
     @safety_lock
     def list(self, request):
-        queryset = Itinerary.objects.all()
-        serializer = ItinerarySerializer(queryset, many=True)
+        user = User.objects.get(id=request.user.id)
+        queryset = Itinerary.objects.get_or_create(user=user)[0]
+        serializer = ItinerarySerializer(queryset, many=False)
         return Response(serializer.data)
 
 
-class TeamItineraryViewset(viewsets.ViewSet):
+class ItineraryItemViewSet(
+        ViewSet,
+        GenericAPIView,
+        CreateModelMixin,
+        DestroyModelMixin):
     """
-    A simple ViewSet for listing an itinerary of a team
-
+    A view for adding/removing an item to a user's itinerary
     """
-
     permission_classes = [IsAuthenticated]
+    serializer_class = ItineraryItemSerializer
+
+    def get_object(self):
+        user = self.request.user
+        itinerary = Itinerary.objects.get(user=user)
+        itinerary_item = ItineraryItem.objects.get(itinerary=itinerary, id=self.kwargs['pk'])
+        return itinerary_item
 
     @safety_lock
-    def retrieve(self, request, pk=None):
-        queryset = Itinerary.objects.filter(team=pk)
-        serializer = ItinerarySerializer(queryset, many=True)
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+    @safety_lock
+    def create(self, request):
+        # Get the current user and it's itinerary
+        user = User.objects.get(id=request.user.id)
+        itinerary = Itinerary.objects.get_or_create(user=user)[0]
+
+        # Create itinerary item if the case exists
+        case = Case.objects.get_or_create(case_id=request.data['id'])[0]
+        itinerary_item = ItineraryItem.objects.create(itinerary=itinerary, case=case)
+        itinerary_item.save()
+
+        # Serialize and return data
+        serializer = ItineraryItemSerializer(itinerary_item, many=False)
         return Response(serializer.data)
-
-
-class CaseViewSet(viewsets.ViewSet):
-    """
-    A temporary viewset for cases with mock data
-    """
-
-    permission_classes = [IsAuthenticated]
-
-    @safety_lock
-    def retrieve(self, request, pk):
-        with open('/app/datasets/case.json') as json_file:
-            data = json.load(json_file)
-            return JsonResponse(data)

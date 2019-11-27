@@ -26,6 +26,8 @@ INSTALLED_APPS = (
     # Your apps
     'api.users',
     'api.itinerary',
+    'api.core',
+    'api.cases',
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -63,7 +65,7 @@ DATABASES = {
         'NAME': os.environ.get('DATABASE_NAME'),
         'USER': os.environ.get('DATABASE_USER'),
         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': 'database',
+        'HOST': os.environ.get('DATABASE_HOST', 'database'),
         'PORT': '5432',
     },
     BWV_DATABASE_NAME: {
@@ -71,7 +73,7 @@ DATABASES = {
         'NAME': os.environ.get('BWV_DB_NAME'),
         'USER': os.environ.get('BWV_DB_USER'),
         'PASSWORD': os.environ.get('BWV_DB_PASSWORD'),
-        'HOST': 'bwv_db',
+        'HOST': os.environ.get('BWV_DB_HOST', 'bwv_db'),
         'PORT': '5432',
     }
 }
@@ -166,8 +168,8 @@ CORS_ORIGIN_ALLOW_ALL = False
 
 
 SWAGGER_SETTINGS = {
-    'LOGIN_URL': '/admin/login/',
-    'LOGOUT_URL': '/admin/logout/'
+    'LOGIN_URL': '/looplijsten/admin/login/',
+    'LOGOUT_URL': '/looplijsten/admin/logout/'
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
