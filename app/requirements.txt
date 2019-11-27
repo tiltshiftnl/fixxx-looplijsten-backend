@@ -39,3 +39,6 @@ boto3==1.9.93
 
 # Settings
 django-constance[database]==2.4.0
+
+# Other
+requests==2.22.0

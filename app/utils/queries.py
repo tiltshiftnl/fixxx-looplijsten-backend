@@ -1,3 +1,5 @@
+import requests
+
 from utils.helpers import get_days_in_range
 from utils.query_helpers import do_query
 
@@ -220,3 +222,25 @@ def get_rental_information(wng_id):
         'notified_rentals': notified_rentals,
         'rented_days': rented_days
     }
+
+def get_bag_data(wng_id):
+    adress = get_import_adres(wng_id)
+
+    query = '{} {} {}'.format(
+        adress['sttnaam'],
+        adress['hsnr'],
+        '' if adress['toev'] is None else adress['toev'])
+
+    try:
+        # Do an initial search to get the objects
+        adress_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/',
+                                     params={'q': query})
+
+        # Do a request using the the objects href
+        adress_uri = adress_search.json()['results'][0]['_links']['self']['href']
+        adress_bag_data = requests.get(adress_uri)
+
+        return adress_bag_data.json()
+
+    except Exception as e:
+        return {'error': str(e)}
