@@ -13,6 +13,7 @@ def get_search_results(postal_code, street_number, suffix):
                   import_adres.postcode AS postal_code,
                   import_adres.sttnaam AS street_name,
                   import_adres.hsnr AS street_number,
+                  import_adres.hsltr AS suffix_letter,
                   import_adres.toev AS suffix,
                   import_stadia.sta_oms AS stadium,
                   import_wvs.zaak_id AS case_id,
@@ -92,6 +93,7 @@ def get_import_adres(wng_id):
             SELECT
               sttnaam,
               hsnr,
+              hsltr,
               toev,
               postcode,
               sbw_omschr,
@@ -135,7 +137,8 @@ def get_case(case_id):
                 import_adres.postcode AS postal_code,
                 import_adres.sttnaam AS street_name,
                 import_adres.hsnr AS street_number,
-                import_adres.toev AS suffix,
+                import_adres.hsltr AS suffix_letter,
+                import_adres.toev AS suffix,            
                 import_stadia.sta_oms AS stadium,
                 import_stadia.stadia_id AS stadium_id,
                 import_stadia.date_created
@@ -226,9 +229,10 @@ def get_rental_information(wng_id):
 def get_bag_data(wng_id):
     adress = get_import_adres(wng_id)
 
-    query = '{} {} {}'.format(
+    query = '{} {} {} {}'.format(
         adress['sttnaam'],
         adress['hsnr'],
+        '' if adress['hsltr'] is None else adress['hsltr'],
         '' if adress['toev'] is None else adress['toev'])
 
     try:
