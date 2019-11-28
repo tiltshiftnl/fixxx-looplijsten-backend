@@ -31,6 +31,7 @@ class Note(models.Model):
     itinerary_item = models.ForeignKey(ItineraryItem, on_delete=models.CASCADE,
                                        null=False, related_name='notes')
     text = models.TextField(null=False, blank=False)
+    author = models.ForeignKey(to=User, null=True, blank=False, on_delete=models.CASCADE)
 
     def __str__(self):
         max_length = 20
