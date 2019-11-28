@@ -45,6 +45,7 @@ def get_bwv_hotline_bevinding(wng_id):
     query = """
             SELECT
               toez_hdr1_code,
+              toez_hdr2_code,
               bevinding_datum,
               bevinding_tijd,
               hit,
