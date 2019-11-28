@@ -24,3 +24,16 @@ class ItineraryItem(models.Model):
             return self.case.__str__()
         else:
             return ''
+
+
+class Note(models.Model):
+    """ A note for an Itinerary Item """
+    itinerary_item = models.ForeignKey(ItineraryItem, on_delete=models.CASCADE,
+                                       null=False, related_name='notes')
+    text = models.TextField(null=False, blank=False)
+
+    def __str__(self):
+        max_length = 20
+        if len(self.text) > max_length:
+            return '{}...'.format(self.text[:max_length])
+        return self.text

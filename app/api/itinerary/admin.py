@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.itinerary.models import Itinerary, ItineraryItem
+from api.itinerary.models import Itinerary, ItineraryItem, Note
 
 class ItineraryItemInline(admin.StackedInline):
     fields = ('case',)
@@ -13,3 +13,7 @@ class ItineraryAdmin(admin.ModelAdmin):
     inlines = [
         ItineraryItemInline,
     ]
+
+@admin.register(Note)
+class NoteAdmin(admin.ModelAdmin):
+    fields = ('itinerary_item', 'text')
