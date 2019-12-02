@@ -80,6 +80,12 @@ class NoteViewSet(
     queryset = Note.objects.all()
 
     @safety_lock
+    def retrieve(self, request, pk=None):
+        note = get_object_or_404(self.queryset, pk=pk)
+        serializer = NoteCrudSerializer(note)
+        return Response(serializer.data)
+
+    @safety_lock
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
 
