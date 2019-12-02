@@ -221,6 +221,7 @@ def get_bwv_vakantieverhuur(wng_id):
               wng_id = '{}'
             AND
               annuleer_date IS NULL
+            ORDER BY check_in
             """.format(wng_id)
 
     query_results = do_query(query)
