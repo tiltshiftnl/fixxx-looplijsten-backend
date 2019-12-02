@@ -101,7 +101,7 @@ def get_import_adres(wng_id):
               postcode,
               sbw_omschr,
               kmrs,
-              a_dam_bag
+              landelijk_bag
             FROM import_adres WHERE wng_id = '{}'
             """.format(wng_id)
 
@@ -238,24 +238,18 @@ def get_rental_information(wng_id):
     }
 
 def get_bag_data(wng_id):
-    adress = get_import_adres(wng_id)
-
-    query = '{} {} {} {}'.format(
-        adress['sttnaam'],
-        adress['hsnr'],
-        '' if adress['hsltr'] is None else adress['hsltr'],
-        '' if adress['toev'] is None else adress['toev'])
+    address = get_import_adres(wng_id)
 
     try:
         # Do an initial search to get the objects
-        adress_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/',
-                                     params={'q': query})
+        address_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/',
+                                      params={'q': address['landelijk_bag']})
 
         # Do a request using the the objects href
-        adress_uri = adress_search.json()['results'][0]['_links']['self']['href']
-        adress_bag_data = requests.get(adress_uri)
+        address_uri = address_search.json()['results'][0]['_links']['self']['href']
+        address_bag_data = requests.get(address_uri)
 
-        return adress_bag_data.json()
+        return address_bag_data.json()
 
     except Exception as e:
         return {'error': str(e)}
