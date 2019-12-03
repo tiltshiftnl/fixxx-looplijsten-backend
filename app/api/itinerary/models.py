@@ -18,6 +18,10 @@ class ItineraryItem(models.Model):
     """ Single Itinerary """
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, null=False, related_name='items')
     case = models.ForeignKey(Case, on_delete=models.CASCADE, null=True, blank=False, related_name='cases')
+    position = models.FloatField(null=False, blank=False)
+
+    class Meta:
+        ordering = ['position']
 
     def __str__(self):
         if self.case:
@@ -25,6 +29,18 @@ class ItineraryItem(models.Model):
         else:
             return ''
 
+    def set_position_to_last(self):
+        """ Sets this item's position to the last in the ItineraryItem list"""
+        itinerary_item_list = self.itinerary.items.all().order_by('position')
+        last_item = list(itinerary_item_list)[-1]
+        self.position = last_item.position + 1
+
+    def save(self, *args, **kwargs):
+        # If no position is given, set the last the last in list
+        if self.position is None:
+            self.set_position_to_last()
+
+        super().save(*args, **kwargs)
 
 class Note(models.Model):
     """ A note for an Itinerary Item """
