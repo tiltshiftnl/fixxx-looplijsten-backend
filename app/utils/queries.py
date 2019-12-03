@@ -4,22 +4,34 @@ from utils.helpers import get_days_in_range
 from utils.query_helpers import do_query
 
 def get_search_results(postal_code, street_number, suffix):
+
     suffix_query = ''
     if suffix:
-        suffix_query = """WHERE LOWER(toev) = LOWER('{}') OR LOWER(hsltr) = LOWER('{}')"""
-        suffix_query = suffix_query.format(suffix, suffix)
+        suffix_query = "WHERE LOWER(suffix) = LOWER('{}')".format(suffix)
 
     query = """
             SELECT
-            import_wvs.zaak_id AS case_id
+              case_id
             FROM
-              import_wvs
-            INNER JOIN
-              import_adres
-            ON import_wvs.adres_id = import_adres.adres_id
-            AND import_wvs.afs_code is NULL
-            AND LOWER(postcode) = LOWER('{}')
-            AND hsnr = '{}'
+              (
+                SELECT
+                  import_wvs.zaak_id AS case_id,
+                COALESCE(hsltr, '') || COALESCE(toev, '') AS suffix
+                FROM
+                  import_wvs
+                INNER JOIN
+                  import_adres
+                ON
+                  import_wvs.adres_id = import_adres.adres_id
+                AND
+                  import_wvs.afs_code is NULL
+                AND
+                  LOWER(postcode) = LOWER('{}')
+                AND
+                  hsnr = '{}'
+              )
+            AS
+              case_preselect
             {}
             """.format(postal_code, street_number, suffix_query)
 
