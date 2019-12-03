@@ -33,6 +33,7 @@ class ItineraryItemViewSet(
         ViewSet,
         GenericAPIView,
         CreateModelMixin,
+        UpdateModelMixin,
         DestroyModelMixin):
     """
     A view for adding/removing an item to a user's itinerary
@@ -45,6 +46,10 @@ class ItineraryItemViewSet(
         itinerary = Itinerary.objects.get(user=user)
         itinerary_item = ItineraryItem.objects.get(itinerary=itinerary, id=self.kwargs['pk'])
         return itinerary_item
+
+    @safety_lock
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
     @safety_lock
     def destroy(self, request, *args, **kwargs):
