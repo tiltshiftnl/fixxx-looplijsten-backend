@@ -4,22 +4,34 @@ from utils.helpers import get_days_in_range
 from utils.query_helpers import do_query
 
 def get_search_results(postal_code, street_number, suffix):
+
     suffix_query = ''
     if suffix:
-        suffix_query = """WHERE LOWER(toev) = LOWER('{}') OR LOWER(hsltr) = LOWER('{}')"""
-        suffix_query = suffix_query.format(suffix, suffix)
+        suffix_query = "WHERE LOWER(suffix) = LOWER('{}')".format(suffix)
 
     query = """
             SELECT
-            import_wvs.zaak_id AS case_id
+              case_id
             FROM
-              import_wvs
-            INNER JOIN
-              import_adres
-            ON import_wvs.adres_id = import_adres.adres_id
-            AND import_wvs.afs_code is NULL
-            AND LOWER(postcode) = LOWER('{}')
-            AND hsnr = '{}'
+              (
+                SELECT
+                  import_wvs.zaak_id AS case_id,
+                COALESCE(hsltr, '') || COALESCE(toev, '') AS suffix
+                FROM
+                  import_wvs
+                INNER JOIN
+                  import_adres
+                ON
+                  import_wvs.adres_id = import_adres.adres_id
+                AND
+                  import_wvs.afs_code is NULL
+                AND
+                  LOWER(postcode) = LOWER('{}')
+                AND
+                  hsnr = '{}'
+              )
+            AS
+              case_preselect
             {}
             """.format(postal_code, street_number, suffix_query)
 
@@ -101,7 +113,7 @@ def get_import_adres(wng_id):
               postcode,
               sbw_omschr,
               kmrs,
-              a_dam_bag
+              landelijk_bag
             FROM import_adres WHERE wng_id = '{}'
             """.format(wng_id)
 
@@ -238,24 +250,18 @@ def get_rental_information(wng_id):
     }
 
 def get_bag_data(wng_id):
-    adress = get_import_adres(wng_id)
-
-    query = '{} {} {} {}'.format(
-        adress['sttnaam'],
-        adress['hsnr'],
-        '' if adress['hsltr'] is None else adress['hsltr'],
-        '' if adress['toev'] is None else adress['toev'])
+    address = get_import_adres(wng_id)
 
     try:
         # Do an initial search to get the objects
-        adress_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/',
-                                     params={'q': query})
+        address_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/',
+                                      params={'q': address['landelijk_bag']})
 
         # Do a request using the the objects href
-        adress_uri = adress_search.json()['results'][0]['_links']['self']['href']
-        adress_bag_data = requests.get(adress_uri)
+        address_uri = address_search.json()['results'][0]['_links']['self']['href']
+        address_bag_data = requests.get(address_uri)
 
-        return adress_bag_data.json()
+        return address_bag_data.json()
 
     except Exception as e:
         return {'error': str(e)}
