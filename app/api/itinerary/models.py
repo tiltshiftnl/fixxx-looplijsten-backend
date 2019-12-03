@@ -18,6 +18,7 @@ class ItineraryItem(models.Model):
     """ Single Itinerary """
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, null=False, related_name='items')
     case = models.ForeignKey(Case, on_delete=models.CASCADE, null=True, blank=False, related_name='cases')
+    position = models.FloatField(null=False, blank=False)
 
     def __str__(self):
         if self.case:
