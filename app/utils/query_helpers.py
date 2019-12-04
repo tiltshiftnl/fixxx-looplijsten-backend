@@ -14,3 +14,9 @@ def do_query(query):
             return query_to_list(cursor)
     except Error:
         return {}
+
+def return_first_or_empty(executed_query):
+    if len(executed_query) > 0:
+        return executed_query[0]
+    else:
+        return {}

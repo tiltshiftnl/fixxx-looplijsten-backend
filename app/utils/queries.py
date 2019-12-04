@@ -1,7 +1,7 @@
 import requests
 
 from utils.helpers import get_days_in_range
-from utils.query_helpers import do_query
+from utils.query_helpers import do_query, return_first_or_empty
 
 def get_search_results(postal_code, street_number, suffix):
     suffix = suffix.replace(' ', '')
@@ -117,7 +117,8 @@ def get_import_adres(wng_id):
             FROM import_adres WHERE wng_id = '{}'
             """.format(wng_id)
 
-    return do_query(query)[0]
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
 
 def get_import_stadia(case_id):
     query = """
@@ -143,7 +144,8 @@ def get_import_wvs(adres_id):
             FROM import_wvs WHERE adres_id = '{}'
             """.format(adres_id)
 
-    return do_query(query)[0]
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
 
 def get_case(case_id):
     query = """
@@ -170,7 +172,8 @@ def get_case(case_id):
             LIMIT 1
             """.format(case_id, case_id)
 
-    return do_query(query)[0]
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
 
 def get_open_cases(adres_id):
     # Note: Our current bwv dump doesn't export the complete history of cases ever
@@ -181,7 +184,9 @@ def get_open_cases(adres_id):
             FROM import_wvs
             WHERE adres_id='{}' AND afs_code is NULL
             """.format(adres_id)
-    return do_query(query)[0]
+
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
 
 def get_case_count(adres_id):
     query = """
@@ -190,7 +195,9 @@ def get_case_count(adres_id):
               FROM import_wvs
               WHERE adres_id='{}'
             """.format(adres_id)
-    return do_query(query)[0]
+
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
 
 def get_case_basics(case_id):
     query = """
@@ -199,7 +206,9 @@ def get_case_basics(case_id):
               beh_oms as openings_reden
             FROM import_wvs WHERE zaak_id='{}'
             """.format(case_id)
-    return do_query(query)[0]
+
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
 
 def get_bwv_tmp(case_id, adres_id):
     case_count = get_case_count(adres_id)
