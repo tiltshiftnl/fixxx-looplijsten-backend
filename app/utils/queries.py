@@ -4,7 +4,7 @@ from utils.helpers import get_days_in_range
 from utils.query_helpers import do_query
 
 def get_search_results(postal_code, street_number, suffix):
-
+    suffix = suffix.replace(' ', '')
     suffix_query = ''
     if suffix:
         suffix_query = "WHERE LOWER(suffix) = LOWER('{}')".format(suffix)
