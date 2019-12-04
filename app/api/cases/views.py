@@ -40,7 +40,6 @@ class CaseViewSet(ViewSet):
 class CaseSearchViewSet(ViewSet, ListAPIView):
     """
     A temporary search ViewSet for listing cases
-
     """
 
     permission_classes = [IsAuthenticated]
