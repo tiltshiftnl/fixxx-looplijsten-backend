@@ -155,7 +155,7 @@ def get_case(case_id):
               import_adres.hsltr AS suffix_letter,
               import_adres.toev AS suffix,
               import_stadia.sta_oms AS stadium,
-              import_stadia.stadia_id AS stadium_id
+              import_wvs.beh_oms AS case_reason
             FROM
               import_wvs
             INNER JOIN
