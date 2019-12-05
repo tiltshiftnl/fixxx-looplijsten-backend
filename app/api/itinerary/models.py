@@ -40,6 +40,11 @@ class ItineraryItem(models.Model):
         if self.position is None:
             self.set_position_to_last()
 
+        # Don't allow saving if another item in the list has the same position
+        objects_with_same_position = self.itinerary.items.all().filter(position=self.position)
+        if objects_with_same_position.exclude(pk=self.pk).count() > 0:
+            raise ValueError('An item with this position already exists')
+
         super().save(*args, **kwargs)
 
 class Note(models.Model):

@@ -4,6 +4,7 @@ from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateMod
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import APIException
 
 from api.itinerary.models import Itinerary, ItineraryItem, Note
 from api.users.models import User
@@ -49,7 +50,10 @@ class ItineraryItemViewSet(
 
     @safety_lock
     def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        try:
+            return super().update(request, *args, **kwargs)
+        except Exception as e:
+            raise APIException(str(e))
 
     @safety_lock
     def destroy(self, request, *args, **kwargs):
@@ -64,8 +68,11 @@ class ItineraryItemViewSet(
         # Create itinerary item if the case exists
         case = Case.objects.get_or_create(case_id=request.data['id'])[0]
         position = request.data.get('position', None)
-        itinerary_item = ItineraryItem.objects.create(itinerary=itinerary, case=case, position=position)
-        itinerary_item.save()
+
+        try:
+            itinerary_item = ItineraryItem.objects.create(itinerary=itinerary, case=case, position=position)
+        except Exception as e:
+            raise APIException(str(e))
 
         # Serialize and return data
         serializer = ItineraryItemSerializer(itinerary_item, many=False)
