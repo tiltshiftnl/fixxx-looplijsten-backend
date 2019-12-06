@@ -7,7 +7,7 @@ def get_search_results(postal_code, street_number, suffix):
     suffix = suffix.replace(' ', '')
     suffix_query = ''
     if suffix:
-        suffix_query = "WHERE LOWER(suffix) = LOWER('{}')".format(suffix)
+        suffix_query = "WHERE LOWER(suffix) LIKE LOWER('{}%')".format(suffix)
 
     query = """
             SELECT
@@ -34,6 +34,7 @@ def get_search_results(postal_code, street_number, suffix):
               case_preselect
             {}
             """.format(postal_code, street_number, suffix_query)
+    print(query)
 
     case_ids = do_query(query)
     case_ids = [case_id['case_id'] for case_id in case_ids]
@@ -135,6 +136,7 @@ def get_import_stadia(case_id):
           """.format(case_id)
 
     return do_query(query)
+
 
 def get_case(case_id):
     query = """
