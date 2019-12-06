@@ -136,17 +136,6 @@ def get_import_stadia(case_id):
 
     return do_query(query)
 
-def get_import_wvs(adres_id):
-    query = """
-            SELECT
-              vloeroppervlak_totaal,
-              nuttig_woonoppervlak
-            FROM import_wvs WHERE adres_id = '{}'
-            """.format(adres_id)
-
-    executed_query = do_query(query)
-    return return_first_or_empty(executed_query)
-
 def get_case(case_id):
     query = """
             SELECT
