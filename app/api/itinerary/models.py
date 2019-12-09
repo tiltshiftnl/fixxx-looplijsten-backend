@@ -32,8 +32,13 @@ class ItineraryItem(models.Model):
     def set_position_to_last(self):
         """ Sets this item's position to the last in the ItineraryItem list"""
         itinerary_item_list = self.itinerary.items.all().order_by('position')
-        last_item = list(itinerary_item_list)[-1]
-        self.position = last_item.position + 1
+        itinerary_items = list(itinerary_item_list)
+
+        if(len(itinerary_items) == 0):
+            self.position = 1
+        else:
+            last_item = itinerary_items[-1]
+            self.position = last_item.position + 1
 
     def save(self, *args, **kwargs):
         # If no position is given, set the last the last in list
