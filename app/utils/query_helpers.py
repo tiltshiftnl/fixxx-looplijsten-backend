@@ -13,7 +13,7 @@ def do_query(query):
             cursor.execute(query)
             return query_to_list(cursor)
     except Error:
-        return {}
+        return []
 
 def return_first_or_empty(executed_query):
     if len(executed_query) > 0:
