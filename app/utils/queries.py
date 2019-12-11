@@ -93,7 +93,7 @@ def get_bwv_personen(adres_id):
             FROM bwv_personen_hist
             INNER JOIN bwv_personen
               ON bwv_personen.id = bwv_personen_hist.pen_id
-              AND ads_id = '{}'
+              AND bwv_personen.ads_id_wa = '{}'
               AND bwv_personen_hist.vertrekdatum_adres is Null
               AND bwv_personen_hist.overlijdensdatum is Null
             ORDER BY vestigingsdatum_adres DESC
