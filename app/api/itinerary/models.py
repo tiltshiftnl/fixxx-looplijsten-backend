@@ -47,8 +47,13 @@ class ItineraryItem(models.Model):
 
         # Don't allow saving if another item in the list has the same position
         objects_with_same_position = self.itinerary.items.all().filter(position=self.position)
-        if objects_with_same_position.exclude(pk=self.pk).count() > 0:
+        if objects_with_same_position.exclude(pk=self.pk).exists():
             raise ValueError('An item with this position already exists')
+
+        # Don't allow saving if the itinerary already contains the same case
+        objects_with_same_case = self.itinerary.items.all().filter(case=self.case)
+        if objects_with_same_case.exists():
+            raise ValueError('The itinerary already contains this case')
 
         super().save(*args, **kwargs)
 
