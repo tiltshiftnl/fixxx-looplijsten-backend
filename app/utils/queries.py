@@ -48,8 +48,9 @@ def get_related_case_ids(case_id):
             INNER JOIN import_wvs ON import_stadia.adres_id = import_wvs.adres_id
             AND zaak_id = '{}'
               """.format(case_id)
-    return do_query(query)
 
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
 
 def get_bwv_hotline_bevinding(wng_id):
     query = """

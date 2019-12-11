@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
@@ -21,9 +21,15 @@ class CaseViewSet(ViewSet):
     @safety_lock
     def retrieve(self, request, pk):
         case_id = pk
-        related_case_ids = get_related_case_ids(case_id)[0]
-        wng_id = related_case_ids['wng_id']
-        adres_id = related_case_ids['adres_id']
+
+        related_case_ids = get_related_case_ids(case_id)
+
+        wng_id = related_case_ids.get('wng_id', None)
+        adres_id = related_case_ids.get('adres_id', None)
+
+        if not wng_id or not adres_id:
+            return HttpResponseNotFound('Case not found')
+
         real_data = {
             'bwv_hotline_bevinding': get_bwv_hotline_bevinding(wng_id),
             'bwv_hotline_melding': get_bwv_hotline_melding(wng_id),
