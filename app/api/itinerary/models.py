@@ -46,12 +46,14 @@ class ItineraryItem(models.Model):
             self.set_position_to_last()
 
         # Don't allow saving if another item in the list has the same position
-        objects_with_same_position = self.itinerary.items.all().filter(position=self.position)
-        if objects_with_same_position.exclude(pk=self.pk).exists():
+        objects_with_same_position = self.itinerary.items.all().filter(position=self.position).exclude(pk=self.pk)
+
+        if objects_with_same_position.exists():
             raise ValueError('An item with this position already exists')
 
         # Don't allow saving if the itinerary already contains the same case
-        objects_with_same_case = self.itinerary.items.all().filter(case=self.case)
+        objects_with_same_case = self.itinerary.items.all().filter(case=self.case).exclude(pk=self.pk)
+
         if objects_with_same_case.exists():
             raise ValueError('The itinerary already contains this case')
 
