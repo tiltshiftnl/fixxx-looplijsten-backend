@@ -1,0 +1,11 @@
+<html>
+
+<body>
+  {% if user.is_authenticated %}
+  <p>Current user: {{ user.email }}</p>
+  {% endif %}
+  <a href="{% url 'oidc_authentication_init' %}">Login</a>
+  <a href="https://auth.grip-on-it.com/logout">Logout</a>
+</body>
+
+</html>

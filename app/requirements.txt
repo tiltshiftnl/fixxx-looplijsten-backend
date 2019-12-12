@@ -42,3 +42,6 @@ django-constance[database]==2.4.0
 
 # Other
 requests==2.22.0
+
+# Authentication
+mozilla-django-oidc==1.2.2

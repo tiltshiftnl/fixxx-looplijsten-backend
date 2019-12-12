@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     'drf_yasg',                  # for generating real Swagger/OpenAPI 2.0 specifications
     'constance',
     'constance.backends.database',  # for dynamic configurations in admin
+    'mozilla_django_oidc',       # for authentication
 
     # Your apps
     'api.users',
@@ -36,6 +37,8 @@ MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'mozilla_django_oidc.middleware.SessionRefresh',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -87,7 +90,6 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 USE_L10N = True
 USE_TZ = True
-LOGIN_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -138,6 +140,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Custom user app
 AUTH_USER_MODEL = 'users.User'
 
+AUTHENTICATION_BACKENDS = (
+    'api.users.auth.OIDCAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 # Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -151,8 +158,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
     )
 }
 
@@ -182,3 +189,55 @@ sentry_sdk.init(
     dsn=os.environ.get('SENTRY_DSN'),
     integrations=[DjangoIntegration()]
 )
+
+# TODO: Get these from the environment instead
+OIDC_RP_CLIENT_ID = '730eb73b-c09b-4c70-b6c8-ea4044d17e85'
+OIDC_RP_CLIENT_SECRET = '4d2kHmxmZVIQCmUu98oD'
+
+# TODO: These two should be done ourselves
+OIDC_OP_LOGOUT_URL_METHOD = 'api.users.utils.oidc_op_logout'
+OIDC_USERNAME_ALGO = 'api.users.utils.generate_username'
+
+OIDC_RP_SIGN_ALGO = 'RS256'
+
+# TODO: Right now email isn't supported in the scopes, but it's available in the User Info.
+# Add the email when it start being supported
+OIDC_RP_SCOPES = 'openid'
+
+LOGIN_URL = 'oidc_authentication_init'
+LOGIN_REDIRECT_URL = '/test/'
+LOGOUT_REDIRECT_URL = '/test/logout/'
+# OIDC_REDIRECT_FIELD_NAME = '/test/blah/'
+
+# https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/openid-configuration
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv('OIDC_OP_AUTHORIZATION_ENDPOINT',
+                                           'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/authorize')
+OIDC_OP_TOKEN_ENDPOINT = os.getenv('OIDC_OP_TOKEN_ENDPOINT',
+                                   'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/token')
+OIDC_OP_USER_ENDPOINT = os.getenv('OIDC_OP_USER_ENDPOINT',
+                                  'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/userinfo')
+OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
+                                  'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/jwks.json')
+
+# TODO: Not sure if this is it
+OIDC_OP_LOGOUT_ENDPOINT = os.getenv('OIDC_OP_LOGOUT_ENDPOINT',
+                                    'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/logout')
+
+
+OIDC_USE_NONCE = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'mozilla_django_oidc': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
+    }
+}
