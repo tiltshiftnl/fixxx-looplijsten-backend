@@ -52,6 +52,21 @@ def get_related_case_ids(case_id):
     executed_query = do_query(query)
     return return_first_or_empty(executed_query)
 
+
+def get_toezichthouder_name(toezichthouder_code):
+    if toezichthouder_code:
+        query = """
+          SELECT naam FROM bwv_medewerkers where code = '{}'
+          """.format(toezichthouder_code)
+
+        executed_query = do_query(query)
+        item = return_first_or_empty(executed_query)
+
+        return item.get('naam', None)
+
+    return None
+
+
 def get_bwv_hotline_bevinding(wng_id):
     query = """
             SELECT
@@ -66,7 +81,17 @@ def get_bwv_hotline_bevinding(wng_id):
             ORDER BY volgnr_bevinding ASC
             """.format(wng_id)
 
-    return do_query(query)
+    results = do_query(query)
+
+    # Adds the user's names to the result data
+    for result in results:
+        toez_hdr1_code = result.get('toez_hdr1_code', None)
+        toez_hdr2_code = result.get('toez_hdr2_code', None)
+
+        result['toez_hdr1_naam'] = get_toezichthouder_name(toez_hdr1_code)
+        result['toez_hdr2_naam'] = get_toezichthouder_name(toez_hdr2_code)
+
+    return results
 
 def get_bwv_hotline_melding(wng_id):
     query = """
