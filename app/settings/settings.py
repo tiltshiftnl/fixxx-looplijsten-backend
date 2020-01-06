@@ -157,8 +157,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     )
 }
 
@@ -193,20 +193,12 @@ sentry_sdk.init(
 OIDC_RP_CLIENT_ID = '730eb73b-c09b-4c70-b6c8-ea4044d17e85'
 OIDC_RP_CLIENT_SECRET = '4d2kHmxmZVIQCmUu98oD'
 
-# TODO: These two should be done ourselves
 OIDC_OP_LOGOUT_URL_METHOD = 'api.users.utils.oidc_op_logout'
 OIDC_USERNAME_ALGO = 'api.users.utils.generate_username'
 
 OIDC_RP_SIGN_ALGO = 'RS256'
 
-# TODO: Right now email isn't supported in the scopes, but it's available in the User Info.
-# Add the email when it start being supported
 OIDC_RP_SCOPES = 'openid'
-
-LOGIN_URL = 'oidc_authentication_init'
-LOGIN_REDIRECT_URL = '/test/'
-LOGOUT_REDIRECT_URL = '/test/logout/'
-# OIDC_REDIRECT_FIELD_NAME = '/test/blah/'
 
 # https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/openid-configuration
 OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv('OIDC_OP_AUTHORIZATION_ENDPOINT',

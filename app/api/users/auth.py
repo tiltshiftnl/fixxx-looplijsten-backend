@@ -1,6 +1,10 @@
+import logging
 from mozilla_django_oidc import auth
 from django.contrib.auth.models import Group
 from django.db import transaction
+from django.core.exceptions import SuspiciousOperation
+from mozilla_django_oidc.utils import absolutify
+from django.urls import reverse
 
 CLAIMS_FIRST_NAME = 'FirstName'
 CLAIMS_LAST_NAME = 'LastName'
@@ -8,7 +12,55 @@ PAYLOAD_NONCE = 'nonce'
 CLAIMS_ROLES = 'roles'
 ACCESS_INFO_REALM = 'realm_access'
 
+LOGGER = logging.getLogger(__name__)
+
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
+
+    def authenticate(self, request, **kwargs):
+        """Authenticates a user based on the OIDC code flow."""
+
+        self.request = request
+        if not self.request:
+            return None
+
+        # Note, removed the state dependency for now
+        # state = self.request.GET.get('state')
+        code = self.request.data.get('code')
+
+        if not code:
+            return None
+
+        reverse_url = self.get_settings('OIDC_AUTHENTICATION_CALLBACK_URL',
+                                        'oidc_authentication_callback')
+
+        token_payload = {
+            'client_id': self.OIDC_RP_CLIENT_ID,
+            'client_secret': self.OIDC_RP_CLIENT_SECRET,
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': absolutify(
+                self.request,
+                reverse(reverse_url)
+            ),
+        }
+
+        # Get the token
+        token_info = self.get_token(token_payload)
+        id_token = token_info.get('id_token')
+        access_token = token_info.get('access_token')
+
+        # Validate the token
+        payload = self.verify_token(id_token)
+
+        if payload:
+            self.store_tokens(access_token, id_token)
+            try:
+                return self.get_or_create_user(access_token, id_token, payload)
+            except SuspiciousOperation as exc:
+                LOGGER.warning('failed to get or create user: %s', exc)
+                return None
+
+        return None
 
     def create_user(self, claims):
         user = super(OIDCAuthenticationBackend, self).create_user(claims)
@@ -56,7 +108,8 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
 
         '''
         NOTE: This is a temporary patch to support the capitalized user info email,
-        instead of the lower capital email which is supposed to be retrieved using the (not yet supported) email scope.
+        instead of the lower capital email which is supposed to be retrieved using the 
+        (not yet supported) email scope.
         '''
         user_info['email'] = user_info.get('Email')
 

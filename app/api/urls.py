@@ -2,7 +2,6 @@ from django.conf import settings
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.views.generic import TemplateView
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 from rest_framework import permissions
@@ -12,6 +11,7 @@ from drf_yasg import openapi
 from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
+from api.users.views import ObtainAuthTokenOIDC
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -52,7 +52,7 @@ urlpatterns = [
     # Swagger/OpenAPI documentation
     path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-    path('test/', TemplateView.as_view(template_name="index.html")),
+    path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
 
 
 
