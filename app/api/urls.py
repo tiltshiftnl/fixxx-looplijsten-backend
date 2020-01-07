@@ -11,7 +11,7 @@ from drf_yasg import openapi
 from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
-from api.users.views import ObtainAuthTokenOIDC
+from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -53,7 +53,6 @@ urlpatterns = [
     path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
     path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
-
-
+    path('looplijsten/is-authenticated/', IsAuthenticatedView.as_view()),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
