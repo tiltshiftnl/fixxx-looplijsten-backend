@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     'drf_yasg',                  # for generating real Swagger/OpenAPI 2.0 specifications
     'constance',
     'constance.backends.database',  # for dynamic configurations in admin
+    'mozilla_django_oidc',       # for authentication
 
     # Your apps
     'api.users',
@@ -36,8 +37,9 @@ MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'mozilla_django_oidc.middleware.SessionRefresh',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -87,7 +89,6 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 USE_L10N = True
 USE_TZ = True
-LOGIN_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
@@ -138,6 +139,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Custom user app
 AUTH_USER_MODEL = 'users.User'
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'api.users.auth.OIDCAuthenticationBackend',
+)
+
 # Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -182,3 +188,41 @@ sentry_sdk.init(
     dsn=os.environ.get('SENTRY_DSN'),
     integrations=[DjangoIntegration()]
 )
+
+OIDC_RP_CLIENT_ID = os.environ.get('OIDC_RP_CLIENT_ID')
+OIDC_RP_CLIENT_SECRET = os.environ.get('OIDC_RP_CLIENT_SECRET')
+
+OIDC_OP_LOGOUT_URL_METHOD = 'api.users.utils.oidc_op_logout'
+OIDC_USERNAME_ALGO = 'api.users.utils.generate_username'
+
+OIDC_RP_SIGN_ALGO = 'RS256'
+
+OIDC_RP_SCOPES = 'openid'
+
+# https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/openid-configuration
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv('OIDC_OP_AUTHORIZATION_ENDPOINT',
+                                           'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/authorize')
+OIDC_OP_TOKEN_ENDPOINT = os.getenv('OIDC_OP_TOKEN_ENDPOINT',
+                                   'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/token')
+OIDC_OP_USER_ENDPOINT = os.getenv('OIDC_OP_USER_ENDPOINT',
+                                  'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/userinfo')
+OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
+                                  'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/jwks.json')
+
+OIDC_USE_NONCE = False
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'mozilla_django_oidc': {
+            'handlers': ['console'],
+            'level': 'DEBUG'
+        },
+    }
+}

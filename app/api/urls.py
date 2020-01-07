@@ -11,6 +11,7 @@ from drf_yasg import openapi
 from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
+from api.users.views import ObtainAuthTokenOIDC
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -30,6 +31,10 @@ router.register(r'search', CaseSearchViewSet, basename='search')
 router.register(r'notes', NoteViewSet, basename='search')
 
 urlpatterns = [
+
+    # OIDC authentication
+    path('looplijsten/oidc/', include('mozilla_django_oidc.urls')),
+
     # Admin environment
     path('looplijsten/admin/', admin.site.urls),
 
@@ -46,5 +51,9 @@ urlpatterns = [
 
     # Swagger/OpenAPI documentation
     path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+
+    path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
