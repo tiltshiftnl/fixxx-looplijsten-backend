@@ -189,9 +189,8 @@ sentry_sdk.init(
     integrations=[DjangoIntegration()]
 )
 
-# TODO: Get these from the environment instead
-OIDC_RP_CLIENT_ID = '730eb73b-c09b-4c70-b6c8-ea4044d17e85'
-OIDC_RP_CLIENT_SECRET = '4d2kHmxmZVIQCmUu98oD'
+OIDC_RP_CLIENT_ID = os.environ.get('OIDC_RP_CLIENT_ID')
+OIDC_RP_CLIENT_SECRET = os.environ.get('OIDC_RP_CLIENT_SECRET')
 
 OIDC_OP_LOGOUT_URL_METHOD = 'api.users.utils.oidc_op_logout'
 OIDC_USERNAME_ALGO = 'api.users.utils.generate_username'
@@ -209,11 +208,6 @@ OIDC_OP_USER_ENDPOINT = os.getenv('OIDC_OP_USER_ENDPOINT',
                                   'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/userinfo')
 OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
                                   'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/jwks.json')
-
-# TODO: Not sure if this is it
-OIDC_OP_LOGOUT_ENDPOINT = os.getenv('OIDC_OP_LOGOUT_ENDPOINT',
-                                    'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/logout')
-
 
 OIDC_USE_NONCE = False
 

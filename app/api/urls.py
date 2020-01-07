@@ -33,7 +33,7 @@ router.register(r'notes', NoteViewSet, basename='search')
 urlpatterns = [
 
     # OIDC authentication
-    path('oidc/', include('mozilla_django_oidc.urls')),
+    path('looplijsten/oidc/', include('mozilla_django_oidc.urls')),
 
     # Admin environment
     path('looplijsten/admin/', admin.site.urls),

@@ -17,7 +17,8 @@ class ObtainAuthTokenOIDC(APIView):
 
         try:
             user = authentication_backend.authenticate(request, **kwargs)
-        except Exception:
+        except Exception as e:
+            print(e)
             return HttpResponseBadRequest('Could not authenticate')
 
         token, created = Token.objects.get_or_create(user=user)
