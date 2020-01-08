@@ -44,7 +44,6 @@ def do_bag_search(address):
 
 def get_bag_data(wng_id):
     address = get_import_adres(wng_id)
-
     try:
         address_search = do_bag_search(address)
 
@@ -55,4 +54,6 @@ def get_bag_data(wng_id):
         return address_bag_data.json()
 
     except Exception as e:
+        print('Requesting BAG data failed:')
+        print(e)
         return {'error': str(e)}
