@@ -43,17 +43,16 @@ def do_bag_search(address):
     return address_search
 
 def get_bag_data(wng_id):
-    return {}
-    # address = get_import_adres(wng_id)
+    address = get_import_adres(wng_id)
 
-    # try:
-    #     address_search = do_bag_search(address)
+    try:
+        address_search = do_bag_search(address)
 
-    #     # Do a request using the the objects href
-    #     address_uri = address_search['results'][0]['_links']['self']['href']
-    #     address_bag_data = requests.get(address_uri)
+        # Do a request using the the objects href
+        address_uri = address_search['results'][0]['_links']['self']['href']
+        address_bag_data = requests.get(address_uri)
 
-    #     return address_bag_data.json()
+        return address_bag_data.json()
 
-    # except Exception as e:
-    #     return {'error': str(e)}
+    except Exception as e:
+        return {'error': str(e)}
