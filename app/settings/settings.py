@@ -181,6 +181,8 @@ SWAGGER_SETTINGS = {
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 CONSTANCE_CONFIG = {
     'ALLOW_DATA_ACCESS': (True, 'Allow data to be accesible through the API'),
+    'BRK_AUTHENTICATION_TOKEN': ('', 'Authentication token for accessing BRK API'),
+    'BRK_AUTHENTICATION_TOKEN_EXPIRY': ('', 'Expiry date for BRK API authentication token'),
 }
 
 # Error logging through Sentry

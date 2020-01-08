@@ -9,6 +9,7 @@ from utils.queries import get_search_results, get_related_case_ids, get_rental_i
 from utils.queries import get_bwv_hotline_melding, get_bwv_hotline_bevinding
 from utils.queries import get_bwv_personen, get_import_adres, get_import_stadia, get_bwv_tmp
 from utils.queries_bag_api import get_bag_data
+from utils.queries_brk_api import get_brk_data, brk_request
 from api.itinerary.serializers import CaseSerializer
 
 class CaseViewSet(ViewSet):
@@ -19,6 +20,7 @@ class CaseViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
 
     @safety_lock
+    @brk_request
     def retrieve(self, request, pk):
         case_id = pk
 
@@ -38,7 +40,8 @@ class CaseViewSet(ViewSet):
             'import_stadia': get_import_stadia(case_id),
             'bwv_tmp': get_bwv_tmp(case_id, adres_id),
             'vakantie_verhuur': get_rental_information(wng_id),
-            'bag_data': get_bag_data(wng_id)
+            'bag_data': get_bag_data(wng_id),
+            'brk_data': get_brk_data()
         }
         return JsonResponse(real_data)
 
