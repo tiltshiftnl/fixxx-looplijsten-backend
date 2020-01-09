@@ -45,3 +45,4 @@ requests==2.22.0
 
 # Authentication
 mozilla-django-oidc==1.2.2
+djangorestframework-simplejwt==4.4.0

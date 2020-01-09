@@ -7,6 +7,10 @@ from rest_framework.authtoken import views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
 from api.cases.views import CaseViewSet, CaseSearchViewSet
@@ -48,6 +52,10 @@ urlpatterns = [
     # Authentication endpoints
     path('looplijsten/api-token-auth/', views.obtain_auth_token),
     path('looplijsten/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    # JWT authentication endpoints
+    path('looplijsten/token_obtain_pair/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('looplijsten/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Swagger/OpenAPI documentation
     path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
