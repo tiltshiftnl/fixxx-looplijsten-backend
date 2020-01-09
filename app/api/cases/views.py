@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from utils.safety_lock import safety_lock
 from utils.queries import get_search_results, get_related_case_ids, get_rental_information
-from utils.queries import get_bwv_hotline_melding, get_bwv_hotline_bevinding
+from utils.queries import get_bwv_hotline_melding, get_bwv_hotline_bevinding, get_related_cases
 from utils.queries import get_bwv_personen, get_import_adres, get_import_stadia, get_bwv_tmp
 from utils.queries_bag_api import get_bag_data
 from utils.queries_brk_api import get_brk_data, brk_request
@@ -41,7 +41,8 @@ class CaseViewSet(ViewSet):
             'bwv_tmp': get_bwv_tmp(case_id, adres_id),
             'vakantie_verhuur': get_rental_information(wng_id),
             'bag_data': get_bag_data(wng_id),
-            'brk_data': get_brk_data()
+            'brk_data': get_brk_data(),
+            'related_cases': get_related_cases(adres_id)
         }
         return JsonResponse(real_data)
 
