@@ -17,7 +17,6 @@ INSTALLED_APPS = (
 
     # Third party apps
     'rest_framework',            # utilities for rest apis
-    'rest_framework.authtoken',  # token authentication
     'django_filters',            # for filtering rest endpoints
     'drf_yasg',                  # for generating real Swagger/OpenAPI 2.0 specifications
     'constance',
@@ -158,7 +157,6 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication'
     )
 }

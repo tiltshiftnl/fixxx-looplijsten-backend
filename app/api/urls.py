@@ -3,7 +3,6 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken import views
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -35,10 +34,6 @@ router.register(r'search', CaseSearchViewSet, basename='search')
 router.register(r'notes', NoteViewSet, basename='search')
 
 urlpatterns = [
-
-    # OIDC authentication
-    path('looplijsten/oidc/', include('mozilla_django_oidc.urls')),
-
     # Admin environment
     path('looplijsten/admin/', admin.site.urls),
 
@@ -50,17 +45,19 @@ urlpatterns = [
     path('looplijsten/api/v1/', include(router.urls)),
 
     # Authentication endpoints
-    path('looplijsten/api-token-auth/', views.obtain_auth_token),
-    path('looplijsten/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-
-    # JWT authentication endpoints
     path('looplijsten/token_obtain_pair/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('looplijsten/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # OIDC authentication
+    path('looplijsten/oidc/', include('mozilla_django_oidc.urls')),
+
+    # OIDC code exchange for token
+    path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
+    path('looplijsten/is-authenticated/', IsAuthenticatedView.as_view()),
 
     # Swagger/OpenAPI documentation
     path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-    path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
-    path('looplijsten/is-authenticated/', IsAuthenticatedView.as_view()),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
