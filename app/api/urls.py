@@ -44,20 +44,22 @@ urlpatterns = [
     # The API for requesting data
     path('looplijsten/api/v1/', include(router.urls)),
 
-    # Authentication endpoints
-    path('looplijsten/token_obtain_pair/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('looplijsten/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # Authentication endpoints for exchanging user credentials for a token
+    path('looplijsten/credentials-authenticate/', TokenObtainPairView.as_view(), name='credentials-authenticate'),
 
-    # OIDC authentication
+    # Authentication endpoint for exchanging an OIDC code for a token
+    path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
+
+    # Endpoint for retrieving a fresh new token
+    path('looplijsten/token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+
+    # OIDC helper urls
     path('looplijsten/oidc/', include('mozilla_django_oidc.urls')),
 
-    # OIDC code exchange for token
-    path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
+    # Endpoint for checking if user is authenticated
     path('looplijsten/is-authenticated/', IsAuthenticatedView.as_view()),
 
     # Swagger/OpenAPI documentation
     path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-
-
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
