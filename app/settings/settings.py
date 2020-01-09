@@ -1,5 +1,6 @@
 import os
 from os.path import join
+from datetime import timedelta
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -17,7 +18,6 @@ INSTALLED_APPS = (
 
     # Third party apps
     'rest_framework',            # utilities for rest apis
-    'rest_framework.authtoken',  # token authentication
     'django_filters',            # for filtering rest endpoints
     'drf_yasg',                  # for generating real Swagger/OpenAPI 2.0 specifications
     'constance',
@@ -158,7 +158,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
     )
 }
 
@@ -226,4 +226,11 @@ LOGGING = {
             'level': 'DEBUG'
         },
     }
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=4),
+    # We don't refresh tokens yet, so we set refresh lifetime to zero
+    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=0),
 }

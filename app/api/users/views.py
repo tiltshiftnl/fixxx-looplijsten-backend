@@ -2,9 +2,10 @@ from django.http import HttpResponseBadRequest
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken
 from api.users.auth import OIDCAuthenticationBackend
 from utils.safety_lock import safety_lock
+
 
 class IsAuthenticatedView(APIView):
     permission_classes = ()
@@ -34,9 +35,11 @@ class ObtainAuthTokenOIDC(APIView):
             print(e)
             return HttpResponseBadRequest('Could not authenticate')
 
-        token, created = Token.objects.get_or_create(user=user)
-
-        return Response({'token': token.key})
+        refresh = RefreshToken.for_user(user)
+        return Response(
+            {'refresh': str(refresh),
+             'access': str(refresh.access_token)}
+        )
 
 
 obtain_auth_token = ObtainAuthTokenOIDC.as_view()
