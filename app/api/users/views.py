@@ -31,7 +31,6 @@ class ObtainAuthTokenOIDC(APIView):
 
         try:
             user = authentication_backend.authenticate(request, **kwargs)
-            print(user)
         except Exception as e:
             print(e)
             return HttpResponseBadRequest('Could not authenticate')
