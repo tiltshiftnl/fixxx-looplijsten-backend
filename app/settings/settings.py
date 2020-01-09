@@ -1,5 +1,6 @@
 import os
 from os.path import join
+from datetime import timedelta
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -225,4 +226,11 @@ LOGGING = {
             'level': 'DEBUG'
         },
     }
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=4),
+    # We don't refresh tokens yet, so we set refresh lifetime to zero
+    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=0),
 }
