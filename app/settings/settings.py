@@ -236,3 +236,7 @@ SIMPLE_JWT = {
     # We don't refresh tokens yet, so we set refresh lifetime to zero
     'REFRESH_TOKEN_LIFETIME': timedelta(seconds=0),
 }
+
+ACCESS_LOG_EXEMPTIONS = (
+    '/looplijsten/health',
+)

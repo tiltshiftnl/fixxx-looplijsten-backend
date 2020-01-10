@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
 from api.accesslogs.models import LogEntry
+from django.conf import settings
 
 class LoggingMiddleware:
     def __init__(self, get_response):
@@ -7,6 +8,9 @@ class LoggingMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
+
+        if request.path in settings.ACCESS_LOG_EXEMPTIONS:
+            return response
 
         log_entry = LogEntry(
             request_uri=request.path,
