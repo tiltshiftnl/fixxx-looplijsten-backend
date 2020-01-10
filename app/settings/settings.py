@@ -29,6 +29,7 @@ INSTALLED_APPS = (
     'api.itinerary',
     'api.core',
     'api.cases',
+    'api.accesslogs'
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -42,6 +43,7 @@ MIDDLEWARE = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.accesslogs.middleware.LoggingMiddleware'
 )
 
 ROOT_URLCONF = 'api.urls'
