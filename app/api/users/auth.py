@@ -25,7 +25,10 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         if not self.request:
             return None
 
-        code = self.request.data.get('code')
+        if hasattr(self.request, 'data'):
+            code = self.request.data.get('code')
+        else:
+            code = None
 
         if not code:
             return None
