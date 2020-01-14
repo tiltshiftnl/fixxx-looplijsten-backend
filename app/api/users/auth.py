@@ -25,9 +25,10 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         if not self.request:
             return None
 
-        # Note, removed the state dependency for now
-        # state = self.request.GET.get('state')
-        code = self.request.data.get('code')
+        if hasattr(self.request, 'data'):
+            code = self.request.data.get('code')
+        else:
+            code = None
 
         if not code:
             return None
@@ -110,7 +111,7 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
 
         '''
         NOTE: This is a temporary patch to support the capitalized user info email,
-        instead of the lower capital email which is supposed to be retrieved using the 
+        instead of the lower capital email which is supposed to be retrieved using the
         (not yet supported) email scope.
         '''
         user_info['email'] = user_info.get('Email')
