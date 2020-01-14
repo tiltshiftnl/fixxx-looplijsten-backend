@@ -54,11 +54,10 @@ def get_related_case_ids(case_id):
 
 def get_related_cases(adres_id):
     query = """
-            SELECT wvs_nr as case_number, zaak_id as case_id
+            SELECT wvs_nr as case_number, zaak_id as case_id, beh_oms AS case_reason
             FROM import_wvs
             WHERE adres_id = '{}'
             """.format(adres_id)
-
     executed_query = do_query(query)
 
     return executed_query
