@@ -181,10 +181,15 @@ SWAGGER_SETTINGS = {
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_ALLOW_DATA_ACCESS_KEY = 'ALLOW_DATA_ACCESS'
+CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY = 'BRK_AUTHENTICATION_TOKEN'
+CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY = 'BRK_AUTHENTICATION_TOKEN_EXPIRY'
+
 CONSTANCE_CONFIG = {
-    'ALLOW_DATA_ACCESS': (True, 'Allow data to be accesible through the API'),
-    'BRK_AUTHENTICATION_TOKEN': ('', 'Authentication token for accessing BRK API'),
-    'BRK_AUTHENTICATION_TOKEN_EXPIRY': ('', 'Expiry date for BRK API authentication token'),
+    CONSTANCE_ALLOW_DATA_ACCESS_KEY: (True, 'Allow data to be accesible through the API'),
+    CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY: ('', 'Authentication token for accessing BRK API'),
+    CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY: ('', 'Expiry date for BRK API token'),
 }
 
 # Error logging through Sentry
@@ -242,3 +247,8 @@ SIMPLE_JWT = {
 ACCESS_LOG_EXEMPTIONS = (
     '/looplijsten/health',
 )
+
+# BRK Access request settings
+BRK_ACCESS_CLIENT_ID = os.getenv('BRK_ACCESS_CLIENT_ID')
+BRK_ACCESS_CLIENT_SECRET = os.getenv('BRK_ACCESS_CLIENT_SECRET')
+BRK_ACCESS_URL = os.getenv('BRK_ACCESS_URL')
