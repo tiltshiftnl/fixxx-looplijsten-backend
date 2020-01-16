@@ -57,6 +57,7 @@ def get_related_cases(adres_id):
             SELECT wvs_nr as case_number, zaak_id as case_id, beh_oms AS case_reason
             FROM import_wvs
             WHERE adres_id = '{}'
+            AND afs_code is Null
             """.format(adres_id)
     executed_query = do_query(query)
 
