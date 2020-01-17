@@ -274,10 +274,43 @@ def get_bwv_vakantieverhuur(wng_id):
     return query_results
 
 
+def get_shortstay_license(wng_id):
+    """
+    Returns the shortstay license
+    """
+
+    query = """
+            SELECT shortstay
+            FROM bwv_woningen
+            WHERE id='{}'
+            """.format(wng_id)
+
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
+
+def get_is_bnb_declared(wng_id):
+    """
+    Returns if the adress is currently declared as a bnb
+    """
+
+    query = """
+            SELECT benb_melding as is_bnb_declared
+            FROM bwv_woningen
+            WHERE id='{}'
+            """.format(wng_id)
+
+    executed_query = do_query(query)
+    return return_first_or_empty(executed_query)
+
 def get_rental_information(wng_id):
     notified_rentals = get_bwv_vakantieverhuur(wng_id)
     rented_days = get_rented_days(notified_rentals)
+    shortstay_license = get_shortstay_license(wng_id)
+    is_bnb_declared = get_is_bnb_declared(wng_id)
+
     return {
         'notified_rentals': notified_rentals,
-        'rented_days': rented_days
+        'rented_days': rented_days,
+        **shortstay_license,
+        **is_bnb_declared
     }
