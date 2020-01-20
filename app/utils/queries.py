@@ -36,6 +36,7 @@ def get_search_results(postal_code, street_number, suffix):
     case_ids = do_query(query)
     case_ids = [case_id['case_id'] for case_id in case_ids]
     cases = [get_case(case_id) for case_id in case_ids]
+    cases = [case for case in cases if bool(case)]
 
     return cases
 
