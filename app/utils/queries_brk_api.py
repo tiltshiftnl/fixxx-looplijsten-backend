@@ -76,20 +76,25 @@ def request_new_token():
 
 def get_brk_data(bag_id):
     '''
-    Do a brk request. This is a temporary adress
+    Does an authenticated request to BRK, and returns the owners of a given bag_id location
     '''
     try:
+        if not bag_id:
+            return {}
+
         token = get_token()
         headers = {
             'Authorization': "Bearer {}".format(token),
             'content-type': "application/json",
         }
 
-        request_uri = 'https://api.data.amsterdam.nl/brk/object-expand/?verblijfsobjecten__id={}'.format(
-            bag_id)
-        brk_data = requests.get(request_uri, headers=headers)
+        brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
+                                        params={'verblijfsobjecten__id': bag_id},
+                                        headers=headers)
+        brk_data = brk_data_request.json()
+        brk_owners = brk_data.get('results')[0].get('rechten')
 
-        return brk_data.json()
+        return {'rechten': brk_owners}
 
     except Exception as e:
         print('Requesting BRK data failed:')
