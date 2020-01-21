@@ -1,4 +1,4 @@
-from utils.helpers import get_days_in_range
+from utils.date_helpers import get_days_in_range
 from utils.query_helpers import do_query, return_first_or_empty
 
 def get_search_results(postal_code, street_number, suffix):
