@@ -1,4 +1,5 @@
 import requests
+from django.conf import settings
 from utils.queries import get_import_adres
 
 def do_bag_search_address(address):
@@ -12,7 +13,7 @@ def do_bag_search_address(address):
     toev = '' if address['toev'] is None else address['toev']
     query = '{} {} {}{}'.format(sttnaam, hsnr, hsltr, toev)
 
-    address_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/', params={'q': query})
+    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': query})
 
     return address_search.json()
 
@@ -23,7 +24,7 @@ def do_bag_search_id(address):
 
     id = address['landelijk_bag']
 
-    address_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/', params={'q': id})
+    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': id})
 
     return address_search.json()
 

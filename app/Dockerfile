@@ -1,4 +1,4 @@
-FROM amsterdam/python3.6
+FROM amsterdam/python
 LABEL maintainer="datapunt@amsterdam.nl"
 
 ENV PYTHONUNBUFFERED 1
