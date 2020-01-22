@@ -80,7 +80,9 @@ def get_brk_data(bag_id):
     '''
     try:
         if not bag_id:
-            return {}
+            return {
+                'no_bag': 'no_bag'
+            }
 
         token = get_token()
         headers = {
@@ -91,10 +93,16 @@ def get_brk_data(bag_id):
         brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
                                         params={'verblijfsobjecten__id': bag_id},
                                         headers=headers)
-        brk_data = brk_data_request.json()
-        brk_owners = brk_data.get('results')[0].get('rechten')
 
-        return {'rechten': brk_owners}
+        # brk_data = brk_data_request.json()
+        # brk_owners = brk_data.get('results')[0].get('rechten')
+
+        return {
+            'debug_CLIENT_ID': settings.BRK_ACCESS_CLIENT_ID,
+            'debug_BRK_ACCESS_URL': settings.BRK_ACCESS_URL,
+            'debug_BRK_API_OBJECT_EXPAND_URL': settings.BRK_API_OBJECT_EXPAND_URL,
+            'request': brk_data_request
+        }
 
     except Exception as e:
         print('Requesting BRK data failed:')
