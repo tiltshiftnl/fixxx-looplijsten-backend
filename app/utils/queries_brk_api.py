@@ -14,7 +14,7 @@ def brk_request(func):
         '''
         expiry = get_expiry()
 
-        if expiry == '' or expiry < datetime.now():
+        if expiry is None or expiry == '' or expiry < datetime.now():
             request_new_token()
 
         return func(request, *args, **kwargs)
