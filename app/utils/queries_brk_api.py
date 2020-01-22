@@ -56,17 +56,18 @@ def request_new_token():
     }
 
     try:
-        token_request_url = settings.BRK_ACCESS_URL
+        # token_request_url = settings.BRK_ACCESS_URL
 
-        response = requests.post(token_request_url, data=payload)
-        response_json = response.json()
+        # response = requests.post(token_request_url, data=payload)
+        # response_json = response.json()
 
-        access_token = response_json.get('access_token')
-        set_token(access_token)
+        # access_token = response_json.get('access_token')
+        # set_token(access_token)
 
-        expires_in = response_json.get('expires_in')
-        expiry = datetime.now() + timedelta(seconds=expires_in)
-        set_expiry(expiry)
+        # expires_in = response_json.get('expires_in')
+        # expiry = datetime.now() + timedelta(seconds=expires_in)
+        # set_expiry(expiry)
+        pass
 
     except Exception as e:
         print('Requesting BRK access token failed:')
