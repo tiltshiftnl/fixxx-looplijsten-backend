@@ -49,25 +49,24 @@ def set_expiry(expiry):
     )
 
 def request_new_token():
-    # payload = {
-    #     'grant_type': 'client_credentials',
-    #     'client_id': settings.BRK_ACCESS_CLIENT_ID,
-    #     'client_secret': settings.BRK_ACCESS_CLIENT_SECRET,
-    # }
+    payload = {
+        'grant_type': 'client_credentials',
+        'client_id': settings.BRK_ACCESS_CLIENT_ID,
+        'client_secret': settings.BRK_ACCESS_CLIENT_SECRET,
+    }
 
     try:
-        # token_request_url = settings.BRK_ACCESS_URL
+        token_request_url = settings.BRK_ACCESS_URL
 
-        # response = requests.post(token_request_url, data=payload)
-        # response_json = response.json()
+        response = requests.post(token_request_url, data=payload)
+        response_json = response.json()
 
-        # access_token = response_json.get('access_token')
-        # set_token(access_token)
+        access_token = response_json.get('access_token')
+        set_token(access_token)
 
-        # expires_in = response_json.get('expires_in')
-        # expiry = datetime.now() + timedelta(seconds=expires_in)
-        # set_expiry(expiry)
-        pass
+        expires_in = response_json.get('expires_in')
+        expiry = datetime.now() + timedelta(seconds=expires_in)
+        set_expiry(expiry)
 
     except Exception as e:
         print('Requesting BRK access token failed:')
@@ -84,20 +83,20 @@ def get_brk_data(bag_id):
             return {}
 
         # token = get_token()
-        headers = {
+        # headers = {
             # 'Authorization': "Bearer {}".format(token),
-            'content-type': "application/json",
-        }
+        #     'content-type': "application/json",
+        # }
 
-        brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
-                                        params={'verblijfsobjecten__id': bag_id},
-                                        headers=headers)
+        # brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
+        #                                 params={'verblijfsobjecten__id': bag_id},
+        #                                 headers=headers)
 
-        brk_data = brk_data_request.json()
+        # brk_data = brk_data_request.json()
         # brk_owners = brk_data.get('results')[0].get('rechten')
 
         return {
-            'request': brk_data
+            # 'request': brk_data
         }
 
     except Exception as e:
