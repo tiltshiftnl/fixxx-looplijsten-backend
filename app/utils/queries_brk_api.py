@@ -84,9 +84,9 @@ def get_brk_data(bag_id):
                 'no_bag': 'no_bag'
             }
 
-        token = get_token()
+        # token = get_token()
         headers = {
-            'Authorization': "Bearer {}".format(token),
+            # 'Authorization': "Bearer {}".format(token),
             'content-type': "application/json",
         }
 
@@ -94,14 +94,14 @@ def get_brk_data(bag_id):
                                         params={'verblijfsobjecten__id': bag_id},
                                         headers=headers)
 
-        # brk_data = brk_data_request.json()
+        brk_data = brk_data_request.json()
         # brk_owners = brk_data.get('results')[0].get('rechten')
 
         return {
             'debug_CLIENT_ID': settings.BRK_ACCESS_CLIENT_ID,
             'debug_BRK_ACCESS_URL': settings.BRK_ACCESS_URL,
             'debug_BRK_API_OBJECT_EXPAND_URL': settings.BRK_API_OBJECT_EXPAND_URL,
-            'request': brk_data_request
+            'request': brk_data
         }
 
     except Exception as e:
