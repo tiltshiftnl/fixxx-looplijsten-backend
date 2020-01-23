@@ -28,7 +28,6 @@ INSTALLED_APPS = (
     # Your apps
     'api.users',
     'api.itinerary',
-    'api.core',
     'api.cases',
     'api.accesslogs'
 )
