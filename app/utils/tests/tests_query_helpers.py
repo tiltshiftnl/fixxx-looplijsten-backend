@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.db import Error
 from utils.query_helpers import return_first_or_empty, do_query
 
+# TODO: Write tests for query_to_list
 
 class ReturnFirstOrEmptyTest(TestCase):
     def test_should_return_first(self):
