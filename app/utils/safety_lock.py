@@ -2,6 +2,9 @@ from django.http import Http404
 from constance import config
 
 def safety_lock(func):
+    '''
+    A decorator function that allows or blocks data access according to the admin's configuration
+    '''
     def wrapper(*args, **kwargs):
         if(config.ALLOW_DATA_ACCESS):
             return func(*args, **kwargs)
