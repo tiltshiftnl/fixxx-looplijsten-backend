@@ -1,16 +1,21 @@
 import requests
 from utils.queries import get_import_adres
 
+
+def get_bag_search_query(address):
+    sttnaam = address.get('postcode')
+    hsnr = address.get('hsnr')
+    hsltr = address.get('hsltr', '')
+    toev = address.get('toev', '')
+    query = '{} {} {}{}'.format(sttnaam, hsnr, hsltr, toev)
+
+    return query.strip()
+
 def do_bag_search_address(address):
     '''
     Search BAG using a BWV address
     '''
-
-    sttnaam = address['postcode']
-    hsnr = address['hsnr']
-    hsltr = '' if address['hsltr'] is None else address['hsltr']
-    toev = '' if address['toev'] is None else address['toev']
-    query = '{} {} {}{}'.format(sttnaam, hsnr, hsltr, toev)
+    query = get_bag_search_query(address)
 
     address_search = requests.get('https://api.data.amsterdam.nl/atlas/search/adres/', params={'q': query})
 
