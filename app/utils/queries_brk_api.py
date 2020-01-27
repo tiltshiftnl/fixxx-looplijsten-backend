@@ -59,6 +59,7 @@ def request_new_token():
         token_request_url = settings.BRK_ACCESS_URL
 
         response = requests.post(token_request_url, data=payload)
+        response.raise_for_status()
         response_json = response.json()
 
         access_token = response_json.get('access_token')
@@ -82,21 +83,23 @@ def get_brk_data(bag_id):
         if not bag_id:
             return {}
 
-        # token = get_token()
-        # headers = {
-            # 'Authorization': "Bearer {}".format(token),
-        #     'content-type': "application/json",
-        # }
+        token = get_token()
+        headers = {
+            'Authorization': "Bearer {}".format(token),
+            'content-type': "application/json",
+        }
 
-        # brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
-        #                                 params={'verblijfsobjecten__id': bag_id},
-        #                                 headers=headers)
+        brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
+                                        params={'verblijfsobjecten__id': bag_id},
+                                        headers=headers)
 
-        # brk_data = brk_data_request.json()
-        # brk_owners = brk_data.get('results')[0].get('rechten')
+        brk_data_request.raise_for_status()
+
+        brk_data = brk_data_request.json()
+        brk_owners = brk_data.get('results')[0].get('rechten')
 
         return {
-            # 'request': brk_data
+            'ownders': brk_owners
         }
 
     except Exception as e:
