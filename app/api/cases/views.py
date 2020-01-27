@@ -45,7 +45,7 @@ class CaseViewSet(ViewSet):
             'bwv_tmp': get_bwv_tmp(case_id, adres_id),
             'vakantie_verhuur': get_rental_information(wng_id),
             'bag_data': bag_data,
-            'brk_data': {},  # get_brk_data(bag_id),
+            'brk_data': get_brk_data(bag_id),
             'related_cases': get_related_cases(adres_id)
         }
         return JsonResponse(real_data)
