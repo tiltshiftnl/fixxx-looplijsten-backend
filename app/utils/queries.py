@@ -169,7 +169,14 @@ def get_import_stadia(case_id):
             ORDER BY sta_nr DESC
           """.format(case_id)
 
-    return do_query(query)
+    all_stadia = do_query(query)
+
+    # Make sure all the open stadia are first in the list
+    open_stadia = [stadia for stadia in all_stadia if stadia['einddatum'] is None]
+    closed_stadia = [stadia for stadia in all_stadia if stadia['einddatum'] is not None]
+    stadia = open_stadia + closed_stadia
+
+    return stadia
 
 
 def get_case(case_id):
@@ -193,7 +200,7 @@ def get_case(case_id):
               stadia_id LIKE '{}_%'
             AND import_wvs.zaak_id = '{}'
             ORDER BY
-              import_stadia.sta_nr DESC
+              import_stadia.einddatum DESC, sta_nr DESC
             LIMIT 1
             """.format(case_id, case_id)
 
