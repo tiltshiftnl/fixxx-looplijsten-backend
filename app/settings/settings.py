@@ -258,6 +258,7 @@ ACCESS_LOG_EXEMPTIONS = (
 BRK_ACCESS_CLIENT_ID = os.getenv('BRK_ACCESS_CLIENT_ID')
 BRK_ACCESS_CLIENT_SECRET = os.getenv('BRK_ACCESS_CLIENT_SECRET')
 BRK_ACCESS_URL = os.getenv('BRK_ACCESS_URL')
-BRK_API_OBJECT_EXPAND_URL = 'https://acc.api.data.amsterdam.nl/brk/object-expand/'
+BRK_API_OBJECT_EXPAND_URL = os.getenv(
+    'BRK_API_OBJECT_EXPAND_URL', 'https://acc.api.data.amsterdam.nl/brk/object-expand/')
 
 BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
