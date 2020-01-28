@@ -94,7 +94,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-STATIC_URL = '/looplijsten/static/'
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
+
+# Temporary prefix for production environment.
+# Will be removed once we have all domains and subdomains ready.
+STATIC_URL = '/api/looplijsten/static/' if ENVIRONMENT == 'production' else '/looplijsten/static/'
 STATIC_ROOT = os.path.normpath(join(os.path.dirname(BASE_DIR), 'static'))
 
 MEDIA_URL = '/media/'
@@ -257,6 +261,3 @@ BRK_ACCESS_URL = os.getenv('BRK_ACCESS_URL')
 BRK_API_OBJECT_EXPAND_URL = 'https://acc.api.data.amsterdam.nl/brk/object-expand/'
 
 BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
-
-
-ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
