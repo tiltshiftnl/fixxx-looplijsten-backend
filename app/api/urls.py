@@ -42,8 +42,8 @@ urlpatterns = [
     path(prefix + 'looplijsten/admin/', admin.site.urls),
 
     # Health check url
-    path(prefix + 'looplijsten/health', health_default),
-    path(prefix + 'looplijsten/health_bwv', health_bwv),
+    path('looplijsten/health', health_default),
+    path('looplijsten/health_bwv', health_bwv),
 
     # The API for requesting data
     path(prefix + 'looplijsten/api/v1/', include(router.urls)),
