@@ -12,10 +12,15 @@ def brk_request(func):
         '''
         This wrapper makes sure a valid BRK token exists before doing a request
         '''
-        expiry = get_expiry()
+        try:
+            expiry = get_expiry()
 
-        if expiry is None or expiry == '' or expiry < datetime.now():
-            request_new_token()
+            if expiry is None or expiry == '' or expiry < datetime.now():
+                request_new_token()
+
+        except Exception as e:
+            print('BRK Request decorator failed:')
+            print(e)
 
         return func(request, *args, **kwargs)
 
@@ -59,6 +64,7 @@ def request_new_token():
         token_request_url = settings.BRK_ACCESS_URL
 
         response = requests.post(token_request_url, data=payload)
+        response.raise_for_status()
         response_json = response.json()
 
         access_token = response_json.get('access_token')
@@ -80,23 +86,29 @@ def get_brk_data(bag_id):
     '''
     try:
         if not bag_id:
-            return {}
+            raise Exception('No BAG ID given for BRK request')
 
-        # token = get_token()
-        # headers = {
-            # 'Authorization': "Bearer {}".format(token),
-        #     'content-type': "application/json",
-        # }
+        token = get_token()
 
-        # brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
-        #                                 params={'verblijfsobjecten__id': bag_id},
-        #                                 headers=headers)
+        if token is None or token == '':
+            raise Exception('No authorization bearer token for BRK request')
 
-        # brk_data = brk_data_request.json()
-        # brk_owners = brk_data.get('results')[0].get('rechten')
+        headers = {
+            'Authorization': "Bearer {}".format(token),
+            'content-type': "application/json",
+        }
+
+        brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
+                                        params={'verblijfsobjecten__id': bag_id},
+                                        headers=headers)
+
+        brk_data_request.raise_for_status()
+
+        brk_data = brk_data_request.json()
+        brk_owners = brk_data.get('results')[0].get('rechten')
 
         return {
-            # 'request': brk_data
+            'owners': brk_owners
         }
 
     except Exception as e:
