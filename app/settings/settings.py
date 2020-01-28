@@ -257,3 +257,6 @@ BRK_ACCESS_URL = os.getenv('BRK_ACCESS_URL')
 BRK_API_OBJECT_EXPAND_URL = 'https://acc.api.data.amsterdam.nl/brk/object-expand/'
 
 BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
+
+
+ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')

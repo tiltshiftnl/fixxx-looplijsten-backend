@@ -33,33 +33,38 @@ router.register(r'cases', CaseViewSet, basename='case')
 router.register(r'search', CaseSearchViewSet, basename='search')
 router.register(r'notes', NoteViewSet, basename='search')
 
+# Temporary prefix for production environment.
+# Will be removed once we have all domains and subdomains ready.
+prefix = 'api/' if settings.ENVIRONMENT == 'production' else ''
+
 urlpatterns = [
     # Admin environment
-    path('looplijsten/admin/', admin.site.urls),
+    path(prefix + 'looplijsten/admin/', admin.site.urls),
 
     # Health check url
-    path('looplijsten/health', health_default),
-    path('looplijsten/health_bwv', health_bwv),
+    path(prefix + 'looplijsten/health', health_default),
+    path(prefix + 'looplijsten/health_bwv', health_bwv),
 
     # The API for requesting data
-    path('looplijsten/api/v1/', include(router.urls)),
+    path(prefix + 'looplijsten/api/v1/', include(router.urls)),
 
     # Authentication endpoints for exchanging user credentials for a token
-    path('looplijsten/credentials-authenticate/', TokenObtainPairView.as_view(), name='credentials-authenticate'),
+    path(prefix + 'looplijsten/credentials-authenticate/',
+         TokenObtainPairView.as_view(), name='credentials-authenticate'),
 
     # Authentication endpoint for exchanging an OIDC code for a token
-    path('looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
+    path(prefix + 'looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
 
     # Endpoint for retrieving a fresh new token
-    path('looplijsten/token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+    path(prefix + 'looplijsten/token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
 
     # OIDC helper urls
-    path('looplijsten/oidc/', include('mozilla_django_oidc.urls')),
+    path(prefix + 'looplijsten/oidc/', include('mozilla_django_oidc.urls')),
 
     # Endpoint for checking if user is authenticated
-    path('looplijsten/is-authenticated/', IsAuthenticatedView.as_view()),
+    path(prefix + 'looplijsten/is-authenticated/', IsAuthenticatedView.as_view()),
 
     # Swagger/OpenAPI documentation
-    path('looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path(prefix + 'looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
