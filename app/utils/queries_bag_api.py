@@ -3,7 +3,6 @@ from django.conf import settings
 from utils.queries import get_import_adres
 from time import sleep
 
-
 def get_bag_search_query(address):
     sttnaam = address.get('postcode')
     hsnr = address.get('hsnr')
@@ -54,10 +53,15 @@ def do_bag_search(address):
 def get_bag_data(wng_id):
     address = get_import_adres(wng_id)
     try:
+        print('Requesting BAG Search:')
         address_search = do_bag_search(address)
 
         # Do a request using the the objects href
         address_uri = address_search['results'][0]['_links']['self']['href']
+
+        print('Requesting Adress URI:')
+        print(address_uri)
+
         address_bag_data = requests.get(address_uri)
 
         return address_bag_data.json()
@@ -65,4 +69,15 @@ def get_bag_data(wng_id):
     except Exception as e:
         print('Requesting BAG data failed:')
         print(e)
-        return {'error': str(e)}
+
+        error_objects = {
+            'error': str(e),
+            'wng_id': wng_id,
+            'api_url': settings.BAG_API_SEARCH_URL,
+            'address': address,
+            'address_search': address_search,
+            'address_uri': address_uri,
+        }
+        print(error_objects)
+
+        return error_objects
