@@ -42,11 +42,11 @@ def do_bag_search(address):
     '''
 
     # First search using an addresss
-    # address_search = do_bag_search_address(address)
+    address_search = do_bag_search_address(address)
 
     # If that search didn't give any results, try using the Landelijk BAG id
-    # if(address_search['count'] == 0):
-    address_search = do_bag_search_id(address)
+    if(address_search['count'] == 0):
+        address_search = do_bag_search_id(address)
 
     return address_search
 
