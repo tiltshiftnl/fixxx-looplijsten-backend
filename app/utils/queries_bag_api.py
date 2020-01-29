@@ -75,8 +75,6 @@ def get_bag_data(wng_id):
             'wng_id': wng_id,
             'api_url': settings.BAG_API_SEARCH_URL,
             'address': address,
-            'address_search': address_search,
-            'address_uri': address_uri,
         }
         print(error_objects)
 
