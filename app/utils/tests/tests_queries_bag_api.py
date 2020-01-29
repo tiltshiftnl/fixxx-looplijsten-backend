@@ -50,7 +50,7 @@ class GetBagSearchQueryTest(TestCase):
 
         self.assertEquals(result, 'postcode_foo hsnr_foo toev_foo')
 
-    def test_get_search_query_alll(self):
+    def test_get_search_query_all(self):
         """
         Returns a search query given all optional parameters
         """
@@ -65,6 +65,35 @@ class GetBagSearchQueryTest(TestCase):
 
         self.assertEquals(result, 'postcode_foo hsnr_foo hsltr_footoev_foo')
 
+    def test_get_search_query_none_hsltr(self):
+        """
+        Returns a clean search query with house number set to None
+        """
+        address = {
+            'postcode': 'postcode_foo',
+            'hsnr': 'hsnr_foo',
+            'hsltr': None,
+            'toev': 'toev_foo',
+        }
+
+        result = get_bag_search_query(address)
+
+        self.assertEquals(result, 'postcode_foo hsnr_foo toev_foo')
+
+    def test_get_search_query_none_toev(self):
+        """
+        Returns a clean search query with house number set to None
+        """
+        address = {
+            'postcode': 'postcode_foo',
+            'hsnr': 'hsnr_foo',
+            'hsltr': 'hsltr_foo',
+            'toev': None,
+        }
+
+        result = get_bag_search_query(address)
+
+        self.assertEquals(result, 'postcode_foo hsnr_foo hsltr_foo')
 
 class DoBagSearchAddressTest(TestCase):
 
