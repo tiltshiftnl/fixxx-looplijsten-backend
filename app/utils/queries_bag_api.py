@@ -6,8 +6,10 @@ from utils.queries import get_import_adres
 def get_bag_search_query(address):
     sttnaam = address.get('postcode')
     hsnr = address.get('hsnr')
-    hsltr = address.get('hsltr', '')
-    toev = address.get('toev', '')
+
+    hsltr = address.get('hsltr', '') or ''
+    toev = address.get('toev', '') or ''
+
     query = '{} {} {}{}'.format(sttnaam, hsnr, hsltr, toev)
 
     return query.strip()
