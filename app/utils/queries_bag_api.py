@@ -1,6 +1,7 @@
 import requests
 from django.conf import settings
 from utils.queries import get_import_adres
+from time import sleep
 
 
 def get_bag_search_query(address):
@@ -54,6 +55,7 @@ def get_bag_data(wng_id):
     address = get_import_adres(wng_id)
     try:
         address_search = do_bag_search(address)
+        sleep(0.125)
 
         # Do a request using the the objects href
         address_uri = address_search['results'][0]['_links']['self']['href']
