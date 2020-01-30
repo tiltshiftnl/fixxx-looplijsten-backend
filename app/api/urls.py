@@ -62,7 +62,7 @@ urlpatterns = [
     path(prefix + 'looplijsten/oidc/', include('mozilla_django_oidc.urls')),
 
     # Endpoint for checking if user is authenticated
-    path(prefix + 'looplijsten/is-authenticated/', IsAuthenticatedView.as_view()),
+    path(prefix + 'looplijsten/is-authenticated/', IsAuthenticatedView.as_view(), name='is-authenticated'),
 
     # Swagger/OpenAPI documentation
     path(prefix + 'looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

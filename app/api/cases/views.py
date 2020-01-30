@@ -13,7 +13,7 @@ from api.itinerary.serializers import CaseSerializer
 
 class CaseViewSet(ViewSet):
     """
-    A temporary viewset for cases with mock data
+    A Viewset for showing a single Case in detail
     """
 
     permission_classes = [IsAuthenticated]
