@@ -31,7 +31,7 @@ router.register(r'itineraries', ItineraryViewSet, basename='itinerary')
 router.register(r'itineraries/items', ItineraryItemViewSet, basename='itinerary-item')
 router.register(r'cases', CaseViewSet, basename='case')
 router.register(r'search', CaseSearchViewSet, basename='search')
-router.register(r'notes', NoteViewSet, basename='search')
+router.register(r'notes', NoteViewSet, basename='notes')
 
 # Temporary prefix for production environment.
 # Will be removed once we have all domains and subdomains ready.
