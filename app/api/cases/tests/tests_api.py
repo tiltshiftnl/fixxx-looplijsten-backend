@@ -118,3 +118,119 @@ class CaseViewSetTest(APITestCase):
         }
 
         self.assertEquals(response.json(), expected_response)
+
+
+class CaseSearchViewSetTest(APITestCase):
+    """
+    Tests for the API endpoint for searching cases
+    """
+
+    MOCK_SEARCH_QUERY_PARAMETERS = {
+        'postalCode': 'FOO_POSTAL_CODE',
+        'streetNumber': 'FOO_STREET_NUMBER',
+        'suffix': 'FOO_SUFFIX'
+    }
+
+    def test_unauthenticated_request(self):
+        """
+        An unauthenticated search should not be possible
+        """
+        url = reverse('search-list')
+        client = get_unauthenticated_client()
+        response = client.get(url, self.MOCK_SEARCH_QUERY_PARAMETERS)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @override_config(ALLOW_DATA_ACCESS=False)
+    def test_safety_locked_request(self):
+        """
+        An authenticated search should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
+        """
+        url = reverse('search-list')
+        client = get_authenticated_client()
+        response = client.get(url, self.MOCK_SEARCH_QUERY_PARAMETERS)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch('api.cases.views.q')
+    def test_search_without_postal_code(self, mock_q):
+        """
+        An authenticated search should fail if postal code is not available
+        """
+        url = reverse('search-list')
+        client = get_authenticated_client()
+
+        MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
+        MOCK_SEARCH_QUERY_PARAMETERS.pop('postalCode')
+
+        # Mock search function
+        mock_q.get_search_results = Mock()
+        mock_q.get_search_results.return_value = 'FOO_SEARCH_RESULTS'
+
+        response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch('api.cases.views.q')
+    def test_search_without_street_number(self, mock_q):
+        """
+        An authenticated search should fail if street number is not available
+        """
+        url = reverse('search-list')
+        client = get_authenticated_client()
+
+        MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
+        MOCK_SEARCH_QUERY_PARAMETERS.pop('postalCode')
+
+        # Mock search function
+        mock_q.get_search_results = Mock()
+        mock_q.get_search_results.return_value = 'FOO_SEARCH_RESULTS'
+
+        response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch('api.cases.views.q')
+    def test_search(self, mock_q):
+        """
+        An authenticated search works
+        """
+        url = reverse('search-list')
+        client = get_authenticated_client()
+
+        # Mock search function
+        FOO_SEARCH_RESULTS = 'FOO_SEARCH_RESULTS'
+        mock_q.get_search_results = Mock(return_value=FOO_SEARCH_RESULTS)
+
+        response = client.get(url, self.MOCK_SEARCH_QUERY_PARAMETERS)
+
+        # Tests if the search function was called with all the given parameters
+        mock_q.get_search_results.assert_called_with(*self.MOCK_SEARCH_QUERY_PARAMETERS.values())
+
+        # Tests if a success response code is given
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Tests if the response contains the mock data
+        self.assertEqual(response.json(), {'cases': FOO_SEARCH_RESULTS})
+
+    @patch('api.cases.views.q')
+    def test_search_without_suffix(self, mock_q):
+        """
+        An authenticated search works without optional suffix
+        """
+        url = reverse('search-list')
+        client = get_authenticated_client()
+
+        # Mock search function
+        FOO_SEARCH_RESULTS = 'FOO_SEARCH_RESULTS'
+        mock_q.get_search_results = Mock(return_value=FOO_SEARCH_RESULTS)
+
+        MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
+        MOCK_SEARCH_QUERY_PARAMETERS.pop('suffix')
+
+        response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
+
+        # Tests if the search function was called with all the given parameters
+        mock_q.get_search_results.assert_called_with(*MOCK_SEARCH_QUERY_PARAMETERS.values(), None)
+
+        # Tests if a success response code is given
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Tests if the response contains the mock data
+        self.assertEqual(response.json(), {'cases': FOO_SEARCH_RESULTS})

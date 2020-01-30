@@ -1,9 +1,7 @@
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
-from django.utils.decorators import method_decorator
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
 
 from utils.safety_lock import safety_lock
 
@@ -65,8 +63,10 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         street_number = request.GET.get('streetNumber', None)
         suffix = request.GET.get('suffix', None)
 
-        if not postal_code or not street_number:
-            return Response(HttpResponseBadRequest)
+        if postal_code is None:
+            return HttpResponseBadRequest('Missing postal code is required')
+        elif not street_number:
+            return HttpResponseBadRequest('Missing steet number is required')
         else:
             items = q.get_search_results(postal_code, street_number, suffix)
             return JsonResponse({'cases': items})
