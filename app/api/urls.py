@@ -53,7 +53,7 @@ urlpatterns = [
          TokenObtainPairView.as_view(), name='credentials-authenticate'),
 
     # Authentication endpoint for exchanging an OIDC code for a token
-    path(prefix + 'looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view()),
+    path(prefix + 'looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view(), name='oidc-authenticate'),
 
     # Endpoint for retrieving a fresh new token
     path(prefix + 'looplijsten/token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
