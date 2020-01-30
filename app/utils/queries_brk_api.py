@@ -3,29 +3,6 @@ from datetime import datetime, timedelta
 from constance.backends.database.models import Constance
 from django.conf import settings
 
-def brk_request(func):
-    '''
-    A decorator function that makes sure a valid token exists to do requests to BRK
-    '''
-
-    def wrapper(request, *args, **kwargs):
-        '''
-        This wrapper makes sure a valid BRK token exists before doing a request
-        '''
-        try:
-            expiry = get_expiry()
-
-            if expiry is None or expiry == '' or expiry < datetime.now():
-                request_new_token()
-
-        except Exception as e:
-            print('BRK Request decorator failed:')
-            print(e)
-
-        return func(request, *args, **kwargs)
-
-    return wrapper
-
 def get_token():
     key = settings.CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY
     token, created = Constance.objects.get_or_create(key=key)
@@ -80,6 +57,28 @@ def request_new_token():
         return {'error': str(e)}
     return
 
+def get_brk_request_headers():
+    """
+    Returns BRK request header for authenticated requests, with a valid bearer token
+    """
+    expiry = get_expiry()
+
+    if expiry is None or expiry == '' or expiry < datetime.now():
+        request_new_token()
+
+    token = get_token()
+
+    if token is None or token == '':
+        raise Exception('No authorization bearer token for BRK request')
+
+    headers = {
+        'Authorization': "Bearer {}".format(token),
+        'content-type': "application/json",
+    }
+
+    return headers
+
+
 def get_brk_data(bag_id):
     '''
     Does an authenticated request to BRK, and returns the owners of a given bag_id location
@@ -88,16 +87,7 @@ def get_brk_data(bag_id):
         if not bag_id:
             raise Exception('No BAG ID given for BRK request')
 
-        token = get_token()
-
-        if token is None or token == '':
-            raise Exception('No authorization bearer token for BRK request')
-
-        headers = {
-            'Authorization': "Bearer {}".format(token),
-            'content-type': "application/json",
-        }
-
+        headers = get_brk_request_headers()
         brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
                                         params={'verblijfsobjecten__id': bag_id},
                                         headers=headers)
