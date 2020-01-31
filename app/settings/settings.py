@@ -204,8 +204,6 @@ sentry_sdk.init(
 
 OIDC_RP_CLIENT_ID = os.environ.get('OIDC_RP_CLIENT_ID')
 OIDC_RP_CLIENT_SECRET = os.environ.get('OIDC_RP_CLIENT_SECRET')
-
-OIDC_OP_LOGOUT_URL_METHOD = 'api.users.utils.oidc_op_logout'
 OIDC_USERNAME_ALGO = 'api.users.utils.generate_username'
 
 OIDC_RP_SIGN_ALGO = 'RS256'
