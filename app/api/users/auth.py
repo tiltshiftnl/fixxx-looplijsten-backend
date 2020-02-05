@@ -20,8 +20,7 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     @safety_lock
     def authenticate(self, request, **kwargs):
         """Authenticates a user based on the OIDC code flow."""
-
-        if request and hasattr(request, 'data') and hasattr(request.data, 'code'):
+        if request and hasattr(request, 'data') and request.data.get('code', False):
             self.request = request
             code = self.request.data.get('code')
         else:
