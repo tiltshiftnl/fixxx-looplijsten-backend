@@ -21,16 +21,10 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def authenticate(self, request, **kwargs):
         """Authenticates a user based on the OIDC code flow."""
 
-        self.request = request
-        if not self.request:
-            return None
-
-        if hasattr(self.request, 'data'):
+        if request and hasattr(request, 'data') and hasattr(request.data, 'code'):
+            self.request = request
             code = self.request.data.get('code')
         else:
-            code = None
-
-        if not code:
             return None
 
         reverse_url = self.get_settings('OIDC_AUTHENTICATION_CALLBACK_URL',
@@ -53,15 +47,15 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         access_token = token_info.get('access_token')
 
         # Validate the token
-        payload = self.verify_token(id_token)
+        try:
+            payload = self.verify_token(id_token)
 
-        if payload:
-            self.store_tokens(access_token, id_token)
-            try:
+            if payload:
+                self.store_tokens(access_token, id_token)
                 return self.get_or_create_user(access_token, id_token, payload)
-            except SuspiciousOperation as exc:
-                LOGGER.warning('failed to get or create user: %s', exc)
-                return None
+
+        except SuspiciousOperation as exc:
+            LOGGER.warning('failed authenticate and to get or create user: %s', exc)
 
         return None
 
