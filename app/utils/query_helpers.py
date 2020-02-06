@@ -16,8 +16,14 @@ def do_query(query):
         cursor = __get_bwv_cursor__()
         cursor.execute(query)
         return query_to_list(cursor)
-    except Error:
+
+    except Exception as e:
+        print('BWV Database Query failed')
+        print(e)
+        print('Query:')
+        print(query)
         return []
+
 
 def return_first_or_empty(executed_query):
     if len(executed_query) > 0:
