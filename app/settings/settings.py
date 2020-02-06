@@ -29,7 +29,8 @@ INSTALLED_APPS = (
     'api.users',
     'api.itinerary',
     'api.cases',
-    'api.accesslogs'
+    'api.accesslogs',
+    'api.planner'
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/

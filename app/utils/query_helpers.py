@@ -1,4 +1,4 @@
-from django.db import Error, connections
+from django.db import connections
 from django.conf import settings
 
 def query_to_list(cursor):
