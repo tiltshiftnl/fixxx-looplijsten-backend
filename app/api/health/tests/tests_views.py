@@ -1,78 +1,69 @@
 """
-Tests for accesslogs middleware
+Tests for the health views
 """
-import django
-from django.db import Error
 from django.test import TestCase
-from django.conf import settings
+from django.urls import reverse
 from unittest.mock import patch, Mock
-from api.health.views import health_default, health_bwv, health_generic, SUCCESS_MESSAGE_DEFAULT
-from api.health.views import ERROR_MESSAGE_DEFAULT, SUCCESS_MESSAGE_BWV, ERROR_MESSAGE_BWV
+from api.health.views import health_default, health_bwv, BWV_TABLES
+from django.conf import settings
+from app.utils.unittest_helpers import get_unauthenticated_client
 
-DATABASE_NAME = 'foo'
 
-class AccessLogsMiddlewareTest(TestCase):
+class HealthViewsTests(TestCase):
+    @patch('api.health.views.assert_health_generic')
+    def test_health_default(self, mock_assert_health_generic):
+        '''
+        health_default calls assert_health_generic with the correct database
+        '''
+        mock_request = Mock()
+        health_default(mock_request)
+        mock_assert_health_generic.assert_called_with(database_name=settings.DEFAULT_DATABASE_NAME)
 
-    @patch.dict('django.db.connections', {DATABASE_NAME: Mock()})
-    def test_health_generic_success(self):
-        """
-        Calls the generic health function successfully, and returns 200 status code
-        """
-        cursor_mock = Mock()
-        django.db.connections[DATABASE_NAME].cursor = cursor_mock
+    @patch('api.health.views.assert_health_generic')
+    def test_health_bwv(self, mock_assert_health_generic):
+        '''
+        health_bwv calls assert_health_generic with the correct bwv database
+        '''
+        mock_request = Mock()
+        health_bwv(mock_request)
+        mock_assert_health_generic.assert_called_with(database_name=settings.BWV_DATABASE_NAME)
 
-        REQUEST = Mock()
-        SUCCESS_MESSAGE = 'foo success'
-        ERROR_MESSAGE = 'foo error'
-
-        response = health_generic(REQUEST, DATABASE_NAME, SUCCESS_MESSAGE, ERROR_MESSAGE)
-
-        self.assertEqual(response.status_code, 200)
-
-    @patch.dict('django.db.connections', {DATABASE_NAME: Mock()})
-    def test_health_generic_error(self):
-        """
-        Calls the generic health function, fails and returns the 500 status code
-        """
-        def cursor_mock():
-            raise Error('Mock Exception')
-
-        django.db.connections[DATABASE_NAME].cursor = cursor_mock
-
-        REQUEST = Mock()
-        SUCCESS_MESSAGE = 'foo success'
-        ERROR_MESSAGE = 'foo error'
-
-        response = health_generic(REQUEST, DATABASE_NAME, SUCCESS_MESSAGE, ERROR_MESSAGE)
-
-        self.assertEqual(response.status_code, 500)
-
-    @patch('api.health.views.health_generic')
-    def test_health_default(self, mock_health_generic):
-        """
-        Calls the generic health function with the default database from settings
-        """
-        request = Mock()
-        health_default(request)
-
-        mock_health_generic.assert_called_with(
-            request=request,
-            database_name=settings.DEFAULT_DATABASE_NAME,
-            success_message=SUCCESS_MESSAGE_DEFAULT,
-            error_message=ERROR_MESSAGE_DEFAULT
-        )
-
-    @patch('api.health.views.health_generic')
-    def test_health_bwv(self, mock_health_generic):
-        """
-        Calls the generic health function with the bwv database from settings
-        """
-        request = Mock()
-        health_bwv(request)
-
-        mock_health_generic.assert_called_with(
-            request=request,
+    @patch('api.health.views.assert_health_generic')
+    @patch('api.health.views.assert_health_database_tables')
+    def test_health_bwv_tables(self, mock_assert_health_database_tables, mock_assert_health_generic):
+        '''
+        health_bwv calls assert_health_database_tables with the correct bwv database and tables
+        '''
+        mock_request = Mock()
+        health_bwv(mock_request)
+        mock_assert_health_database_tables.assert_called_with(
             database_name=settings.BWV_DATABASE_NAME,
-            success_message=SUCCESS_MESSAGE_BWV,
-            error_message=ERROR_MESSAGE_BWV
+            tables=BWV_TABLES
         )
+
+class HealthViewsUrlsTests(TestCase):
+    @patch('api.health.views.assert_health_generic')
+    def test_health_default_url_view(self, mock_assert_health_generic):
+        """
+        URL endpoint for health_default can be called
+        """
+        url = reverse('health-default')
+        client = get_unauthenticated_client()
+        response = client.get(url)
+
+        mock_assert_health_generic.assert_called()
+        self.assertEquals(response.status_code, 200)
+
+    @patch('api.health.views.assert_health_generic')
+    @patch('api.health.views.assert_health_database_tables')
+    def test_health_bwv_url_view(self, mock_assert_health_generic, mock_assert_health_database_tables):
+        """
+        URL endpoint for health_bwv can be called
+        """
+        url = reverse('health-bwv')
+        client = get_unauthenticated_client()
+        response = client.get(url)
+
+        mock_assert_health_generic.assert_called()
+        mock_assert_health_database_tables.assert_called()
+        self.assertEquals(response.status_code, 200)
