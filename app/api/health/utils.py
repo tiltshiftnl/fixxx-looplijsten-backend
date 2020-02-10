@@ -22,7 +22,7 @@ def is_table_filled_query(table):
 
 def assert_health_table(database_name, table):
     '''
-    Given a database and one table, checks if the table is filled
+    Given a database and one table, checks if the table is filled with at least on entry
     '''
     cursor = connections[database_name].cursor()
     query = is_table_filled_query(table)

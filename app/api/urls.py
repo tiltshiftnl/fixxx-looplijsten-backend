@@ -15,6 +15,7 @@ from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteView
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
 from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView
+from api.planner.views import GenerateWeeklyItinerariesViewset
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -32,6 +33,8 @@ router.register(r'itineraries/items', ItineraryItemViewSet, basename='itinerary-
 router.register(r'cases', CaseViewSet, basename='case')
 router.register(r'search', CaseSearchViewSet, basename='search')
 router.register(r'notes', NoteViewSet, basename='notes')
+router.register(r'generate-weekly-itineraries', GenerateWeeklyItinerariesViewset,
+                basename='generate-weekly-itineraries')
 
 # Temporary prefix for production environment.
 # Will be removed once we have all domains and subdomains ready.
