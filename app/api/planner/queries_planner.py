@@ -19,9 +19,7 @@ def get_cases():
               import_adres.hsltr AS suffix_letter,
               import_adres.toev AS suffix,
               import_stadia.sta_oms AS stadium,
-              import_stadia.sta_nr AS sta_nr,
-              import_adres.wzs_lon AS lng,
-              import_adres.wzs_lat as lat
+              import_stadia.sta_nr AS sta_nr
             FROM
               import_wvs
             INNER JOIN
