@@ -1,5 +1,8 @@
+import logging
 from django.db import connections
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 def query_to_list(cursor):
     columns = [col[0] for col in cursor.description]
@@ -18,10 +21,7 @@ def do_query(query):
         return query_to_list(cursor)
 
     except Exception as e:
-        print('BWV Database Query failed')
-        print(e)
-        print('Query:')
-        print(query)
+        logger.error('BWV Database Query failed: {} {}'.format(str(e), query))
         return []
 
 

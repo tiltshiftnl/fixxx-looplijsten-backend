@@ -1,7 +1,10 @@
 import requests
+import logging
 from datetime import datetime, timedelta
 from constance.backends.database.models import Constance
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 def get_token():
     key = settings.CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY
@@ -52,8 +55,7 @@ def request_new_token():
         set_expiry(expiry)
 
     except Exception as e:
-        print('Requesting BRK access token failed:')
-        print(e)
+        logger.error('Requesting BRK access token failed: {}'.format(str(e)))
         return {'error': str(e)}
     return
 
@@ -102,6 +104,5 @@ def get_brk_data(bag_id):
         }
 
     except Exception as e:
-        print('Requesting BRK data failed:')
-        print(e)
+        logger.error('Requesting BRK data failed: {}'.format(str(e)))
         return {'error': str(e)}
