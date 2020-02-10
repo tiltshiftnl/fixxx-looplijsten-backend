@@ -37,8 +37,22 @@ STAGES = [
 EXAMPLE_POST = {
     "opening_date": "2018-01-01",
     "opening_reasons": [
+        "Zebra",
+        "Woonschip (woonboot)",
+        "Social Media 2019",
         "Safari 2015",
-        "Safari"
+        "Safari",
+        "Project Lobith",
+        "Project Jordaan",
+        "Project Andes",
+        "Mystery Guest",
+        "Hotline",
+        "Haarlemmerbuurt",
+        "Digital toezicht Zebra",
+        "Digital toezicht Safari",
+        "Corpo-rico",
+        "Burgwallenproject Oudezijde",
+        "Bed en breakfast 2019"
     ],
     "days": [
         {
