@@ -25,7 +25,11 @@ def do_bag_search_address(address):
     '''
     query = get_bag_search_query(address)
 
-    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': query})
+    address_search = requests.get(
+        settings.BAG_API_SEARCH_URL,
+        params={'q': query},
+        timeout=1.5
+    )
 
     return address_search.json()
 
@@ -36,7 +40,11 @@ def do_bag_search_id(address):
 
     id = address['landelijk_bag']
 
-    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': id})
+    address_search = requests.get(
+        settings.BAG_API_SEARCH_URL,
+        params={'q': id},
+        timeout=1.5
+    )
 
     return address_search.json()
 
@@ -62,7 +70,10 @@ def get_bag_data(wng_id):
 
         # Do a request using the the objects href
         address_uri = address_search['results'][0]['_links']['self']['href']
-        address_bag_data = requests.get(address_uri)
+        address_bag_data = requests.get(
+            address_uri,
+            timeout=1.5
+        )
 
         return address_bag_data.json()
 

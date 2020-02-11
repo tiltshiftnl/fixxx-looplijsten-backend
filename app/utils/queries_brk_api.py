@@ -90,14 +90,18 @@ def get_brk_data(bag_id):
             raise Exception('No BAG ID given for BRK request')
 
         headers = get_brk_request_headers()
-        brk_data_request = requests.get(settings.BRK_API_OBJECT_EXPAND_URL,
-                                        params={'verblijfsobjecten__id': bag_id},
-                                        headers=headers)
+        brk_data_request = requests.get(
+            settings.BRK_API_OBJECT_EXPAND_URL,
+            params={'verblijfsobjecten__id': bag_id},
+            headers=headers,
+            timeout=1.5
+        )
 
         brk_data_request.raise_for_status()
-
         brk_data = brk_data_request.json()
-        brk_owners = brk_data.get('results')[0].get('rechten')
+        brk_owners = brk_data.get(
+            'results',
+            timeout=1.5)[0].get('rechten')
 
         return {
             'owners': brk_owners
