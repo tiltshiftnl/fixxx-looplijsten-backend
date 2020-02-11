@@ -15,7 +15,8 @@ from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteView
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
 from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView
-from api.planner.views import GenerateWeeklyItinerariesViewset
+from api.planner.views import GenerateWeeklyItinerariesViewset, AlgorithmView
+
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -43,6 +44,8 @@ prefix = 'api/' if settings.ENVIRONMENT == 'production' else ''
 urlpatterns = [
     # Admin environment
     path(prefix + 'looplijsten/admin/', admin.site.urls),
+    path(prefix + 'looplijsten/algorithm/', AlgorithmView.as_view(), name='algorithm'),
+
 
     # Health check url
     path('looplijsten/health', health_default, name='health-default'),

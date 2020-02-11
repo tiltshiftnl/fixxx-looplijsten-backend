@@ -1,4 +1,7 @@
 from django.http import JsonResponse, HttpResponseBadRequest
+from django.views import View
+from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.viewsets import ViewSet
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +10,7 @@ from utils.safety_lock import safety_lock
 from api.planner.queries_planner import get_cases
 from api.planner.serializers import WeekListSerializer
 from api.planner.utils import sort_by_postal_code
-from api.planner.const import STAGES
+from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA
 
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """
@@ -73,3 +76,32 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
 
         # return the right data here
         return JsonResponse(data)
+
+
+class AlgorithmView(LoginRequiredMixin, View):
+    login_url = '/looplijsten/admin/login/'
+    template_name = 'algorithm_template.html'
+
+    def get_context_data(self):
+        return {'opening_reasons': PROJECTS}
+
+    @safety_lock
+    def get(self, request, *args, **kwargs):
+        context_data = self.get_context_data()
+        context_data['selected_opening_date'] = '2018-01-01'
+        context_data['selected_opening_reasons'] = PROJECTS_WITHOUT_SAHARA
+
+        return render(request, self.template_name, context_data)
+
+    @safety_lock
+    def post(self, request, *args, **kwargs):
+        opening_date = request.POST.get('opening_date')
+        opening_reasons = request.POST.getlist('opening_reasons')
+
+        cases = get_cases(opening_date, opening_reasons, STAGES)
+        context_data = self.get_context_data()
+        context_data['cases'] = cases
+        context_data['selected_opening_date'] = opening_date
+        context_data['selected_opening_reasons'] = opening_reasons
+
+        return render(request, self.template_name, context_data)
