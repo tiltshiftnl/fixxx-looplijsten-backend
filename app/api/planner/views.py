@@ -7,8 +7,8 @@ from utils.safety_lock import safety_lock
 from api.planner.queries_planner import get_cases
 from api.planner.serializers import WeekListSerializer
 from api.planner.utils import sort_by_postal_code
+from api.planner.const import STAGES
 
-# Create your views here.
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """
     A viewset for generating weekly itineraries
@@ -33,6 +33,9 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
                     list_cases = []
 
                     for x in range(length_of_lists):
+                        if len(cases) == 0:
+                            break
+
                         case = cases.pop()
                         list_cases.append(case)
 
@@ -56,12 +59,12 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
                 'errors': serializer.errors
             }, status=HttpResponseBadRequest.status_code)
 
-        # TODO: Actually use the opening_data, opening_reason and necessary parameters to get cases
-        # opening_date = data.get('opening_date')
-        # opening_reasons = data.get('opening_reasons')
+        opening_date = data.get('opening_date')
+        opening_reasons = data.get('opening_reasons')
 
         days = data.get('days')
-        cases = get_cases()
+        cases = get_cases(opening_date, opening_reasons, STAGES)
+
         sorted_cases = sort_by_postal_code(cases)
 
         # Fills the days data with cases

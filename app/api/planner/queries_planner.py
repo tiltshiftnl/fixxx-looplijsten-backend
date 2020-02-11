@@ -1,13 +1,12 @@
 from utils.query_helpers import do_query
-from api.planner.const import STARTING_DATE, PROJECTS, STAGES
 
 def to_query_list(list):
     query_string = str(list)[1:-1]
     return query_string
 
-def get_cases():
-    projects_query_list = to_query_list(PROJECTS)
-    stages_query_list = to_query_list(STAGES)
+def get_cases(starting_date, projects, stages):
+    projects_query_list = to_query_list(projects)
+    stages_query_list = to_query_list(stages)
 
     query = """
             SELECT
@@ -32,7 +31,7 @@ def get_cases():
             AND beh_oms IN ({})
             AND sta_oms IN ({})
             ORDER BY sta_nr desc
-            """.format(STARTING_DATE, projects_query_list, stages_query_list)
+            """.format(starting_date, projects_query_list, stages_query_list)
 
     executed_query = do_query(query)
     return executed_query

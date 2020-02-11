@@ -49,6 +49,8 @@ PROJECTS = [
     PROJECT_ZEBRA,
 ]
 
+# NOTE: More stages exist, such as the 'Issuemeldingen' which are currently not user
+# By this application
 TWEEDE_CONTROLE = "2de Controle"
 TWEEDE_HERCONTROLE = "2de hercontrole"
 DERDE_CONTROLE = "3de Controle"
@@ -58,8 +60,6 @@ HERCONTROLE = "Hercontrole"
 ONDERZOEK_ADVERDENTIE = "Onderzoek advertentie"
 ONDERZOEK_BUITENDIENST = "Onderzoek buitendienst"
 WEEKEND_BUITENDIENST_ONDERZOEK = "Weekend buitendienstonderzoek"
-# NOTE: More stages exist, such as the 'Issuemeldingen' which are currently not user
-# By this application
 
 STAGES = [
     TWEEDE_CONTROLE,
@@ -72,7 +72,6 @@ STAGES = [
     ONDERZOEK_BUITENDIENST,
     WEEKEND_BUITENDIENST_ONDERZOEK,
 ]
-
 
 EXAMPLE_POST = {
     "opening_date": "2018-01-01",

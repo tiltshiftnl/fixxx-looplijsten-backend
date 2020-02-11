@@ -6,6 +6,9 @@ from utils.queries import get_import_adres
 logger = logging.getLogger(__name__)
 
 def get_bag_search_query(address):
+    '''
+    Constructs a BAG search query using the address data
+    '''
     sttnaam = address.get('postcode')
     hsnr = address.get('hsnr')
 
