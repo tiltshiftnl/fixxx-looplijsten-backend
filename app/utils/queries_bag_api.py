@@ -5,7 +5,6 @@ from requests.packages.urllib3.util.retry import Retry
 import logging
 from django.conf import settings
 from utils.queries import get_import_adres
-from circuitbreaker import circuit
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,6 @@ def get_bag_search_query(address):
 
     return query.strip()
 
-@circuit
 def do_bag_search_address(address):
     '''
     Search BAG using a BWV address
@@ -31,20 +29,18 @@ def do_bag_search_address(address):
     query = get_bag_search_query(address)
 
     session = requests.Session()
-    retry = Retry(connect=3, backoff_factor=0.5)
+    retry = Retry(connect=4, backoff_factor=1.5)
     adapter = HTTPAdapter(max_retries=retry)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
 
     address_search = session.get(
         settings.BAG_API_SEARCH_URL,
-        params={'q': query},
-        timeout=1.5
+        params={'q': query}
     )
 
     return address_search.json()
 
-@circuit
 def do_bag_search_id(address):
     '''
     Search BAG using a BWV 'landelijk BAG ID'
@@ -53,15 +49,14 @@ def do_bag_search_id(address):
     id = address['landelijk_bag']
 
     session = requests.Session()
-    retry = Retry(connect=3, backoff_factor=0.5)
+    retry = Retry(connect=4, backoff_factor=1.5)
     adapter = HTTPAdapter(max_retries=retry)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
 
     address_search = session.get(
         settings.BAG_API_SEARCH_URL,
-        params={'q': id},
-        timeout=1.5
+        params={'q': id}
     )
 
     return address_search.json()
@@ -81,22 +76,20 @@ def do_bag_search(address):
 
     return address_search
 
-@circuit
 def get_bag_data(wng_id):
     address = get_import_adres(wng_id)
     try:
         address_search = do_bag_search(address)
 
         session = requests.Session()
-        retry = Retry(connect=3, backoff_factor=0.5)
+        retry = Retry(connect=4, backoff_factor=1.5)
         adapter = HTTPAdapter(max_retries=retry)
         session.mount('http://', adapter)
         session.mount('https://', adapter)
         # Do a request using the the objects href
         address_uri = address_search['results'][0]['_links']['self']['href']
         address_bag_data = session.get(
-            address_uri,
-            timeout=1.5
+            address_uri
         )
 
         return address_bag_data.json()
