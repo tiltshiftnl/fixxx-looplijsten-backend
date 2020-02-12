@@ -1,4 +1,7 @@
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
 import logging
 from django.conf import settings
 from utils.queries import get_import_adres
@@ -27,7 +30,13 @@ def do_bag_search_address(address):
     '''
     query = get_bag_search_query(address)
 
-    address_search = requests.get(
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    address_search = session.get(
         settings.BAG_API_SEARCH_URL,
         params={'q': query},
         timeout=1.5
@@ -43,7 +52,13 @@ def do_bag_search_id(address):
 
     id = address['landelijk_bag']
 
-    address_search = requests.get(
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    address_search = session.get(
         settings.BAG_API_SEARCH_URL,
         params={'q': id},
         timeout=1.5
@@ -72,9 +87,14 @@ def get_bag_data(wng_id):
     try:
         address_search = do_bag_search(address)
 
+        session = requests.Session()
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
         # Do a request using the the objects href
         address_uri = address_search['results'][0]['_links']['self']['href']
-        address_bag_data = requests.get(
+        address_bag_data = session.get(
             address_uri,
             timeout=1.5
         )
