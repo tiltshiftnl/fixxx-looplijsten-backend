@@ -88,7 +88,7 @@ class AlgorithmView(LoginRequiredMixin, View):
     @safety_lock
     def get(self, request, *args, **kwargs):
         context_data = self.get_context_data()
-        context_data['selected_opening_date'] = '2018-01-01'
+        context_data['selected_opening_date'] = '2019-01-01'
         context_data['selected_opening_reasons'] = PROJECTS_WITHOUT_SAHARA
 
         return render(request, self.template_name, context_data)

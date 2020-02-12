@@ -1,0 +1,32 @@
+<script>
+  // Initialize and add the map
+  function initMap() {
+    var amsterdam = {
+      lat: 52.379189,
+      lng: 4.899431
+    };
+
+    var map = new google.maps.Map(
+      document.getElementById('map'), {
+        zoom: 13,
+        center: amsterdam
+      });
+
+    var cases = JSON.parse(document.getElementById('cases').textContent);
+    var circleIcon = {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 4,
+      fillColor: 'blue'
+    }
+
+    for(var i=0; i < cases.length; i++){      
+      var case_position = {lat: cases[i].lat, lng: cases[i].lng}
+      var marker = new google.maps.Marker({
+        position: case_position,
+        map: map,          
+        icon: icons[0]
+      });
+    }
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={KEY}&callback=initMap" />
