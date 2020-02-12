@@ -93,15 +93,13 @@ def get_brk_data(bag_id):
         brk_data_request = requests.get(
             settings.BRK_API_OBJECT_EXPAND_URL,
             params={'verblijfsobjecten__id': bag_id},
-            headers=headers,
-            timeout=1.5
+            headers=headers
         )
 
         brk_data_request.raise_for_status()
         brk_data = brk_data_request.json()
         brk_owners = brk_data.get(
-            'results',
-            timeout=1.5)[0].get('rechten')
+            'results')[0].get('rechten')
 
         return {
             'owners': brk_owners

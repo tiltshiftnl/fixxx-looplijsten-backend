@@ -20,7 +20,7 @@ def get_bag_search_query(address):
 
     return query.strip()
 
-@circuit
+@circuit(recovery_timeout=5)
 def do_bag_search_address(address):
     '''
     Search BAG using a BWV address
@@ -29,13 +29,12 @@ def do_bag_search_address(address):
 
     address_search = requests.get(
         settings.BAG_API_SEARCH_URL,
-        params={'q': query},
-        timeout=1.5
+        params={'q': query}
     )
 
     return address_search.json()
 
-@circuit
+@circuit(recovery_timeout=5)
 def do_bag_search_id(address):
     '''
     Search BAG using a BWV 'landelijk BAG ID'
@@ -45,8 +44,7 @@ def do_bag_search_id(address):
 
     address_search = requests.get(
         settings.BAG_API_SEARCH_URL,
-        params={'q': id},
-        timeout=1.5
+        params={'q': id}
     )
 
     return address_search.json()
@@ -66,7 +64,7 @@ def do_bag_search(address):
 
     return address_search
 
-@circuit
+@circuit(recovery_timeout=5)
 def get_bag_data(wng_id):
     address = get_import_adres(wng_id)
     try:
@@ -75,8 +73,7 @@ def get_bag_data(wng_id):
         # Do a request using the the objects href
         address_uri = address_search['results'][0]['_links']['self']['href']
         address_bag_data = requests.get(
-            address_uri,
-            timeout=1.5
+            address_uri
         )
 
         return address_bag_data.json()
