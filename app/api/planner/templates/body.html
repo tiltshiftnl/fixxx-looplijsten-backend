@@ -1,18 +1,21 @@
 {% include 'head.html' %}
+
 <body class="p-sm-3">
   <div class="container-fluid">
     <div class="row">
       <div class="col-3">
+        {% include 'table.html' %}
         {% include 'controls.html' %}
       </div>
       <div class="col-9">
-        {% include 'map.html' %}        
+        {% include 'map.html' %}
       </div>
     </div>
   </div>
-  {{ cases|json_script:"cases" }}
-  {% include 'icons.html' %}
+  {{ planned_cases|json_script:"planned_cases" }}
+  {{ unused_cases|json_script:"unused_cases" }}
   {% include 'script_maps.html' %}
   {% include 'script_calender.html' %}
 </body>
+
 </html>

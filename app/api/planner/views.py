@@ -12,6 +12,19 @@ from api.planner.serializers import WeekListSerializer
 from api.planner.utils import sort_by_postal_code
 from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA
 
+def crude_plan_cases(n_lists, cases, lengh_of_lists=8):
+    lists = []
+    for i in range(0, n_lists):
+        new_list = []
+        for x in range(lengh_of_lists):
+            if len(cases) == 0:
+                break
+            case = cases.pop()
+            new_list.append(case)
+        lists.append(new_list)
+
+    return lists
+
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """
     A viewset for generating weekly itineraries
@@ -80,7 +93,7 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/looplijsten/admin/login/'
-    template_name = 'algorithm_template.html'
+    template_name = 'body.html'
 
     def get_context_data(self):
         return {'opening_reasons': PROJECTS}
@@ -88,8 +101,14 @@ class AlgorithmView(LoginRequiredMixin, View):
     @safety_lock
     def get(self, request, *args, **kwargs):
         context_data = self.get_context_data()
-        context_data['selected_opening_date'] = '2019-01-01'
-        context_data['selected_opening_reasons'] = PROJECTS_WITHOUT_SAHARA
+
+        opening_date = '2019-01-01'
+        opening_reasons = PROJECTS_WITHOUT_SAHARA
+
+        context_data['selected_opening_date'] = opening_date
+        context_data['selected_opening_reasons'] = opening_reasons
+        context_data['cases'] = get_cases(opening_date, opening_reasons, STAGES)
+        context_data['unused_cases'] = get_cases(opening_date, opening_reasons, STAGES)
 
         return render(request, self.template_name, context_data)
 
@@ -103,5 +122,13 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['cases'] = cases
         context_data['selected_opening_date'] = opening_date
         context_data['selected_opening_reasons'] = opening_reasons
+
+        plan_cases = get_cases(opening_date, opening_reasons, STAGES)
+        sorted_cases = sort_by_postal_code(plan_cases)
+        sorted_cases.reverse()
+
+        planned_cases = crude_plan_cases(20, sorted_cases, 18)
+        context_data['planned_cases'] = planned_cases
+        context_data['unused_cases'] = sorted_cases
 
         return render(request, self.template_name, context_data)
