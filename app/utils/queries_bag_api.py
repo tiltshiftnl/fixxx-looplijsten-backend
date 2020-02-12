@@ -28,12 +28,14 @@ def do_bag_search_address(address):
     try:
         address_search = requests.get(
             settings.BAG_API_SEARCH_URL,
-            params={'q': query}
+            params={'q': query},
+            timeout=1.5
         )
     except requests.exceptions.Timeout:
         address_search = requests.get(
             settings.BAG_API_SEARCH_URL,
-            params={'q': query}
+            params={'q': query},
+            timeout=1.5
         )
 
     return address_search.json()
