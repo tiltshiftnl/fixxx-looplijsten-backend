@@ -40,23 +40,23 @@ def request_new_token():
         'client_secret': settings.BRK_ACCESS_CLIENT_SECRET,
     }
 
-    try:
-        token_request_url = settings.BRK_ACCESS_URL
+    # try:
+    token_request_url = settings.BRK_ACCESS_URL
 
-        response = requests.post(token_request_url, data=payload)
-        response.raise_for_status()
-        response_json = response.json()
+    response = requests.post(token_request_url, data=payload)
+    response.raise_for_status()
+    response_json = response.json()
 
-        access_token = response_json.get('access_token')
-        set_token(access_token)
+    access_token = response_json.get('access_token')
+    set_token(access_token)
 
-        expires_in = response_json.get('expires_in')
-        expiry = datetime.now() + timedelta(seconds=expires_in)
-        set_expiry(expiry)
+    expires_in = response_json.get('expires_in')
+    expiry = datetime.now() + timedelta(seconds=expires_in)
+    set_expiry(expiry)
 
-    except Exception as e:
-        logger.error('Requesting BRK access token failed: {}'.format(str(e)))
-        return {'error': str(e)}
+    # except Exception as e:
+    #     logger.error('Requesting BRK access token failed: {}'.format(str(e)))
+    #     return {'error': str(e)}
     return
 
 def get_brk_request_headers():
@@ -70,8 +70,8 @@ def get_brk_request_headers():
 
     token = get_token()
 
-    if token is None or token == '':
-        raise Exception('No authorization bearer token for BRK request')
+    # if token is None or token == '':
+    #     raise Exception('No authorization bearer token for BRK request')
 
     headers = {
         'Authorization': "Bearer {}".format(token),

@@ -2,6 +2,7 @@ import requests
 import logging
 from django.conf import settings
 from utils.queries import get_import_adres
+from circuitbreaker import circuit
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,7 @@ def get_bag_search_query(address):
 
     return query.strip()
 
+@circuit
 def do_bag_search_address(address):
     '''
     Search BAG using a BWV address
@@ -33,6 +35,7 @@ def do_bag_search_address(address):
 
     return address_search.json()
 
+@circuit
 def do_bag_search_id(address):
     '''
     Search BAG using a BWV 'landelijk BAG ID'
@@ -63,6 +66,7 @@ def do_bag_search(address):
 
     return address_search
 
+@circuit
 def get_bag_data(wng_id):
     address = get_import_adres(wng_id)
     try:
