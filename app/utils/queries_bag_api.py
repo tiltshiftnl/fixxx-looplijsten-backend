@@ -27,13 +27,13 @@ def do_bag_search_address(address):
 
     try:
         address_search = requests.get(
-            'https://api.data.amsterdam.nl/atlas/search/adres/',
+            settings.BAG_API_SEARCH_URL,
             params={'q': query},
             timeout=1.5
         )
     except requests.exceptions.Timeout:
         address_search = requests.get(
-            'https://api.data.amsterdam.nl/atlas/search/adres/',
+            settings.BAG_API_SEARCH_URL,
             params={'q': query},
             timeout=1.5
         )
@@ -49,13 +49,13 @@ def do_bag_search_id(address):
 
     try:
         address_search = requests.get(
-            'https://api.data.amsterdam.nl/atlas/search/adres/',
+            settings.BAG_API_SEARCH_URL,
             params={'q': id},
             timeout=1.5
         )
     except requests.exceptions.Timeout:
         address_search = requests.get(
-            'https://api.data.amsterdam.nl/atlas/search/adres/',
+            settings.BAG_API_SEARCH_URL,
             params={'q': id},
             timeout=1.5
         )
