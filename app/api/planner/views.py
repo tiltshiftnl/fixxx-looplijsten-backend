@@ -12,6 +12,10 @@ from api.planner.serializers import WeekListSerializer
 from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA
 from api.planner.utils import sort_by_postal_code
 from api.planner.clustering import postal_code_grouping
+from api.planner.clustering import k_means_grouping, filter_cases_with_missing_coordinates
+
+
+# filter_cases_with_missing_coordinates
 
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """
@@ -124,14 +128,14 @@ class AlgorithmView(LoginRequiredMixin, View):
         # Right now we just always do postal code
         planned_cases, unplanned_cases = postal_code_grouping(number_of_lists, cases, length_of_lists)
 
-        # cases = filter_cases_with_missing_coordinated(cases)
-        # k_means_grouping(number_of_lists, cases)
+        cases = filter_cases_with_missing_coordinates(cases)
 
         # Grouping method here
         if grouping_method == 'postal_code':
             planned_cases, unplanned_cases = postal_code_grouping(number_of_lists, cases, length_of_lists)
         elif grouping_method == 'k_means':
-            print('TEST')
+            planned_cases = k_means_grouping(number_of_lists, cases)
+            unplanned_cases = []
         elif grouping_method == 'optics':
             print('TEST optics')
 

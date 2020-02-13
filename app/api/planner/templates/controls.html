@@ -9,9 +9,9 @@
       <option value="k_means" {% if grouping_method == 'k_means' %}selected{% endif %}>
         K-means
       </option>
-      <option value="optics" {% if grouping_method == 'optics' %}selected{% endif %}>
+      <!-- <option value="optics" {% if grouping_method == 'optics' %}selected{% endif %}>
         Optics
-      </option>
+      </option> -->
     </select>
   </div>
 
@@ -26,22 +26,20 @@
         <label for="length_of_lists">Length of lists:</label>
         <input id="length_of_lists" class="form-control" type="number" name="length_of_lists"
           value="{{length_of_lists}}" />
-      </div>  
+      </div>
     </div>
   </div>
 
   <div class="form-group">
     <label for="opening_date">Date:</label>
-    <input id="opening_date" class="form-control" type="text" name="opening_date"
-      value="{{selected_opening_date}}" />
+    <input id="opening_date" class="form-control" type="text" name="opening_date" value="{{selected_opening_date}}" />
   </div>
 
   <div class="form-group">
     <label for="opening_reasons">Projects:</label>
     <select id="opening_reasons" name="opening_reasons" class="custom-select" multiple>
       {% for opening_reason in opening_reasons %}
-      <option value="{{opening_reason}}" {% if opening_reason in selected_opening_reasons %} selected
-        {% endif %}>
+      <option value="{{opening_reason}}" {% if opening_reason in selected_opening_reasons %} selected {% endif %}>
         {{opening_reason}}
       </option>
       {% endfor %}
