@@ -42,7 +42,7 @@ class CaseViewSet(ViewSet):
             'bwv_tmp': q.get_bwv_tmp(case_id, adres_id),
             'vakantie_verhuur': q.get_rental_information(wng_id),
             'bag_data': bag_data,
-            'brk_data': brk_api.get_brk_data(bag_id),
+            # 'brk_data': brk_api.get_brk_data(bag_id),
             'related_cases': q.get_related_cases(adres_id)
         }
 

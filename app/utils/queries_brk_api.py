@@ -93,7 +93,8 @@ def get_brk_data(bag_id):
         brk_data_request = requests.get(
             settings.BRK_API_OBJECT_EXPAND_URL,
             params={'verblijfsobjecten__id': bag_id},
-            headers=headers
+            headers=headers,
+            timeout=1.5
         )
 
         brk_data_request.raise_for_status()
