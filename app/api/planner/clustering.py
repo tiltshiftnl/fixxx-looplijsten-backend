@@ -27,13 +27,13 @@ def postal_code_grouping(n_lists, cases, lengh_of_lists=8):
     """
     sorted_cases = sort_by_postal_code(cases)
     sorted_cases.reverse()
-    unplanned_cases = sorted_cases
+    unplanned_cases = sorted_cases.copy()
 
     lists = []
     for i in range(0, n_lists):
         new_list = []
         for x in range(lengh_of_lists):
-            if len(cases) == 0:
+            if len(unplanned_cases) == 0:
                 break
             case = unplanned_cases.pop()
             new_list.append(case)
