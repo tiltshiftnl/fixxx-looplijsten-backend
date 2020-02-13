@@ -108,4 +108,4 @@ def get_brk_data(bag_id):
 
     except Exception as e:
         logger.error('Requesting BRK data failed: {}'.format(str(e)))
-        return {'error': str(e)}
+        return {'owners': [], 'error': str(e)}

@@ -32,7 +32,6 @@ class CaseViewSet(ViewSet):
         # Get the bag_data first in order to retrieve the 'verblijfsobjectidentificatie' id
         bag_data = bag_api.get_bag_data(wng_id)
         bag_id = bag_data.get('verblijfsobjectidentificatie')
-        owners = brk_api.get_brk_data(bag_id)
 
         data = {
             'bwv_hotline_bevinding': q.get_bwv_hotline_bevinding(wng_id),
@@ -43,7 +42,7 @@ class CaseViewSet(ViewSet):
             'bwv_tmp': q.get_bwv_tmp(case_id, adres_id),
             'vakantie_verhuur': q.get_rental_information(wng_id),
             'bag_data': bag_data,
-            'brk_data': {'owners': [], 'error_owners': owners},
+            'brk_data': brk_api.get_brk_data(bag_id),
             'related_cases': q.get_related_cases(adres_id)
         }
 
