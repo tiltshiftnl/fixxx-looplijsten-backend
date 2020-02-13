@@ -9,21 +9,9 @@ from rest_framework.permissions import IsAuthenticated
 from utils.safety_lock import safety_lock
 from api.planner.queries_planner import get_cases
 from api.planner.serializers import WeekListSerializer
-from api.planner.utils import sort_by_postal_code
 from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA
-
-def crude_plan_cases(n_lists, cases, lengh_of_lists=8):
-    lists = []
-    for i in range(0, n_lists):
-        new_list = []
-        for x in range(lengh_of_lists):
-            if len(cases) == 0:
-                break
-            case = cases.pop()
-            new_list.append(case)
-        lists.append(new_list)
-
-    return lists
+# from api.planner.clustering import k_means_grouping, postal_code_grouping
+# from api.planner.clustering import filter_cases_with_missing_coordinated
 
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """
@@ -81,7 +69,8 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
         days = data.get('days')
         cases = get_cases(opening_date, opening_reasons, STAGES)
 
-        sorted_cases = sort_by_postal_code(cases)
+        sorted_cases = postal_code_grouping(cases)
+        sorted_cases.reverse()
 
         # Fills the days data with cases
         unplanned_cases = self.fill_week_list(sorted_cases, days)
@@ -108,9 +97,10 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['selected_opening_date'] = opening_date
         context_data['selected_opening_reasons'] = opening_reasons
         context_data['cases'] = get_cases(opening_date, opening_reasons, STAGES)
-        context_data['unused_cases'] = get_cases(opening_date, opening_reasons, STAGES)
+        context_data['unplanned_cases'] = get_cases(opening_date, opening_reasons, STAGES)
         context_data['number_of_lists'] = 30
         context_data['length_of_lists'] = 8
+        context_data['grouping_method'] = 'postal_code'
 
         return render(request, self.template_name, context_data)
 
@@ -120,6 +110,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         opening_reasons = request.POST.getlist('opening_reasons')
         number_of_lists = int(request.POST.get('number_of_lists'))
         length_of_lists = int(request.POST.get('length_of_lists'))
+        grouping_method = request.POST.get('grouping_method')
 
         cases = get_cases(opening_date, opening_reasons, STAGES)
         context_data = self.get_context_data()
@@ -128,13 +119,23 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['selected_opening_reasons'] = opening_reasons
         context_data['number_of_lists'] = number_of_lists
         context_data['length_of_lists'] = length_of_lists
+        context_data['grouping_method'] = grouping_method
 
-        plan_cases = get_cases(opening_date, opening_reasons, STAGES)
-        sorted_cases = sort_by_postal_code(plan_cases)
-        sorted_cases.reverse()
+        # Right now we just always do postal code
+        planned_cases, unplanned_cases = postal_code_grouping(number_of_lists, cases, length_of_lists)
 
-        planned_cases = crude_plan_cases(number_of_lists, sorted_cases, length_of_lists)
+        # cases = filter_cases_with_missing_coordinated(cases)
+        # k_means_grouping(number_of_lists, cases)
+
+        # Grouping method here
+        if grouping_method == 'postal_code':
+            planned_cases, unplanned_cases = postal_code_grouping(number_of_lists, cases, length_of_lists)
+        elif grouping_method == 'k_means':
+            print('TEST')
+        elif grouping_method == 'optics':
+            print('TEST optics')
+
         context_data['planned_cases'] = planned_cases
-        context_data['unused_cases'] = sorted_cases
+        context_data['unplanned_cases'] = unplanned_cases
 
         return render(request, self.template_name, context_data)

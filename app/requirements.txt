@@ -48,3 +48,7 @@ requests==2.22.0
 mozilla-django-oidc==1.2.2
 djangorestframework-simplejwt==4.4.0
 circuitbreaker==1.2.0
+
+# Algorithm toolbox
+scikit-learn==0.22.1
+numpy==1.18.1

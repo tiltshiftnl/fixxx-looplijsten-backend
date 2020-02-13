@@ -13,7 +13,7 @@
     </div>
   </div>
   {{ planned_cases|json_script:"planned_cases" }}
-  {{ unused_cases|json_script:"unused_cases" }}
+  {{ unplanned_cases|json_script:"unplanned_cases" }}
   {% include 'script_maps.html' %}
   {% include 'script_calender.html' %}
 </body>

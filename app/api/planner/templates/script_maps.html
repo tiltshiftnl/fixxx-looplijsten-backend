@@ -42,12 +42,12 @@
 
 
     var planned_cases = JSON.parse(document.getElementById('planned_cases').textContent);
-    var unused_cases = JSON.parse(document.getElementById('unused_cases').textContent);
+    var unplanned_cases = JSON.parse(document.getElementById('unplanned_cases').textContent);
 
     // Place the unused cases
     listUnusedIcon = getUnusedPin();
-    for (var i = 0; i < unused_cases.length; i++) {
-        var item = unused_cases[i];
+    for (var i = 0; i < unplanned_cases.length; i++) {
+        var item = unplanned_cases[i];
 
         var case_position = {
           lat: item.lat,
@@ -84,4 +84,4 @@
   }
 </script>
 <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key={KEY}&callback=initMap" />
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfyWYAXxiGIFwUVzsNSx8AqETCYb8p3VM&callback=initMap" />
