@@ -10,8 +10,7 @@ from utils.safety_lock import safety_lock
 from api.planner.queries_planner import get_cases
 from api.planner.serializers import WeekListSerializer
 from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA
-# from api.planner.clustering import k_means_grouping, postal_code_grouping
-# from api.planner.clustering import filter_cases_with_missing_coordinated
+from api.planner.utils import sort_by_postal_code
 
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """
@@ -69,7 +68,7 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
         days = data.get('days')
         cases = get_cases(opening_date, opening_reasons, STAGES)
 
-        sorted_cases = postal_code_grouping(cases)
+        sorted_cases = sort_by_postal_code(cases)
         sorted_cases.reverse()
 
         # Fills the days data with cases
