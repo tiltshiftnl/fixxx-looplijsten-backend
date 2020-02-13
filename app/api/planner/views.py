@@ -11,6 +11,7 @@ from api.planner.queries_planner import get_cases
 from api.planner.serializers import WeekListSerializer
 from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA
 from api.planner.utils import sort_by_postal_code
+from api.planner.clustering import postal_code_grouping
 
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """

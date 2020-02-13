@@ -26,6 +26,7 @@ def postal_code_grouping(n_lists, cases, lengh_of_lists=8):
     Plans lists bases on postal code
     """
     sorted_cases = sort_by_postal_code(cases)
+    sorted_cases.reverse()
     unplanned_cases = sorted_cases
 
     lists = []
