@@ -1,16 +1,16 @@
-<table class="table table-sm table-borderless">
-  <thead>
-    <tr>
-      <th scope="col">Cases</th>
-      <th scope="col">Unused cases</th>
-      <th scope="col">Lists</th>        
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>{{ cases|length }}</td>
-      <td>{{ unused_cases|length }}</td>
-      <td>{{ planned_cases|length }}</td>
-    </tr>
-  </tbody>
-</table>
+<div class="table-wrapper">
+  <table class="table table-sm table-borderless">
+    <thead>
+      <tr>
+        <th scope="col">Cases</th>
+        <th scope="col">Unused cases</th>           
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ cases|length }}</td>
+        <td>{{ unused_cases|length }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

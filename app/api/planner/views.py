@@ -109,6 +109,8 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['selected_opening_reasons'] = opening_reasons
         context_data['cases'] = get_cases(opening_date, opening_reasons, STAGES)
         context_data['unused_cases'] = get_cases(opening_date, opening_reasons, STAGES)
+        context_data['number_of_lists'] = 30
+        context_data['length_of_lists'] = 8
 
         return render(request, self.template_name, context_data)
 
@@ -116,18 +118,22 @@ class AlgorithmView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         opening_date = request.POST.get('opening_date')
         opening_reasons = request.POST.getlist('opening_reasons')
+        number_of_lists = int(request.POST.get('number_of_lists'))
+        length_of_lists = int(request.POST.get('length_of_lists'))
 
         cases = get_cases(opening_date, opening_reasons, STAGES)
         context_data = self.get_context_data()
         context_data['cases'] = cases
         context_data['selected_opening_date'] = opening_date
         context_data['selected_opening_reasons'] = opening_reasons
+        context_data['number_of_lists'] = number_of_lists
+        context_data['length_of_lists'] = length_of_lists
 
         plan_cases = get_cases(opening_date, opening_reasons, STAGES)
         sorted_cases = sort_by_postal_code(plan_cases)
         sorted_cases.reverse()
 
-        planned_cases = crude_plan_cases(20, sorted_cases, 18)
+        planned_cases = crude_plan_cases(number_of_lists, sorted_cases, length_of_lists)
         context_data['planned_cases'] = planned_cases
         context_data['unused_cases'] = sorted_cases
 
