@@ -263,7 +263,8 @@ BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
 
 # Settings to improve security
 is_secure_environment = True if ENVIRONMENT in ['production', 'acceptance'] else False
-SECURE_SSL_REDIRECT = is_secure_environment
+# NOTE: this is commented out because currently the internal health check is done over HTTP
+# SECURE_SSL_REDIRECT = is_secure_environment
 SESSION_COOKIE_SECURE = is_secure_environment
 CSRF_COOKIE_SECURE = is_secure_environment
 DEBUG = not is_secure_environment
