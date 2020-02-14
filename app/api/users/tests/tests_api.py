@@ -37,7 +37,7 @@ class IsAuthenticatedViewTest(APITestCase):
 
     def test_unauthenticated_requests(self):
         """
-        is_authenticated false true when user is not logged in
+        is_authenticated false when user is not logged in
         """
         url = reverse('is-authenticated')
         client = get_unauthenticated_client()
