@@ -5,7 +5,6 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEBUG = os.environ.get('DJANGO_DEBUG') == 'True'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -261,3 +260,16 @@ BRK_API_OBJECT_EXPAND_URL = os.getenv(
     'BRK_API_OBJECT_EXPAND_URL', 'https://acc.api.data.amsterdam.nl/brk/object-expand/')
 
 BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
+
+# Settings to improve security
+is_secure_environment = True if ENVIRONMENT in ['production', 'acceptance'] else False
+SECURE_SSL_REDIRECT = is_secure_environment
+SESSION_COOKIE_SECURE = is_secure_environment
+CSRF_COOKIE_SECURE = is_secure_environment
+DEBUG = not is_secure_environment
+SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_INCLUDE_SUBDOMAINS = is_secure_environment
+SECURE_HSTS_PRELOAD = is_secure_environment
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
