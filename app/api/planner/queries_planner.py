@@ -10,7 +10,7 @@ def get_cases(starting_date, projects, stages):
 
     query = """
             SELECT
-              DISTINCT zaak_id,
+              DISTINCT zaak_id as case_id,
               import_wvs.beh_oms AS case_reason,
               import_adres.postcode AS postal_code,
               import_adres.sttnaam AS street_name,
