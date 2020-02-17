@@ -40,7 +40,7 @@ services:
       - UWSGI_HTTP=0.0.0.0:8000
       - UWSGI_MASTER=1
       - UWSGI_STATIC_INDEX=index.html
-      - UWSGI_STATIC_MAP=/looplijsten/static=/static
+      - UWSGI_STATIC_MAP=/api/looplijsten/static=/static
       - UWSGI_CALLABLE=application
       - UWSGI_VACUUM=1
       - UWSGI_STATIC_EXPIRES=/* 3600
@@ -60,3 +60,4 @@ services:
 networks:
   default:
     name: looplijsten_backend
+
