@@ -6,21 +6,38 @@
     border-radius: .25rem;
   }
 
-  #opening_date { 
+  #opening_date {
     width: 100%;
   }
+
   #grouping_method {
     width: 100%;
   }
 
   #opening_reasons {
-    height:50vh;
-    width:100%
+    width: 100%
   }
 
-  .table-borderless tbody + tbody, .table-borderless td, .table-borderless th, .table-borderless thead th {
+  .multi-select-wrapper .btn-group {
+    width: 100%;
+  }
+
+  .multi-select-wrapper ul {
+    max-height: 50vh;
+    overflow-y: scroll;
+    width: 100%;
+  }
+
+  .multi-select-wrapper .checkbox {
+    padding: .25rem .5rem .25rem .5rem;
+  }
+
+  .table-borderless tbody+tbody,
+  .table-borderless td,
+  .table-borderless th,
+  .table-borderless thead th {
     border: 0;
-  }  
+  }
 
   .table-wrapper .table {
     margin: 0;
@@ -28,16 +45,20 @@
 
   .table-wrapper {
     position: fixed;
-    background-color:white;
+    background-color: white;
     right: 0;
     top: 0;
     width: 230px;
     z-index: 1;
     border-radius: .25rem;
-    padding: .5rem;    
+    padding: .5rem;
   }
 
   button {
+    width: 100%;
+  }
+
+  .custom-select {
     width: 100%;
   }
 </style>

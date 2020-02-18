@@ -7,29 +7,41 @@
     };
 
     function pinSymbol(color) {
-        // Other paths we might need
-        // Marker with dot inside
-        // 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-        // Flag
-        // path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
+      // Other paths we might need
+      // Marker with dot inside
+      // 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+      // Flag
+      // path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
 
-        return {
-            path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
-            fillColor: color,
-            fillOpacity: 1,
-            strokeColor: '#000',
-            strokeWeight: 1.25,
-            scale: .5,
+      return {
+        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: '#000',
+        strokeWeight: 1.25,
+        scale: .5,
+      };
+    }
+
+    function pinEphasizeSymbol(color) {
+      return {
+        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: '#000',
+        strokeWeight: 1.25,
+        scale: .5,
       };
     }
 
     function getUnusedPin() {
-      return pinSymbol('#bfbfbf');
+      var listColor = '#bfbfbf'
+      return [pinSymbol(listColor), pinEphasizeSymbol(listColor)];
     }
 
     function getRandomPin() {
       var listColor = chroma.random().toString();
-      return pinSymbol(listColor);
+      return [pinSymbol(listColor), pinEphasizeSymbol(listColor)]
     }
 
 
@@ -43,44 +55,59 @@
 
     var planned_cases = JSON.parse(document.getElementById('planned_cases').textContent);
     var unplanned_cases = JSON.parse(document.getElementById('unplanned_cases').textContent);
+    var main_stadium = 'Onderzoek buitendienst'
 
     // Place the unused cases
-    listUnusedIcon = getUnusedPin();
+    listIcons = getUnusedPin();
+
     for (var i = 0; i < unplanned_cases.length; i++) {
-        var item = unplanned_cases[i];
+      var item = unplanned_cases[i];
+
+      var case_position = {
+        lat: item.lat,
+        lng: item.lng
+      }
+
+      var listIcon = listIcons[0];
+      if (item.stadium === main_stadium) {
+        listIcon = listIcons[1];
+      }
+
+      var marker = new google.maps.Marker({
+        position: case_position,
+        map: map,
+        icon: listIcon
+      });
+    }
+
+
+    // Place the planned cases
+    for (var i = 0; i < planned_cases.length; i++) {
+      var list = planned_cases[i];
+      var listIcons = getRandomPin();
+
+
+      for (var j = 0; j < list.length; j++) {
+        var item = list[j];
 
         var case_position = {
           lat: item.lat,
           lng: item.lng
         }
+
+        var listIcon = listIcons[0];
+        if (item.stadium === main_stadium) {
+          listIcon = listIcons[1];
+        }
+
         var marker = new google.maps.Marker({
           position: case_position,
           map: map,
-          icon: listUnusedIcon
+          icon: listIcon,
+          title: item.case_reason + ', ' + item.stadium + ', Group size:' + list.length,
         });
-    }
-  
-
-    // Place the planned cases
-    for (var i = 0; i < planned_cases.length; i++) {
-      var list = planned_cases[i];
-      var listIcon = getRandomPin();
-
-      for (var j = 0; j < list.length; j++) {
-          var item = list[j];
-
-          var case_position = {
-            lat: item.lat,
-            lng: item.lng
-          }
-
-          var marker = new google.maps.Marker({
-            position: case_position,
-            map: map,
-            icon: listIcon
-          });
-        }        
       }
+    }
   }
 </script>
 <script async defer

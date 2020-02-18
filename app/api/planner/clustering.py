@@ -1,7 +1,6 @@
 from sklearn.cluster import KMeans
-import numpy as np
-
-from api.planner.utils import sort_by_postal_code
+from sklearn.cluster import OPTICS
+from api.planner.utils import sort_by_postal_code, get_case_coordinates
 
 def filter_cases_with_missing_coordinates(cases):
     def has_missing_coordinates(case):
@@ -9,11 +8,31 @@ def filter_cases_with_missing_coordinates(cases):
 
     return list(filter(lambda case: has_missing_coordinates(case), cases))
 
+def optics_grouping(cluster_size, cases):
+    coordinates = get_case_coordinates(cases)
+    clusters = OPTICS(min_samples=3, min_cluster_size=cluster_size).fit(coordinates)
+
+    grouping_labels = clusters.labels_
+    n_lists = max(grouping_labels) + 1
+
+    groups = [[] for i in range(0, n_lists)]
+    unplanned_cases = []
+
+    for i in range(0, len(cases)):
+        group = grouping_labels[i]
+        case = cases[i]
+        if group == -1:
+            unplanned_cases.append(case)
+        else:
+            groups[group].append(case)
+
+    return groups, unplanned_cases
+
+
 def k_means_grouping(n_lists, cases):
-    coordinates = list(map(lambda case: [case['lat'], case['lng']], cases))
-    coordinates = np.array(coordinates)
-    kmeans = KMeans(n_clusters=n_lists, random_state=0).fit(coordinates)
-    grouping_labels = kmeans.labels_
+    coordinates = get_case_coordinates(cases)
+    clusters = KMeans(n_clusters=n_lists, random_state=0).fit(coordinates)
+    grouping_labels = clusters.labels_
 
     groups = [[] for i in range(0, n_lists)]
     for i in range(0, len(cases)):
