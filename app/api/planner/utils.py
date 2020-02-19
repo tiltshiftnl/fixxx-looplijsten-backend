@@ -63,3 +63,10 @@ def calculate_distances(center, cases):
     case_coordinates = get_case_coordinates(cases)
     distances = euclidean_distances(case_coordinates, [center])
     return list(distances.flatten())
+
+# TODO: Write test for this
+def filter_cases_with_missing_coordinates(cases):
+    def has_missing_coordinates(case):
+        return case['lat'] is not None and case['lng']
+
+    return list(filter(lambda case: has_missing_coordinates(case), cases))

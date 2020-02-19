@@ -1,15 +1,15 @@
 <form method="POST">
   {% csrf_token %}
   <div class="form-group">
-    <label for="grouping_method">Grouping method:</label>
-    <select class="custom-select" id="grouping_method" name="grouping_method">
-      <option value="postal_code" {% if grouping_method == 'postal_code' %}selected{% endif %}>
+    <label for="clustering_method">clustering method:</label>
+    <select class="custom-select" id="clustering_method" name="clustering_method">
+      <option value="postal_code" {% if clustering_method == 'postal_code' %}selected{% endif %}>
         Postal code
       </option>
-      <option value="k_means" {% if grouping_method == 'k_means' %}selected{% endif %}>
+      <option value="k_means" {% if clustering_method == 'k_means' %}selected{% endif %}>
         K-means
       </option>
-      <option value="optics" {% if grouping_method == 'optics' %}selected{% endif %}>
+      <option value="optics" {% if clustering_method == 'optics' %}selected{% endif %}>
         Optics
       </option>
     </select>

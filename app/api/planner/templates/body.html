@@ -14,10 +14,14 @@
   </div>
   {{ planned_cases|json_script:"planned_cases" }}
   {{ unplanned_cases|json_script:"unplanned_cases" }}
+  {{ planning|json_script:"planning" }}
   {% include 'script_maps.html' %}
   {% include 'script_calender.html' %}
 </body>
 <script type="text/javascript">
+  var planning = JSON.parse(document.getElementById('planning').textContent);
+  console.log(planning);
+
   $(document).ready(function () {
     $('#opening_reasons').multiselect();
     $('#stadia').multiselect();
