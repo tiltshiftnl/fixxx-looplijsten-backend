@@ -36,6 +36,8 @@ def get_list_for_planning(configuration):
 
     return lists
 
+def get_lists_in_original_order(lists):
+    return sorted(lists, key=lambda case: case.get('id'))
 
 def get_planning(configuration):
     cases = get_cases_for_configuration(configuration)
@@ -59,6 +61,11 @@ def get_planning(configuration):
             cases = remove_cases_from_list(cases, itinerary)
 
         item['itineraries'] = itineraries
+
+    lists = get_lists_in_original_order(lists)
+
+    configuration['lists'] = lists
+    configuration['unplanned_cases'] = cases
 
     return configuration
 

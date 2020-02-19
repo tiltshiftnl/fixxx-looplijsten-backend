@@ -24,34 +24,8 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = WeekListSerializer
 
-    def fill_week_list(self, cases, days):
-        """
-        A very crude MVP for filling the lists
-        """
-        for day in days:
-            lists = day.get('lists')
-
-            for list_item in lists:
-                number_of_lists = list_item.get('number_of_lists')
-                length_of_lists = list_item.get('length_of_lists')
-                list_item['itineraries'] = []
-
-                for i in range(number_of_lists):
-                    list_cases = []
-
-                    for x in range(length_of_lists):
-                        if len(cases) == 0:
-                            break
-
-                        case = cases.pop()
-                        list_cases.append(case)
-
-                    list_item['itineraries'].append(list_cases)
-
-        return cases
-
     @safety_lock
-    def create(self, request):
+    def create_old(self, request):
         """
         Generates a weekly planning with itineraries.
         (Note this is an MVP and very crude at the moment)
@@ -82,6 +56,17 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
         # return the right data here
         return JsonResponse(data)
 
+    @safety_lock
+    def create(self, request):
+        """
+        Generates a weekly planning with itineraries.
+        """
+        data = request.data
+
+        # TODO: Validate data
+        data = get_planning(data)
+        return JsonResponse(data)
+
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/looplijsten/admin/login/'
@@ -110,7 +95,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['length_of_lists'] = 8
         context_data['clustering_method'] = 'postal_code'
 
-        context_data['planning'] = get_planning(EXAMPLE_POST, cases)
+        context_data['planning'] = get_planning(EXAMPLE_POST)
 
         return render(request, self.template_name, context_data)
 
