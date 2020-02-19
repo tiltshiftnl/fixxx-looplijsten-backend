@@ -42,7 +42,7 @@ class UtilsTests(TestCase):
         cases = [case_a, case_b, case_c]
         result = filter_cases(cases, [])
 
-        self.assertEquals(result, [])
+        self.assertEquals(result, cases)
 
     def test_filter_cases_one_stadium(self):
         case_a = {'stadium': BED_AND_BREAKFAST}
