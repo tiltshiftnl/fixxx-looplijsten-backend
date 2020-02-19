@@ -12,6 +12,9 @@ def filter_cases(cases, stadia):
     '''
     Returns a list of cases with the given stadia
     '''
+    if len(stadia) == 0:
+        return cases
+
     def has_stadium(case):
         return case['stadium'] in stadia
 
@@ -36,6 +39,14 @@ def get_best_list(case_lists, primary_stadium):
     best_list = case_lists[best_list_index]
 
     return best_list
+
+def sort_with_stadium(cases, stadium):
+    '''
+    Returns lists of cases in which the case is sorted by stadium
+    '''
+    sorted_cases = sorted(cases, key=lambda case: case.get('stadium') == stadium)
+    sorted_cases.reverse()
+    return sorted_cases
 
 def remove_cases_from_list(cases, cases_to_remove):
     '''

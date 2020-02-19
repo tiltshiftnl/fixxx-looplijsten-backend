@@ -114,43 +114,36 @@ EXAMPLE_POST = {
     ],
     "lists": [
         {
-            "id": "monday-morning",
             "number_of_lists": 2,
             "length_of_lists": 6
         },
         {
-            "id": "tuesday-morning",
             "number_of_lists": 1,
             "length_of_lists": 6
         },
         {
-            "id": "tuesday-afternoon",
             "number_of_lists": 1,
             "length_of_lists": 6
         },
         {
-            "id": "tuesday-night",
             "number_of_lists": 2,
             "length_of_lists": 5,
             "primary_stadium": AVONDRONDE,
             "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
         },
         {
-            "id": "thursday-morning",
             "number_of_lists": 2,
             "length_of_lists": 8,
             "primary_stadium": ONDERZOEK_BUITENDIENST,
             "secondary_stadia": [TWEEDE_CONTROLE, DERDE_CONTROLE]
         },
         {
-            "id": "friday-morning",
             "number_of_lists": 2,
             "length_of_lists": 8,
             "primary_stadium": ONDERZOEK_BUITENDIENST,
             "secondary_stadia": [TWEEDE_CONTROLE, DERDE_CONTROLE]
         },
         {
-            "id": "saturday-morning",
             "number_of_lists": 2,
             "length_of_lists": 4,
             "primary_stadium": WEEKEND_BUITENDIENST_ONDERZOEK,

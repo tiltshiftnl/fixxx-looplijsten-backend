@@ -4,7 +4,7 @@ Tests for the health views
 from django.test import TestCase
 import numpy as np
 from api.planner.utils import sort_by_postal_code, filter_cases, get_count, get_best_list
-from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances
+from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances, sort_with_stadium
 from api.planner.const import BED_AND_BREAKFAST, HOTLINE, SAFARI
 
 class UtilsTests(TestCase):
@@ -156,3 +156,28 @@ class UtilsTests(TestCase):
         results = calculate_distances(center, cases)
 
         self.assertEquals(results, [0, 1])
+
+    def sort_with_stadium(self):
+        cases = [
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE}
+        ]
+
+        expected = [
+            {'stadium': HOTLINE},
+            {'stadium': HOTLINE},
+            {'stadium': HOTLINE},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST}
+        ]
+
+        results = sort_with_stadium(cases, HOTLINE)
+
+        self.assertEquals(expected, results)
