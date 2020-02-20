@@ -65,6 +65,16 @@ class UtilsTests(TestCase):
 
         self.assertEquals(result, 1)
 
+    def test_get_count_no_stadium(self):
+        case_a = {'stadium': BED_AND_BREAKFAST}
+        case_b = {'stadium': BED_AND_BREAKFAST}
+        case_c = {'stadium': SAFARI}
+
+        cases = [case_a, case_b, case_c]
+        result = get_count(cases, None)
+
+        self.assertEquals(result, 0)
+
     def test_get_count_multiple(self):
         case_a = {'stadium': BED_AND_BREAKFAST}
         case_b = {'stadium': BED_AND_BREAKFAST}
@@ -93,6 +103,26 @@ class UtilsTests(TestCase):
 
         best_list = get_best_list(lists, BED_AND_BREAKFAST)
         self.assertEquals(best_list, list_b)
+
+    def test_get_best_list_no_stadium(self):
+
+        list_a = [
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE}]
+        list_b = [
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST}]
+        list_c = [
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE},
+            {'stadium': HOTLINE}]
+        lists = [list_a, list_b, list_c]
+
+        best_list = get_best_list(lists, None)
+        # Will just return the first list if no Stadium if given
+        self.assertEquals(best_list, list_a)
 
     def test_remove_cases_from_list(self):
         case_a = {'stadium': BED_AND_BREAKFAST, 'case_id': 'foo-a'}
@@ -181,3 +211,21 @@ class UtilsTests(TestCase):
         results = sort_with_stadium(cases, HOTLINE)
 
         self.assertEquals(expected, results)
+
+    def sort_with_no_stadium(self):
+        '''
+        Should return the given list if no stadium is given
+        '''
+        cases = [
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE}
+        ]
+
+        results = sort_with_stadium(cases, None)
+
+        self.assertEquals(cases, results)

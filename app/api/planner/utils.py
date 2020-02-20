@@ -27,6 +27,7 @@ def get_count(cases, stadium):
     '''
     cases_with_stadium = [case['stadium'] == stadium for case in cases]
     count = sum(cases_with_stadium)
+
     return count
 
 
@@ -44,8 +45,13 @@ def sort_with_stadium(cases, stadium):
     '''
     Returns lists of cases in which the case is sorted by stadium
     '''
+    # Just return the list as is if no stadium is given
+    if stadium is None:
+        return cases
+
     sorted_cases = sorted(cases, key=lambda case: case.get('stadium') == stadium)
     sorted_cases.reverse()
+
     return sorted_cases
 
 def remove_cases_from_list(cases, cases_to_remove):
@@ -56,6 +62,7 @@ def remove_cases_from_list(cases, cases_to_remove):
         return case not in cases_to_remove
 
     new_list = list(filter(lambda case: should_not_remove(case), cases))
+
     return new_list
 
 
@@ -64,6 +71,7 @@ def get_case_coordinates(cases):
     Maps the cases to an array of coordinates
     '''
     coordinates = list(map(lambda case: [case['lat'], case['lng']], cases))
+
     return np.array(coordinates)
 
 
@@ -73,6 +81,7 @@ def calculate_distances(center, cases):
     '''
     case_coordinates = get_case_coordinates(cases)
     distances = euclidean_distances(case_coordinates, [center])
+
     return list(distances.flatten())
 
 # TODO: Write test for this
