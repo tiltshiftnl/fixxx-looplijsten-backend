@@ -3,7 +3,7 @@ from api.planner.const import STAGES
 from api.planner.queries_planner import get_cases
 from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list
-from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium
+from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium, filter_out_cases
 
 def get_cases_for_configuration(configuration):
     opening_date = configuration.get('opening_date')
@@ -46,6 +46,7 @@ def get_planning(configuration):
     for item in lists:
         primary_stadium = item.get('primary_stadium', None)
         secondary_stadia = item.get('secondary_stadia', [])
+        exclude_stadia = item.get('exclude_stadia', [])
         number_of_lists = item.get('number_of_lists', 0)
         length_of_lists = item.get('length_of_lists', 0)
 
@@ -54,7 +55,8 @@ def get_planning(configuration):
             number_of_lists=number_of_lists,
             length_of_lists=length_of_lists,
             primary_stadium=primary_stadium,
-            secondary_stadia=secondary_stadia
+            secondary_stadia=secondary_stadia,
+            exclude_stadia=exclude_stadia
         )
 
         for itinerary in itineraries:
@@ -70,7 +72,7 @@ def get_planning(configuration):
     return configuration
 
 
-def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=None, secondary_stadia=[]):
+def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=None, secondary_stadia=[], exclude_stadia=[]):
     itineraries = []
 
     # Get a subset of cases containing the primary_stadium and secondary_stadia cases
@@ -79,6 +81,7 @@ def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=Non
         filter_stadia = [primary_stadium] + filter_stadia
 
     filtered_cases = filter_cases(cases, filter_stadia)
+    filtered_cases = filter_out_cases(filtered_cases, exclude_stadia)
     filtered_cases = filter_cases_with_missing_coordinates(filtered_cases)
 
     # Copy the cases into a unplanned cases list

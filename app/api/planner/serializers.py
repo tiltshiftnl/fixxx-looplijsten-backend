@@ -1,27 +1,16 @@
 from rest_framework import serializers
-from api.planner.const import PROJECTS
-
-DAYS = [
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-    'sunday'
-]
+from api.planner.const import PROJECTS, STAGES
 
 class ListSerializer(serializers.Serializer):
-    name = serializers.CharField(required=True)
+    name = serializers.CharField(required=False)
     number_of_lists = serializers.IntegerField(required=True)
     length_of_lists = serializers.IntegerField(required=True)
+    primary_stadium = serializers.ChoiceField(required=False, choices=STAGES)
+    secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STAGES)
+    exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STAGES)
 
-class DaySerializer(serializers.Serializer):
-    day = serializers.ChoiceField(choices=DAYS)
-    lists = ListSerializer(required=True, many=True)
 
 class WeekListSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
     opening_reasons = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
-    # TODO: Better validation for days (optional, since we're probably removing the weekplanning anyways).
-    days = DaySerializer(required=True, many=True)
+    lists = ListSerializer(required=True, many=True)

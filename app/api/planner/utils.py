@@ -8,6 +8,19 @@ def sort_by_postal_code(cases):
 
     return sorted(cases, key=lambda case: case.get('postal_code'))
 
+# TODO: Test this
+def filter_out_cases(cases, stadia):
+    '''
+    Returns a list of cases without the given stadia
+    '''
+    if len(stadia) == 0:
+        return cases
+
+    def has_stadium(case):
+        return case['stadium'] not in stadia
+
+    return list(filter(lambda case: has_stadium(case), cases))
+
 def filter_cases(cases, stadia):
     '''
     Returns a list of cases with the given stadia

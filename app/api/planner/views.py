@@ -25,10 +25,9 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     serializer_class = WeekListSerializer
 
     @safety_lock
-    def create_old(self, request):
+    def create(self, request):
         """
         Generates a weekly planning with itineraries.
-        (Note this is an MVP and very crude at the moment)
         """
         data = request.data
         serializer = WeekListSerializer(data=data)
@@ -40,30 +39,6 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
                 'errors': serializer.errors
             }, status=HttpResponseBadRequest.status_code)
 
-        opening_date = data.get('opening_date')
-        opening_reasons = data.get('opening_reasons')
-
-        days = data.get('days')
-        cases = get_cases(opening_date, opening_reasons, STAGES)
-
-        sorted_cases = sort_by_postal_code(cases)
-        sorted_cases.reverse()
-
-        # Fills the days data with cases
-        unplanned_cases = self.fill_week_list(sorted_cases, days)
-        data['unplanned_cases'] = unplanned_cases
-
-        # return the right data here
-        return JsonResponse(data)
-
-    @safety_lock
-    def create(self, request):
-        """
-        Generates a weekly planning with itineraries.
-        """
-        data = request.data
-
-        # TODO: Validate data
         data = get_planning(data)
         return JsonResponse(data)
 
