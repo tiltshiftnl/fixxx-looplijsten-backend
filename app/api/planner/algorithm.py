@@ -92,8 +92,11 @@ def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=Non
         if len(unplanned_cases) == 0:
             break
 
+        # The cluster size cannot be larger then the number of unplanned cases
+        cluster_size = min(length_of_lists, len(unplanned_cases))
+
         # Do a clustering using this subset
-        clusters, rest = optics_clustering(length_of_lists, unplanned_cases)
+        clusters, rest = optics_clustering(cluster_size, unplanned_cases)
 
         # Select the best list and append it to the itinerary
         best_list = get_best_list(clusters, primary_stadium)
