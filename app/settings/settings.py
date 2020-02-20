@@ -210,7 +210,7 @@ OIDC_RP_SIGN_ALGO = 'RS256'
 
 OIDC_RP_SCOPES = 'openid'
 
-OIDC_VERIFY_SSL = False
+OIDC_VERIFY_SSL = True
 
 # https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/openid-configuration
 OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv('OIDC_OP_AUTHORIZATION_ENDPOINT',
