@@ -179,8 +179,15 @@ CORS_ORIGIN_ALLOW_ALL = False
 
 
 SWAGGER_SETTINGS = {
-    'LOGIN_URL': '/looplijsten/admin/login/',
-    'LOGOUT_URL': '/looplijsten/admin/logout/'
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'scheme': 'bearer'
+        }
+    }
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
