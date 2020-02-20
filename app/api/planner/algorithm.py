@@ -73,7 +73,7 @@ def get_planning(configuration):
 
 
 def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=None, secondary_stadia=[], exclude_stadia=[]):
-    itineraries = []
+    itineraries = [[] for item in range(0, number_of_lists)]
 
     # Get a subset of cases containing the primary_stadium and secondary_stadia cases
     filter_stadia = secondary_stadia
@@ -105,7 +105,7 @@ def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=Non
             sorted_best_list = sort_with_stadium(best_list, primary_stadium)
             shortened_list = sorted_best_list[:length_of_lists]
 
-            itineraries.append(shortened_list)
+            itineraries[i] = shortened_list
 
             # remove the list from the unplanned cases
             unplanned_cases = remove_cases_from_list(unplanned_cases, shortened_list)
