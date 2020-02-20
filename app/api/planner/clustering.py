@@ -2,7 +2,12 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import OPTICS
 from api.planner.utils import sort_by_postal_code, get_case_coordinates
 
+MIN_SAMPLE_SIZE = 3
+
 def optics_clustering(cluster_size, cases):
+    if cluster_size < MIN_SAMPLE_SIZE:
+        return [], cases
+
     coordinates = get_case_coordinates(cases)
     clusters = OPTICS(min_samples=3, min_cluster_size=cluster_size).fit(coordinates)
 

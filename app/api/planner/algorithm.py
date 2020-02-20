@@ -92,20 +92,22 @@ def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=Non
         if len(unplanned_cases) == 0:
             break
 
+        # TODO: Refine these min fallbacks (also see MIN_SAMPLE_SIZE fallback in optics_clustering)
         # The cluster size cannot be larger then the number of unplanned cases
         cluster_size = min(length_of_lists, len(unplanned_cases))
 
         # Do a clustering using this subset
         clusters, rest = optics_clustering(cluster_size, unplanned_cases)
 
-        # Select the best list and append it to the itinerary
-        best_list = get_best_list(clusters, primary_stadium)
-        sorted_best_list = sort_with_stadium(best_list, primary_stadium)
-        shortened_list = sorted_best_list[:length_of_lists]
+        if len(clusters) > 0:
+            # Select the best list and append it to the itinerary
+            best_list = get_best_list(clusters, primary_stadium)
+            sorted_best_list = sort_with_stadium(best_list, primary_stadium)
+            shortened_list = sorted_best_list[:length_of_lists]
 
-        itineraries.append(shortened_list)
+            itineraries.append(shortened_list)
 
-        # remove the list from the unplanned cases
-        unplanned_cases = remove_cases_from_list(unplanned_cases, shortened_list)
+            # remove the list from the unplanned cases
+            unplanned_cases = remove_cases_from_list(unplanned_cases, shortened_list)
 
     return itineraries
