@@ -1,52 +1,6 @@
 <script>
     // Initialize and add the map
     function initMap() {
-      function pinSymbol(color) {
-        return {
-          path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
-          fillColor: color,
-          fillOpacity: 1,
-          strokeColor: '#000',
-          strokeWeight: 1.25,
-          scale: .5,
-        };
-      }
-
-      function pinEphasizeSymbol(color) {
-        return {
-          path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-          fillColor: color,
-          fillOpacity: 1,
-          strokeColor: '#000',
-          strokeWeight: 1.25,
-          scale: .5,
-        };
-      }
-
-      function pinFlag(color) {
-        return {
-          path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
-          fillColor: color,
-          fillOpacity: 1,
-          strokeColor: '#000',
-          strokeWeight: 1.25,
-          scale: .5,
-        };
-      }
-
-      function getUnusedPin() {
-        return getColorPin('#bfbfbf')
-      }
-
-      function getRandomPin() {
-        var listColor = chroma.random().toString();
-        return getColorPin(listColor);
-      }
-
-      function getColorPin(color) {
-        return [pinSymbol(color), pinEphasizeSymbol(color), pinFlag(color)];
-      }      
-
       function placeCase(item, map, icons) {  
         var case_position = {lat: item.lat, lng: item.lng};
         var icon = icons[0]
@@ -88,8 +42,7 @@
         var lists = planned_cases[i]['itineraries'];
         for (var x = 0; x < lists.length; x++) {
           var list = lists[x];
-          var icons = getRandomPin();
-
+          var icons = getIndexedColorPin(x);
 
           for (var j = 0; j < list.length; j++) {
             var item = list[j];
