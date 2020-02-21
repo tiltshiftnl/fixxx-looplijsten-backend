@@ -95,12 +95,22 @@ class AlgorithmView(LoginRequiredMixin, View):
                 {
                     "number_of_lists": number_of_lists,
                     "length_of_lists": length_of_lists,
-                    "primary_stadium": main_stadium,
                     "secondary_stadia": stadia,
                     "exclude_stadia": exclude_stadia,
                 }
             ]
         }
+
+        if main_stadium:
+            post["lists"]["primary_stadium"] = main_stadium
+
+        serializer = WeekListSerializer(data=post)
+        is_valid = serializer.is_valid()
+        if not is_valid:
+            return JsonResponse({
+                'message': 'Could not validate posted data',
+                'errors': serializer.errors
+            }, status=HttpResponseBadRequest.status_code)
 
         context_data['planning'] = get_planning(post)
 
