@@ -235,7 +235,8 @@ def get_case_basics(case_id):
     query = """
             SELECT
               wvs_nr as case_number,
-              beh_oms as openings_reden
+              beh_oms as openings_reden,
+              mededelingen AS statements
             FROM import_wvs WHERE zaak_id='{}'
             """.format(case_id)
 
