@@ -16,7 +16,6 @@ from utils.safety_lock import safety_lock
 class ItineraryViewSet(ViewSet, GenericAPIView):
     """
     A simple ViewSet for listing an itinerary of a user
-
     """
 
     permission_classes = [IsAuthenticated]
