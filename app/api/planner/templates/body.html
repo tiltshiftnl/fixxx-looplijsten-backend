@@ -1,10 +1,8 @@
 {% include 'head.html' %}
-
 <body class="p-sm-3">
   <div class="container-fluid">
     <div class="row">
       <div class="col-3">
-        {% include 'table.html' %}
         {% include 'controls.html' %}
       </div>
       <div class="col-9">
@@ -12,20 +10,8 @@
       </div>
     </div>
   </div>
-  {{ planned_cases|json_script:"planned_cases" }}
-  {{ unplanned_cases|json_script:"unplanned_cases" }}
-  {{ planning|json_script:"planning" }}
+  {% include 'json.html' %}
   {% include 'script_maps.html' %}
-  {% include 'script_calender.html' %}
+  {% include 'script_multiselect.html' %}  
 </body>
-<script type="text/javascript">
-  var planning = JSON.parse(document.getElementById('planning').textContent);
-  console.log(planning);
-
-  $(document).ready(function () {
-    $('#opening_reasons').multiselect();
-    $('#stadia').multiselect();
-  });
-</script>
-
 </html>

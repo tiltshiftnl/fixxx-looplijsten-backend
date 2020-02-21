@@ -72,7 +72,13 @@ def get_planning(configuration):
     return configuration
 
 
-def get_itineraries(cases, number_of_lists, length_of_lists, primary_stadium=None, secondary_stadia=[], exclude_stadia=[]):
+def get_itineraries(
+        cases,
+        number_of_lists,
+        length_of_lists,
+        primary_stadium=None,
+        secondary_stadia=[],
+        exclude_stadia=[]):
     itineraries = [[] for item in range(0, number_of_lists)]
 
     # Get a subset of cases containing the primary_stadium and secondary_stadia cases

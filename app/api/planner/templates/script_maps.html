@@ -1,114 +1,101 @@
 <script>
-  // Initialize and add the map
-  function initMap() {
-    var amsterdam = {
-      lat: 52.379189,
-      lng: 4.899431
-    };
-
-    function pinSymbol(color) {
-      // Other paths we might need
-      // Marker with dot inside
-      // 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-      // Flag
-      // path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
-
-      return {
-        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
-        fillColor: color,
-        fillOpacity: 1,
-        strokeColor: '#000',
-        strokeWeight: 1.25,
-        scale: .5,
-      };
-    }
-
-    function pinEphasizeSymbol(color) {
-      return {
-        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-        fillColor: color,
-        fillOpacity: 1,
-        strokeColor: '#000',
-        strokeWeight: 1.25,
-        scale: .5,
-      };
-    }
-
-    function getUnusedPin() {
-      var listColor = '#bfbfbf'
-      return [pinSymbol(listColor), pinEphasizeSymbol(listColor)];
-    }
-
-    function getRandomPin() {
-      var listColor = chroma.random().toString();
-      return [pinSymbol(listColor), pinEphasizeSymbol(listColor)]
-    }
-
-
-    var map = new google.maps.Map(
-      document.getElementById('map'), {
-        zoom: 13,
-        center: amsterdam,
-        disableDefaultUI: true
-      });
-
-
-    var planned_cases = JSON.parse(document.getElementById('planned_cases').textContent);
-    var unplanned_cases = JSON.parse(document.getElementById('unplanned_cases').textContent);
-    var main_stadium = 'Onderzoek buitendienst'
-
-    // Place the unused cases
-    listIcons = getUnusedPin();
-
-    for (var i = 0; i < unplanned_cases.length; i++) {
-      var item = unplanned_cases[i];
-
-      var case_position = {
-        lat: item.lat,
-        lng: item.lng
+    // Initialize and add the map
+    function initMap() {
+      function pinSymbol(color) {
+        return {
+          path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z',
+          fillColor: color,
+          fillOpacity: 1,
+          strokeColor: '#000',
+          strokeWeight: 1.25,
+          scale: .5,
+        };
       }
 
-      var listIcon = listIcons[0];
-      if (item.stadium === main_stadium) {
-        listIcon = listIcons[1];
+      function pinEphasizeSymbol(color) {
+        return {
+          path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+          fillColor: color,
+          fillOpacity: 1,
+          strokeColor: '#000',
+          strokeWeight: 1.25,
+          scale: .5,
+        };
       }
 
-      var marker = new google.maps.Marker({
-        position: case_position,
-        map: map,
-        icon: listIcon
-      });
-    }
+      function pinFlag(color) {
+        return {
+          path: 'M 0,0 -1,-2 V -43 H 1 V -2 z M 1,-40 H 30 V -20 H 1 z',
+          fillColor: color,
+          fillOpacity: 1,
+          strokeColor: '#000',
+          strokeWeight: 1.25,
+          scale: .5,
+        };
+      }
 
+      function getUnusedPin() {
+        return getColorPin('#bfbfbf')
+      }
 
-    // Place the planned cases
-    for (var i = 0; i < planned_cases.length; i++) {
-      var list = planned_cases[i];
-      var listIcons = getRandomPin();
+      function getRandomPin() {
+        var listColor = chroma.random().toString();
+        return getColorPin(listColor);
+      }
 
+      function getColorPin(color) {
+        return [pinSymbol(color), pinEphasizeSymbol(color), pinFlag(color)];
+      }      
 
-      for (var j = 0; j < list.length; j++) {
-        var item = list[j];
-
-        var case_position = {
-          lat: item.lat,
-          lng: item.lng
-        }
-
-        var listIcon = listIcons[0];
+      function placeCase(item, map, icons) {  
+        var case_position = {lat: item.lat, lng: item.lng};
+        var icon = icons[0]
+        
         if (item.stadium === main_stadium) {
-          listIcon = listIcons[1];
+          icon = icons[1];
         }
 
         var marker = new google.maps.Marker({
           position: case_position,
           map: map,
-          icon: listIcon,
-          title: item.case_reason + ', ' + item.stadium + ', Group size:' + list.length,
+          icon: icon,
+          title: item.case_reason + ', ' + item.stadium,
         });
       }
+      
+      var map = new google.maps.Map(
+        document.getElementById('map'), {
+          zoom: 13,
+          center: { lat: 52.379189, lng: 4.899431},
+          disableDefaultUI: true
+        });
+
+      var planning = JSON.parse(document.getElementById('planning').textContent);
+      var unplanned_cases = planning['unplanned_cases']
+      var planned_cases = planning['lists']
+
+      // Place the unused cases
+      icons = getUnusedPin();
+
+      for (var i = 0; i < unplanned_cases.length; i++) {
+        var item = unplanned_cases[i];
+        placeCase(item, map, icons);
+      }
+
+
+      // Place the planned cases
+      for (var i = 0; i < planned_cases.length; i++) {
+        var lists = planned_cases[i]['itineraries'];
+        for (var x = 0; x < lists.length; x++) {
+          var list = lists[x];
+          var icons = getRandomPin();
+
+
+          for (var j = 0; j < list.length; j++) {
+            var item = list[j];
+            placeCase(item, map, icons);
+          }
+        }
+      }
     }
-  }
 </script>
-<script async defer
-  src="https://maps.googleapis.com/maps/api/js?key={KEY}&callback=initMap" />
