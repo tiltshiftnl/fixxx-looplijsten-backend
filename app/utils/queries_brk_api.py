@@ -18,7 +18,7 @@ def get_expiry():
     expiry = expiry.value
 
     if not expiry == '':
-        return datetime.strptime(expiry, '%Y-%m-%d %H:%M:%S.%f')
+        return expiry
 
 def set_constance(key, value):
     constance_object, created = Constance.objects.get_or_create(key=key)
