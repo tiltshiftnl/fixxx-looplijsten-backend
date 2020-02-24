@@ -92,7 +92,7 @@ STAGES = [
     WEEKEND_BUITENDIENST_ONDERZOEK,
 ]
 
-EXAMPLE_POST = {
+EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2018-01-01",
     "opening_reasons": [
         "Zebra",

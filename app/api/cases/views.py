@@ -4,7 +4,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 
 from utils.safety_lock import safety_lock
-
 import utils.queries as q
 import utils.queries_brk_api as brk_api
 import utils.queries_bag_api as bag_api

@@ -11,6 +11,7 @@ from constance.backends.database.models import Constance
 from utils.safety_lock import safety_lock
 from api.planner.serializers import WeekListSerializer
 from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA, ONDERZOEK_BUITENDIENST
+from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 from api.planner.algorithm import get_planning
 
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
@@ -136,3 +137,20 @@ class ConstantsStadiaViewSet(ViewSet):
     @safety_lock
     def list(self, request):
         return JsonResponse({'constants': STAGES})
+
+
+class SettingsPlannerViewSet(ViewSet):
+    """
+    Retrieves the planner settings which are used for generating lists
+    """
+    permission_classes = [IsAuthenticated]
+
+    @safety_lock
+    def list(self, request):
+        planner_settings = Constance.objects.get(key=settings.CONSTANCE_PLANNER_SETTINGS_KEY)
+        planner_settings = planner_settings.value
+
+        if not planner_settings:
+            planner_settings = EXAMPLE_PLANNER_SETTINGS
+
+        return JsonResponse({'settings': planner_settings})

@@ -16,7 +16,7 @@ from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
 from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView
 from api.planner.views import GenerateWeeklyItinerariesViewset, AlgorithmView
-from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet
+from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
 
 
 admin.site.site_header = "Wonen looplijsten"
@@ -39,6 +39,7 @@ router.register(r'generate-weekly-itineraries', GenerateWeeklyItinerariesViewset
                 basename='generate-weekly-itineraries')
 router.register(r'constants/projects', ConstantsProjectsViewSet, basename='constants-projects')
 router.register(r'constants/stadia', ConstantsStadiaViewSet, basename='constants-stadia')
+router.register(r'settings/planner', SettingsPlannerViewSet, basename='settings-planner')
 
 # Temporary prefix for production environment.
 # Will be removed once we have all domains and subdomains ready.

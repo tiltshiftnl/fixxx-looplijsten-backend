@@ -1,8 +1,10 @@
 import os
 from os.path import join
 from datetime import timedelta
+import json
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -196,12 +198,15 @@ CONSTANCE_ALLOW_DATA_ACCESS_KEY = 'ALLOW_DATA_ACCESS'
 CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY = 'BRK_AUTHENTICATION_TOKEN'
 CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY = 'BRK_AUTHENTICATION_TOKEN_EXPIRY'
 CONSTANCE_MAPS_KEY = 'MAPS_KEY'
+CONSTANCE_PLANNER_SETTINGS_KEY = 'PLANNER_SETTINGS'
 
 CONSTANCE_CONFIG = {
     CONSTANCE_ALLOW_DATA_ACCESS_KEY: (True, 'Allow data to be accesible through the API'),
     CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY: ('', 'Authentication token for accessing BRK API'),
     CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY: ('', 'Expiry date for BRK API token'),
-    CONSTANCE_MAPS_KEY: ('', 'Maps API Key')
+    CONSTANCE_MAPS_KEY: ('', 'Maps API Key'),
+    CONSTANCE_PLANNER_SETTINGS_KEY: (json.dumps(EXAMPLE_PLANNER_SETTINGS),
+                                     'Settings for planning and generating lists')
 }
 
 # Error logging through Sentry
