@@ -120,7 +120,7 @@ class SettingsPlannerViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @override_config(PLANNER_SETTINGS={'foo_settings': 'foo'})
-    def test_no_settings_saved(self):
+    def test_settings(self):
         """
         Should return the PLANNER_SETTINGS value
         """
