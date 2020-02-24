@@ -1,3 +1,4 @@
+# TODO: Write tests for these functions
 import requests
 import logging
 from datetime import datetime, timedelta
@@ -14,7 +15,10 @@ def get_token():
 def get_expiry():
     key = settings.CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY
     expiry, created = Constance.objects.get_or_create(key=key)
-    return expiry.value
+    expiry = expiry.value
+
+    if not expiry == '':
+        return datetime.strptime(expiry.value, '%Y-%m-%d %H:%M:%S.%f')
 
 def set_constance(key, value):
     constance_object, created = Constance.objects.get_or_create(key=key)
@@ -65,7 +69,7 @@ def get_brk_request_headers():
     """
     expiry = get_expiry()
 
-    if expiry is None or expiry == '' or expiry < datetime.now():
+    if not expiry or expiry < datetime.now():
         request_new_token()
 
     token = get_token()
