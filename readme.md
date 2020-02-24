@@ -28,19 +28,9 @@ Running migrations:
 docker-compose run --rm api python manage.py migrate
 ```
 
-To load some initial mock data run:
-```bash
-docker-compose run --rm api python manage.py loaddata /app/datasets/initial_data.json
-```
-
 To load local *bwv* dumps into the local *bwv* database:
 ```bash
 bwv_db/import.sh </path/to/local/dir/with/dumps>
-```
-
-To dump data into a mock data JSON, run:
-```bash
-docker-compose run --rm api python manage.py dumpdata --format=json users itinerary > REPLACE_WITH_FILE_NAME.json
 ```
 
 Creating a superuser:
@@ -49,11 +39,6 @@ docker-compose run --rm api python manage.py createsuperuser
 ```
 A superuser can be used to access the Django backend
 
-
-Populate with mock/fake data:
-```bash
-docker-compose run --rm api python manage.py populate
-```
 
 Frontend steps when pulling new backend code:
 ```bash
