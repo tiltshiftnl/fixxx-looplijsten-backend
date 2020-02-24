@@ -115,3 +115,24 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['planning'] = get_planning(post)
 
         return render(request, self.template_name, context_data)
+
+
+class ConstantsProjectsViewSet(ViewSet):
+    """
+    Retrieve the projects constants which are used for cases
+    """
+    permission_classes = [IsAuthenticated]
+
+    @safety_lock
+    def list(self, request):
+        return JsonResponse({'constants': PROJECTS})
+
+class ConstantsStadiaViewSet(ViewSet):
+    """
+    Retrieve the stadia constants which are used for cases
+    """
+    permission_classes = [IsAuthenticated]
+
+    @safety_lock
+    def list(self, request):
+        return JsonResponse({'constants': STAGES})

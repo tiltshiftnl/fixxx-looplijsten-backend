@@ -35,7 +35,7 @@ class CaseViewSetTest(APITestCase):
     @patch('api.cases.views.q')
     def test_authenticated_requests_no_case(self, mock_q, mock_bag_api, mock_brk_api):
         """
-        # An authenticated request fails if the requested id's doesn't have a wng_id or adres_id
+        An authenticated request fails if the requested id's doesn't have a wng_id or adres_id
         """
 
         mock_q.get_related_case_ids.return_value = {}
@@ -56,7 +56,7 @@ class CaseViewSetTest(APITestCase):
     @patch('api.cases.views.q')
     def test_authenticated_requests_no_case(self, mock_q, mock_bag_api, mock_brk_api):
         """
-        # An authenticated request succeeds and contains all the necessary data
+        An authenticated request succeeds and contains all the necessary data
         """
 
         mock_q.get_related_case_ids.return_value = {
