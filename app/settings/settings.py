@@ -235,7 +235,7 @@ OIDC_OP_USER_ENDPOINT = os.getenv('OIDC_OP_USER_ENDPOINT',
 OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
                                   'https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/jwks.json')
 
-OIDC_USE_NONCE = False
+OIDC_USE_NONCE = True
 
 LOGGING = {
     'version': 1,

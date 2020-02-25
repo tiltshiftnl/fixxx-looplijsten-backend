@@ -96,8 +96,7 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         them in a dict.
         """
         user_info = super().get_userinfo(access_token, id_token, payload)
-        # NOTE: temporary disable the Nonce here, since it's not supported by KPN Grip yet
-        access_info = self.verify_token(access_token, nonce=None)
+        access_info = self.verify_token(access_token)
         roles = access_info.get(ACCESS_INFO_REALM, {}).get(CLAIMS_ROLES, [])
 
         user_info[CLAIMS_ROLES] = roles
