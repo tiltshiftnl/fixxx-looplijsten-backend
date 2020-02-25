@@ -104,7 +104,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         }
 
         if main_stadium:
-            post["lists"]["primary_stadium"] = main_stadium
+            post["lists"][0]["primary_stadium"] = main_stadium
 
         serializer = WeekListSerializer(data=post)
         is_valid = serializer.is_valid()
