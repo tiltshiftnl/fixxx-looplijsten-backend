@@ -1,3 +1,4 @@
+import json
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views import View
 from django.shortcuts import render
@@ -139,18 +140,43 @@ class ConstantsStadiaViewSet(ViewSet):
         return JsonResponse({'constants': STAGES})
 
 
-class SettingsPlannerViewSet(ViewSet):
+class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     """
     Retrieves the planner settings which are used for generating lists
     """
     permission_classes = [IsAuthenticated]
+    serializer_class = WeekListSerializer
 
     @safety_lock
     def list(self, request):
-        planner_settings = Constance.objects.get(key=settings.CONSTANCE_PLANNER_SETTINGS_KEY)
-        planner_settings = planner_settings.value
+        planner_settings, _ = Constance.objects.get_or_create(key=settings.CONSTANCE_PLANNER_SETTINGS_KEY)
+        settings_data = planner_settings.value
 
-        if not planner_settings:
-            planner_settings = EXAMPLE_PLANNER_SETTINGS
+        if settings_data:
+            # Make sure the string from constance is converted to JSON
+            settings_data = json.loads(settings_data)
+        else:
+            # Set the default value if nothing is set, and store it
+            settings_data = EXAMPLE_PLANNER_SETTINGS
+            planner_settings.value = str(settings_data)
+            planner_settings.save()
 
-        return JsonResponse({'settings': planner_settings})
+        return JsonResponse(settings_data)
+
+    @safety_lock
+    def create(self, request):
+        data = request.data
+        serializer = WeekListSerializer(data=data)
+        is_valid = serializer.is_valid()
+
+        if not is_valid:
+            return JsonResponse({
+                'message': 'Could not validate posted data',
+                'errors': serializer.errors
+            }, status=HttpResponseBadRequest.status_code)
+
+        planner_settings, _ = Constance.objects.get_or_create(key=settings.CONSTANCE_PLANNER_SETTINGS_KEY)
+        planner_settings.value = str(data)
+        planner_settings.save()
+
+        return JsonResponse(data)

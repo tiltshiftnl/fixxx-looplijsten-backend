@@ -92,60 +92,115 @@ STAGES = [
     WEEKEND_BUITENDIENST_ONDERZOEK,
 ]
 
+
 EXAMPLE_PLANNER_SETTINGS = {
-    "opening_date": "2018-01-01",
-    "opening_reasons": [
-        "Zebra",
-        "Woonschip (woonboot)",
-        "Social Media 2019",
-        "Safari 2015",
-        "Safari",
-        "Project Lobith",
-        "Project Jordaan",
-        "Project Andes",
-        "Mystery Guest",
-        "Hotline",
-        "Haarlemmerbuurt",
-        "Digital toezicht Zebra",
-        "Digital toezicht Safari",
-        "Corpo-rico",
-        "Burgwallenproject Oudezijde",
-        "Bed en breakfast 2019"
-    ],
+    "opening_date": "2019-01-01",
+    "opening_reasons": PROJECTS_WITHOUT_SAHARA,
     "lists": [
         {
-            "number_of_lists": 2,
-            "length_of_lists": 6
-        },
-        {
+            "name": "Maandag Ochtend",
             "number_of_lists": 1,
             "length_of_lists": 6
         },
         {
+            "name": "Maandag Middag",
             "number_of_lists": 1,
             "length_of_lists": 6
         },
         {
-            "number_of_lists": 2,
-            "length_of_lists": 5,
+            "name": "Maandag Avond",
+            "number_of_lists": 0,
+            "length_of_lists": 6,
             "primary_stadium": AVONDRONDE,
             "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
         },
         {
+            "name": "Dinsdag Ochtend",
+            "number_of_lists": 1,
+            "length_of_lists": 6
+        },
+        {
+            "name": "Dinsdag Middag",
+            "number_of_lists": 1,
+            "length_of_lists": 6
+        },
+        {
+            "name": "Dinsdag Avond",
+            "number_of_lists": 0,
+            "length_of_lists": 6,
+            "primary_stadium": AVONDRONDE,
+            "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
+        },
+        {
+            "name": "Woensdag Ochtend",
+            "number_of_lists": 1,
+            "length_of_lists": 6
+        },
+        {
+            "name": "Woensdag Middag",
+            "number_of_lists": 1,
+            "length_of_lists": 6
+        },
+        {
+            "name": "Woensdag Avond",
+            "number_of_lists": 0,
+            "length_of_lists": 6,
+            "primary_stadium": AVONDRONDE,
+            "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
+        },
+        {
+            "name": "Donderdag Ochtend",
             "number_of_lists": 2,
-            "length_of_lists": 8,
+            "length_of_lists": 6,
             "primary_stadium": ONDERZOEK_BUITENDIENST,
             "secondary_stadia": [TWEEDE_CONTROLE, DERDE_CONTROLE]
         },
         {
+            "name": "Donderdag Middag",
             "number_of_lists": 2,
-            "length_of_lists": 8,
+            "length_of_lists": 6,
             "primary_stadium": ONDERZOEK_BUITENDIENST,
             "secondary_stadia": [TWEEDE_CONTROLE, DERDE_CONTROLE]
         },
         {
+            "name": "Donderdag Avond",
+            "number_of_lists": 1,
+            "length_of_lists": 6,
+            "primary_stadium": AVONDRONDE,
+            "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
+        },
+        {
+            "name": "Vrijdag Ochtend",
             "number_of_lists": 2,
-            "length_of_lists": 4,
+            "length_of_lists": 6,
+            "primary_stadium": ONDERZOEK_BUITENDIENST,
+            "secondary_stadia": [TWEEDE_CONTROLE, DERDE_CONTROLE]
+        },
+        {
+            "name": "Vrijdag Middag",
+            "number_of_lists": 2,
+            "length_of_lists": 6,
+            "primary_stadium": ONDERZOEK_BUITENDIENST,
+            "secondary_stadia": [TWEEDE_CONTROLE, DERDE_CONTROLE]
+        },
+        {
+            "name": "Vrijdag Avond",
+            "number_of_lists": 0,
+            "length_of_lists": 6,
+            "primary_stadium": AVONDRONDE,
+            "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
+        },
+        {
+            "name": "Zaterdag Weekend",
+            "number_of_lists": 1,
+            "length_of_lists": 12,
+            "primary_stadium": WEEKEND_BUITENDIENST_ONDERZOEK,
+            "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
+        },
+        {
+            "name": "Zondag Weekend",
+            "number_of_lists": 1,
+            "length_of_lists": 12,
             "primary_stadium": WEEKEND_BUITENDIENST_ONDERZOEK,
             "secondary_stadia": [HERCONTROLE, TWEEDE_HERCONTROLE, DERDE_HERCONTROLE]
         }

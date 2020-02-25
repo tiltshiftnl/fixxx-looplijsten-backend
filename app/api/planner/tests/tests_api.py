@@ -119,7 +119,7 @@ class SettingsPlannerViewSet(APITestCase):
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @override_config(PLANNER_SETTINGS={'foo_settings': 'foo'})
+    @override_config(PLANNER_SETTINGS='{"foo_settings": "foo"}')
     def test_settings(self):
         """
         Should return the PLANNER_SETTINGS value
@@ -128,14 +128,12 @@ class SettingsPlannerViewSet(APITestCase):
         client = get_authenticated_client()
         response = client.get(url)
 
-        expected_response = {
-            'settings': {'foo_settings': 'foo'}
-        }
+        expected_response = {"foo_settings": "foo"}
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEquals(response.json(), expected_response)
 
-    @override_config(PLANNER_SETTINGS={})
+    @override_config(PLANNER_SETTINGS="")
     def test_no_settings_saved(self):
         """
         Should return the default example planner settings if PLANNER_SETTINGS aren't set
@@ -144,8 +142,6 @@ class SettingsPlannerViewSet(APITestCase):
         client = get_authenticated_client()
         response = client.get(url)
 
-        expected_response = {
-            'settings': EXAMPLE_PLANNER_SETTINGS
-        }
+        expected_response = EXAMPLE_PLANNER_SETTINGS
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEquals(response.json(), expected_response)
