@@ -2,7 +2,7 @@
 from api.planner.const import STAGES
 from api.planner.queries_planner import get_cases
 from api.planner.clustering import optics_clustering
-from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list
+from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list, sort_by_postal_code
 from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium, filter_out_cases
 
 def get_cases_for_configuration(configuration):
@@ -67,7 +67,7 @@ def get_planning(configuration):
     lists = get_lists_in_original_order(lists)
 
     configuration['lists'] = lists
-    configuration['unplanned_cases'] = cases
+    configuration['unplanned_cases'] = sort_by_postal_code(cases)
 
     return configuration
 

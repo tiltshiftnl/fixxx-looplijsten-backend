@@ -5,7 +5,6 @@ def sort_by_postal_code(cases):
     '''
     Sorts cases based on their postal_code
     '''
-
     return sorted(cases, key=lambda case: case.get('postal_code'))
 
 # TODO: Test this
