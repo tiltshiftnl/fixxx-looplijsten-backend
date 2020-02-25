@@ -4,6 +4,7 @@ from api.planner.queries_planner import get_cases
 from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list, sort_by_postal_code
 from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium, filter_out_cases
+from api.planner.utils import shorten_if_necessary
 
 def get_cases_for_configuration(configuration):
     opening_date = configuration.get('opening_date')
@@ -105,15 +106,16 @@ def get_itineraries(
         # Do a clustering using this subset
         clusters, rest = optics_clustering(cluster_size, unplanned_cases)
 
+        # Select the best list and append it to the itinerary
         if len(clusters) > 0:
-            # Select the best list and append it to the itinerary
-            best_list = get_best_list(clusters, primary_stadium)
-            sorted_best_list = sort_with_stadium(best_list, primary_stadium)
-            shortened_list = sorted_best_list[:length_of_lists]
 
-            itineraries[i] = shortened_list
+            best_list = get_best_list(clusters, primary_stadium)
+            shortened_list = shorten_if_necessary(best_list, length_of_lists)
+            sorted_best_list = sort_with_stadium(shortened_list, primary_stadium)
+
+            itineraries[i] = sorted_best_list
 
             # remove the list from the unplanned cases
-            unplanned_cases = remove_cases_from_list(unplanned_cases, shortened_list)
+            unplanned_cases = remove_cases_from_list(unplanned_cases, itineraries[i])
 
     return itineraries

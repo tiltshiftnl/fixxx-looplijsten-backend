@@ -103,3 +103,32 @@ def filter_cases_with_missing_coordinates(cases):
         return case.get('lat') is not None and case.get('lng')
 
     return list(filter(lambda case: has_missing_coordinates(case), cases))
+
+
+def shorten_if_necessary(cases, length_target):
+    '''
+    Shorten the given list using the length_target as cutoff index
+    Cutoff is increased when two or more cases share the same address
+    '''
+    # Set the initial cutoff index to length_target
+    cutoff_index = length_target
+
+    # Sort by address similarity (street number & street name)
+    sorted_cases = cases.copy()
+    sorted_cases = sorted(sorted_cases, key=lambda case: case.get('street_number'))
+    sorted_cases = sorted(sorted_cases, key=lambda case: case.get('street_name'))
+
+    # Increment the cutoff if two following items share the same adress
+    for index, case in enumerate(sorted_cases):
+        if index + 1 == len(sorted_cases):
+            break
+
+        next_case = sorted_cases[index + 1]
+        same_street = case.get('street_name') == next_case.get('street_name')
+        same_number = case.get('street_number') == next_case.get('street_number')
+
+        if same_street and same_number:
+            cutoff_index += 1
+
+    shortened_list = sorted_cases[:cutoff_index]
+    return shortened_list

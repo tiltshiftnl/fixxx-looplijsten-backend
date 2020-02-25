@@ -6,8 +6,10 @@ import numpy as np
 from api.planner.utils import sort_by_postal_code, filter_cases, get_count, get_best_list
 from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances
 from api.planner.utils import sort_with_stadium, filter_cases_with_missing_coordinates, filter_out_cases
+from api.planner.utils import shorten_if_necessary
 from api.planner.const import BED_AND_BREAKFAST, HOTLINE, SAFARI
 
+# TODO: Split up in multiple classes
 class UtilsTests(TestCase):
     def test_sort_by_postal_code(self):
         case_a = {'postal_code': '1088XX'}
@@ -283,5 +285,61 @@ class UtilsTests(TestCase):
         cases = [case_a, case_b, case_c]
         result = filter_out_cases(cases, [SAFARI])
         expected = [case_a, case_b]
+
+        self.assertEquals(result, expected)
+
+    def test_shorten_if_necessary_normal(self):
+        '''
+        Does a normal shortening
+        '''
+        case_a = {'street_name': 'foo street A', 'street_number': 11}
+        case_b = {'street_name': 'foo street B', 'street_number': 12}
+        case_c = {'street_name': 'foo street C', 'street_number': 13}
+        cases = [case_a, case_b, case_c]
+
+        result = shorten_if_necessary(cases, 2)
+        expected = [case_a, case_b]
+
+        self.assertEquals(result, expected)
+
+    def test_shorten_if_necessary_extra(self):
+        '''
+        Doesn't shorten because of grouped addresses
+        '''
+        case_a = {'street_name': 'foo street A', 'street_number': 11}
+        case_b = {'street_name': 'foo street B', 'street_number': 12}
+        case_c = {'street_name': 'foo street C', 'street_number': 13}
+        cases = [case_c, case_a, case_b, case_c, case_c, case_c]
+
+        result = shorten_if_necessary(cases, 3)
+        expected = [case_a, case_b, case_c, case_c, case_c, case_c]
+
+        self.assertEquals(result, expected)
+
+    def test_shorten_if_necessary_multiple_extra(self):
+        '''
+        Doesn't shorten because of (multiple) grouped addresses
+        '''
+        case_a = {'street_name': 'foo street A', 'street_number': 11}
+        case_b = {'street_name': 'foo street B', 'street_number': 12}
+        case_c = {'street_name': 'foo street C', 'street_number': 13}
+        cases = [case_c, case_a, case_b, case_a, case_c, case_c, case_c]
+
+        result = shorten_if_necessary(cases, 6)
+        expected = [case_a, case_a, case_b, case_c, case_c, case_c, case_c]
+
+        self.assertEquals(result, expected)
+
+    def test_shorten_if_necessary_exceeding_length(self):
+        '''
+        Doesn't shorten because length_target exceeds the list length
+        '''
+        case_a = {'street_name': 'foo street A', 'street_number': 11}
+        case_b = {'street_name': 'foo street B', 'street_number': 12}
+        case_c = {'street_name': 'foo street C', 'street_number': 13}
+        cases = [case_c, case_a, case_b, case_c, case_c, case_c]
+
+        result = shorten_if_necessary(cases, 8)
+        expected = [case_a, case_b, case_c, case_c, case_c, case_c]
 
         self.assertEquals(result, expected)
