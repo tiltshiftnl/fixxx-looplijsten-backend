@@ -7,8 +7,7 @@ def sort_by_postal_code(cases):
     '''
     return sorted(cases, key=lambda case: case.get('postal_code'))
 
-# TODO: Test this
-def filter_out_cases(cases, stadia):
+def filter_out_cases(cases, stadia=[]):
     '''
     Returns a list of cases without the given stadia
     '''

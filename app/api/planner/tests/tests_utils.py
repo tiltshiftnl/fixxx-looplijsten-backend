@@ -5,7 +5,7 @@ from django.test import TestCase
 import numpy as np
 from api.planner.utils import sort_by_postal_code, filter_cases, get_count, get_best_list
 from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances
-from api.planner.utils import sort_with_stadium, filter_cases_with_missing_coordinates
+from api.planner.utils import sort_with_stadium, filter_cases_with_missing_coordinates, filter_out_cases
 from api.planner.const import BED_AND_BREAKFAST, HOTLINE, SAFARI
 
 class UtilsTests(TestCase):
@@ -249,3 +249,39 @@ class UtilsTests(TestCase):
 
         filtered_cases = filter_cases_with_missing_coordinates(cases)
         self.assertEquals(filtered_cases, [valid_case])
+
+    def test_filter_out_cases(self):
+        case_a = {'stadium': BED_AND_BREAKFAST}
+        case_b = {'stadium': HOTLINE}
+        case_c = {'stadium': SAFARI}
+
+        cases = [case_a, case_b, case_c]
+        result = filter_out_cases(cases, [BED_AND_BREAKFAST, HOTLINE])
+        expected = [case_c]
+
+        self.assertEquals(result, expected)
+
+    def test_filter_out_cases_empty(self):
+        result = filter_out_cases([], [BED_AND_BREAKFAST, HOTLINE])
+        self.assertEquals(result, [])
+
+    def test_filter_out_cases_no_stadia(self):
+        case_a = {'stadium': BED_AND_BREAKFAST}
+        case_b = {'stadium': HOTLINE}
+        case_c = {'stadium': SAFARI}
+
+        cases = [case_a, case_b, case_c]
+        result = filter_out_cases(cases, [])
+
+        self.assertEquals(result, cases)
+
+    def test_filter_out_cases_one_stadium(self):
+        case_a = {'stadium': BED_AND_BREAKFAST}
+        case_b = {'stadium': HOTLINE}
+        case_c = {'stadium': SAFARI}
+
+        cases = [case_a, case_b, case_c]
+        result = filter_out_cases(cases, [SAFARI])
+        expected = [case_a, case_b]
+
+        self.assertEquals(result, expected)
