@@ -96,9 +96,11 @@ def calculate_distances(center, cases):
 
     return list(distances.flatten())
 
-# TODO: Write test for this
 def filter_cases_with_missing_coordinates(cases):
+    '''
+    Cases with polluted data (missing coordinates) are removed
+    '''
     def has_missing_coordinates(case):
-        return case['lat'] is not None and case['lng']
+        return case.get('lat') is not None and case.get('lng')
 
     return list(filter(lambda case: has_missing_coordinates(case), cases))

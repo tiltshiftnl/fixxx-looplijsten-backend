@@ -4,7 +4,8 @@ Tests for the health views
 from django.test import TestCase
 import numpy as np
 from api.planner.utils import sort_by_postal_code, filter_cases, get_count, get_best_list
-from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances, sort_with_stadium
+from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances
+from api.planner.utils import sort_with_stadium, filter_cases_with_missing_coordinates
 from api.planner.const import BED_AND_BREAKFAST, HOTLINE, SAFARI
 
 class UtilsTests(TestCase):
@@ -229,3 +230,22 @@ class UtilsTests(TestCase):
         results = sort_with_stadium(cases, None)
 
         self.assertEquals(cases, results)
+
+    def test_filter_cases_with_missing_coordinates(self):
+        '''
+        Should filter out cases with missing coordinates
+        '''
+        valid_case = {'stadium': HOTLINE, 'lat': 12, 'lng': -69}
+        cases = [
+            {'stadium': BED_AND_BREAKFAST},
+            {'stadium': HOTLINE, 'lat': 12},
+            {'stadium': BED_AND_BREAKFAST, 'lng': -69},
+            {'stadium': HOTLINE, 'lat': 12},
+            {'stadium': HOTLINE, 'lat': None, 'lng': -69},
+            {'stadium': BED_AND_BREAKFAST, 'lat': 12, 'lng': None},
+            {'stadium': BED_AND_BREAKFAST, 'lat': None, 'lng': None},
+            valid_case,
+        ]
+
+        filtered_cases = filter_cases_with_missing_coordinates(cases)
+        self.assertEquals(filtered_cases, [valid_case])
