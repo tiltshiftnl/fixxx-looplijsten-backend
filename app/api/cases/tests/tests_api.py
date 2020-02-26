@@ -85,6 +85,9 @@ class CaseViewSetTest(APITestCase):
         FOO_BWV_TEMP = 'FOO_BWV_TEMP'
         mock_q.get_bwv_tmp = Mock(return_value=FOO_BWV_TEMP)
 
+        FOO_STATEMENTS = 'FOO_STATEMENTS'
+        mock_q.get_statements = Mock(return_value=FOO_STATEMENTS)
+
         FOO_RENTAL_INFORMATION = 'FOO_RENTAL_INFORMATION'
         mock_q.get_rental_information = Mock(return_value=FOO_RENTAL_INFORMATION)
 
@@ -111,6 +114,7 @@ class CaseViewSetTest(APITestCase):
             'import_adres': FOO_IMPORT_ADRES,
             'import_stadia': FOO_IMPORT_STADIA,
             'bwv_tmp': FOO_BWV_TEMP,
+            'statements': FOO_STATEMENTS,
             'vakantie_verhuur': FOO_RENTAL_INFORMATION,
             'bag_data': FOO_BAG_DATA,
             'brk_data': FOO_BRK_DATA,
