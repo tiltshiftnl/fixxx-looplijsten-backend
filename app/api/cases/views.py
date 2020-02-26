@@ -39,6 +39,7 @@ class CaseViewSet(ViewSet):
             'import_adres': q.get_import_adres(wng_id),
             'import_stadia': q.get_import_stadia(case_id),
             'bwv_tmp': q.get_bwv_tmp(case_id, adres_id),
+            'statements': q.get_case_statements(case_id),
             'vakantie_verhuur': q.get_rental_information(wng_id),
             'bag_data': bag_data,
             'brk_data': brk_api.get_brk_data(bag_id),

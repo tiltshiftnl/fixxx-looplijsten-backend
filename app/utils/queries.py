@@ -1,5 +1,6 @@
 from utils.date_helpers import get_days_in_range
 from utils.query_helpers import do_query, return_first_or_empty
+from utils.statement_helpers import parse_statement
 
 def get_search_results(postal_code, street_number, suffix):
     suffix = suffix.replace(' ', '')
@@ -231,12 +232,24 @@ def get_case_count(adres_id):
     executed_query = do_query(query)
     return return_first_or_empty(executed_query)
 
+def get_case_statements(case_id):
+    query = """
+            SELECT
+              mededelingen AS statements
+            FROM import_wvs WHERE zaak_id='{}'
+            """.format(case_id)
+
+    executed_query = do_query(query)
+    raw_statements = return_first_or_empty(executed_query).get('statements')
+    statements = parse_statement(raw_statements)
+
+    return statements
+
 def get_case_basics(case_id):
     query = """
             SELECT
               wvs_nr as case_number,
-              beh_oms as openings_reden,
-              mededelingen AS statements
+              beh_oms as openings_reden
             FROM import_wvs WHERE zaak_id='{}'
             """.format(case_id)
 
