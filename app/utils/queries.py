@@ -241,8 +241,8 @@ def get_statements(case_id):
 
     executed_query = do_query(query)
     raw_statements = return_first_or_empty(executed_query).get('statements')
-    statements = parse_statement(raw_statements)
 
+    statements = parse_statement(raw_statements) if raw_statements else []
     return statements
 
 def get_case_basics(case_id):
