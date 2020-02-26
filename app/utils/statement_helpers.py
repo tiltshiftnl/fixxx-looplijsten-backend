@@ -27,14 +27,15 @@ def parse_statement(raw_statements):
     Parses a raw statements string and normalizes the date
     '''
     DELIMITER = '[SPLIT]'
-    raw_statements = raw_statements.replace('(', DELIMITER)
-    raw_statements = raw_statements.replace('): ', DELIMITER)
     split_statements = raw_statements.split('\n')
     split_statements = split_statements[:-1]
 
     statements = []
 
     for text_statement in split_statements:
+        text_statement = text_statement.replace('(', DELIMITER, 1)
+        text_statement = text_statement.replace('): ', DELIMITER, 1)
+
         user_code, raw_date, text = text_statement.split(DELIMITER)
         user = queries.get_toezichthouder_name(user_code)
         date = parse_date(raw_date)
