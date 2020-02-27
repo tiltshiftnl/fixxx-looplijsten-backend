@@ -14,6 +14,7 @@ from api.planner.serializers import WeekListSerializer
 from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA, ONDERZOEK_BUITENDIENST
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 from api.planner.algorithm import get_planning
+from api.planner.optimization import linear_optimization
 
 class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
     """
@@ -57,7 +58,8 @@ class AlgorithmView(LoginRequiredMixin, View):
             'selected_exclude_stadia': [],
             'number_of_lists': 2,
             'length_of_lists': 8,
-            'maps_key': key.value
+            'maps_key': key.value,
+            'optimization': linear_optimization()
         }
 
     @safety_lock
