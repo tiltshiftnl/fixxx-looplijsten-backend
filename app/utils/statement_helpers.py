@@ -1,5 +1,8 @@
+import logging
 from datetime import datetime
 from utils import queries
+
+logger = logging.getLogger(__name__)
 # TODO: Tests for this
 '''
 Helper function to parse and process BWV 'mededelingen' (statements) text
@@ -29,6 +32,7 @@ def parse_statement(raw_statements):
     DELIMITER = '[SPLIT]'
     split_statements = raw_statements.split('\n')
     split_statements = split_statements[:-1]
+    split_statements = list(filter(lambda statement: not statement == '', split_statements))
 
     statements = []
 
@@ -36,16 +40,19 @@ def parse_statement(raw_statements):
         text_statement = text_statement.replace('(', DELIMITER, 1)
         text_statement = text_statement.replace('): ', DELIMITER, 1)
 
-        user_code, raw_date, text = text_statement.split(DELIMITER)
-        user = queries.get_toezichthouder_name(user_code)
-        date = parse_date(raw_date)
+        try:
+            user_code, raw_date, text = text_statement.split(DELIMITER)
+            user = queries.get_toezichthouder_name(user_code)
+            date = parse_date(raw_date)
 
-        statement = {
-            'user': user,
-            'date': date,
-            'statement': text
-        }
+            statement = {
+                'user': user,
+                'date': date,
+                'statement': text
+            }
 
-        statements.append(statement)
+            statements.append(statement)
+        except Exception as e:
+            logger.error('Could not parse statement'.format(str(e)))
 
     return statements
