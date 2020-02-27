@@ -14,10 +14,10 @@ def query_to_list(cursor):
 def __get_bwv_cursor__():
     return connections[settings.BWV_DATABASE_NAME].cursor()
 
-def do_query(query):
+def do_query(query, args=None):
     try:
         cursor = __get_bwv_cursor__()
-        cursor.execute(query)
+        cursor.execute(query, args)
         return query_to_list(cursor)
 
     except Exception as e:

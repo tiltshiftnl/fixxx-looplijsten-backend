@@ -39,10 +39,26 @@ class DoQueryTest(TestCase):
         mock_get_bwv_cursor.return_value = bwv_cursor
 
         QUERY = 'SELECT * FROM table_name'
+        args = {'foo': 'foo'}
+        do_query(QUERY, args)
+
+        mock_query_to_list.assert_called()
+        bwv_cursor.execute.assert_called_with(QUERY, args)
+
+    @patch('utils.query_helpers.__get_bwv_cursor__')
+    @patch('utils.query_helpers.query_to_list')
+    def test_do_query_no_args(self, mock_query_to_list, mock_get_bwv_cursor):
+        '''
+        Should execute the database cursor using given query when no args arge given
+        '''
+        bwv_cursor = Mock()
+        mock_get_bwv_cursor.return_value = bwv_cursor
+
+        QUERY = 'SELECT * FROM table_name'
         do_query(QUERY)
 
         mock_query_to_list.assert_called()
-        bwv_cursor.execute.assert_called_with(QUERY)
+        bwv_cursor.execute.assert_called_with(QUERY, None)
 
     @patch('utils.query_helpers.__get_bwv_cursor__')
     def test_do_query_fails(self, mock_get_bwv_cursor):
