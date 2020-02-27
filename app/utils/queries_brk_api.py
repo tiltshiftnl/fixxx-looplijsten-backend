@@ -69,6 +69,9 @@ def get_brk_request_headers():
     """
     expiry = get_expiry()
 
+    if expiry and type(expiry) is str:
+        expiry = datetime.fromisoformat(expiry)
+
     if not expiry or expiry < datetime.now():
         request_new_token()
 
