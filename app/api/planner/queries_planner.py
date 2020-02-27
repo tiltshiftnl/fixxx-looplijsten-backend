@@ -1,12 +1,5 @@
 from utils.query_helpers import do_query
 
-def to_query_list(list):
-    '''
-    Creates a string from a list that can be used in an SQL query
-    '''
-    query_string = str(list)[1:-1]
-    return query_string
-
 
 def get_eligible_stadia(stages):
     '''
@@ -22,10 +15,11 @@ def get_eligible_stadia(stages):
             FROM import_stadia
             WHERE einddatum is Null
             AND peildatum < NOW()
-            AND sta_oms IN ({})
-            """.format(stages)
+            AND sta_oms IN %(stages)s
+            """
 
-    stadia = do_query(query)
+    args = {'stages': tuple(stages)}
+    stadia = do_query(query, args)
 
     # Parses the case_id from the stadia_id and maps it in dictionary to easily access the stadia
     stadia_dictionary = {}
@@ -38,7 +32,7 @@ def get_eligible_stadia(stages):
 
     return stadia_dictionary
 
-def get_eligible_cases(starting_date, projects_query_list):
+def get_eligible_cases(starting_date, projects):
     '''
     Gets cases which are eligible for planning
     '''
@@ -57,11 +51,16 @@ def get_eligible_cases(starting_date, projects_query_list):
             FROM import_wvs
             INNER JOIN
               import_adres ON import_adres.adres_id = import_wvs.adres_id
-            WHERE begindatum > '{}'
-            AND beh_oms IN ({})
-            """.format(starting_date, projects_query_list)
+            WHERE begindatum > %(starting_date)s
+            AND beh_oms IN %(projects)s
+            """
 
-    cases = do_query(query)
+    args = {
+        'starting_date': starting_date,
+        'projects': tuple(projects)
+    }
+    cases = do_query(query, args)
+
     return cases
 
 def match_cases_to_stages(cases, stages):
@@ -81,13 +80,10 @@ def match_cases_to_stages(cases, stages):
     return filtered_cases
 
 def get_cases(starting_date, projects, stages):
-    projects_query_list = to_query_list(projects)
-    stages_query_list = to_query_list(stages)
-
     # Due to a flaw in the BWV database design, there is no direct relationship
     # between the stadia and the cases. That's why two queries and matching are needed
-    eligible_cases = get_eligible_cases(starting_date, projects_query_list)
-    eligible_stages = get_eligible_stadia(stages_query_list)
+    eligible_cases = get_eligible_cases(starting_date, projects)
+    eligible_stages = get_eligible_stadia(stages)
     matched_cases = match_cases_to_stages(eligible_cases, eligible_stages)
 
     return matched_cases

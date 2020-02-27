@@ -2,11 +2,14 @@ from utils.date_helpers import get_days_in_range
 from utils.query_helpers import do_query, return_first_or_empty
 from utils.statement_helpers import parse_statement
 
+
 def get_search_results(postal_code, street_number, suffix):
+
     suffix = suffix.replace(' ', '')
     suffix_query = ''
+
     if suffix:
-        suffix_query = "WHERE LOWER(suffix) LIKE LOWER('{}%')".format(suffix)
+        suffix_query = "WHERE LOWER(suffix) LIKE LOWER(%(suffix)s)"
 
     query = """
             SELECT
@@ -25,21 +28,28 @@ def get_search_results(postal_code, street_number, suffix):
                 AND
                   import_wvs.afs_code is NULL
                 AND
-                  LOWER(postcode) = LOWER('{}')
+                  LOWER(postcode) = LOWER(%(postal_code)s)
                 AND
-                  hsnr = '{}'
+                  hsnr = %(street_number)s
               )
             AS
               case_preselect
-            {}
-            """.format(postal_code, street_number, suffix_query)
+            """ + suffix_query
 
-    case_ids = do_query(query)
+    args = {
+        'postal_code': postal_code,
+        # % is added here because of the LIKE sql check
+        'suffix': suffix + '%',
+        'street_number': street_number,
+    }
+
+    case_ids = do_query(query, args)
     case_ids = [case_id['case_id'] for case_id in case_ids]
     cases = [get_case(case_id) for case_id in case_ids]
     cases = [case for case in cases if bool(case)]
 
     return cases
+
 
 def get_related_case_ids(case_id):
     query = """
@@ -48,30 +58,37 @@ def get_related_case_ids(case_id):
               import_adres.wng_id
             FROM import_adres INNER JOIN import_stadia ON import_adres.adres_id = import_stadia.adres_id
             INNER JOIN import_wvs ON import_stadia.adres_id = import_wvs.adres_id
-            AND zaak_id = '{}'
-              """.format(case_id)
+            AND zaak_id = %(case_id)s
+              """
 
-    executed_query = do_query(query)
+    args = {'case_id': case_id}
+    executed_query = do_query(query, args)
+
     return return_first_or_empty(executed_query)
 
-def get_related_cases(adres_id):
+
+def get_related_cases(address_id):
     query = """
             SELECT wvs_nr as case_number, zaak_id as case_id, beh_oms AS case_reason
             FROM import_wvs
-            WHERE adres_id = '{}'
+            WHERE adres_id = %(address_id)s
             AND afs_code is Null
-            """.format(adres_id)
-    executed_query = do_query(query)
+            """
+
+    args = {'address_id': address_id}
+    executed_query = do_query(query, args)
 
     return executed_query
 
-def get_toezichthouder_name(toezichthouder_code):
-    if toezichthouder_code:
-        query = """
-          SELECT naam FROM bwv_medewerkers where code = '{}'
-          """.format(toezichthouder_code)
 
-        executed_query = do_query(query)
+def get_toezichthouder_name(code):
+    if code:
+        query = """
+                SELECT naam FROM bwv_medewerkers where code = %(code)s
+                """
+
+        args = {'code': code}
+        executed_query = do_query(query, args)
         item = return_first_or_empty(executed_query)
 
         return item.get('naam', None)
@@ -89,11 +106,12 @@ def get_bwv_hotline_bevinding(wng_id):
               hit,
               opmerking,
               volgnr_bevinding
-            FROM bwv_hotline_bevinding WHERE wng_id = '{}'
+            FROM bwv_hotline_bevinding WHERE wng_id = %(wng_id)s
             ORDER BY volgnr_bevinding ASC
-            """.format(wng_id)
+            """
 
-    results = do_query(query)
+    args = {'wng_id': wng_id}
+    results = do_query(query, args)
 
     # Adds the user's names to the result data
     for result in results:
@@ -105,6 +123,7 @@ def get_bwv_hotline_bevinding(wng_id):
 
     return results
 
+
 def get_bwv_hotline_melding(wng_id):
     query = """
             SELECT
@@ -114,13 +133,15 @@ def get_bwv_hotline_melding(wng_id):
               melder_emailadres,
               melder_telnr,
               situatie_schets
-            FROM bwv_hotline_melding WHERE wng_id = '{}'
+            FROM bwv_hotline_melding WHERE wng_id = %(wng_id)s
             ORDER BY melding_datum ASC
-            """.format(wng_id)
+            """
 
-    return do_query(query)
+    args = {'wng_id': wng_id}
+    return do_query(query, args)
 
-def get_bwv_personen(adres_id):
+
+def get_bwv_personen(address_id):
     query = """
             SELECT
               naam,
@@ -132,12 +153,14 @@ def get_bwv_personen(adres_id):
             FROM bwv_personen_hist
             INNER JOIN bwv_personen
               ON bwv_personen.id = bwv_personen_hist.pen_id
-              AND ads_id = '{}'
+              AND ads_id = %(address_id)s
               AND bwv_personen_hist.vertrekdatum_adres is Null
             ORDER BY vestigingsdatum_adres DESC
-            """.format(adres_id)
+            """
 
-    return do_query(query)
+    args = {'address_id': address_id}
+    return do_query(query, args)
+
 
 def get_import_adres(wng_id):
     query = """
@@ -150,11 +173,14 @@ def get_import_adres(wng_id):
               sbw_omschr,
               kmrs,
               landelijk_bag
-            FROM import_adres WHERE wng_id = '{}'
-            """.format(wng_id)
+            FROM import_adres WHERE wng_id = %(wng_id)s
+            """
 
-    executed_query = do_query(query)
+    args = {'wng_id': wng_id}
+    executed_query = do_query(query, args)
+
     return return_first_or_empty(executed_query)
+
 
 def get_import_stadia(case_id):
     query = """
@@ -166,11 +192,13 @@ def get_import_stadia(case_id):
               sta_nr
             FROM
               import_stadia
-            WHERE stadia_id LIKE '{}_%'
+            WHERE stadia_id LIKE %(case_id)s
             ORDER BY sta_nr DESC
           """.format(case_id)
 
-    all_stadia = do_query(query)
+    # Adds the _% to support the LIKE query
+    args = {'case_id': case_id + '_%'}
+    all_stadia = do_query(query, args)
 
     # Make sure all the open stadia are first in the list
     open_stadia = [stadia for stadia in all_stadia if stadia['einddatum'] is None]
@@ -198,62 +226,78 @@ def get_case(case_id):
             INNER JOIN
               import_stadia ON import_wvs.adres_id = import_stadia.adres_id
             AND
-              stadia_id LIKE '{}_%'
-            AND import_wvs.zaak_id = '{}'
+              stadia_id LIKE %(case_id_like)s
+            AND import_wvs.zaak_id = %(case_id)s
             ORDER BY
               import_stadia.einddatum DESC, sta_nr DESC
             LIMIT 1
-            """.format(case_id, case_id)
+            """
 
-    executed_query = do_query(query)
+    args = {
+        'case_id_like': case_id + '_%',
+        'case_id': case_id
+    }
+    executed_query = do_query(query, args)
+
     return return_first_or_empty(executed_query)
 
-def get_open_cases(adres_id):
+
+def get_open_cases(address_id):
     # Note: Our current bwv dump doesn't export the complete history of cases ever
     # So this might not always be accurate (we'll have to check)
     query = """
             SELECT
               COUNT(adres_id) as num_open_cases
             FROM import_wvs
-            WHERE adres_id='{}' AND afs_code is NULL
-            """.format(adres_id)
+            WHERE adres_id=%(address_id)s AND afs_code is NULL
+            """
 
-    executed_query = do_query(query)
+    args = {'address_id': address_id}
+    executed_query = do_query(query, args)
+
     return return_first_or_empty(executed_query)
 
-def get_case_count(adres_id):
+
+def get_case_count(address_id):
     query = """
               SELECT
                 MAX(wvs_nr) as num_cases
               FROM import_wvs
-              WHERE adres_id='{}'
-            """.format(adres_id)
+              WHERE adres_id=%(address_id)s
+            """
 
-    executed_query = do_query(query)
+    args = {'address_id': address_id}
+    executed_query = do_query(query, args)
     return return_first_or_empty(executed_query)
+
 
 def get_statements(case_id):
     query = """
             SELECT
               mededelingen AS statements
-            FROM import_wvs WHERE zaak_id='{}'
-            """.format(case_id)
+            FROM import_wvs WHERE zaak_id=%(case_id)s
+            """
 
-    executed_query = do_query(query)
+    args = {'case_id': case_id}
+    executed_query = do_query(query, args)
     raw_statements = return_first_or_empty(executed_query).get('statements')
 
     statements = parse_statement(raw_statements) if raw_statements else []
+
     return statements
+
 
 def get_case_basics(case_id):
     query = """
             SELECT
               wvs_nr as case_number,
               beh_oms as openings_reden
-            FROM import_wvs WHERE zaak_id='{}'
-            """.format(case_id)
+            FROM import_wvs WHERE zaak_id=%(case_id)s
+            """
 
-    executed_query = do_query(query)
+    args = {'case_id': case_id}
+    executed_query = do_query(query, args)
+
     return return_first_or_empty(executed_query)
 
 def get_bwv_tmp(case_id, adres_id):
@@ -285,14 +329,16 @@ def get_bwv_vakantieverhuur(wng_id):
             WHERE
               date_part('year', datum_einde_verhuur) = date_part('year', CURRENT_DATE)
             AND
-              wng_id = '{}'
+              wng_id = %(wng_id)s
             AND
               annuleer_date IS NULL
             ORDER BY check_in
-            """.format(wng_id)
+            """
 
-    query_results = do_query(query)
+    args = {'wng_id': wng_id}
+    query_results = do_query(query, args)
     get_rented_days(query_results)
+
     return query_results
 
 
@@ -304,11 +350,14 @@ def get_shortstay_license(wng_id):
     query = """
             SELECT shortstay
             FROM bwv_woningen
-            WHERE id='{}'
-            """.format(wng_id)
+            WHERE id=%(wng_id)s
+            """
 
-    executed_query = do_query(query)
+    args = {'wng_id': wng_id}
+    executed_query = do_query(query, args)
+
     return return_first_or_empty(executed_query)
+
 
 def get_is_bnb_declared(wng_id):
     """
@@ -318,11 +367,14 @@ def get_is_bnb_declared(wng_id):
     query = """
             SELECT benb_melding as is_bnb_declared
             FROM bwv_woningen
-            WHERE id='{}'
-            """.format(wng_id)
+            WHERE id=%(wng_id)s
+            """
 
-    executed_query = do_query(query)
+    args = {'wng_id': wng_id}
+    executed_query = do_query(query, args)
+
     return return_first_or_empty(executed_query)
+
 
 def get_rental_information(wng_id):
     notified_rentals = get_bwv_vakantieverhuur(wng_id)
