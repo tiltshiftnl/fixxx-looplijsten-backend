@@ -6,10 +6,7 @@ from rest_framework.routers import DefaultRouter
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
 from api.cases.views import CaseViewSet, CaseSearchViewSet
@@ -29,52 +26,44 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-router = DefaultRouter()
-router.register(r'itineraries', ItineraryViewSet, basename='itinerary')
-router.register(r'itineraries/items', ItineraryItemViewSet, basename='itinerary-item')
-router.register(r'cases', CaseViewSet, basename='case')
-router.register(r'search', CaseSearchViewSet, basename='search')
-router.register(r'notes', NoteViewSet, basename='notes')
-router.register(r'generate-weekly-itineraries', GenerateWeeklyItinerariesViewset,
-                basename='generate-weekly-itineraries')
-router.register(r'constants/projects', ConstantsProjectsViewSet, basename='constants-projects')
-router.register(r'constants/stadia', ConstantsStadiaViewSet, basename='constants-stadia')
-router.register(r'settings/planner', SettingsPlannerViewSet, basename='settings-planner')
-
-# Temporary prefix for production environment.
-# Will be removed once we have all domains and subdomains ready.
-prefix = 'api/' if settings.ENVIRONMENT == 'production' else ''
+api_router = DefaultRouter()
+api_router.register(r'itineraries', ItineraryViewSet, basename='itinerary')
+api_router.register(r'itineraries/items', ItineraryItemViewSet, basename='itinerary-item')
+api_router.register(r'cases', CaseViewSet, basename='case')
+api_router.register(r'search', CaseSearchViewSet, basename='search')
+api_router.register(r'notes', NoteViewSet, basename='notes')
+api_router.register(r'generate-weekly-itineraries', GenerateWeeklyItinerariesViewset,
+                    basename='generate-weekly-itineraries')
+api_router.register(r'constants/projects', ConstantsProjectsViewSet, basename='constants-projects')
+api_router.register(r'constants/stadia', ConstantsStadiaViewSet, basename='constants-stadia')
+api_router.register(r'settings/planner', SettingsPlannerViewSet, basename='settings-planner')
 
 urlpatterns = [
     # Admin environment
-    path(prefix + 'looplijsten/admin/', admin.site.urls),
-    path(prefix + 'looplijsten/algorithm/', AlgorithmView.as_view(), name='algorithm'),
-
+    path('admin/', admin.site.urls),
+    path('algorithm/', AlgorithmView.as_view(), name='algorithm'),
 
     # Health check url
     path('looplijsten/health', health_default, name='health-default'),
     path('looplijsten/health_bwv', health_bwv, name='health-bwv'),
 
+    # OIDC helper urls
+    path('oidc/', include('mozilla_django_oidc.urls')),
+
     # The API for requesting data
-    path(prefix + 'looplijsten/api/v1/', include(router.urls)),
+    path('api/v1/', include(api_router.urls)),
 
     # Authentication endpoints for exchanging user credentials for a token
-    path(prefix + 'looplijsten/credentials-authenticate/',
+    path('api/v1/credentials-authenticate/',
          TokenObtainPairView.as_view(), name='credentials-authenticate'),
 
     # Authentication endpoint for exchanging an OIDC code for a token
-    path(prefix + 'looplijsten/oidc-authenticate/', ObtainAuthTokenOIDC.as_view(), name='oidc-authenticate'),
-
-    # Endpoint for retrieving a fresh new token
-    path(prefix + 'looplijsten/token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
-
-    # OIDC helper urls
-    path(prefix + 'looplijsten/oidc/', include('mozilla_django_oidc.urls')),
+    path('api/v1/oidc-authenticate/', ObtainAuthTokenOIDC.as_view(), name='oidc-authenticate'),
 
     # Endpoint for checking if user is authenticated
-    path(prefix + 'looplijsten/is-authenticated/', IsAuthenticatedView.as_view(), name='is-authenticated'),
+    path('api/v1/is-authenticated/', IsAuthenticatedView.as_view(), name='is-authenticated'),
 
     # Swagger/OpenAPI documentation
-    path(prefix + 'looplijsten/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/v1/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

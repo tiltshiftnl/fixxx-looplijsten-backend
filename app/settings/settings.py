@@ -98,9 +98,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'development')
 
-# Temporary prefix for production environment.
-# Will be removed once we have all domains and subdomains ready.
-STATIC_URL = '/api/looplijsten/static/' if ENVIRONMENT == 'production' else '/looplijsten/static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.normpath(join(os.path.dirname(BASE_DIR), 'static'))
 
 MEDIA_URL = '/media/'
@@ -262,7 +260,7 @@ SIMPLE_JWT = {
 }
 
 ACCESS_LOG_EXEMPTIONS = (
-    '/looplijsten/health',
+    '/health',
 )
 
 # BRK Access request settings

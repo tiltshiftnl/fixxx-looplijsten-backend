@@ -44,7 +44,7 @@ class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
 
 
 class AlgorithmView(LoginRequiredMixin, View):
-    login_url = '/looplijsten/admin/login/'
+    login_url = '/admin/login/'
     template_name = 'body.html'
 
     def get_context_data(self):
