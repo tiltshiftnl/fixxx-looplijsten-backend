@@ -64,6 +64,7 @@ pipeline {
       }
       steps {
         push_image("acceptance")
+        push_image("koenwashere")
         deploy("acceptance")
       }
     }
