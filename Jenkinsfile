@@ -19,7 +19,7 @@ def deploy(environment) {
 pipeline {
   agent any
   environment {
-    DOCKER_IMAGE = "fixxx/looplijsten-backend"
+    DOCKER_IMAGE = "fixxx/looplijsten"
     APP = "looplijsten-api"
     DOCKER_REGISTRY = "repo.secure.amsterdam.nl"
   }
@@ -64,7 +64,6 @@ pipeline {
       }
       steps {
         push_image("acceptance")
-        push_image("koenwashere")
         deploy("acceptance")
       }
     }
