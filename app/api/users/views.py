@@ -28,6 +28,7 @@ class ObtainAuthTokenOIDC(APIView):
         code = request.data.get('code', None)
 
         if not code:
+            LOGGER.error('Could not authenticate: No authentication code found')
             return HttpResponseBadRequest('No authentication code found')
 
         authentication_backend = OIDCAuthenticationBackend()
@@ -35,7 +36,7 @@ class ObtainAuthTokenOIDC(APIView):
         try:
             user = authentication_backend.authenticate(request)
         except Exception as e:
-            LOGGER.error('Could not authenticate: {}'.format(str(e)))
+            LOGGER.error('Could not authenticate: {} {}'.format(str(e), request.META['HTTP_REFERER']))
             return HttpResponseBadRequest('Could not authenticate')
 
         refresh = RefreshToken.for_user(user)
