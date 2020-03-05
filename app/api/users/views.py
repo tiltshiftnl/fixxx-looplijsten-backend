@@ -39,7 +39,11 @@ class ObtainAuthTokenOIDC(APIView):
             LOGGER.error('Could not authenticate: {}'.format(str(e)))
             return HttpResponseBadRequest('Could not authenticate')
 
-        refresh = RefreshToken.for_user(user)
+        try:
+            refresh = RefreshToken.for_user(user)
+        except Exception as e:
+            LOGGER.error('Could not refresh token: {}'.format(str(e)))
+            return HttpResponseBadRequest('Could not refresh token')
 
         serialized_user = UserSerializer(user)
         return Response(
