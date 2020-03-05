@@ -1,3 +1,4 @@
+import logging
 from django.http import HttpResponseBadRequest
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,6 +8,7 @@ from api.users.auth import OIDCAuthenticationBackend
 from api.users.serializers import UserSerializer
 from utils.safety_lock import safety_lock
 
+LOGGER = logging.getLogger(__name__)
 
 class IsAuthenticatedView(APIView):
     permission_classes = ()
@@ -33,7 +35,7 @@ class ObtainAuthTokenOIDC(APIView):
         try:
             user = authentication_backend.authenticate(request)
         except Exception as e:
-            print(e)
+            LOGGER.error('Could not authenticate: {}'.format(str(e)))
             return HttpResponseBadRequest('Could not authenticate')
 
         refresh = RefreshToken.for_user(user)

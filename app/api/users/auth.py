@@ -3,8 +3,6 @@ from mozilla_django_oidc import auth
 from django.contrib.auth.models import Group
 from django.db import transaction
 from django.core.exceptions import SuspiciousOperation
-from mozilla_django_oidc.utils import absolutify
-from django.urls import reverse
 from utils.safety_lock import safety_lock
 
 CLAIMS_FIRST_NAME = 'FirstName'
