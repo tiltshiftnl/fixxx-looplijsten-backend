@@ -25,8 +25,9 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
             return None
 
         """ Retrieve the redirect uri from the request """
-        http_referer = request.META['HTTP_REFERER']
-        redirect_uri = http_referer.split('?')[0]
+        # http_referer = request.META['HTTP_REFERER']
+        # redirect_uri = http_referer.split('?')[0]
+        redirect_uri = 'https://acc.top.amsterdam.nl/authentication/callback'
 
         token_payload = {
             'client_id': self.OIDC_RP_CLIENT_ID,
