@@ -217,6 +217,14 @@ OIDC_RP_CLIENT_ID = os.environ.get('OIDC_RP_CLIENT_ID')
 OIDC_RP_CLIENT_SECRET = os.environ.get('OIDC_RP_CLIENT_SECRET')
 OIDC_USERNAME_ALGO = 'api.users.utils.generate_username'
 
+ACCEPTANCE_OIDC_REDIRECT_URL = 'https://acc.top.amsterdam.nl/authentication/callback'
+PRODUCTION_OIDC_REDIRECT_URL = 'https://top.amsterdam.nl/authentication/callback'
+
+OIDC_REDIRECT_URL = ACCEPTANCE_OIDC_REDIRECT_URL
+
+if ENVIRONMENT == 'production':
+    OIDC_REDIRECT_URL = PRODUCTION_OIDC_REDIRECT_URL
+
 OIDC_RP_SIGN_ALGO = 'RS256'
 
 OIDC_RP_SCOPES = 'openid'

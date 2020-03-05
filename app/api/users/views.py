@@ -36,7 +36,7 @@ class ObtainAuthTokenOIDC(APIView):
         try:
             user = authentication_backend.authenticate(request)
         except Exception as e:
-            LOGGER.error('Could not authenticate: {} {}'.format(str(e), request.META['HTTP_REFERER']))
+            LOGGER.error('Could not authenticate: {}'.format(str(e)))
             return HttpResponseBadRequest('Could not authenticate')
 
         refresh = RefreshToken.for_user(user)

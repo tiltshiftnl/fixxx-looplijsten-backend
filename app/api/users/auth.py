@@ -3,6 +3,7 @@ from mozilla_django_oidc import auth
 from django.contrib.auth.models import Group
 from django.db import transaction
 from django.core.exceptions import SuspiciousOperation
+from django.conf import settings
 from utils.safety_lock import safety_lock
 
 CLAIMS_FIRST_NAME = 'FirstName'
@@ -25,16 +26,12 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
             return None
 
         """ Retrieve the redirect uri from the request """
-        # http_referer = request.META['HTTP_REFERER']
-        # redirect_uri = http_referer.split('?')[0]
-        redirect_uri = 'https://acc.top.amsterdam.nl/authentication/callback'
-
         token_payload = {
             'client_id': self.OIDC_RP_CLIENT_ID,
             'client_secret': self.OIDC_RP_CLIENT_SECRET,
             'grant_type': 'authorization_code',
             'code': code,
-            'redirect_uri': redirect_uri,
+            'redirect_uri': settings.OIDC_REDIRECT_URL,
         }
 
         # Get the token
