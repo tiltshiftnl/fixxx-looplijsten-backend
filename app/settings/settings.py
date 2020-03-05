@@ -260,7 +260,7 @@ SIMPLE_JWT = {
 }
 
 ACCESS_LOG_EXEMPTIONS = (
-    '/health',
+    '/looplijsten/health',
 )
 
 # BRK Access request settings
