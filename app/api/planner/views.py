@@ -161,7 +161,7 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         else:
             # Set the default value if nothing is set, and store it
             settings_data = EXAMPLE_PLANNER_SETTINGS
-            planner_settings.value = str(settings_data)
+            planner_settings.value = json.dumps(settings_data)
             planner_settings.save()
 
         return JsonResponse(settings_data)
@@ -179,7 +179,7 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
             }, status=HttpResponseBadRequest.status_code)
 
         planner_settings, _ = Constance.objects.get_or_create(key=settings.CONSTANCE_PLANNER_SETTINGS_KEY)
-        planner_settings.value = str(data)
+        planner_settings.value = json.dumps(data)
         planner_settings.save()
 
         return JsonResponse(data)
