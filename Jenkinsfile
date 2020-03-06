@@ -69,6 +69,9 @@ pipeline {
     }
 
     stage("Push and deploy production image") {
+      echo "Tag is ${tag}"
+      echo "Env Tag is ${env.TAG_NAME}"
+      
       when {  tag "v*" }
       steps {
         push_image("production")
