@@ -48,6 +48,7 @@ pipeline {
       steps {
         script {
           echo "Env Tag is ${env.TAG_NAME}"
+          echo "Tag is ${tag}"
           def image = docker.build("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}:${env.COMMIT_HASH}",
             "--no-cache " +
             "--shm-size 1G " +
