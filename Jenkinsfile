@@ -47,6 +47,8 @@ pipeline {
 
       steps {
         script {
+          echo "Tag is ${tag}"
+          echo "Env Tag is ${env.TAG_NAME}"
           def image = docker.build("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}:${env.COMMIT_HASH}",
             "--no-cache " +
             "--shm-size 1G " +
@@ -69,9 +71,6 @@ pipeline {
     }
 
     stage("Push and deploy production image") {
-      echo "Tag is ${tag}"
-      echo "Env Tag is ${env.TAG_NAME}"
-      
       when {  tag "v*" }
       steps {
         push_image("production")
