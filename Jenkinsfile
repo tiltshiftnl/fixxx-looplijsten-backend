@@ -59,7 +59,7 @@ pipeline {
 
     stage("Push and deploy acceptance image") {
       when {
-        not { buildingTag() }
+        not { tag "v*" }
         branch 'master'
       }
       steps {
@@ -69,7 +69,7 @@ pipeline {
     }
 
     stage("Push and deploy production image") {
-      when { buildingTag() }
+      when {  tag "v*" }
       steps {
         push_image("production")
         push_image(env.TAG_NAME)
