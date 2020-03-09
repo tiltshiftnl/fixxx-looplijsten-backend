@@ -59,14 +59,14 @@ class ItineraryViewSet(
             raise APIException('Could not read date query parameter: {}'.format(e))
 
     def __get_serialized_team__(self, itinerary_pk):
-        itinerary = Itinerary.objects.get(pk=itinerary_pk)
+        itinerary = get_object_or_404(Itinerary, pk=itinerary_pk)
         team_members = itinerary.team_members
         team_members_serialized = ItineraryTeamMemberSerializer(team_members, many=True)
 
         return Response({'team_members': team_members_serialized.data})
 
     def __replace_team_members__(self, itinerary_pk, user_ids):
-        itinerary = Itinerary.objects.get(pk=itinerary_pk)
+        itinerary = get_object_or_404(Itinerary, pk=itinerary_pk)
         serializer = ItineraryTeamMemberSerializer(data=user_ids, many=True)
 
         if not serializer.is_valid():
@@ -77,6 +77,7 @@ class ItineraryViewSet(
         itinerary.clear_team_members()
         itinerary.add_team_members(user_ids)
 
+    # TODO: Figure out how to add the safety lock decorator
     @action(detail=True, methods=['get', 'put'])
     def team(self, request, pk):
         if request.method == 'GET':
@@ -94,7 +95,7 @@ class ItineraryViewSet(
 
         for team_member in team_members:
             user_id = team_member.get('user').get('id')
-            user = User.objects.get(id=user_id)
+            user = get_object_or_404(User, id=user_id)
             ItineraryTeamMember.objects.create(itinerary=itinerary, user=user)
 
         serializer = self.serializer_class(itinerary)
@@ -107,7 +108,7 @@ class ItineraryViewSet(
     @safety_lock
     def list(self, request):
         date = self.__get_date_from_query_parameter__(request)
-        user = User.objects.get(id=request.user.id)
+        user = get_object_or_404(User, id=request.user.id)
         itineraries = self.__get_all_itineraries__(user, date)
 
         return Response({
@@ -129,7 +130,7 @@ class ItineraryItemViewSet(
 
     def get_object(self):
         user = self.request.user
-        itinerary = Itinerary.objects.get(user=user)
+        itinerary = get_object_or_404(Itinerary, user=user)
         itinerary_item = ItineraryItem.objects.get(itinerary=itinerary, id=self.kwargs['pk'])
         return itinerary_item
 
@@ -147,7 +148,7 @@ class ItineraryItemViewSet(
     @safety_lock
     def create(self, request):
         # Get the current user and it's itinerary
-        user = User.objects.get(id=request.user.id)
+        user = get_object_or_404(User, id=request.user.id)
         itinerary = Itinerary.objects.get_or_create(user=user)[0]
 
         # Create itinerary item if the case exists
@@ -195,7 +196,7 @@ class NoteViewSet(
     @safety_lock
     def create(self, request):
         # Get the current user and it's itinerary
-        user = User.objects.get(id=request.user.id)
+        user = get_object_or_404(User, id=request.user.id)
 
         text = request.data['text']
         itinerary_item_id = request.data['itinerary_item']
