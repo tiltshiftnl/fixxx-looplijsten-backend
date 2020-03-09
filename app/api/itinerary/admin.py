@@ -2,7 +2,8 @@ from django.contrib import admin
 from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
 
 class ItinerarySettingsInline(admin.StackedInline):
-    fields = ('opening_date', 'projects', 'primary_state', 'secondary_states', 'exclude_states',)
+    fields = ('opening_date', 'target_itinerary_length', 'projects',
+              'primary_state', 'secondary_states', 'exclude_states',)
     model = ItinerarySettings
 
 class ItineraryTeamMemberInline(admin.StackedInline):

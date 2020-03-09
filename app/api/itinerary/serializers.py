@@ -21,7 +21,8 @@ class ItinerarySettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItinerarySettings
-        fields = ('opening_date', 'projects', 'primary_state', 'secondary_states', 'exclude_states')
+        fields = ('opening_date', 'target_itinerary_length', 'projects',
+                  'primary_state', 'secondary_states', 'exclude_states')
 
 class ItineraryItemSerializer(serializers.ModelSerializer):
     case = CaseSerializer(read_only=True)
@@ -41,7 +42,7 @@ class ItineraryTeamMemberSerializer(serializers.ModelSerializer):
 class ItinerarySerializer(serializers.ModelSerializer):
     items = ItineraryItemSerializer(read_only=True, many=True)
     created_at = serializers.DateField(read_only=True)
-    team_members = ItineraryTeamMemberSerializer(read_only=True, many=True)
+    team_members = ItineraryTeamMemberSerializer(many=True)
     settings = ItinerarySettingsSerializer(read_only=True)
 
     class Meta:

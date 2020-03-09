@@ -28,6 +28,8 @@ class ItinerarySettings(models.Model):
     opening_date = models.DateField(blank=False,
                                     null=False)
 
+    target_itinerary_length = models.IntegerField(default=6)
+
     itinerary = models.OneToOneField(Itinerary,
                                      on_delete=models.CASCADE,
                                      null=False,

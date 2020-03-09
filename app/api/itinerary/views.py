@@ -91,12 +91,13 @@ class ItineraryViewSet(
     @safety_lock
     def create(self, request):
         # TODO: Cleanup and shorten this function
+        # TODO: Check if we need to make this atomic
         serializer = ItinerarySerializer(data=request.data)
 
         if not serializer.is_valid():
             raise APIException('Could not create itinerary: {}'.format(serializer.errors))
 
-        itinerary = serializer.create(serializer.validated_data)
+        itinerary = Itinerary.objects.create()
         team_members = request.data.get('team_members', [])
 
         for team_member in team_members:
@@ -106,6 +107,7 @@ class ItineraryViewSet(
 
         settings = request.data.get('settings')
         opening_date = settings.get('opening_date')
+        target_itinerary_length = settings.get('target_itinerary_length')
 
         projects = settings.get('projects')
         projects = [project.get('name') for project in projects]
@@ -126,6 +128,7 @@ class ItineraryViewSet(
             opening_date=opening_date,
             itinerary=itinerary,
             primary_state=primary_state,
+            target_itinerary_length=target_itinerary_length
         )
         itinerary_settings.projects.set(projects)
         itinerary_settings.secondary_states.set(secondary_states)
