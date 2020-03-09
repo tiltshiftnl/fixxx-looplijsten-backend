@@ -1,5 +1,5 @@
 from django.contrib import admin
-from api.cases.models import Case, Project, State
+from api.cases.models import Case, Project, Stadium
 
 @admin.register(Case)
 class CaseAdmin(admin.ModelAdmin):
@@ -9,6 +9,6 @@ class CaseAdmin(admin.ModelAdmin):
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
-@admin.register(State)
-class StateAdmin(admin.ModelAdmin):
+@admin.register(Stadium)
+class StadiumAdmin(admin.ModelAdmin):
     list_display = ('name',)

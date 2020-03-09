@@ -3,7 +3,7 @@ from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMe
 
 class ItinerarySettingsInline(admin.StackedInline):
     fields = ('opening_date', 'target_itinerary_length', 'projects',
-              'primary_state', 'secondary_states', 'exclude_states',)
+              'primary_stadium', 'secondary_stadia', 'exclude_stadia',)
     model = ItinerarySettings
 
 class ItineraryTeamMemberInline(admin.StackedInline):

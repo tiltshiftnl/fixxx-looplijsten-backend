@@ -1,6 +1,6 @@
 from django.db import models
 from utils.queries import get_case
-from api.cases.const import PROJECTS, STAGES
+from api.cases.const import PROJECTS, STADIA
 
 class Case(models.Model):
     '''
@@ -33,8 +33,8 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-class State(models.Model):
-    CHOICES = [(state, state) for state in STAGES]
+class Stadium(models.Model):
+    CHOICES = [(stadium, stadium) for stadium in STADIA]
 
     name = models.CharField(
         max_length=255,

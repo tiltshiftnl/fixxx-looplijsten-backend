@@ -1,5 +1,5 @@
 
-from api.cases.const import STAGES
+from api.cases.const import STADIA
 from api.planner.queries_planner import get_cases
 from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list, sort_by_postal_code
@@ -9,7 +9,7 @@ from api.planner.utils import shorten_if_necessary
 def get_cases_for_configuration(configuration):
     opening_date = configuration.get('opening_date')
     opening_reasons = configuration.get('opening_reasons')
-    return get_cases(opening_date, opening_reasons, STAGES)
+    return get_cases(opening_date, opening_reasons, STADIA)
 
 def get_list_for_planning(configuration):
     lists = configuration.get("lists", [])

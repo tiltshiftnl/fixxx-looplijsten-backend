@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
-from api.cases.serializers import CaseSerializer, ProjectSerializer, StateSerializer
+from api.cases.serializers import CaseSerializer, ProjectSerializer, StadiumSerializer
 from api.users.serializers import UserIdSerializer
 
 class NoteCrudSerializer(serializers.ModelSerializer):
@@ -15,14 +15,14 @@ class NoteSerializer(serializers.ModelSerializer):
 
 class ItinerarySettingsSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(many=True)
-    primary_state = StateSerializer()
-    secondary_states = StateSerializer(many=True)
-    exclude_states = StateSerializer(many=True)
+    primary_stadium = StadiumSerializer()
+    secondary_stadia = StadiumSerializer(many=True)
+    exclude_stadia = StadiumSerializer(many=True)
 
     class Meta:
         model = ItinerarySettings
         fields = ('opening_date', 'target_itinerary_length', 'projects',
-                  'primary_state', 'secondary_states', 'exclude_states')
+                  'primary_stadium', 'secondary_stadia', 'exclude_stadia')
 
 class ItineraryItemSerializer(serializers.ModelSerializer):
     case = CaseSerializer(read_only=True)

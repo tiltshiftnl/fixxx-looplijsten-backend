@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from api.cases.const import PROJECTS, STAGES
+from api.cases.const import PROJECTS, STADIA
 
 class ListSerializer(serializers.Serializer):
     name = serializers.CharField(required=False)
     number_of_lists = serializers.IntegerField(required=True)
     length_of_lists = serializers.IntegerField(required=True)
-    primary_stadium = serializers.ChoiceField(required=False, choices=STAGES)
-    secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STAGES)
-    exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STAGES)
+    primary_stadium = serializers.ChoiceField(required=False, choices=STADIA)
+    secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
+    exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
 
     def validate_mutual_exclusivity(self, stadia_a, stadia_b, message):
         for stadium in stadia_a:

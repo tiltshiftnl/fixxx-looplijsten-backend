@@ -1,6 +1,6 @@
 from django.db import models
 from api.users.models import User
-from api.cases.models import Case, Project, State
+from api.cases.models import Case, Project, Stadium
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
@@ -40,15 +40,16 @@ class ItinerarySettings(models.Model):
                                       blank=False,
                                       related_name='settings')
 
-    primary_state = models.ForeignKey(to=State,
-                                      on_delete=models.CASCADE,
-                                      related_name='settings_as_primary_state')
+    primary_stadium = models.ForeignKey(to=Stadium,
+                                        null=True,
+                                        on_delete=models.CASCADE,
+                                        related_name='settings_as_primary_stadium')
 
-    secondary_states = models.ManyToManyField(to=State,
-                                              related_name='settings_as_secondary_state')
+    secondary_stadia = models.ManyToManyField(to=Stadium,
+                                              related_name='settings_as_secondary_stadia')
 
-    exclude_states = models.ManyToManyField(to=State,
-                                            related_name='settings_as_exclude_state')
+    exclude_stadia = models.ManyToManyField(to=Stadium,
+                                            related_name='settings_as_exclude_stadia')
 
     def __str__(self):
         return self.itinerary.__str__()

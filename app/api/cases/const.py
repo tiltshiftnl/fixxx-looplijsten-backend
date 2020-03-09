@@ -78,7 +78,7 @@ ONDERZOEK_ADVERDENTIE = "Onderzoek advertentie"
 ONDERZOEK_BUITENDIENST = "Onderzoek buitendienst"
 WEEKEND_BUITENDIENST_ONDERZOEK = "Weekend buitendienstonderzoek"
 
-STAGES = [
+STADIA = [
     TWEEDE_CONTROLE,
     TWEEDE_HERCONTROLE,
     DERDE_CONTROLE,

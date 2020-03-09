@@ -4,7 +4,7 @@ from rest_framework import status
 from constance.test import override_config
 from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
 from app.api.planner.const import EXAMPLE_PLANNER_SETTINGS
-from app.api.cases.const import PROJECTS, STAGES
+from app.api.cases.const import PROJECTS, STADIA
 
 class ConstantsProjectsViewSet(APITestCase):
     """
@@ -86,7 +86,7 @@ class ConstantsStadiaViewSet(APITestCase):
         response = client.get(url)
 
         expected_response = {
-            'constants': STAGES
+            'constants': STADIA
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEquals(response.json(), expected_response)

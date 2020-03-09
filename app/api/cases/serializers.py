@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from api.cases.models import Case, Project, State
-from api.cases.const import STAGES, PROJECTS
+from api.cases.models import Case, Project, Stadium
+from api.cases.const import STADIA, PROJECTS
 
 class CaseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,9 +15,10 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ('name', )
 
-class StateSerializer(serializers.ModelSerializer):
-    name = serializers.ChoiceField(required=True, choices=STAGES)
+
+class StadiumSerializer(serializers.ModelSerializer):
+    name = serializers.ChoiceField(required=True, choices=STADIA)
 
     class Meta:
-        model = State
+        model = Stadium
         fields = ('name', )

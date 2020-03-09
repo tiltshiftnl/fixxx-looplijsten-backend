@@ -13,7 +13,7 @@ from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMe
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
 from api.itinerary.serializers import ItineraryTeamMemberSerializer
-from api.cases.models import Case, Project, State
+from api.cases.models import Case, Project, Stadium
 
 from utils.safety_lock import safety_lock
 
@@ -113,26 +113,26 @@ class ItineraryViewSet(
         projects = [project.get('name') for project in projects]
         projects = [Project.objects.get_or_create(name=project)[0] for project in projects]
 
-        primary_state = settings.get('primary_state').get('name')
-        primary_state = State.objects.get_or_create(name=primary_state)[0]
+        primary_stadium = settings.get('primary_stadium').get('name')
+        primary_stadium = Stadium.objects.get_or_create(name=primary_stadium)[0]
 
-        secondary_states = settings.get('secondary_states')
-        secondary_states = [state.get('name') for state in secondary_states]
-        secondary_states = [State.objects.get_or_create(name=state)[0] for state in secondary_states]
+        secondary_stadia = settings.get('secondary_stadia')
+        secondary_stadia = [stadium.get('name') for stadium in secondary_stadia]
+        secondary_stadia = [Stadium.objects.get_or_create(name=stadium)[0] for stadium in secondary_stadia]
 
-        exclude_states = settings.get('exclude_states')
-        exclude_states = [state.get('name') for state in exclude_states]
-        exclude_states = [State.objects.get_or_create(name=state)[0] for state in exclude_states]
+        exclude_stadia = settings.get('exclude_stadia')
+        exclude_stadia = [stadium.get('name') for stadium in exclude_stadia]
+        exclude_stadia = [Stadium.objects.get_or_create(name=stadium)[0] for stadium in exclude_stadia]
 
         itinerary_settings = ItinerarySettings.objects.create(
             opening_date=opening_date,
             itinerary=itinerary,
-            primary_state=primary_state,
+            primary_stadium=primary_stadium,
             target_itinerary_length=target_itinerary_length
         )
         itinerary_settings.projects.set(projects)
-        itinerary_settings.secondary_states.set(secondary_states)
-        itinerary_settings.exclude_states.set(exclude_states)
+        itinerary_settings.secondary_stadia.set(secondary_stadia)
+        itinerary_settings.exclude_stadia.set(exclude_stadia)
 
         serializer = self.serializer_class(itinerary)
         return Response(serializer.data)
