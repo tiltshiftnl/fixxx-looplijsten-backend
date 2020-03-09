@@ -1,5 +1,11 @@
 from django.contrib import admin
-from api.itinerary.models import Itinerary, ItineraryItem, Note
+from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember
+
+
+class ItineraryTeamMemberInline(admin.StackedInline):
+    fields = ('user', )
+    model = ItineraryTeamMember
+    extra = 0
 
 class ItineraryItemInline(admin.StackedInline):
     fields = ('case',)
@@ -8,9 +14,10 @@ class ItineraryItemInline(admin.StackedInline):
 
 @admin.register(Itinerary)
 class ItineraryAdmin(admin.ModelAdmin):
-    list_display = ('user',)
+    list_display = ('__str__', 'created_at',)
 
     inlines = [
+        ItineraryTeamMemberInline,
         ItineraryItemInline,
     ]
 

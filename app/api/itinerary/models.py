@@ -4,15 +4,44 @@ from api.cases.models import Case
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
-    plain_text_itinerary = models.TextField(max_length=4000, blank=True)
-    user = models.ForeignKey(to=User, null=True, blank=False, on_delete=models.CASCADE, unique=True)
+    created_at = models.DateField(auto_now_add=True)
+
+    def clear_team_members(self):
+        team_members = self.team_members.all()
+
+        for team_member in team_members:
+            team_member.delete()
+
+    def add_team_members(self, user_ids):
+        for user_id in user_ids:
+            user = User.objects.get(id=user_id)
+            ItineraryTeamMember.objects.create(user=user, itinerary=self)
 
     def __str__(self):
-        if self.user:
-            return '{}'.format(self.user.email)
-        else:
-            return ''
+        team_members = self.team_members.all()
+        team_members = [str(member) for member in team_members]
+        string = ', '.join(team_members)
 
+        return string
+
+class ItineraryTeamMember(models.Model):
+
+    class Meta:
+        unique_together = ['user', 'itinerary']
+
+    """ Member of an Itinerary Team """
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE, null=False,
+                             related_name='teams',
+                             related_query_name="user")
+
+    itinerary = models.ForeignKey(Itinerary,
+                                  on_delete=models.CASCADE,
+                                  null=False,
+                                  related_name='team_members')
+
+    def __str__(self):
+        return self.user.first_name
 
 class ItineraryItem(models.Model):
     """ Single Itinerary """
