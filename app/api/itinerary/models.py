@@ -1,10 +1,38 @@
 from django.db import models
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
+from api.planner.algorithm import get_planning
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
     created_at = models.DateField(auto_now_add=True)
+
+    def get_cases_from_settings(self):
+        # TODO: Later on we'll have to consider other itineraries as well
+        # TODO: Rewrite planning algorithm for a better integration with single itineraries
+
+        projects = [project.name for project in self.settings.projects.all()]
+        secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]
+        exclude_stadia = [stadium.name for stadium in self.settings.exclude_stadia.all()]
+
+        planning_settings = {
+            "opening_date": self.settings.opening_date,
+            "opening_reasons": projects,
+            "lists": [
+                {
+                    "number_of_lists": 1,
+                    "length_of_lists": self.settings.target_itinerary_length,
+                    "secondary_stadia": secondary_stadia,
+                    "exclude_stadia": exclude_stadia
+                }
+            ]
+        }
+
+        cases = get_planning(planning_settings)
+        lists = cases.get('lists')[0]
+        itineraries = lists.get('itineraries')[0]
+
+        return itineraries
 
     def clear_team_members(self):
         team_members = self.team_members.all()

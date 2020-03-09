@@ -92,6 +92,7 @@ class ItineraryViewSet(
     def create(self, request):
         # TODO: Cleanup and shorten this function
         # TODO: Check if we need to make this atomic
+        # TODO: Make sure optional parameters are handled well (primary_stadium for example)
         serializer = ItinerarySerializer(data=request.data)
 
         if not serializer.is_valid():
@@ -135,6 +136,13 @@ class ItineraryViewSet(
         itinerary_settings.exclude_stadia.set(exclude_stadia)
 
         serializer = self.serializer_class(itinerary)
+
+        cases = itinerary.get_cases_from_settings()
+        for case in cases:
+            case_id = case.get('case_id')
+            case = Case.objects.get_or_create(case_id=case_id)[0]
+            ItineraryItem.objects.create(itinerary=itinerary, case=case)
+
         return Response(serializer.data)
 
     @safety_lock
