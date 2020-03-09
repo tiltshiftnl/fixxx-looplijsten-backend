@@ -1,14 +1,25 @@
 import logging
 from django.http import HttpResponseBadRequest
 from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import generics
+from api.users.models import User
 from api.users.auth import OIDCAuthenticationBackend
 from api.users.serializers import UserSerializer
 from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
+
+class UserListView(ViewSet, generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    @safety_lock
+    def get(self, request):
+        return super().get(self, request)
 
 class IsAuthenticatedView(APIView):
     permission_classes = ()

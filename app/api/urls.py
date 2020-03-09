@@ -10,7 +10,7 @@ from drf_yasg import openapi
 from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
-from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView
+from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView, UserListView
 from api.planner.views import GenerateWeeklyItinerariesViewset, AlgorithmView
 from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
 
@@ -30,6 +30,7 @@ api_router.register(r'itineraries/items', ItineraryItemViewSet, basename='itiner
 api_router.register(r'cases', CaseViewSet, basename='case')
 api_router.register(r'search', CaseSearchViewSet, basename='search')
 api_router.register(r'notes', NoteViewSet, basename='notes')
+api_router.register(r'users', UserListView, basename='users')
 api_router.register(r'generate-weekly-itineraries', GenerateWeeklyItinerariesViewset,
                     basename='generate-weekly-itineraries')
 api_router.register(r'constants/projects', ConstantsProjectsViewSet, basename='constants-projects')
