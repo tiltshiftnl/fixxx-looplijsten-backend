@@ -1,5 +1,5 @@
 
-from api.planner.const import STAGES
+from api.cases.const import STAGES
 from api.planner.queries_planner import get_cases
 from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list, sort_by_postal_code

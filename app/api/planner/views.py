@@ -11,7 +11,7 @@ from constance.backends.database.models import Constance
 
 from utils.safety_lock import safety_lock
 from api.planner.serializers import WeekListSerializer
-from api.planner.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA, ONDERZOEK_BUITENDIENST
+from api.cases.const import STAGES, PROJECTS, PROJECTS_WITHOUT_SAHARA, ONDERZOEK_BUITENDIENST
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 from api.planner.algorithm import get_planning
 from api.planner.optimization import linear_optimization, knapsack_demo

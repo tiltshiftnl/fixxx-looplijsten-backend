@@ -1,6 +1,6 @@
 from django.db import models
 from api.users.models import User
-from api.cases.models import Case
+from api.cases.models import Case, Project, State
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
@@ -23,6 +23,34 @@ class Itinerary(models.Model):
         string = ', '.join(team_members)
 
         return string
+
+class ItinerarySettings(models.Model):
+    opening_date = models.DateField(blank=False,
+                                    null=False)
+
+    itinerary = models.OneToOneField(Itinerary,
+                                     on_delete=models.CASCADE,
+                                     null=False,
+                                     unique=True,
+                                     related_name='settings')
+
+    projects = models.ManyToManyField(to=Project,
+                                      blank=False,
+                                      related_name='settings')
+
+    primary_state = models.ForeignKey(to=State,
+                                      on_delete=models.CASCADE,
+                                      related_name='settings_as_primary_state')
+
+    secondary_states = models.ManyToManyField(to=State,
+                                              related_name='settings_as_secondary_state')
+
+    exclude_states = models.ManyToManyField(to=State,
+                                            related_name='settings_as_exclude_state')
+
+    def __str__(self):
+        return self.itinerary.__str__()
+
 
 class ItineraryTeamMember(models.Model):
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.planner.const import PROJECTS, STAGES
+from api.cases.const import PROJECTS, STAGES
 
 class ListSerializer(serializers.Serializer):
     name = serializers.CharField(required=False)

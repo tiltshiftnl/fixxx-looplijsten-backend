@@ -9,11 +9,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import action
 
-from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember
+from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
 from api.itinerary.serializers import ItineraryTeamMemberSerializer
-from api.cases.models import Case
+from api.cases.models import Case, Project, State
 
 from utils.safety_lock import safety_lock
 
@@ -89,14 +89,47 @@ class ItineraryViewSet(
             return self.__get_serialized_team__(pk)
 
     @safety_lock
-    def create(self, request, *args, **kwargs):
+    def create(self, request):
+        # TODO: Cleanup and shorten this function
+        serializer = ItinerarySerializer(data=request.data)
+
+        if not serializer.is_valid():
+            raise APIException('Could not create itinerary: {}'.format(serializer.errors))
+
+        itinerary = serializer.create(serializer.validated_data)
         team_members = request.data.get('team_members', [])
-        itinerary = Itinerary.objects.create()
 
         for team_member in team_members:
             user_id = team_member.get('user').get('id')
             user = get_object_or_404(User, id=user_id)
             ItineraryTeamMember.objects.create(itinerary=itinerary, user=user)
+
+        settings = request.data.get('settings')
+        opening_date = settings.get('opening_date')
+
+        projects = settings.get('projects')
+        projects = [project.get('name') for project in projects]
+        projects = [Project.objects.get_or_create(name=project)[0] for project in projects]
+
+        primary_state = settings.get('primary_state').get('name')
+        primary_state = State.objects.get_or_create(name=primary_state)[0]
+
+        secondary_states = settings.get('secondary_states')
+        secondary_states = [state.get('name') for state in secondary_states]
+        secondary_states = [State.objects.get_or_create(name=state)[0] for state in secondary_states]
+
+        exclude_states = settings.get('exclude_states')
+        exclude_states = [state.get('name') for state in exclude_states]
+        exclude_states = [State.objects.get_or_create(name=state)[0] for state in exclude_states]
+
+        itinerary_settings = ItinerarySettings.objects.create(
+            opening_date=opening_date,
+            itinerary=itinerary,
+            primary_state=primary_state,
+        )
+        itinerary_settings.projects.set(projects)
+        itinerary_settings.secondary_states.set(secondary_states)
+        itinerary_settings.exclude_states.set(exclude_states)
 
         serializer = self.serializer_class(itinerary)
         return Response(serializer.data)

@@ -7,7 +7,7 @@ from api.planner.utils import sort_by_postal_code, filter_cases, get_count, get_
 from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances
 from api.planner.utils import sort_with_stadium, filter_cases_with_missing_coordinates, filter_out_cases
 from api.planner.utils import shorten_if_necessary
-from api.planner.const import BED_AND_BREAKFAST, HOTLINE, SAFARI
+from api.cases.const import BED_AND_BREAKFAST, HOTLINE, SAFARI
 
 # TODO: Split up in multiple classes
 class UtilsTests(TestCase):

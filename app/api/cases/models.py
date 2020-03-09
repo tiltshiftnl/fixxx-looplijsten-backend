@@ -1,5 +1,6 @@
 from django.db import models
 from utils.queries import get_case
+from api.cases.const import PROJECTS, STAGES
 
 class Case(models.Model):
     '''
@@ -18,3 +19,29 @@ class Case(models.Model):
         if self.case_id:
             return self.case_id
         return ''
+
+class Project(models.Model):
+    CHOICES = [(project, project) for project in PROJECTS]
+
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True,
+        choices=CHOICES)
+
+    def __str__(self):
+        return self.name
+
+class State(models.Model):
+    CHOICES = [(state, state) for state in STAGES]
+
+    name = models.CharField(
+        max_length=255,
+        null=False,
+        blank=False,
+        unique=True,
+        choices=CHOICES)
+
+    def __str__(self):
+        return self.name
