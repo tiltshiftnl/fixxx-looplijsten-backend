@@ -107,6 +107,7 @@ class ItineraryViewSet(
 
         # Serialize the itinerary again
         serializer = ItinerarySerializer(itinerary)
+
         return Response(serializer.data)
 
     @safety_lock

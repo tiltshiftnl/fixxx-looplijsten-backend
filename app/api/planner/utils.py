@@ -69,8 +69,10 @@ def remove_cases_from_list(cases, cases_to_remove):
     '''
     Returns a new list without the 'cases_to_remove' items
     '''
+    cases_to_remove = [case.get('case_id') for case in cases_to_remove]
+
     def should_not_remove(case):
-        return case not in cases_to_remove
+        return case.get('case_id') not in cases_to_remove
 
     new_list = list(filter(lambda case: should_not_remove(case), cases))
 

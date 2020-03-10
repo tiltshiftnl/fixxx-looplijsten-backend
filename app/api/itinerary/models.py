@@ -1,38 +1,51 @@
 from django.db import models
+from django.contrib.admin.utils import flatten
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
-from api.planner.algorithm import get_planning
+from api.planner.algorithm import get_itinerary
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
     created_at = models.DateField(auto_now_add=True)
 
-    def get_cases_from_settings(self):
-        # TODO: Later on we'll have to consider other itineraries as well
-        # TODO: Rewrite planning algorithm for a better integration with single itineraries
+    def __get_itinerary_cases_for_date__(date):
+        '''
+        returns a list of cases which are already in itineraries for a given date
+        '''
+        itineraries = Itinerary.objects.filter(created_at=date)
+        itineraries = [itinerary.__get_cases__() for itinerary in itineraries]
+        cases = flatten(itineraries)
 
+        return cases
+
+    def __get_cases__(self):
+        '''
+        Returns a list of cases for this itinerary
+        '''
+        cases = [item.case for item in self.items.all()]
+        return cases
+
+    def get_cases_from_settings(self):
         projects = [project.name for project in self.settings.projects.all()]
         secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]
         exclude_stadia = [stadium.name for stadium in self.settings.exclude_stadia.all()]
+        exclude_cases = Itinerary.__get_itinerary_cases_for_date__(self.created_at)
 
-        planning_settings = {
-            "opening_date": self.settings.opening_date,
-            "opening_reasons": projects,
-            "lists": [
-                {
-                    "number_of_lists": 1,
-                    "length_of_lists": self.settings.target_itinerary_length,
-                    "secondary_stadia": secondary_stadia,
-                    "exclude_stadia": exclude_stadia
-                }
-            ]
-        }
+        try:
+            primary_stadium = self.settings.primary_stadium.name
+        except AttributeError:
+            primary_stadium = None
 
-        cases = get_planning(planning_settings)
-        lists = cases.get('lists')[0]
-        itineraries = lists.get('itineraries')[0]
+        itinerary = get_itinerary(
+            opening_date=self.settings.opening_date,
+            target_length=self.settings.target_itinerary_length,
+            projects=projects,
+            primary_stadium=primary_stadium,
+            secondary_stadia=secondary_stadia,
+            exclude_stadia=exclude_stadia,
+            exclude_cases=exclude_cases)
 
-        return itineraries
+        return itinerary
 
     def clear_team_members(self):
         team_members = self.team_members.all()

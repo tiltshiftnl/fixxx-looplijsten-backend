@@ -40,6 +40,32 @@ def get_list_for_planning(configuration):
 def get_lists_in_original_order(lists):
     return sorted(lists, key=lambda case: case.get('id'))
 
+def get_itinerary(
+        opening_date,
+        target_length=8,
+        projects=[],
+        primary_stadium=None,
+        secondary_stadia=[],
+        exclude_stadia=[],
+        exclude_cases=[]):
+
+    cases = get_cases(opening_date, projects, STADIA)
+    exclude_cases = [{'case_id': case.case_id} for case in exclude_cases]
+    # TODO: this function can probably be written at a later point so that the previous mapping is not needed
+    cases = remove_cases_from_list(cases, exclude_cases)
+
+    itineraries = get_itineraries(
+        cases=cases,
+        number_of_lists=1,
+        length_of_lists=target_length,
+        primary_stadium=primary_stadium,
+        secondary_stadia=secondary_stadia,
+        exclude_stadia=exclude_stadia
+    )
+
+    return itineraries[0]
+
+
 def get_planning(configuration):
     cases = get_cases_for_configuration(configuration)
     lists = get_list_for_planning(configuration)
