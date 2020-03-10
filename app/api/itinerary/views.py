@@ -98,7 +98,7 @@ class ItineraryViewSet(
         # Create the itinerary
         itinerary = serializer.create(request.data)
 
-        # Populare the itinerary with cases
+        # Populate the itinerary with cases
         cases = itinerary.get_cases_from_settings()
         for case in cases:
             case_id = case.get('case_id')
