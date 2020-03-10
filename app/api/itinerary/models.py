@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.admin.utils import flatten
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
-from api.planner.algorithm import get_itinerary
+from api.planner.algorithm import get_cases_with_settings
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
@@ -36,7 +36,7 @@ class Itinerary(models.Model):
         except AttributeError:
             primary_stadium = None
 
-        itinerary = get_itinerary(
+        cases = get_cases_with_settings(
             opening_date=self.settings.opening_date,
             target_length=self.settings.target_itinerary_length,
             projects=projects,
@@ -45,7 +45,7 @@ class Itinerary(models.Model):
             exclude_stadia=exclude_stadia,
             exclude_cases=exclude_cases)
 
-        return itinerary
+        return cases
 
     def clear_team_members(self):
         team_members = self.team_members.all()

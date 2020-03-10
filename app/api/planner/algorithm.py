@@ -40,7 +40,7 @@ def get_list_for_planning(configuration):
 def get_lists_in_original_order(lists):
     return sorted(lists, key=lambda case: case.get('id'))
 
-def get_itinerary(
+def get_cases_with_settings(
         opening_date,
         target_length=8,
         projects=[],

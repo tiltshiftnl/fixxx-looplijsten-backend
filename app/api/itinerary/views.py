@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ViewSet
@@ -87,6 +88,15 @@ class ItineraryViewSet(
             new_team_members = request.data.get('team_members')
             self.__replace_team_members__(pk, new_team_members)
             return self.__get_serialized_team__(pk)
+
+    # TODO: Figure out how to add the safety lock decorator
+    # TODO: Use a smarted suggestions function later
+    @action(detail=True, methods=['get'])
+    def suggestions(self, request, pk):
+        ''' Returns a list of suggestions for the given itinerary '''
+        itinerary = get_object_or_404(Itinerary, pk=pk)
+        cases = itinerary.get_cases_from_settings()
+        return JsonResponse({'cases': cases})
 
     @safety_lock
     def create(self, request):
