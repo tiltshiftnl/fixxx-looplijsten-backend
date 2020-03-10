@@ -8,6 +8,9 @@ class Case(models.Model):
     '''
     case_id = models.CharField(max_length=255, null=True, blank=False)
 
+    def get(case_id):
+        return Case.objects.get_or_create(case_id=case_id)[0]
+
     def __get_case__(self, case_id):
         return get_case(case_id)
 
@@ -30,6 +33,9 @@ class Project(models.Model):
         unique=True,
         choices=CHOICES)
 
+    def get(name):
+        return Project.objects.get_or_create(name=name)[0]
+
     def __str__(self):
         return self.name
 
@@ -42,6 +48,9 @@ class Stadium(models.Model):
         blank=False,
         unique=True,
         choices=CHOICES)
+
+    def get(name):
+        return Stadium.objects.get_or_create(name=name)[0]
 
     def __str__(self):
         return self.name

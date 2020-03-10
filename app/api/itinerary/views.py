@@ -9,11 +9,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import action
 
-from api.itinerary.models import Itinerary, ItineraryItem, Note, ItinerarySettings
+from api.itinerary.models import Itinerary, ItineraryItem, Note
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
 from api.itinerary.serializers import ItineraryTeamMemberSerializer
-from api.cases.models import Case, Project, Stadium
+from api.cases.models import Case
 
 from utils.safety_lock import safety_lock
 
@@ -90,60 +90,23 @@ class ItineraryViewSet(
 
     @safety_lock
     def create(self, request):
-        # TODO: Cleanup and shorten this function
-        # TODO: Check if we need to make this atomic
-        # TODO: Make sure optional parameters are handled well (primary_stadium for example)
         serializer = ItinerarySerializer(data=request.data)
 
         if not serializer.is_valid():
             raise APIException('Could not create itinerary: {}'.format(serializer.errors))
 
-        itinerary = Itinerary.objects.create()
+        # Create the itinerary
+        itinerary = serializer.create(request.data)
 
-        # Add team members to the itinerary
-        team_members = request.data.get('team_members', [])
-        team_members = [team_member.get('user').get('id') for team_member in team_members]
-        itinerary.add_team_members(team_members)
-
-        settings = request.data.get('settings')
-        opening_date = settings.get('opening_date')
-        target_itinerary_length = settings.get('target_itinerary_length')
-
-        projects = settings.get('projects', [])
-        projects = [project.get('name') for project in projects]
-        projects = [Project.objects.get_or_create(name=project)[0] for project in projects]
-
-        primary_stadium = None
-        if settings.get('primary_stadium', None):
-            primary_stadium = settings.get('primary_stadium').get('name')
-            primary_stadium = Stadium.objects.get_or_create(name=primary_stadium)[0]
-
-        secondary_stadia = settings.get('secondary_stadia', [])
-        secondary_stadia = [stadium.get('name') for stadium in secondary_stadia]
-        secondary_stadia = [Stadium.objects.get_or_create(name=stadium)[0] for stadium in secondary_stadia]
-
-        exclude_stadia = settings.get('exclude_stadia', [])
-        exclude_stadia = [stadium.get('name') for stadium in exclude_stadia]
-        exclude_stadia = [Stadium.objects.get_or_create(name=stadium)[0] for stadium in exclude_stadia]
-
-        itinerary_settings = ItinerarySettings.objects.create(
-            opening_date=opening_date,
-            itinerary=itinerary,
-            primary_stadium=primary_stadium,
-            target_itinerary_length=target_itinerary_length
-        )
-        itinerary_settings.projects.set(projects)
-        itinerary_settings.secondary_stadia.set(secondary_stadia)
-        itinerary_settings.exclude_stadia.set(exclude_stadia)
-
-        serializer = self.serializer_class(itinerary)
-
+        # Populare the itinerary with cases
         cases = itinerary.get_cases_from_settings()
         for case in cases:
             case_id = case.get('case_id')
-            case = Case.objects.get_or_create(case_id=case_id)[0]
+            case = Case.get(case_id=case_id)
             ItineraryItem.objects.create(itinerary=itinerary, case=case)
 
+        # Serialize the itinerary again
+        serializer = ItinerarySerializer(itinerary)
         return Response(serializer.data)
 
     @safety_lock
