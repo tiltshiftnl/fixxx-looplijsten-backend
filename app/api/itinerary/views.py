@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -144,7 +145,7 @@ class ItineraryItemViewSet(
     A view for adding/removing an item to a user's itinerary
     """
     permission_classes = [IsAuthenticated]
-    queryset = Itinerary.objects.all()
+    queryset = ItineraryItem.objects.all()
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
