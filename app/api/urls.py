@@ -26,7 +26,7 @@ schema_view = get_schema_view(
 
 api_router = DefaultRouter()
 api_router.register(r'itineraries', ItineraryViewSet, basename='itinerary')
-api_router.register(r'itineraries/items', ItineraryItemViewSet, basename='itinerary-item')
+api_router.register(r'itinerary-items', ItineraryItemViewSet, basename='itinerary-item')
 api_router.register(r'cases', CaseViewSet, basename='case')
 api_router.register(r'search', CaseSearchViewSet, basename='search')
 api_router.register(r'notes', NoteViewSet, basename='notes')

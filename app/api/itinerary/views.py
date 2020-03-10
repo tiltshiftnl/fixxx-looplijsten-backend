@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,7 +12,7 @@ from rest_framework.decorators import action
 from api.itinerary.models import Itinerary, ItineraryItem, Note
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
-from api.itinerary.serializers import ItineraryTeamMemberSerializer
+from api.itinerary.serializers import ItineraryTeamMemberSerializer, ItineraryItemCreateSerializer
 from api.cases.models import Case
 
 from utils.safety_lock import safety_lock
@@ -145,13 +144,12 @@ class ItineraryItemViewSet(
     A view for adding/removing an item to a user's itinerary
     """
     permission_classes = [IsAuthenticated]
-    serializer_class = ItineraryItemSerializer
+    queryset = Itinerary.objects.all()
 
-    def get_object(self):
-        user = self.request.user
-        itinerary = get_object_or_404(Itinerary, user=user)
-        itinerary_item = ItineraryItem.objects.get(itinerary=itinerary, id=self.kwargs['pk'])
-        return itinerary_item
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ItineraryItemCreateSerializer
+        return ItineraryItemSerializer
 
     @safety_lock
     def update(self, request, *args, **kwargs):
@@ -166,17 +164,14 @@ class ItineraryItemViewSet(
 
     @safety_lock
     def create(self, request):
-        # Get the current user and it's itinerary
-        user = get_object_or_404(User, id=request.user.id)
-        itinerary = Itinerary.objects.get_or_create(user=user)[0]
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=request.data)
 
-        # Create itinerary item if the case exists
-        case = Case.objects.get_or_create(case_id=request.data['id'])[0]
-        position = request.data.get('position', None)
+        if not serializer.is_valid():
+            raise APIException('Could not create itinerary item: {}'.format(serializer.errors))
 
         try:
-            itinerary_item = ItineraryItem.objects.create(
-                itinerary=itinerary, case=case, position=position)
+            itinerary_item = serializer.create(request.data)
         except Exception as e:
             raise APIException(str(e))
 
