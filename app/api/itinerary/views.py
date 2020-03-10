@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import APIException
 from rest_framework.decorators import action
 
-from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
+from api.itinerary.models import Itinerary, ItineraryItem, Note, ItinerarySettings
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
 from api.itinerary.serializers import ItineraryTeamMemberSerializer
@@ -99,29 +99,30 @@ class ItineraryViewSet(
             raise APIException('Could not create itinerary: {}'.format(serializer.errors))
 
         itinerary = Itinerary.objects.create()
-        team_members = request.data.get('team_members', [])
 
-        for team_member in team_members:
-            user_id = team_member.get('user').get('id')
-            user = get_object_or_404(User, id=user_id)
-            ItineraryTeamMember.objects.create(itinerary=itinerary, user=user)
+        # Add team members to the itinerary
+        team_members = request.data.get('team_members', [])
+        team_members = [team_member.get('user').get('id') for team_member in team_members]
+        itinerary.add_team_members(team_members)
 
         settings = request.data.get('settings')
         opening_date = settings.get('opening_date')
         target_itinerary_length = settings.get('target_itinerary_length')
 
-        projects = settings.get('projects')
+        projects = settings.get('projects', [])
         projects = [project.get('name') for project in projects]
         projects = [Project.objects.get_or_create(name=project)[0] for project in projects]
 
-        primary_stadium = settings.get('primary_stadium').get('name')
-        primary_stadium = Stadium.objects.get_or_create(name=primary_stadium)[0]
+        primary_stadium = None
+        if settings.get('primary_stadium', None):
+            primary_stadium = settings.get('primary_stadium').get('name')
+            primary_stadium = Stadium.objects.get_or_create(name=primary_stadium)[0]
 
-        secondary_stadia = settings.get('secondary_stadia')
+        secondary_stadia = settings.get('secondary_stadia', [])
         secondary_stadia = [stadium.get('name') for stadium in secondary_stadia]
         secondary_stadia = [Stadium.objects.get_or_create(name=stadium)[0] for stadium in secondary_stadia]
 
-        exclude_stadia = settings.get('exclude_stadia')
+        exclude_stadia = settings.get('exclude_stadia', [])
         exclude_stadia = [stadium.get('name') for stadium in exclude_stadia]
         exclude_stadia = [Stadium.objects.get_or_create(name=stadium)[0] for stadium in exclude_stadia]
 
