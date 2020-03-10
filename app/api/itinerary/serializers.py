@@ -33,6 +33,11 @@ class ItineraryItemSerializer(serializers.ModelSerializer):
         model = ItineraryItem
         fields = ('id', 'position', 'notes', 'case')
 
+class ItineraryItemUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItineraryItem
+        fields = ('id', 'position')
+
 class ItineraryItemCreateSerializer(serializers.ModelSerializer):
     case_id = serializers.CharField(required=True)
 

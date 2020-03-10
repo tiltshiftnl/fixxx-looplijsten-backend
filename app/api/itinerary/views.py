@@ -14,6 +14,7 @@ from api.itinerary.models import Itinerary, ItineraryItem, Note
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
 from api.itinerary.serializers import ItineraryTeamMemberSerializer, ItineraryItemCreateSerializer
+from api.itinerary.serializers import ItineraryItemUpdateSerializer
 from api.cases.models import Case
 
 from utils.safety_lock import safety_lock
@@ -150,6 +151,8 @@ class ItineraryItemViewSet(
     def get_serializer_class(self):
         if self.request.method == 'POST':
             return ItineraryItemCreateSerializer
+        elif self.request.method in ['PATCH', 'PUT']:
+            return ItineraryItemUpdateSerializer
         return ItineraryItemSerializer
 
     @safety_lock
