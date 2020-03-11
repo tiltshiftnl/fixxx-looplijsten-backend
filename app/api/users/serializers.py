@@ -6,6 +6,7 @@ class UserIdSerializer(serializers.Serializer):
     username = serializers.CharField(read_only=True)
     first_name = serializers.CharField(read_only=True)
     last_name = serializers.CharField(read_only=True)
+    full_name = serializers.CharField()
 
 class UserSerializer(serializers.Serializer):
     id = serializers.UUIDField(required=True)
@@ -13,3 +14,4 @@ class UserSerializer(serializers.Serializer):
     username = serializers.CharField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
+    full_name = serializers.CharField()
