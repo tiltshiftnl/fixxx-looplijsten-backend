@@ -22,18 +22,18 @@ class User(AbstractUser):
     @property
     def full_name(self):
         '''
-        Parses and returns last name from email (f.foo will return foo)
+        Parses and returns last name from email (f.foo will return F. Foo)
         '''
         if self.email:
             split_email_username = self.email.split('@')[0].split('.')
-            if len(split_email_username) == 2:
-                first_initial = split_email_username[0]
-                first_initial = first_initial.capitalize()
 
-                last_name = split_email_username[1]
+            if len(split_email_username) >= 2:
+                last_name = split_email_username.pop()
                 last_name = last_name.capitalize()
+                first_names_initials = '.'.join(split_email_username) + '.'
+                first_names_initials = first_names_initials.upper()
 
-                return '{}. {}'.format(first_initial, last_name)
+                return '{} {}'.format(first_names_initials, last_name)
 
     def __str__(self):
         return self.full_name
