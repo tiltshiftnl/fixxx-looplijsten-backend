@@ -40,6 +40,7 @@ class ItineraryItemUpdateSerializer(serializers.ModelSerializer):
 
 class ItineraryItemCreateSerializer(serializers.ModelSerializer):
     case_id = serializers.CharField(required=True)
+    position = serializers.FloatField(required=False)
 
     class Meta:
         model = ItineraryItem
