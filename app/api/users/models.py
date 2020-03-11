@@ -25,15 +25,18 @@ class User(AbstractUser):
         Parses and returns last name from email (f.foo will return F. Foo)
         '''
         if self.email:
-            split_email_username = self.email.split('@')[0].split('.')
+            full_name = self.email.split('@')[0].split('.')
+            processed_full_name = ''
 
-            if len(split_email_username) >= 2:
-                last_name = split_email_username.pop()
-                last_name = last_name.capitalize()
-                first_names_initials = '.'.join(split_email_username) + '.'
-                first_names_initials = first_names_initials.upper()
+            for part in full_name:
+                part = part.capitalize()
 
-                return '{} {}'.format(first_names_initials, last_name)
+                if len(part) == 1:
+                    part = part + '.'
+
+                processed_full_name = processed_full_name + ' ' + part
+
+            return processed_full_name
 
     def __str__(self):
         return self.full_name
