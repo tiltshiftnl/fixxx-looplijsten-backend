@@ -19,28 +19,21 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-    def get_last_name_from_email(self):
+    @property
+    def full_name(self):
         '''
         Parses and returns last name from email (f.foo will return foo)
         '''
         if self.email:
             split_email_username = self.email.split('@')[0].split('.')
             if len(split_email_username) == 2:
+                first_initial = split_email_username[0]
+                first_initial = first_initial.capitalize()
+
                 last_name = split_email_username[1]
                 last_name = last_name.capitalize()
-                return last_name
 
-    @property
-    def full_name(self):
-        last_name = self.last_name
-
-        if not last_name:
-            last_name = self.get_last_name_from_email()
-            print('\033[91m HELLO', last_name)
-
-        last_name = '' if last_name is None else last_name
-
-        return '{} {}'.format(self.first_name, last_name)
+                return '{}. {}'.format(first_initial, last_name)
 
     def __str__(self):
         return self.full_name
