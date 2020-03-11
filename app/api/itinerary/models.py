@@ -25,6 +25,20 @@ class Itinerary(models.Model):
         cases = [item.case for item in self.items.all()]
         return cases
 
+    def add_case(self, case_id, position):
+        case = Case.objects.get_or_create(case_id=case_id)[0]
+        used_cases = Itinerary.__get_itinerary_cases_for_date__(self.created_at)
+
+        if case in used_cases:
+            raise ValueError('This case is already used in an itinerary for this date')
+
+        itinerary_item = ItineraryItem.objects.create(
+            case=case,
+            itinerary=self,
+            position=position)
+
+        return itinerary_item
+
     def get_cases_from_settings(self):
         projects = [project.name for project in self.settings.projects.all()]
         secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]

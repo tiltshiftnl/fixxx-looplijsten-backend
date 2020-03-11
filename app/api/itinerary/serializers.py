@@ -2,7 +2,7 @@ from api.users.serializers import UserIdSerializer
 from rest_framework import serializers
 from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
 from api.cases.serializers import CaseSerializer, ProjectSerializer, StadiumSerializer
-from api.cases.models import Project, Stadium, Case
+from api.cases.models import Project, Stadium
 
 class NoteCrudSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,10 +51,8 @@ class ItineraryItemCreateSerializer(serializers.ModelSerializer):
         itinerary_id = validated_data.get('itinerary')
         position = validated_data.get('position', None)
 
-        case = Case.objects.get_or_create(case_id=case_id)[0]
         itinerary = Itinerary.objects.get(id=itinerary_id)
-
-        itinerary_item = ItineraryItem.objects.create(case=case, itinerary=itinerary, position=position)
+        itinerary_item = itinerary.add_case(case_id, position)
 
         return itinerary_item
 
