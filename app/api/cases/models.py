@@ -3,6 +3,9 @@ from utils.queries import get_case
 from api.cases.const import PROJECTS, STADIA
 
 class Case(models.Model):
+    class Meta:
+        ordering = ['case_id']
+
     '''
     A simple case model
     '''

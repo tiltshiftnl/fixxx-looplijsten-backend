@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
@@ -9,6 +10,7 @@ import utils.queries_brk_api as brk_api
 import utils.queries_bag_api as bag_api
 
 from api.itinerary.serializers import CaseSerializer
+from api.itinerary.models import Itinerary
 
 class CaseViewSet(ViewSet):
     """
@@ -69,4 +71,20 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
             return HttpResponseBadRequest('Missing steet number is required')
         else:
             items = q.get_search_results(postal_code, street_number, suffix)
+
+            # Enrich the search result data with teams whose itinerary contains this item
+            # TODO: Quickly implemented for demo/prototyping. Revisit and improve this later.
+            items_mapped = {}
+            for item in items:
+                item['teams'] = []
+                items_mapped[item.get('case_id')] = item
+
+            itineraries = Itinerary.objects.filter(created_at=datetime.now()).all()
+            for itinerary in itineraries:
+                case_ids = [case.case_id for case in itinerary.get_cases()]
+                for case_id in case_ids:
+                    item = items_mapped.get(case_id, None)
+                    if item:
+                        item['teams'].append(itinerary.__str__())
+
             return JsonResponse({'cases': items})

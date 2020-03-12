@@ -9,7 +9,7 @@ class Itinerary(models.Model):
     created_at = models.DateField(auto_now_add=True)
 
     def get_center(self):
-        cases = self.__get_cases__()
+        cases = self.get_cases()
         locations = [case.get_location() for case in cases]
         locations_lng = [location.get('lng') for location in locations]
         locations_lat = [location.get('lat') for location in locations]
@@ -19,17 +19,17 @@ class Itinerary(models.Model):
 
         return {'lat': locations_lat, 'lng': locations_lng}
 
-    def __get_itinerary_cases_for_date__(date):
+    def get_itinerary_cases_for_date(date):
         '''
         returns a list of cases which are already in itineraries for a given date
         '''
         itineraries = Itinerary.objects.filter(created_at=date)
-        itineraries = [itinerary.__get_cases__() for itinerary in itineraries]
+        itineraries = [itinerary.get_cases() for itinerary in itineraries]
         cases = flatten(itineraries)
 
         return cases
 
-    def __get_cases__(self):
+    def get_cases(self):
         '''
         Returns a list of cases for this itinerary
         '''
@@ -38,7 +38,7 @@ class Itinerary(models.Model):
 
     def add_case(self, case_id, position):
         case = Case.objects.get_or_create(case_id=case_id)[0]
-        used_cases = Itinerary.__get_itinerary_cases_for_date__(self.created_at)
+        used_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
 
         if case in used_cases:
             raise ValueError('This case is already used in an itinerary for this date')
@@ -54,7 +54,7 @@ class Itinerary(models.Model):
         projects = [project.name for project in self.settings.projects.all()]
         secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]
         exclude_stadia = [stadium.name for stadium in self.settings.exclude_stadia.all()]
-        exclude_cases = Itinerary.__get_itinerary_cases_for_date__(self.created_at)
+        exclude_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
         center = self.get_center()
         opening_date = self.settings.opening_date
 
@@ -77,7 +77,7 @@ class Itinerary(models.Model):
         projects = [project.name for project in self.settings.projects.all()]
         secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]
         exclude_stadia = [stadium.name for stadium in self.settings.exclude_stadia.all()]
-        exclude_cases = Itinerary.__get_itinerary_cases_for_date__(self.created_at)
+        exclude_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
 
         try:
             primary_stadium = self.settings.primary_stadium.name
@@ -161,7 +161,7 @@ class ItineraryTeamMember(models.Model):
                                   related_name='team_members')
 
     def __str__(self):
-        return self.user.first_name
+        return self.user.full_name
 
 class ItineraryItem(models.Model):
     """ Single Itinerary """
