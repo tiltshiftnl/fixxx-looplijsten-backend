@@ -1,5 +1,6 @@
 from sklearn.metrics.pairwise import euclidean_distances
 import numpy as np
+from geopy.distance import distance
 
 def sort_by_postal_code(cases):
     '''
@@ -96,6 +97,16 @@ def calculate_distances(center, cases):
     distances = euclidean_distances(case_coordinates, [center])
 
     return list(distances.flatten())
+
+def calculate_geo_distances(center, cases):
+    '''
+    Returns a set of distances in KM from the given center
+    '''
+    case_coordinates = get_case_coordinates(cases)
+    distances = [distance(center, coordinates).km * 1000 for coordinates in case_coordinates]
+
+    return distances
+
 
 def filter_cases_with_missing_coordinates(cases):
     '''

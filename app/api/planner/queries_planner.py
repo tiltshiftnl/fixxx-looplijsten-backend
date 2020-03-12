@@ -79,7 +79,7 @@ def match_cases_to_stages(cases, stages):
 
     return filtered_cases
 
-def get_cases(starting_date, projects, stages):
+def get_cases_from_bwv(starting_date, projects, stages):
     # Due to a flaw in the BWV database design, there is no direct relationship
     # between the stadia and the cases. That's why two queries and matching are needed
     eligible_cases = get_eligible_cases(starting_date, projects)

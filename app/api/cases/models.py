@@ -14,6 +14,10 @@ class Case(models.Model):
     def __get_case__(self, case_id):
         return get_case(case_id)
 
+    def get_location(self):
+        case_data = self.__get_case__(self.case_id)
+        return {'lat': case_data.get('lat'), 'lng': case_data.get('lng')}
+
     @property
     def bwv_data(self):
         return self.__get_case__(self.case_id)

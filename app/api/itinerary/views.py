@@ -96,7 +96,8 @@ class ItineraryViewSet(
     def suggestions(self, request, pk):
         ''' Returns a list of suggestions for the given itinerary '''
         itinerary = get_object_or_404(Itinerary, pk=pk)
-        cases = itinerary.get_cases_from_settings()
+        cases = itinerary.get_suggestions()
+
         return JsonResponse({'cases': cases})
 
     @safety_lock

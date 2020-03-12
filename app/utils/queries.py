@@ -217,6 +217,8 @@ def get_case(case_id):
               import_adres.hsnr AS street_number,
               import_adres.hsltr AS suffix_letter,
               import_adres.toev AS suffix,
+              import_adres.wzs_lon AS lng,
+              import_adres.wzs_lat as lat,
               import_stadia.sta_oms AS stadium,
               import_wvs.beh_oms AS case_reason
             FROM

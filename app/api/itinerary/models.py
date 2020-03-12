@@ -2,11 +2,22 @@ from django.db import models
 from django.contrib.admin.utils import flatten
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
-from api.planner.algorithm import get_cases_with_settings
+from api.planner.algorithm import get_cases_with_settings, get_suggestions
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
     created_at = models.DateField(auto_now_add=True)
+
+    def get_center(self):
+        cases = self.__get_cases__()
+        locations = [case.get_location() for case in cases]
+        locations_lng = [location.get('lng') for location in locations]
+        locations_lat = [location.get('lat') for location in locations]
+
+        locations_lng = sum(locations_lng) / len(cases)
+        locations_lat = sum(locations_lat) / len(cases)
+
+        return {'lat': locations_lat, 'lng': locations_lng}
 
     def __get_itinerary_cases_for_date__(date):
         '''
@@ -38,6 +49,29 @@ class Itinerary(models.Model):
             position=position)
 
         return itinerary_item
+
+    def get_suggestions(self):
+        projects = [project.name for project in self.settings.projects.all()]
+        secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]
+        exclude_stadia = [stadium.name for stadium in self.settings.exclude_stadia.all()]
+        exclude_cases = Itinerary.__get_itinerary_cases_for_date__(self.created_at)
+        center = self.get_center()
+        opening_date = self.settings.opening_date
+
+        try:
+            primary_stadium = self.settings.primary_stadium.name
+        except AttributeError:
+            primary_stadium = None
+
+        cases = get_suggestions(center=center,
+                                opening_date=opening_date,
+                                projects=projects,
+                                primary_stadium=primary_stadium,
+                                secondary_stadia=secondary_stadia,
+                                exclude_stadia=exclude_stadia,
+                                exclude_cases=exclude_cases)
+
+        return cases
 
     def get_cases_from_settings(self):
         projects = [project.name for project in self.settings.projects.all()]

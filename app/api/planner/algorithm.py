@@ -1,15 +1,14 @@
-
 from api.cases.const import STADIA
-from api.planner.queries_planner import get_cases
+from api.planner.queries_planner import get_cases_from_bwv
 from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list, sort_by_postal_code
 from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium, filter_out_cases
-from api.planner.utils import shorten_if_necessary
+from api.planner.utils import shorten_if_necessary, calculate_geo_distances
 
 def get_cases_for_configuration(configuration):
     opening_date = configuration.get('opening_date')
     opening_reasons = configuration.get('opening_reasons')
-    return get_cases(opening_date, opening_reasons, STADIA)
+    return get_cases_from_bwv(opening_date, opening_reasons, STADIA)
 
 def get_list_for_planning(configuration):
     lists = configuration.get("lists", [])
@@ -49,7 +48,7 @@ def get_cases_with_settings(
         exclude_stadia=[],
         exclude_cases=[]):
 
-    cases = get_cases(opening_date, projects, STADIA)
+    cases = get_cases_from_bwv(opening_date, projects, STADIA)
     exclude_cases = [{'case_id': case.case_id} for case in exclude_cases]
     # TODO: this function can probably be written at a later point so that the previous mapping is not needed
     cases = remove_cases_from_list(cases, exclude_cases)
@@ -98,6 +97,42 @@ def get_planning(configuration):
 
     return configuration
 
+# TODO: A lot of this code is repeated in get_itineraries. This is for prototype/demo purposes
+def get_suggestions(
+        center,
+        opening_date,
+        projects,
+        primary_stadium=None,
+        secondary_stadia=[],
+        exclude_stadia=[],
+        exclude_cases=[]):
+
+    cases = get_cases_from_bwv(opening_date, projects, STADIA)
+
+    exclude_cases = [{'case_id': case.case_id} for case in exclude_cases]
+    # TODO: this function can probably be written at a later point so that the previous mapping is not needed
+    cases = remove_cases_from_list(cases, exclude_cases)
+
+    # Get a subset of cases containing the primary_stadium and secondary_stadia cases
+    filter_stadia = secondary_stadia
+    if primary_stadium:
+        filter_stadia = [primary_stadium] + filter_stadia
+
+    filtered_cases = filter_cases(cases, filter_stadia)
+    filtered_cases = filter_out_cases(filtered_cases, exclude_stadia)
+    filtered_cases = filter_cases_with_missing_coordinates(filtered_cases)
+
+    # Calculate a list of distances for each case
+    center = [center.get('lat'), center.get('lng')]
+    distances = calculate_geo_distances(center, filtered_cases)
+
+    # Add the distances to the cases
+    for index, case in enumerate(filtered_cases):
+        case['distance'] = distances[index]
+
+    # Sort the cases based on distance
+    sorted_cases = sorted(filtered_cases, key=lambda case: case['distance'])
+    return sorted_cases
 
 def get_itineraries(
         cases,
