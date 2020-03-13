@@ -29,3 +29,8 @@ class ItineraryAdmin(admin.ModelAdmin):
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
     fields = ('itinerary_item', 'text', 'author')
+
+
+@admin.register(ItineraryItem)
+class ItineraryItemAdmim(admin.ModelAdmin):
+    fields = ('itinerary', 'case', 'position')

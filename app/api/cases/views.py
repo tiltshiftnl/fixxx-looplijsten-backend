@@ -9,7 +9,7 @@ import utils.queries as q
 import utils.queries_brk_api as brk_api
 import utils.queries_bag_api as bag_api
 
-from api.itinerary.serializers import CaseSerializer
+from api.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
 from api.itinerary.models import Itinerary
 
 class CaseViewSet(ViewSet):
@@ -59,6 +59,36 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CaseSerializer
 
+    def __add_teams__(self, cases, itineraries_created_at):
+        '''
+        Enriches the cases with teams
+        '''
+        # Enrich the search result data with teams whose itinerary contains this item
+        mapped_cases = {}
+        cases = cases.copy()
+
+        for case in cases:
+            # Map the objects so that they're easily accessible through the case_id
+            mapped_cases[case.get('case_id')] = case
+            # Add a teams arrar to the case object as well
+            case['teams'] = []
+
+        # Get today's itineraries
+        itineraries = Itinerary.objects.filter(created_at=itineraries_created_at).all()
+
+        for itinerary in itineraries:
+            team = itinerary.team_members.all()
+            itinerary_cases = itinerary.get_cases()
+
+            # Match the mapped_cases to the itinerary_cases, and add the teams
+            for case in itinerary_cases:
+                case_id = case.case_id
+                mapped_case = mapped_cases.get(case_id, {'teams': []})
+                serialized_team = ItineraryTeamMemberSerializer(team, many=True)
+                mapped_case['teams'].append(serialized_team.data)
+
+        return cases
+
     @safety_lock
     def list(self, request):
         postal_code = request.GET.get('postalCode', None)
@@ -71,20 +101,6 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
             return HttpResponseBadRequest('Missing steet number is required')
         else:
             items = q.get_search_results(postal_code, street_number, suffix)
-
-            # Enrich the search result data with teams whose itinerary contains this item
-            # TODO: Quickly implemented for demo/prototyping. Revisit and improve this later.
-            items_mapped = {}
-            for item in items:
-                item['teams'] = []
-                items_mapped[item.get('case_id')] = item
-
-            itineraries = Itinerary.objects.filter(created_at=datetime.now()).all()
-            for itinerary in itineraries:
-                case_ids = [case.case_id for case in itinerary.get_cases()]
-                for case_id in case_ids:
-                    item = items_mapped.get(case_id, None)
-                    if item:
-                        item['teams'].append(itinerary.__str__())
+            items = self.__add_teams__(items, datetime.now())
 
             return JsonResponse({'cases': items})
