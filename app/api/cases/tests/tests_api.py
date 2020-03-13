@@ -54,7 +54,7 @@ class CaseViewSetTest(APITestCase):
     @patch('api.cases.views.brk_api')
     @patch('api.cases.views.bag_api')
     @patch('api.cases.views.q')
-    def test_authenticated_requests_no_case(self, mock_q, mock_bag_api, mock_brk_api):
+    def test_authenticated_requests_succeeds(self, mock_q, mock_bag_api, mock_brk_api):
         """
         An authenticated request succeeds and contains all the necessary data
         """
@@ -167,7 +167,7 @@ class CaseSearchViewSetTest(APITestCase):
 
         # Mock search function
         mock_q.get_search_results = Mock()
-        mock_q.get_search_results.return_value = 'FOO_SEARCH_RESULTS'
+        mock_q.get_search_results.return_value = []
 
         response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -185,7 +185,7 @@ class CaseSearchViewSetTest(APITestCase):
 
         # Mock search function
         mock_q.get_search_results = Mock()
-        mock_q.get_search_results.return_value = 'FOO_SEARCH_RESULTS'
+        mock_q.get_search_results.return_value = []
 
         response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -199,7 +199,7 @@ class CaseSearchViewSetTest(APITestCase):
         client = get_authenticated_client()
 
         # Mock search function
-        FOO_SEARCH_RESULTS = 'FOO_SEARCH_RESULTS'
+        FOO_SEARCH_RESULTS = []
         mock_q.get_search_results = Mock(return_value=FOO_SEARCH_RESULTS)
 
         response = client.get(url, self.MOCK_SEARCH_QUERY_PARAMETERS)
@@ -222,7 +222,7 @@ class CaseSearchViewSetTest(APITestCase):
         client = get_authenticated_client()
 
         # Mock search function
-        FOO_SEARCH_RESULTS = 'FOO_SEARCH_RESULTS'
+        FOO_SEARCH_RESULTS = []
         mock_q.get_search_results = Mock(return_value=FOO_SEARCH_RESULTS)
 
         MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
@@ -238,3 +238,23 @@ class CaseSearchViewSetTest(APITestCase):
 
         # Tests if the response contains the mock data
         self.assertEqual(response.json(), {'cases': FOO_SEARCH_RESULTS})
+
+    @patch('api.cases.views.q')
+    def test_search_with_teams_array(self, mock_q):
+        """
+        The cases in a search result should contain a teams array
+        """
+        url = reverse('search-list')
+        client = get_authenticated_client()
+
+        CASE_ID = 'FOO-ID'
+
+        # Mock search function
+        FOO_SEARCH_RESULTS = [{'case_id': CASE_ID}]
+        mock_q.get_search_results = Mock(return_value=FOO_SEARCH_RESULTS)
+
+        response = client.get(url, self.MOCK_SEARCH_QUERY_PARAMETERS)
+
+        # Tests if the response contains the mock data with an added teams array
+        expected_response = {'cases': [{'case_id': CASE_ID, 'teams': []}]}
+        self.assertEqual(response.json(), expected_response)
