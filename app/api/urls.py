@@ -11,7 +11,7 @@ from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteView
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
 from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView, UserListView
-from api.planner.views import GenerateWeeklyItinerariesViewset, AlgorithmView
+from api.planner.views import AlgorithmView
 from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
 
 admin.site.site_header = "Wonen looplijsten"
@@ -31,8 +31,6 @@ api_router.register(r'cases', CaseViewSet, basename='case')
 api_router.register(r'search', CaseSearchViewSet, basename='search')
 api_router.register(r'notes', NoteViewSet, basename='notes')
 api_router.register(r'users', UserListView, basename='users')
-api_router.register(r'generate-weekly-itineraries', GenerateWeeklyItinerariesViewset,
-                    basename='generate-weekly-itineraries')
 api_router.register(r'constants/projects', ConstantsProjectsViewSet, basename='constants-projects')
 api_router.register(r'constants/stadia', ConstantsStadiaViewSet, basename='constants-stadia')
 api_router.register(r'settings/planner', SettingsPlannerViewSet, basename='settings-planner')

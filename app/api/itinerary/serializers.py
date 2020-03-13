@@ -22,7 +22,7 @@ class ItinerarySettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItinerarySettings
-        fields = ('opening_date', 'target_itinerary_length', 'projects',
+        fields = ('opening_date', 'target_length', 'projects',
                   'primary_stadium', 'secondary_stadia', 'exclude_stadia')
 
 class ItineraryItemSerializer(serializers.ModelSerializer):
@@ -104,7 +104,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
         settings = validated_data.get('settings')
         opening_date = settings.get('opening_date')
-        target_itinerary_length = settings.get('target_itinerary_length')
+        target_length = settings.get('target_length')
 
         # Get the projects and stadia from settings
         projects = self.__get_projects_from_settings__(settings)
@@ -117,7 +117,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
             opening_date=opening_date,
             itinerary=itinerary,
             primary_stadium=primary_stadium,
-            target_itinerary_length=target_itinerary_length
+            target_length=target_length
         )
         # Next, add the many-to-many relations of the itinerary_Settings
         itinerary_settings.projects.set(projects)

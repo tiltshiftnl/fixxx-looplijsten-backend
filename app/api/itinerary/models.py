@@ -2,13 +2,17 @@ from django.db import models
 from django.contrib.admin.utils import flatten
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
-from api.planner.algorithm import get_cases_with_settings, get_suggestions
+from api.planner.algorithm import ItineraryGenerateCluster, ItineraryGenerateSuggestions
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
+
     created_at = models.DateField(auto_now_add=True)
 
     def get_center(self):
+        '''
+        Returns the center coordinates of the itinerary
+        '''
         cases = self.get_cases()
         locations = [case.get_location() for case in cases]
         locations_lng = [location.get('lng') for location in locations]
@@ -37,7 +41,10 @@ class Itinerary(models.Model):
         return cases
 
     def add_case(self, case_id, position):
-        case = Case.objects.get_or_create(case_id=case_id)[0]
+        '''
+        Adds a case to the itinerary
+        '''
+        case = Case.get(case_id=case_id)
         used_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
 
         if case in used_cases:
@@ -51,62 +58,48 @@ class Itinerary(models.Model):
         return itinerary_item
 
     def get_suggestions(self):
-        projects = [project.name for project in self.settings.projects.all()]
-        secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]
-        exclude_stadia = [stadium.name for stadium in self.settings.exclude_stadia.all()]
+        '''
+        Returns a list of suggested cases which can be added to this itinerary
+        '''
         exclude_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
         center = self.get_center()
-        opening_date = self.settings.opening_date
 
-        try:
-            primary_stadium = self.settings.primary_stadium.name
-        except AttributeError:
-            primary_stadium = None
-
-        cases = get_suggestions(center=center,
-                                opening_date=opening_date,
-                                projects=projects,
-                                primary_stadium=primary_stadium,
-                                secondary_stadia=secondary_stadia,
-                                exclude_stadia=exclude_stadia,
-                                exclude_cases=exclude_cases)
+        itinerary_generator = ItineraryGenerateSuggestions(self.settings)
+        cases = itinerary_generator.generate(center, exclude_cases)
 
         return cases
 
     def get_cases_from_settings(self):
-        projects = [project.name for project in self.settings.projects.all()]
-        secondary_stadia = [stadium.name for stadium in self.settings.secondary_stadia.all()]
-        exclude_stadia = [stadium.name for stadium in self.settings.exclude_stadia.all()]
+        '''
+        Returns a list of cases based on the settings which can be added to this itinerary
+        '''
         exclude_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
-
-        try:
-            primary_stadium = self.settings.primary_stadium.name
-        except AttributeError:
-            primary_stadium = None
-
-        cases = get_cases_with_settings(
-            opening_date=self.settings.opening_date,
-            target_length=self.settings.target_itinerary_length,
-            projects=projects,
-            primary_stadium=primary_stadium,
-            secondary_stadia=secondary_stadia,
-            exclude_stadia=exclude_stadia,
-            exclude_cases=exclude_cases)
+        itinerary_generator = ItineraryGenerateCluster(self.settings)
+        cases = itinerary_generator.generate(exclude_cases)
 
         return cases
 
     def clear_team_members(self):
+        '''
+        Removes all team members from this itinerary
+        '''
         team_members = self.team_members.all()
 
         for team_member in team_members:
             team_member.delete()
 
     def add_team_members(self, user_ids):
+        '''
+        Addes team members to this itinerary
+        '''
         for user_id in user_ids:
             user = User.objects.get(id=user_id)
             ItineraryTeamMember.objects.create(user=user, itinerary=self)
 
     def __str__(self):
+        '''
+        A string representation of this itinerary
+        '''
         team_members = self.team_members.all()
         team_members = [str(member) for member in team_members]
         string = ', '.join(team_members)
@@ -114,10 +107,13 @@ class Itinerary(models.Model):
         return string
 
 class ItinerarySettings(models.Model):
+    """
+    Settings for an itinerary
+    """
     opening_date = models.DateField(blank=False,
                                     null=False)
 
-    target_itinerary_length = models.IntegerField(default=6)
+    target_length = models.IntegerField(default=6)
 
     itinerary = models.OneToOneField(Itinerary,
                                      on_delete=models.CASCADE,
@@ -145,11 +141,11 @@ class ItinerarySettings(models.Model):
 
 
 class ItineraryTeamMember(models.Model):
+    """ Member of an Itinerary Team """
 
     class Meta:
         unique_together = ['user', 'itinerary']
 
-    """ Member of an Itinerary Team """
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE, null=False,
                              related_name='teams',
@@ -164,7 +160,7 @@ class ItineraryTeamMember(models.Model):
         return self.user.full_name
 
 class ItineraryItem(models.Model):
-    """ Single Itinerary """
+    """ Single Itinerary item """
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, null=False, related_name='items')
     case = models.ForeignKey(Case, on_delete=models.CASCADE, null=True, blank=False, related_name='cases')
     position = models.FloatField(null=False, blank=False)

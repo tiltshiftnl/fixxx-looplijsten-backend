@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -101,6 +102,7 @@ class ItineraryViewSet(
         return JsonResponse({'cases': cases})
 
     @safety_lock
+    @transaction.atomic
     def create(self, request):
         serializer = ItinerarySerializer(data=request.data)
 

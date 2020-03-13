@@ -13,35 +13,7 @@ from utils.safety_lock import safety_lock
 from api.planner.serializers import WeekListSerializer
 from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA, ONDERZOEK_BUITENDIENST
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
-from api.planner.algorithm import get_planning
 from api.planner.optimization import linear_optimization, knapsack_demo
-
-class GenerateWeeklyItinerariesViewset(ViewSet, CreateAPIView):
-    """
-    A viewset for generating weekly itineraries
-    """
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = WeekListSerializer
-
-    @safety_lock
-    def create(self, request):
-        """
-        Generates a weekly planning with itineraries.
-        """
-        data = request.data
-        serializer = WeekListSerializer(data=data)
-        is_valid = serializer.is_valid()
-
-        if not is_valid:
-            return JsonResponse({
-                'message': 'Could not validate posted data',
-                'errors': serializer.errors
-            }, status=HttpResponseBadRequest.status_code)
-
-        data = get_planning(data)
-        return JsonResponse(data)
-
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/admin/login/'
@@ -117,7 +89,7 @@ class AlgorithmView(LoginRequiredMixin, View):
                 'errors': serializer.errors
             }, status=HttpResponseBadRequest.status_code)
 
-        context_data['planning'] = get_planning(post)
+        context_data['planning'] = {}
 
         return render(request, self.template_name, context_data)
 
