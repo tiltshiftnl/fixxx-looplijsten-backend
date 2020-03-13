@@ -24,19 +24,20 @@ class User(AbstractUser):
         '''
         Parses and returns last name from email (f.foo will return F. Foo)
         '''
+
+        def capitalize(string):
+            return string.capitalize()
+
+        def add_punctuation(string):
+            return string + '.' if len(string) == 1 else ' ' + string
+
         if self.email:
             full_name = self.email.split('@')[0].split('.')
-            processed_full_name = ''
+            full_name = [capitalize(part) for part in full_name]
+            full_name = [add_punctuation(part) for part in full_name]
+            full_name = ''.join(full_name)
 
-            for part in full_name:
-                part = part.capitalize()
-
-                if len(part) == 1:
-                    part = part + '.'
-
-                processed_full_name = processed_full_name + ' ' + part
-
-            return processed_full_name
+            return full_name
 
     def __str__(self):
         return self.full_name
