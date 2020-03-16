@@ -14,6 +14,7 @@ from api.planner.serializers import WeekListSerializer
 from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA, ONDERZOEK_BUITENDIENST
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 from api.planner.optimization import linear_optimization, knapsack_demo
+from woonfraude_model import score
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/admin/login/'
@@ -32,12 +33,14 @@ class AlgorithmView(LoginRequiredMixin, View):
             'length_of_lists': 8,
             'maps_key': key.value,
             'optimization': linear_optimization(),
-            'knapsack': knapsack_demo()
+            'knapsack': knapsack_demo(),
+            'woonfraude': score.__str__()
         }
 
     @safety_lock
     def get(self, request, *args, **kwargs):
         context_data = self.get_context_data()
+        self.test_hitkans()
 
         opening_date = '2019-01-01'
         opening_reasons = PROJECTS_WITHOUT_SAHARA
