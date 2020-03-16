@@ -33,21 +33,22 @@ def filter_cases(cases, stadia):
     return list(filter(lambda case: has_stadium(case), cases))
 
 
-def get_count(cases, stadium):
+def get_count(cases, stadia=[]):
     '''
     Returns how many of the given cases have the given stadium
     '''
-    cases_with_stadium = [case['stadium'] == stadium for case in cases]
+    cases_with_stadium = [case['stadium'] in stadia for case in cases]
     count = sum(cases_with_stadium)
 
     return count
 
 
-def get_best_list(case_lists, primary_stadium):
+def get_best_list(case_lists, best_stadia=[]):
     '''
     Returns the 'best' list, which is the list with most cases with the primary_stadium
     '''
-    cases_counted = [get_count(case_list, primary_stadium) for case_list in case_lists]
+
+    cases_counted = [get_count(case_list, best_stadia) for case_list in case_lists]
     best_list_index = cases_counted.index(max(cases_counted))
     best_list = case_lists[best_list_index]
 

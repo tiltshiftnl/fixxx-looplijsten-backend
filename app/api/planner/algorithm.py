@@ -1,4 +1,4 @@
-from api.cases.const import STADIA
+from api.cases.const import STADIA, ISSUEMELDING
 from api.planner.queries_planner import get_cases_from_bwv
 from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list
@@ -22,16 +22,22 @@ class ItineraryGenerateAlgorithm():
         self.secondary_stadia = [stadium.name for stadium in settings.secondary_stadia.all()]
         self.exclude_stadia = [stadium.name for stadium in settings.exclude_stadia.all()]
 
+    def __get_filter_stadia__(self):
+        '''
+        Gets a list of filter stadia
+        '''
+        filter_stadia = self.secondary_stadia
+        if self.primary_stadium:
+            filter_stadia = [self.primary_stadium, ISSUEMELDING] + filter_stadia
+
+        return filter_stadia
+
     def __get_eligible_cases__(self, exclude_cases):
         '''
         Returns a list of eligible cases using the settings object
         '''
         cases = get_cases_from_bwv(self.opening_date, self.projects, self.stadia)
-
-        # Get a subset of cases containing the primary_stadium and secondary_stadia cases
-        filter_stadia = self.secondary_stadia
-        if self.primary_stadium:
-            filter_stadia = [self.primary_stadium] + filter_stadia
+        filter_stadia = self.__get_filter_stadia__()
 
         filtered_cases = filter_cases(cases, filter_stadia)
         filtered_cases = filter_out_cases(filtered_cases, self.exclude_stadia)
@@ -65,10 +71,12 @@ class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
         if len(clusters) == 0:
             return []
 
-        # Get the best list, shorten it, and sort it
-        best_list = get_best_list(clusters, self.primary_stadium)
+        # Get the best list, shorten it, and sort it by primary stadium
+        best_list = get_best_list(clusters, [self.primary_stadium, ISSUEMELDING])
         shortened_list = shorten_if_necessary(best_list, self.target_length)
+
         sorted_best_list = sort_with_stadium(shortened_list, self.primary_stadium)
+        sorted_best_list = sort_with_stadium(sorted_best_list, ISSUEMELDING)
 
         return sorted_best_list
 

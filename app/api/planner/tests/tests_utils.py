@@ -7,7 +7,7 @@ from api.planner.utils import sort_by_postal_code, filter_cases, get_count, get_
 from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances
 from api.planner.utils import sort_with_stadium, filter_cases_with_missing_coordinates, filter_out_cases
 from api.planner.utils import shorten_if_necessary
-from api.cases.const import BED_AND_BREAKFAST, HOTLINE, SAFARI
+from api.cases.const import ISSUEMELDING, TWEEDE_CONTROLE, ONDERZOEK_BUITENDIENST
 
 # TODO: Split up in multiple classes
 class UtilsTests(TestCase):
@@ -23,24 +23,24 @@ class UtilsTests(TestCase):
         self.assertEquals(result, expected)
 
     def test_filter_cases(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': HOTLINE}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ISSUEMELDING}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
-        result = filter_cases(cases, [BED_AND_BREAKFAST, HOTLINE])
+        result = filter_cases(cases, [ONDERZOEK_BUITENDIENST, ISSUEMELDING])
         expected = [case_a, case_b]
 
         self.assertEquals(result, expected)
 
     def test_filter_cases_empty(self):
-        result = filter_cases([], [BED_AND_BREAKFAST, HOTLINE])
+        result = filter_cases([], [ONDERZOEK_BUITENDIENST, ISSUEMELDING])
         self.assertEquals(result, [])
 
     def test_filter_cases_no_stadia(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': HOTLINE}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ISSUEMELDING}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
         result = filter_cases(cases, [])
@@ -48,91 +48,110 @@ class UtilsTests(TestCase):
         self.assertEquals(result, cases)
 
     def test_filter_cases_one_stadium(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': HOTLINE}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ISSUEMELDING}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
-        result = filter_cases(cases, [SAFARI])
+        result = filter_cases(cases, [TWEEDE_CONTROLE])
         expected = [case_c]
 
         self.assertEquals(result, expected)
 
     def test_get_count(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': BED_AND_BREAKFAST}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
-        result = get_count(cases, SAFARI)
+        result = get_count(cases, TWEEDE_CONTROLE)
 
         self.assertEquals(result, 1)
 
     def test_get_count_no_stadium(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': BED_AND_BREAKFAST}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
-        result = get_count(cases, None)
+        result = get_count(cases, [])
 
         self.assertEquals(result, 0)
 
     def test_get_count_multiple(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': BED_AND_BREAKFAST}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
-        result = get_count(cases, BED_AND_BREAKFAST)
+        result = get_count(cases, ONDERZOEK_BUITENDIENST)
 
         self.assertEquals(result, 2)
 
     def test_get_best_list(self):
 
         list_a = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE}]
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': TWEEDE_CONTROLE}]
         list_b = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST}]
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST}]
         list_c = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE},
-            {'stadium': HOTLINE}]
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': TWEEDE_CONTROLE},
+            {'stadium': TWEEDE_CONTROLE}]
         lists = [list_a, list_b, list_c]
 
-        best_list = get_best_list(lists, BED_AND_BREAKFAST)
+        best_list = get_best_list(lists, [ONDERZOEK_BUITENDIENST])
         self.assertEquals(best_list, list_b)
 
     def test_get_best_list_no_stadium(self):
 
         list_a = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE}]
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': TWEEDE_CONTROLE}]
         list_b = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST}]
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST}]
         list_c = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE},
-            {'stadium': HOTLINE}]
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': TWEEDE_CONTROLE},
+            {'stadium': TWEEDE_CONTROLE}]
         lists = [list_a, list_b, list_c]
 
-        best_list = get_best_list(lists, None)
+        best_list = get_best_list(lists, [])
         # Will just return the first list if no Stadium if given
         self.assertEquals(best_list, list_a)
 
+    def test_get_best_list_multiple_stadia(self):
+
+        list_a = [
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': TWEEDE_CONTROLE}]
+        list_b = [
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING}]
+        list_c = [
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': TWEEDE_CONTROLE},
+            {'stadium': TWEEDE_CONTROLE}]
+        lists = [list_a, list_b, list_c]
+
+        best_list = get_best_list(lists, [ONDERZOEK_BUITENDIENST, ISSUEMELDING])
+        self.assertEquals(best_list, list_b)
+
     def test_remove_cases_from_list(self):
-        case_a = {'stadium': BED_AND_BREAKFAST, 'case_id': 'foo-a'}
-        case_b = {'stadium': HOTLINE, 'case_id': 'foo-b'}
-        case_c = {'stadium': SAFARI, 'case_id': 'foo-c'}
-        case_d = {'stadium': BED_AND_BREAKFAST, 'case_id': 'foo-d'}
-        case_e = {'stadium': HOTLINE, 'case_id': 'foo-e'}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-a'}
+        case_b = {'stadium': ISSUEMELDING, 'case_id': 'foo-b'}
+        case_c = {'stadium': TWEEDE_CONTROLE, 'case_id': 'foo-c'}
+        case_d = {'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-d'}
+        case_e = {'stadium': ISSUEMELDING, 'case_id': 'foo-e'}
 
         cases = [case_a, case_b, case_c, case_d, case_e]
         cases_to_remove = [case_b, case_e]
@@ -146,12 +165,12 @@ class UtilsTests(TestCase):
         '''
         Wil still succeed if tiems from the cases_to_remove don't exist in the cases list
         '''
-        case_a = {'stadium': BED_AND_BREAKFAST, 'case_id': 'foo-a'}
-        case_b = {'stadium': HOTLINE, 'case_id': 'foo-b'}
-        case_c = {'stadium': SAFARI, 'case_id': 'foo-c'}
-        case_d = {'stadium': BED_AND_BREAKFAST, 'case_id': 'foo-d'}
-        case_e = {'stadium': HOTLINE, 'case_id': 'foo-e'}
-        case_not_in_list = {'stadium': HOTLINE, 'case_id': 'foo-f'}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-a'}
+        case_b = {'stadium': ISSUEMELDING, 'case_id': 'foo-b'}
+        case_c = {'stadium': TWEEDE_CONTROLE, 'case_id': 'foo-c'}
+        case_d = {'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-d'}
+        case_e = {'stadium': ISSUEMELDING, 'case_id': 'foo-e'}
+        case_not_in_list = {'stadium': ISSUEMELDING, 'case_id': 'foo-f'}
 
         cases = [case_a, case_b, case_c, case_d, case_e]
         cases_to_remove = [case_a, case_b, case_not_in_list]
@@ -162,9 +181,9 @@ class UtilsTests(TestCase):
         self.assertEquals(result, expected)
 
     def test_get_case_coordinates(self):
-        case_a = {'lat': 0, 'lng': 1, 'stadium': BED_AND_BREAKFAST, 'case_id': 'foo-a'}
-        case_b = {'lat': 2, 'lng': 3, 'stadium': HOTLINE, 'case_id': 'foo-b'}
-        case_c = {'lat': 4, 'lng': 5, 'stadium': SAFARI, 'case_id': 'foo-c'}
+        case_a = {'lat': 0, 'lng': 1, 'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-a'}
+        case_b = {'lat': 2, 'lng': 3, 'stadium': ISSUEMELDING, 'case_id': 'foo-b'}
+        case_c = {'lat': 4, 'lng': 5, 'stadium': TWEEDE_CONTROLE, 'case_id': 'foo-c'}
         cases = [case_a, case_b, case_c]
         case_coordinates = get_case_coordinates(cases)
         expected = np.array([
@@ -176,8 +195,8 @@ class UtilsTests(TestCase):
         self.assertEquals(case_coordinates.all(), expected.all())
 
     def test_get_case_distances(self):
-        case_a = {'lat': 0, 'lng': 1, 'stadium': BED_AND_BREAKFAST, 'case_id': 'foo-a'}
-        case_b = {'lat': 0, 'lng': 2, 'stadium': HOTLINE, 'case_id': 'foo-b'}
+        case_a = {'lat': 0, 'lng': 1, 'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-a'}
+        case_b = {'lat': 0, 'lng': 2, 'stadium': ISSUEMELDING, 'case_id': 'foo-b'}
 
         cases = [case_a, case_b]
         center = [0, 0]
@@ -192,26 +211,26 @@ class UtilsTests(TestCase):
 
     def sort_with_stadium(self):
         cases = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE}
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING}
         ]
 
         expected = [
-            {'stadium': HOTLINE},
-            {'stadium': HOTLINE},
-            {'stadium': HOTLINE},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST}
+            {'stadium': ISSUEMELDING},
+            {'stadium': ISSUEMELDING},
+            {'stadium': ISSUEMELDING},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST}
         ]
 
-        results = sort_with_stadium(cases, HOTLINE)
+        results = sort_with_stadium(cases, ISSUEMELDING)
 
         self.assertEquals(expected, results)
 
@@ -220,13 +239,13 @@ class UtilsTests(TestCase):
         Should return the given list if no stadium is given
         '''
         cases = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE}
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING}
         ]
 
         results = sort_with_stadium(cases, None)
@@ -237,15 +256,15 @@ class UtilsTests(TestCase):
         '''
         Should filter out cases with missing coordinates
         '''
-        valid_case = {'stadium': HOTLINE, 'lat': 12, 'lng': -69}
+        valid_case = {'stadium': ISSUEMELDING, 'lat': 12, 'lng': -69}
         cases = [
-            {'stadium': BED_AND_BREAKFAST},
-            {'stadium': HOTLINE, 'lat': 12},
-            {'stadium': BED_AND_BREAKFAST, 'lng': -69},
-            {'stadium': HOTLINE, 'lat': 12},
-            {'stadium': HOTLINE, 'lat': None, 'lng': -69},
-            {'stadium': BED_AND_BREAKFAST, 'lat': 12, 'lng': None},
-            {'stadium': BED_AND_BREAKFAST, 'lat': None, 'lng': None},
+            {'stadium': ONDERZOEK_BUITENDIENST},
+            {'stadium': ISSUEMELDING, 'lat': 12},
+            {'stadium': ONDERZOEK_BUITENDIENST, 'lng': -69},
+            {'stadium': ISSUEMELDING, 'lat': 12},
+            {'stadium': ISSUEMELDING, 'lat': None, 'lng': -69},
+            {'stadium': ONDERZOEK_BUITENDIENST, 'lat': 12, 'lng': None},
+            {'stadium': ONDERZOEK_BUITENDIENST, 'lat': None, 'lng': None},
             valid_case,
         ]
 
@@ -253,24 +272,24 @@ class UtilsTests(TestCase):
         self.assertEquals(filtered_cases, [valid_case])
 
     def test_filter_out_cases(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': HOTLINE}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ISSUEMELDING}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
-        result = filter_out_cases(cases, [BED_AND_BREAKFAST, HOTLINE])
+        result = filter_out_cases(cases, [ONDERZOEK_BUITENDIENST, ISSUEMELDING])
         expected = [case_c]
 
         self.assertEquals(result, expected)
 
     def test_filter_out_cases_empty(self):
-        result = filter_out_cases([], [BED_AND_BREAKFAST, HOTLINE])
+        result = filter_out_cases([], [ONDERZOEK_BUITENDIENST, ISSUEMELDING])
         self.assertEquals(result, [])
 
     def test_filter_out_cases_no_stadia(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': HOTLINE}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ISSUEMELDING}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
         result = filter_out_cases(cases, [])
@@ -278,12 +297,12 @@ class UtilsTests(TestCase):
         self.assertEquals(result, cases)
 
     def test_filter_out_cases_one_stadium(self):
-        case_a = {'stadium': BED_AND_BREAKFAST}
-        case_b = {'stadium': HOTLINE}
-        case_c = {'stadium': SAFARI}
+        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
+        case_b = {'stadium': ISSUEMELDING}
+        case_c = {'stadium': TWEEDE_CONTROLE}
 
         cases = [case_a, case_b, case_c]
-        result = filter_out_cases(cases, [SAFARI])
+        result = filter_out_cases(cases, [TWEEDE_CONTROLE])
         expected = [case_a, case_b]
 
         self.assertEquals(result, expected)
