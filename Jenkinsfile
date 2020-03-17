@@ -20,6 +20,7 @@ pipeline {
   agent any
   environment {
     DOCKER_IMAGE = "fixxx/looplijsten"
+    BWV_SYNC_DOCKER_IMAGE = "fixxx/looplijsten-bwv-sync"
     APP = "looplijsten-api"
     DOCKER_REGISTRY = "repo.secure.amsterdam.nl"
   }
@@ -57,6 +58,19 @@ pipeline {
       steps {
         script {
           def image = docker.build("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}:${env.COMMIT_HASH}",
+            "--no-cache " +
+            "--shm-size 1G " +
+            " ./app")
+          image.push()
+          image.push("latest")
+        }
+      }
+    }
+
+    stage("Build bwv-sync image") {
+      steps {
+        script {
+          def image = docker.build("${env.DOCKER_REGISTRY}/${env.BWV_SYNC_DOCKER_IMAGE}:${env.COMMIT_HASH}",
             "--no-cache " +
             "--shm-size 1G " +
             " ./app")
