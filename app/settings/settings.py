@@ -293,3 +293,5 @@ SECURE_HSTS_PRELOAD = is_secure_environment
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
+
+FRAUD_PREDICTION_CACHE_DIR = os.path.normpath(join(os.path.dirname(BASE_DIR), 'fraud_prediction_cache'))
