@@ -4,6 +4,8 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import connections
 from woonfraude_model import score
+from utils.queries_planner import get_cases_from_bwv
+from api.cases.const import STADIA, PROJECTS
 
 from api.fraudprediction.models import FraudPrediction
 
@@ -11,6 +13,7 @@ LOGGER = logging.getLogger(__name__)
 
 DATABASE_CONFIG_KEYS = ['adres', 'bwv_adres_periodes', 'bbga', 'hotline',
                         'personen', 'personen_hist', 'stadia', 'zaken']
+SCORE_STARTING_FROM_DATE = '2019-01-01'
 
 class Command(BaseCommand):
     help = 'Uses the fraud prediction model to score and store Predictions'
@@ -29,7 +32,11 @@ class Command(BaseCommand):
 
         for case_id in case_ids:
             result = results.get(case_id)
-            self.create_or_update_prediction(case_ids, result)
+            try:
+                self.create_or_update_prediction(case_id, result)
+            except Exception as e:
+                print('NOT WORKING:', case_id)
+                print(e)
 
     def get_all_database_configs(self, keys=[]):
         config = {}
@@ -48,7 +55,12 @@ class Command(BaseCommand):
         return config
 
     def get_case_ids_to_score(self):
-        return ['192026_1', '138168_5']
+        '''
+        Returns a list of case ids which are eligible for scoring
+        '''
+        cases = get_cases_from_bwv(SCORE_STARTING_FROM_DATE, PROJECTS, STADIA)
+        case_ids = [case.get('case_id') for case in cases]
+        return case_ids
 
     def clean_dictionary(self, dictionary):
         '''
@@ -63,7 +75,6 @@ class Command(BaseCommand):
         return dictionary
 
     def create_or_update_prediction(self, case_id, result):
-
         fraud_probability = result.get('prob_woonfraude')
         fraud_prediction = result.get('prediction_woonfraude')
         business_rules = result.get('business_rules')

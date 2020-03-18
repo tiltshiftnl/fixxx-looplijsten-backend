@@ -1,6 +1,5 @@
 from utils.query_helpers import do_query
 
-
 def get_eligible_stadia(stages):
     '''
     Gets stadia which are eligible for planning

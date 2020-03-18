@@ -1,5 +1,5 @@
 from api.cases.const import STADIA, ISSUEMELDING
-from api.planner.queries_planner import get_cases_from_bwv
+from utils.queries_planner import get_cases_from_bwv
 from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list
 from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium, filter_out_cases
