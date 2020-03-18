@@ -73,7 +73,7 @@ pipeline {
           def image = docker.build("${env.DOCKER_REGISTRY}/${env.BWV_SYNC_DOCKER_IMAGE}:${env.COMMIT_HASH}",
             "--no-cache " +
             "--shm-size 1G " +
-            " ./app")
+            " ./bwv_sync")
           image.push()
           image.push("latest")
         }
