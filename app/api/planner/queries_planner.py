@@ -53,6 +53,7 @@ def get_eligible_cases(starting_date, projects):
               import_adres ON import_adres.adres_id = import_wvs.adres_id
             WHERE begindatum > %(starting_date)s
             AND beh_oms IN %(projects)s
+            AND afs_code is NULL
             """
 
     args = {
