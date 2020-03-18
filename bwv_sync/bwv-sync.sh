@@ -43,7 +43,7 @@ for src_dst in ${tables[@]}; do
   dst_table=$(cut -d, -f 2 <<<"$src_dst")
   echo "Syncing $src_table on ${src_host}:${src_db} to $dst_table"
 
-  psql -c "TRUNCATE $dst_table" "$dst_db"
+  PGPASSWORD="${BWV_DB_PASSWORD}" psql -h "${BWV_DB_HOST}" -U "${BWV_DB_USER}" -c "TRUNCATE $dst_table" "$dst_db"
   psql --no-align --tuples-only -h "$src_host" -d "$src_db" -U "$src_user" \
     -c "COPY (SELECT * FROM $src_table) TO STDOUT" \
     | if $anonymize; then /usr/local/bin/pg_anonymize -c /etc/pg_anonymize.conf "$dst_table"; else cat -; fi \
