@@ -1,16 +1,17 @@
 use serde::Deserialize;
 use structopt::StructOpt;
 
-use std::io::BufRead;
 use std::collections::HashMap;
+use std::io::BufRead;
+use std::path::PathBuf;
 
 mod strategy;
 use strategy::Strategy;
 
 fn main() {
     let opts = Opts::from_args();
-    let config_raw = std::fs::read_to_string("config.yaml").expect("Failed to read config.yaml");
-    let config: Config = serde_yaml::from_str(&config_raw).expect("Failed to decode config.yaml");
+    let config_raw = std::fs::read_to_string(&opts.config).expect("Failed to read config file");
+    let config: Config = serde_yaml::from_str(&config_raw).expect("Failed to decode config file");
     let stdin = std::io::stdin();
 
     for row in stdin.lock().lines() {
@@ -44,9 +45,11 @@ fn process_row<'a>(config: &HashMap<TableName, TableConfig>, row: &'a str, table
 #[derive(Debug, StructOpt)]
 #[structopt(name = "pg_anonymize", about = "Anonymize PostgreSQL COPY output")]
 struct Opts {
-#[structopt()]
+    #[structopt()]
     /// The table we're COPY-ing
     table: String,
+    #[structopt(short = "c", long = "config", parse(from_os_str))]
+    config: PathBuf,
 }
 
 type TableName = String;
