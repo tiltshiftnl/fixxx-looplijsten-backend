@@ -10,6 +10,7 @@ class FraudPrediction(models.Model):
     fraud_prediction = models.BooleanField(null=False)
     business_rules = JSONField(null=False)
     shap_values = JSONField(null=False)
+    sync_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.case_id

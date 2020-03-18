@@ -4,6 +4,7 @@ from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list
 from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium, filter_out_cases
 from api.planner.utils import shorten_if_necessary, calculate_geo_distances
+from api.fraudprediction.utils import get_fraud_prediction
 
 class ItineraryGenerateAlgorithm():
     ''' An abstract class which forms the basis of itinerary generating algorithms '''
@@ -95,9 +96,10 @@ class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
         center = [location.get('lat'), location.get('lng')]
         distances = calculate_geo_distances(center, cases)
 
-        # Add the distances to the cases
+        # Add the distances and fraud predictions to the cases
         for index, case in enumerate(cases):
             case['distance'] = distances[index]
+            case['fraud_prediction'] = get_fraud_prediction(case['case_id'])
 
         # Sort the cases based on distance
         sorted_cases = sorted(cases, key=lambda case: case['distance'])

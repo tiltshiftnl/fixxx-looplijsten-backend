@@ -11,6 +11,7 @@ import utils.queries_bag_api as bag_api
 
 from api.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
 from api.itinerary.models import Itinerary
+from api.fraudprediction.utils import get_fraud_prediction
 
 class CaseViewSet(ViewSet):
     """
@@ -45,7 +46,8 @@ class CaseViewSet(ViewSet):
             'vakantie_verhuur': q.get_rental_information(wng_id),
             'bag_data': bag_data,
             'brk_data': brk_api.get_brk_data(bag_id),
-            'related_cases': q.get_related_cases(adres_id)
+            'related_cases': q.get_related_cases(adres_id),
+            'fraud_prediction': get_fraud_prediction(case_id)
         }
 
         return JsonResponse(data)
@@ -86,6 +88,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
                 mapped_case = mapped_cases.get(case_id, {'teams': []})
                 serialized_team = ItineraryTeamMemberSerializer(team, many=True)
                 mapped_case['teams'].append(serialized_team.data)
+                mapped_case['fraud_prediction'] = get_fraud_prediction(case_id)
 
         return cases
 
