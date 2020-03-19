@@ -58,4 +58,4 @@ geopy==1.21.0
 # Hitkans. 
 # Note: Add a gitlab access code here to make this work (you might need to use the shared services VPN in order to install this successfully)
 # git+https://oauth2:{ACCESS_CODE}@git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning.git
-git+https://git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning.git
+# git+https://git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning.git
