@@ -1,23 +1,33 @@
-use rand::prelude::*;
 use lipsum::lipsum_words;
+use rand::prelude::*;
 
 /// Return a random element from the given slice.
-pub(crate) fn element<T>(source: &[T]) -> T where T: Clone {
+pub(crate) fn element<T>(source: &[T]) -> T
+where
+    T: Clone,
+{
     let mut rng = rand::thread_rng();
     source[rng.gen_range(0, source.len() - 1)].clone()
 }
 
 /// Return a single lowercase character in the range a-z.
 pub(crate) fn char() -> char {
-    let alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    let alphabet = [
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+        's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    ];
     element(&alphabet)
 }
 
 /// Return a somewhat random date in the past, compatible with PostgreSQL's timestamp fields.
 pub(crate) fn date() -> String {
     let mut rng = rand::thread_rng();
-    format!("{year}-{month:02}-{day:02} 00:00:00",
-        year = rng.gen_range(1940, 2019), month = rng.gen_range(1, 12), day = rng.gen_range(1, 30))
+    format!(
+        "{year}-{month:02}-{day:02} 00:00:00",
+        year = rng.gen_range(1940, 2019),
+        month = rng.gen_range(1, 12),
+        day = rng.gen_range(1, 30)
+    )
 }
 
 /// Return a random name from `data/given_names.txt`.
@@ -41,15 +51,15 @@ pub(crate) fn surname() -> &'static str {
 }
 
 /// Generate a somewhat latin paragraph.
-pub(crate) fn prose() -> String {
+pub(crate) fn prose(length: usize) -> String {
     let mut rng = rand::thread_rng();
     let no_words = rng.gen_range(5, 50);
-    lipsum_words(no_words)
+    lipsum_words(no_words).chars().take(length).collect()
 }
 
 /// Generate a random (semi-) phone number.
 pub(crate) fn phone_nr() -> String {
     let mut rng = rand::thread_rng();
-    let nr: u64 = rng.gen_range(1000000000,9999999999);
+    let nr: u64 = rng.gen_range(1000000000, 9999999999);
     format!("{}", nr)
 }

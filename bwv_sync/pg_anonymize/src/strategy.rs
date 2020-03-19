@@ -10,7 +10,7 @@ pub(crate) enum Strategy {
     Date,
     Characters,
     Name,
-    Prose,
+    Prose(usize),
     PhoneNr,
     OneOf(Vec<String>),
 }
@@ -20,7 +20,13 @@ impl Strategy {
     pub(crate) fn generate(&self) -> String {
         use Strategy::*;
         match self {
-            BinaryGender => if rand::random() { "M".to_string() } else { "V".to_string() },
+            BinaryGender => {
+                if rand::random() {
+                    "M".to_string()
+                } else {
+                    "V".to_string()
+                }
+            }
             Date => date(),
             Characters => {
                 let mut initials = String::new();
@@ -32,9 +38,9 @@ impl Strategy {
                     }
                 }
                 initials
-            },
+            }
             Name => format!("{} {}", given_name(), surname()),
-            Prose => prose(),
+            Prose(n) => prose(*n),
             PhoneNr => phone_nr(),
             OneOf(list) => element(list),
         }

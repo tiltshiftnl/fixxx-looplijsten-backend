@@ -49,6 +49,7 @@ struct Opts {
     /// The table we're COPY-ing
     table: String,
     #[structopt(short = "c", long = "config", parse(from_os_str))]
+    /// Path to the config file
     config: PathBuf,
 }
 
