@@ -8,7 +8,7 @@ use strategies::*;
 pub(crate) enum Strategy {
     BinaryGender,
     Date,
-    Characters,
+    Characters(usize),
     Name,
     Prose(usize),
     PhoneNr,
@@ -28,12 +28,15 @@ impl Strategy {
                 }
             }
             Date => date(),
-            Characters => {
+            Characters(n) => {
                 let mut initials = String::new();
                 loop {
                     let c = char().to_ascii_uppercase();
                     initials.push(c);
                     if rand::random() {
+                        break;
+                    }
+                    if initials.len() > *n {
                         break;
                     }
                 }
