@@ -22,6 +22,7 @@ class ItineraryGenerateAlgorithm():
         self.projects = [project.name for project in settings.projects.all()]
         self.secondary_stadia = [stadium.name for stadium in settings.secondary_stadia.all()]
         self.exclude_stadia = [stadium.name for stadium in settings.exclude_stadia.all()]
+        self.exclude_cases = []
 
     def __get_filter_stadia__(self):
         '''
@@ -33,7 +34,7 @@ class ItineraryGenerateAlgorithm():
 
         return filter_stadia
 
-    def __get_eligible_cases__(self, exclude_cases):
+    def __get_eligible_cases__(self):
         '''
         Returns a list of eligible cases using the settings object
         '''
@@ -44,10 +45,16 @@ class ItineraryGenerateAlgorithm():
         filtered_cases = filter_out_cases(filtered_cases, self.exclude_stadia)
         filtered_cases = filter_cases_with_missing_coordinates(filtered_cases)
 
-        exclude_cases = [{'case_id': case.case_id} for case in exclude_cases]
+        exclude_cases = [{'case_id': case.case_id} for case in self.exclude_cases]
         filtered_cases = remove_cases_from_list(filtered_cases, exclude_cases)
 
         return filtered_cases
+
+    def exclude(self, cases):
+        '''
+        Makes sure the givens are not used when generating a list
+        '''
+        self.exclude_cases = cases
 
     def generate(self):
         raise NotImplementedError()
@@ -56,10 +63,10 @@ class ItineraryGenerateAlgorithm():
 class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
     '''Generates an itinerary using a clustering algorithm'''
 
-    def generate(self, exclude_cases=[]):
-        cases = self.__get_eligible_cases__(exclude_cases)
+    def generate(self):
+        cases = self.__get_eligible_cases__()
 
-        if len(cases) == 0:
+        if not cases:
             return []
 
         # The cluster size cannot be larger then the number of unplanned cases
@@ -69,7 +76,7 @@ class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
         clusters, rest = optics_clustering(cluster_size, cases)
 
         # Select the best list and append it to the itinerary
-        if len(clusters) == 0:
+        if not clusters:
             return []
 
         # Get the best list, shorten it, and sort it by primary stadium
@@ -83,17 +90,17 @@ class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
 
 
 class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
-    ''' Generates an list of suggestion based on a given location '''
+    ''' Generates a list of suggestion based on a given location '''
 
-    def generate(self, location, exclude_cases=[]):
+    def generate(self, location):
 
-        cases = self.__get_eligible_cases__(exclude_cases)
+        cases = self.__get_eligible_cases__()
 
-        if len(cases) == 0:
+        if not cases:
             return []
 
         # Calculate a list of distances for each case
-        center = [location.get('lat'), location.get('lng')]
+        center = (location['lat'], location['lng'])
         distances = calculate_geo_distances(center, cases)
 
         # Add the distances and fraud predictions to the cases
@@ -103,4 +110,55 @@ class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
 
         # Sort the cases based on distance
         sorted_cases = sorted(cases, key=lambda case: case['distance'])
+        return sorted_cases
+
+
+class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
+
+    class Weights():
+        '''
+        A configurable weight object which is used in our scoring function
+        '''
+
+        def __init__(self,
+                     distance=1,
+                     fraud_prediction=1,
+                     primary_stadium=1,
+                     secondary_stadium=0.5,
+                     hotline=1):
+
+            self.distance = distance
+            self.fraud_prediction = fraud_prediction
+            self.primary_stadium = primary_stadium
+            self.secondary_stadium = secondary_stadium
+            self.hotline = hotline
+
+    def get_score(self, case):
+        '''
+        Gets the score of our case
+        '''
+        # TODO: Use the weights here
+        # weights = ItineraryKnapsack.Weights()
+        return 1
+
+    def generate(self, location):
+        cases = self.__get_eligible_cases__()
+
+        if not cases:
+            return []
+
+        # Calculate a list of distances for each case
+        center = (location['lat'], location['lng'])
+        distances = calculate_geo_distances(center, cases)
+        max_distance = max(distances)
+
+        # Add the distances and fraud predictions to the cases
+        for index, case in enumerate(cases):
+            case['distance'] = distances[index]
+            case['normalized_inverse_distance'] = (max_distance - case['distance']) / max_distance
+            case['fraud_prediction'] = get_fraud_prediction(case['case_id'])
+            case['score'] = self.get_score(case)
+
+        # Sort the cases based on distance
+        sorted_cases = sorted(cases, key=lambda case: case['score'])
         return sorted_cases

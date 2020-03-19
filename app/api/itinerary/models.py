@@ -15,15 +15,15 @@ class Itinerary(models.Model):
         '''
         cases = self.get_cases()
         locations = [case.get_location() for case in cases]
-        locations_lng = [location.get('lng') for location in locations]
-        locations_lat = [location.get('lat') for location in locations]
+        locations_lng = [location['lng'] for location in locations]
+        locations_lat = [location['lat'] for location in locations]
 
         locations_lng = sum(locations_lng) / len(cases)
         locations_lat = sum(locations_lat) / len(cases)
 
         return {'lat': locations_lat, 'lng': locations_lng}
 
-    def get_itinerary_cases_for_date(date):
+    def get_cases_for_date(date):
         '''
         returns a list of cases which are already in itineraries for a given date
         '''
@@ -45,7 +45,7 @@ class Itinerary(models.Model):
         Adds a case to the itinerary
         '''
         case = Case.get(case_id=case_id)
-        used_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
+        used_cases = Itinerary.get_cases_for_date(self.created_at)
 
         if case in used_cases:
             raise ValueError('This case is already used in an itinerary for this date')
@@ -61,23 +61,34 @@ class Itinerary(models.Model):
         '''
         Returns a list of suggested cases which can be added to this itinerary
         '''
-        exclude_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
+        # Initialise using this itinerary's settings
+        generator = ItineraryGenerateSuggestions(self.settings)
+
+        # Exclude the cases which are already in itineraries
+        cases = Itinerary.get_cases_for_date(self.created_at)
+        generator.exclude(cases)
+
+        # Generate suggestions based on this itineraries' center
         center = self.get_center()
+        generated_list = generator.generate(center)
 
-        itinerary_generator = ItineraryGenerateSuggestions(self.settings)
-        cases = itinerary_generator.generate(center, exclude_cases)
-
-        return cases
+        return generated_list
 
     def get_cases_from_settings(self):
         '''
         Returns a list of cases based on the settings which can be added to this itinerary
         '''
-        exclude_cases = Itinerary.get_itinerary_cases_for_date(self.created_at)
-        itinerary_generator = ItineraryGenerateCluster(self.settings)
-        cases = itinerary_generator.generate(exclude_cases)
+        # Initialise using this itinerary's settings
+        generator = ItineraryGenerateCluster(self.settings)
 
-        return cases
+        # Exclude cases which are already in itineraries
+        cases = Itinerary.get_cases_for_date(self.created_at)
+        generator.exclude(cases)
+
+        # Generator the list
+        generated_list = generator.generate()
+
+        return generated_list
 
     def clear_team_members(self):
         '''
