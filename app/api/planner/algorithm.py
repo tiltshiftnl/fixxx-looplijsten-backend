@@ -125,21 +125,37 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
                      fraud_prediction=1,
                      primary_stadium=1,
                      secondary_stadium=0.5,
-                     hotline=1):
+                     issuemelding=1):
 
             self.distance = distance
             self.fraud_prediction = fraud_prediction
             self.primary_stadium = primary_stadium
             self.secondary_stadium = secondary_stadium
-            self.hotline = hotline
+            self.issuemelding = issuemelding
 
     def get_score(self, case):
         '''
         Gets the score of our case
         '''
-        # TODO: Use the weights here
-        # weights = ItineraryKnapsack.Weights()
-        return 1
+        weights = ItineraryKnapsackSuggestions.Weights()
+        key_weights = [
+            ('normalized_inverse_distance', weights.distance),
+            ('fraud_probability', weights.fraud_prediction),
+            ('has_primary_stadium', weights.primary_stadium),
+            ('has_secondary_stadium', weights.secondary_stadium),
+            ('has_issuemelding_stadium', weights.issuemelding)
+        ]
+        scores = {}
+
+        for key, weight in key_weights:
+            print(key)
+            print(weight)
+            print(case[key])
+            scores[key] = case[key] * weight
+
+        scores['total_score'] = sum(scores.values())
+
+        return scores
 
     def generate(self, location):
         cases = self.__get_eligible_cases__()
@@ -157,8 +173,14 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
             case['distance'] = distances[index]
             case['normalized_inverse_distance'] = (max_distance - case['distance']) / max_distance
             case['fraud_prediction'] = get_fraud_prediction(case['case_id'])
+            case['fraud_probability'] = get_fraud_prediction(case['case_id'])['fraud_probability']
+            case['has_primary_stadium'] = case['stadium'] == self.primary_stadium
+            case['has_secondary_stadium'] = case['stadium'] in self.secondary_stadia
+            case['has_issuemelding_stadium'] = case['stadium'] == ISSUEMELDING
             case['score'] = self.get_score(case)
 
-        # Sort the cases based on distance
-        sorted_cases = sorted(cases, key=lambda case: case['score'])
+        # Sort the cases based on score
+        sorted_cases = sorted(cases, key=lambda case: case['score']['total_score'])
+        sorted_cases.reverse()
+
         return sorted_cases
