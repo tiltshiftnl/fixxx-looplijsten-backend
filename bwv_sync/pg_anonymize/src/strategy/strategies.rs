@@ -26,7 +26,7 @@ pub(crate) fn date() -> String {
         "{year}-{month:02}-{day:02} 00:00:00",
         year = rng.gen_range(1940, 2019),
         month = rng.gen_range(1, 12),
-        day = rng.gen_range(1, 30)
+        day = rng.gen_range(1, 28)
     )
 }
 
