@@ -20,6 +20,7 @@ anonymize=true
 else
 anonymize=false
 fi
+logfile="/tmp/bwv-sync.log"
 
 # The views/tables to sync and the table to sync them to.
 # Format: <source view/table>,<destination table>
@@ -41,7 +42,7 @@ export PGPASSWORD="${src_pw}"
 for src_dst in ${tables[@]}; do
   src_table=$(cut -d, -f 1 <<<"$src_dst")
   dst_table=$(cut -d, -f 2 <<<"$src_dst")
-  echo "Syncing $src_table on ${src_host}:${src_db} to $dst_table"
+  echo "Syncing $src_table on ${src_host}:${src_db} to $dst_table" | tee "$logfile"
 
   PGPASSWORD="${BWV_DB_PASSWORD}" psql -h "${BWV_DB_HOST}" -U "${BWV_DB_USER}" -c "TRUNCATE $dst_table" "$dst_db"
   psql --no-align --tuples-only -h "$src_host" -d "$src_db" -U "$src_user" \
