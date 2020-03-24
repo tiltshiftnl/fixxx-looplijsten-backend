@@ -63,3 +63,27 @@ pub(crate) fn phone_nr() -> String {
     let nr: u64 = rng.gen_range(1000000000, 9999999999);
     format!("{}", nr)
 }
+
+/// Generate a melding
+pub(crate) fn melding(toezichthouder_codes: &Vec<String>) -> String {
+    let mut rng = rand::thread_rng();
+    let date = format!(
+        "{}-{}-{}",
+        rng.gen_range(1, 28),
+        element(&["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "SEP", "OKT", "NOV", "DEC"]),
+        rng.gen_range(10, 20)
+    );
+    let no_words = rng.gen_range(5, 20);
+    let content = format!(
+        "{}({}): {}",
+        element(&toezichthouder_codes),
+        date,
+        lipsum_words(no_words)
+    );
+
+    if rand::random() {
+        format!("{}\n{}", content, melding(toezichthouder_codes))
+    } else {
+        content
+    }
+}

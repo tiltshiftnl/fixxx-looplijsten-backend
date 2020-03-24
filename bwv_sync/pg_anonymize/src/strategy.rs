@@ -13,6 +13,7 @@ pub(crate) enum Strategy {
     Prose(usize),
     PhoneNr,
     OneOf(Vec<String>),
+    Melding(Vec<String>),
 }
 
 impl Strategy {
@@ -49,6 +50,7 @@ impl Strategy {
             Prose(n) => prose(*n),
             PhoneNr => phone_nr(),
             OneOf(list) => element(list),
+            Melding(toezichthouders) => melding(toezichthouders),
         }
     }
 }
