@@ -22,6 +22,7 @@ pipeline {
   environment {
     APP = "looplijsten-api"
     DOCKER_IMAGE_URL = "${DOCKER_REGISTRY_NO_PROTOCOL}/fixxx/looplijsten"
+    INTEGRALE_AANPAK_ONDERMIJNING_KEY = credentials('deploy_key_integrale_aanpak_ondermijning')
   }
 
   stages {
@@ -59,6 +60,7 @@ pipeline {
           def image = docker.build("${DOCKER_IMAGE_URL}:${env.COMMIT_HASH}",
             "--no-cache " +
             "--shm-size 1G " +
+            "--build-arg INTEGRALE_AANPAK_ONDERMIJNING_CREDS=gitlab+deploy-token-90:${INTEGRALE_AANPAK_ONDERMIJNING_KEY}" +
             " ./app")
           image.push()
           tag_image_as("latest")
