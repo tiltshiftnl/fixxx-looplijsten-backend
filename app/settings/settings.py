@@ -31,7 +31,8 @@ INSTALLED_APPS = (
     'api.itinerary',
     'api.cases',
     'api.accesslogs',
-    'api.planner'
+    'api.planner',
+    'api.fraudprediction'
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -293,3 +294,5 @@ SECURE_HSTS_PRELOAD = is_secure_environment
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
+
+FRAUD_PREDICTION_CACHE_DIR = os.path.normpath(join(os.path.dirname(BASE_DIR), 'fraud_prediction_cache'))

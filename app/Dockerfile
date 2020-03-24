@@ -6,11 +6,11 @@ ENV PYTHONUNBUFFERED 1
 # Setup Certificates for ADP/Motiv
 COPY certificates/adp_rootca.crt /usr/local/share/ca-certificates/extras/adp_rootca.crt
 RUN chmod 644 /usr/local/share/ca-certificates/extras/adp_rootca.crt \
-    && update-ca-certificates --fresh
+  && update-ca-certificates --fresh
 
 # Setup datapunt directories and user
 RUN adduser --system datapunt
-ENV DIRECTORYLIST "/static /app /downloads /certificates /deploy /var/log/uwsgi"
+ENV DIRECTORYLIST "/static /app /downloads /certificates /deploy /var/log/uwsgi /fraud_prediction_cache"
 RUN mkdir -p ${DIRECTORYLIST} && chown datapunt ${DIRECTORYLIST}
 
 # Setup application
