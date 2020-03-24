@@ -1,5 +1,8 @@
+# TODO: Add tests
 import math
 import logging
+import os
+import glob
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import connections
@@ -19,11 +22,14 @@ class Command(BaseCommand):
     help = 'Uses the fraud prediction model to score and store Predictions'
 
     def handle(self, *args, **options):
+        print('Starting scoring..')
         dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
         case_ids = self.get_case_ids_to_score()
+        cache_dir = settings.FRAUD_PREDICTION_CACHE_DIR
+        self.clear_cache_dir(cache_dir)
 
         try:
-            scorer = score.Scorer(cache_dir=settings.FRAUD_PREDICTION_CACHE_DIR, dbconfig=dbconfig)
+            scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
             results = scorer.score(zaak_ids=case_ids, zaken_con=connections[settings.BWV_DATABASE_NAME])
             results = results.to_dict(orient='index')
         except Exception as e:
@@ -35,8 +41,9 @@ class Command(BaseCommand):
             try:
                 self.create_or_update_prediction(case_id, result)
             except Exception as e:
-                print('NOT WORKING:', case_id)
-                print(e)
+                LOGGER.error('Could not create or update prediction for {}: {}'.format(case_id, str(e)))
+
+        print('Finished scoring..')
 
     def get_all_database_configs(self, keys=[]):
         config = {}
@@ -61,6 +68,17 @@ class Command(BaseCommand):
         cases = get_cases_from_bwv(SCORE_STARTING_FROM_DATE, PROJECTS, STADIA)
         case_ids = [case.get('case_id') for case in cases]
         return case_ids
+
+    def clear_cache_dir(self, dir):
+        '''
+        Clears the contents of the given directory
+        '''
+        try:
+            files = glob.glob(os.path.join(dir, '*'))
+            for f in files:
+                os.remove(f)
+        except Exception as e:
+            LOGGER.error('Something when wrong while removing cached scoring files: {}'.format(str(e)))
 
     def clean_dictionary(self, dictionary):
         '''
