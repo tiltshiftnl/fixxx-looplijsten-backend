@@ -32,13 +32,12 @@ class AlgorithmView(LoginRequiredMixin, View):
             'length_of_lists': 8,
             'maps_key': key.value,
             'optimization': linear_optimization(),
-            'knapsack': knapsack_demo(),
+            'knapsack': knapsack_demo()
         }
 
     @safety_lock
     def get(self, request, *args, **kwargs):
         context_data = self.get_context_data()
-        self.test_hitkans()
 
         opening_date = '2019-01-01'
         opening_reasons = PROJECTS_WITHOUT_SAHARA

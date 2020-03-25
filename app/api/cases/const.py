@@ -66,7 +66,8 @@ PROJECTS_WITHOUT_SAHARA = [
     PROJECT_ZEBRA,
 ]
 
-# Note: more stadia exist, but these are currently used by our application
+# NOTE: More stages exist, such as the 'Issuemeldingen' which are currently not user
+# By this application
 TWEEDE_CONTROLE = "2de Controle"
 TWEEDE_HERCONTROLE = "2de hercontrole"
 DERDE_CONTROLE = "3de Controle"
