@@ -1,7 +1,7 @@
 from django.db import models
 from utils.queries import get_case
 from api.cases.const import PROJECTS, STADIA
-from api.fraudprediction.models import FraudPrediction
+# from api.fraudprediction.models import FraudPrediction
 
 class Case(models.Model):
     class Meta:
@@ -28,8 +28,9 @@ class Case(models.Model):
 
     @property
     def fraud_prediction(self):
-        fraud_prediction = FraudPrediction.objects.get(case_id=self.case_id)
-        return fraud_prediction
+        return {}
+        # fraud_prediction = FraudPrediction.objects.get(case_id=self.case_id)
+        # return fraud_prediction
 
     def __str__(self):
         if self.case_id:

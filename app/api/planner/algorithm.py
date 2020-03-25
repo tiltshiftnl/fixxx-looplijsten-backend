@@ -5,8 +5,8 @@ from api.planner.clustering import optics_clustering
 from api.planner.utils import filter_cases, get_best_list, remove_cases_from_list
 from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_stadium, filter_out_cases
 from api.planner.utils import shorten_if_necessary, calculate_geo_distances
-from api.fraudprediction.utils import get_fraud_prediction
-from api.fraudprediction.models import FraudPrediction
+# from api.fraudprediction.utils import get_fraud_prediction
+# from api.fraudprediction.models import FraudPrediction
 
 class ItineraryGenerateAlgorithm():
     ''' An abstract class which forms the basis of itinerary generating algorithms '''
@@ -59,7 +59,8 @@ class ItineraryGenerateAlgorithm():
         '''
         Returns a dictionary of fraud probabilities mapped to case_ids
         '''
-        fraud_predictions = FraudPrediction.objects.all()
+        # fraud_predictions = FraudPrediction.objects.all()
+        fraud_predictions = []
         fraud_prediction_dictionary = {}
 
         for fraud_prediction in fraud_predictions:

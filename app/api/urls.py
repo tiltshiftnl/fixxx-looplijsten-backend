@@ -13,7 +13,7 @@ from api.health.views import health_default, health_bwv
 from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView, UserListView
 from api.planner.views import AlgorithmView
 from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
-from api.fraudprediction.views import FraudPredictionScoringViewSet
+# from api.fraudprediction.views import FraudPredictionScoringViewSet
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -35,8 +35,8 @@ api_router.register(r'users', UserListView, basename='users')
 api_router.register(r'constants/projects', ConstantsProjectsViewSet, basename='constants-projects')
 api_router.register(r'constants/stadia', ConstantsStadiaViewSet, basename='constants-stadia')
 api_router.register(r'settings/planner', SettingsPlannerViewSet, basename='settings-planner')
-api_router.register(r'fraud-prediction/scoring', FraudPredictionScoringViewSet,
-                    basename='fraud-prediction-score')
+# api_router.register(r'fraud-prediction/scoring', FraudPredictionScoringViewSet,
+#                     basename='fraud-prediction-score')
 
 urlpatterns = [
     # Admin environment
