@@ -2,6 +2,7 @@ FROM amsterdam/python
 LABEL maintainer="datapunt@amsterdam.nl"
 
 ENV PYTHONUNBUFFERED 1
+ARG INTEGRALE_AANPAK_ONDERMIJNING_CREDS
 
 # Setup Certificates for ADP/Motiv
 COPY certificates/adp_rootca.crt /usr/local/share/ca-certificates/extras/adp_rootca.crt
@@ -16,6 +17,9 @@ RUN mkdir -p ${DIRECTORYLIST} && chown datapunt ${DIRECTORYLIST}
 # Setup application
 WORKDIR /app
 COPY requirements.txt /app/
+RUN echo ${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}
+RUN git clone https://${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning
+RUN pip install --no-cache-dir /tmp/integrale_aanpak_ondermijning
 RUN pip install --no-cache-dir -r requirements.txt
 USER datapunt
 
