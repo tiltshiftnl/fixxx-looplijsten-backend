@@ -29,7 +29,9 @@ def health_bwv(request):
         assert_health_generic(database_name=settings.BWV_DATABASE_NAME)
         assert_health_database_tables(database_name=settings.BWV_DATABASE_NAME, tables=BWV_TABLES)
 
-    sync_times = str(get_bwv_sync_times())
+    sync_times = get_bwv_sync_times()
+    sync_times = [{'start': str(sync_time['start']), 'finished': str(sync_time['finished'])}
+                  for sync_time in sync_times]
     success_dict = SUCCESS_DICTIONARY_BWV.copy()
     success_dict['sync_times'] = sync_times
 

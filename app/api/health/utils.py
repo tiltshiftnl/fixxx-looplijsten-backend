@@ -48,9 +48,7 @@ def assert_health_generic(database_name):
     assert cursor.fetchone()
 
 def get_bwv_sync_times():
-    query = """
-            SELECT start, finished FROM sync_log
-            """
+    query = """ SELECT start, finished FROM sync_log """
 
     executed_query = do_query(query)
 
