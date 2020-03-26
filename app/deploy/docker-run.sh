@@ -6,7 +6,7 @@ set -x
 echo Collecting static files
 python manage.py collectstatic --no-input
 
-ls -al /static/
+yes yes | python manage.py migrate --noinput
 
 chmod -R 777 /static
 
