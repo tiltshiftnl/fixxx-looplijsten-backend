@@ -1,7 +1,8 @@
 from django.db import connections
-from django.http import HttpResponse
+from django.http import JsonResponse
+from utils.query_helpers import do_query
 
-def get_health_response(health_checks, success_message):
+def get_health_response(health_checks, success_dictionary):
     '''
     Executes the given health_checks function, 
     and returns a response based on the funciton's success
@@ -9,9 +10,9 @@ def get_health_response(health_checks, success_message):
     try:
         health_checks()
     except Exception as e:
-        return HttpResponse(str(e), content_type='text/plain', status=500)
+        return JsonResponse({'error': str(e)}, status=500)
     else:
-        return HttpResponse(success_message, content_type='text/plain', status=200)
+        return JsonResponse(success_dictionary, status=200)
 
 
 def is_table_filled_query(table):
@@ -45,3 +46,12 @@ def assert_health_generic(database_name):
     cursor = connections[database_name].cursor()
     cursor.execute('select 1')
     assert cursor.fetchone()
+
+def get_bwv_sync_times():
+    query = """
+            SELECT start, finished FROM sync_log
+            """
+
+    executed_query = do_query(query)
+
+    return executed_query

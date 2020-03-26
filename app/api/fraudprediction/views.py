@@ -1,5 +1,6 @@
 # TODO: Add tests
 import threading
+from datetime import datetime
 from django.core import management
 from django.http import HttpResponse
 from rest_framework.viewsets import ViewSet
@@ -24,4 +25,4 @@ class FraudPredictionScoringViewSet(ViewSet):
         t = threading.Thread(target=self.background_process)
         t.setDaemon(True)
         t.start()
-        return HttpResponse('Scoring Started')
+        return HttpResponse('Scoring Started {}'.format(str(datetime.now())))
