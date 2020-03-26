@@ -23,18 +23,23 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         print('Starting scoring..')
+        LOGGER.info('Started scoring')
         dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
         case_ids = self.get_case_ids_to_score()
         cache_dir = settings.FRAUD_PREDICTION_CACHE_DIR
         self.clear_cache_dir(cache_dir)
+        LOGGER.warning('Cleared cache')
 
-        try:
-            scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
-            results = scorer.score(zaak_ids=case_ids, zaken_con=connections[settings.BWV_DATABASE_NAME])
-            results = results.to_dict(orient='index')
-        except Exception as e:
-            LOGGER.error('Could not calculate prediction scores: {}'.format(str(e)))
-            return
+        # try:
+        scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
+        LOGGER.warning('init scoring')
+        results = scorer.score(zaak_ids=case_ids, zaken_con=connections[settings.BWV_DATABASE_NAME])
+        LOGGER.warning('retrieved results')
+        results = results.to_dict(orient='index')
+        LOGGER.warning('results to dict')
+        # except Exception as e:
+        #     LOGGER.error('Could not calculate prediction scores: {}'.format(str(e)))
+        #     return
 
         for case_id in case_ids:
             result = results.get(case_id)
