@@ -29,16 +29,17 @@ class FraudPredictionScoringViewSet(ViewSet):
     @safety_lock
     def create(self, request):
         # Before starting any threads, get the contents of the cache directory
-        dir = settings.FRAUD_PREDICTION_CACHE_DIR
-        files = glob.glob(os.path.join(dir, '*'))
+        management.call_command(fraud_predict.Command())
+        # dir = settings.FRAUD_PREDICTION_CACHE_DIR
+        # files = glob.glob(os.path.join(dir, '*'))
 
         # Note: At some point it might be better to use asynchronous task queue/job
-        t = threading.Thread(target=self.background_process)
-        t.setDaemon(True)
-        t.start()
+        # t = threading.Thread(target=self.background_process)
+        # t.setDaemon(True)
+        # t.start()
 
         json = {
             'message': 'Scoring Started {}'.format(str(datetime.now())),
-            'cache': files
+            # 'cache': files
         }
         return JsonResponse(json)
