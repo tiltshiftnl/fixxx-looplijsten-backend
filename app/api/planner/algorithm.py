@@ -17,7 +17,7 @@ class ItineraryGenerateAlgorithm():
         self.target_length = settings.target_length
 
         try:
-            self.primary_stadium = settings.primary_stadium
+            self.primary_stadium = settings.primary_stadium.name
         except AttributeError:
             self.primary_stadium = None
 
@@ -30,9 +30,9 @@ class ItineraryGenerateAlgorithm():
         '''
         Gets a list of filter stadia
         '''
-        filter_stadia = self.secondary_stadia
+        filter_stadia = self.secondary_stadia + [ISSUEMELDING]
         if self.primary_stadium:
-            filter_stadia = [self.primary_stadium, ISSUEMELDING] + filter_stadia
+            filter_stadia = filter_stadia + [self.primary_stadium]
 
         return filter_stadia
 
