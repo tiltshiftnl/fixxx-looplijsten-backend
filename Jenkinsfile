@@ -1,9 +1,10 @@
 #!groovy
 
-def push_image(tag) {
+// tag image, push to repo, remove local tagged image
+def tag_image_as(tag) {
   script {
-    def image = docker.image("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}:${env.COMMIT_HASH}")
-    image.push(tag)
+    docker.image("${DOCKER_IMAGE_URL}:${env.COMMIT_HASH}").push(tag)
+    sh "docker rmi ${DOCKER_IMAGE_URL}:${tag} || true"
   }
 }
 
@@ -59,13 +60,13 @@ pipeline {
 
       steps {
         script {
-          def image = docker.build("${env.DOCKER_REGISTRY}/${env.DOCKER_IMAGE}:${env.COMMIT_HASH}",
+          def image = docker.build("${DOCKER_IMAGE_URL}:${env.COMMIT_HASH}",
             "--no-cache " +
             "--shm-size 1G " +
             "--build-arg INTEGRALE_AANPAK_ONDERMIJNING_CREDS=gitlab+deploy-token-90:${INTEGRALE_AANPAK_ONDERMIJNING_KEY}" +
             " ./app")
           image.push()
-          image.push("latest")
+          tag_image_as("latest")
         }
       }
     }
@@ -89,7 +90,7 @@ pipeline {
         branch 'master'
       }
       steps {
-        push_image("acceptance")
+        tag_image_as("acceptance")
         deploy("acceptance")
       }
     }
@@ -97,11 +98,20 @@ pipeline {
     stage("Push and deploy production image") {
       when { buildingTag() }
       steps {
-        push_image("production")
-        push_image(env.TAG_NAME)
+        tag_image_as("production")
+        tag_image_as(env.TAG_NAME)
         deploy("production")
       }
     }
 
+  }
+
+  post {
+    always {
+      script {
+        // delete original image built on the build server
+        sh "docker rmi ${DOCKER_IMAGE_URL}:${env.COMMIT_HASH} || true"
+      }
+    }
   }
 }
