@@ -45,7 +45,7 @@ services:
       - UWSGI_VACUUM=1
       - UWSGI_STATIC_EXPIRES=/* 3600
       - UWSGI_OFFLOAD_THREADS=1
-      - UWSGI_HARAKIRI=15
+      - UWSGI_HARAKIRI=1000
       - UWSGI_DIE_ON_TERM=1
       - UWSGI_MODULE=wsgi:application
       - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
