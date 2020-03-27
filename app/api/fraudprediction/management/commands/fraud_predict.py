@@ -22,21 +22,20 @@ class Command(BaseCommand):
     help = 'Uses the fraud prediction model to score and store Predictions'
 
     def handle(self, *args, **options):
-        print('Starting scoring..')
-        LOGGER.info('Started scoring')
+        LOGGER.error('Started scoring')
         dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
         case_ids = self.get_case_ids_to_score()
         cache_dir = settings.FRAUD_PREDICTION_CACHE_DIR
         self.clear_cache_dir(cache_dir)
-        LOGGER.warning('Cleared cache')
+        LOGGER.error('Cleared cache')
 
         # try:
         scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
-        LOGGER.warning('init scoring')
+        LOGGER.error('init scoring')
         results = scorer.score(zaak_ids=case_ids, zaken_con=connections[settings.BWV_DATABASE_NAME])
-        LOGGER.warning('retrieved results')
+        LOGGER.error('retrieved results')
         results = results.to_dict(orient='index')
-        LOGGER.warning('results to dict')
+        LOGGER.error('results to dict')
         # except Exception as e:
         #     LOGGER.error('Could not calculate prediction scores: {}'.format(str(e)))
         #     return
@@ -48,7 +47,7 @@ class Command(BaseCommand):
             except Exception as e:
                 LOGGER.error('Could not create or update prediction for {}: {}'.format(case_id, str(e)))
 
-        print('Finished scoring..')
+        LOGGER.error('Finished scoring..')
 
     def get_all_database_configs(self, keys=[]):
         config = {}
