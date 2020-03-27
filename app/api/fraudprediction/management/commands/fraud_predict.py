@@ -29,16 +29,16 @@ class Command(BaseCommand):
         self.clear_cache_dir(cache_dir)
         LOGGER.error('Cleared cache')
 
-        # try:
-        scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
-        LOGGER.error('init scoring')
-        results = scorer.score(zaak_ids=case_ids, zaken_con=connections[settings.BWV_DATABASE_NAME])
-        LOGGER.error('retrieved results')
-        results = results.to_dict(orient='index')
-        LOGGER.error('results to dict')
-        # except Exception as e:
-        #     LOGGER.error('Could not calculate prediction scores: {}'.format(str(e)))
-        #     return
+        try:
+            scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
+            LOGGER.error('init scoring')
+            results = scorer.score(zaak_ids=case_ids, zaken_con=connections[settings.BWV_DATABASE_NAME])
+            LOGGER.error('retrieved results')
+            results = results.to_dict(orient='index')
+            LOGGER.error('results to dict')
+        except Exception as e:
+            LOGGER.error('Could not calculate prediction scores: {}'.format(str(e)))
+            return
 
         for case_id in case_ids:
             result = results.get(case_id)
