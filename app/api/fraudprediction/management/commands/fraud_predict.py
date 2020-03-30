@@ -26,12 +26,13 @@ class Command(BaseCommand):
         LOGGER.info('Started scoring')
         print('Started scoring')
         sleep = 15
-        for i in range(0, 20):
+        for i in range(0, 60):
             time.sleep(sleep)
             LOGGER.info('Time Sleep {}'.format(i * sleep))
             print('Time Sleep {}'.format(i * sleep))
 
         LOGGER.info('Thread command completed')
+        print('Thread command completed')
 
         # dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
         # case_ids = self.get_case_ids_to_score()
