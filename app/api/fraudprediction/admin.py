@@ -3,7 +3,7 @@ from api.fraudprediction.models import FraudPrediction
 
 @admin.register(FraudPrediction)
 class FraudPredictionAdmin(admin.ModelAdmin):
-    list_display = ('case_id',)
+    list_display = ('case_id', 'fraud_probability')
 
     search_fields = ('case_id',)
 
