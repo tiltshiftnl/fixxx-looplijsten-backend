@@ -81,7 +81,6 @@ class Command(BaseCommand):
         '''
         try:
             files = glob.glob(os.path.join(dir, '*'))
-            LOGGER.info('clearing', files)
             for f in files:
                 LOGGER.info('removing {}'.format(f))
                 os.remove(f)
