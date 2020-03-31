@@ -244,6 +244,8 @@ OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
 
 OIDC_USE_NONCE = True
 
+
+DEBUG_LOG_FILE = os.path.join(BASE_DIR, 'debug.log')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -255,7 +257,7 @@ LOGGING = {
         'applogfile': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'filename': DEBUG_LOG_FILE,
             'maxBytes': 1024*1024*15,  # 15MB
             'backupCount': 10,
         },

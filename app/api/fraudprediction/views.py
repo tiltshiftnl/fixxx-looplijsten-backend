@@ -1,4 +1,6 @@
 # TODO: Add tests
+from django.conf import settings
+from django.http import FileResponse
 import threading
 import logging
 from datetime import datetime
@@ -34,3 +36,14 @@ class FraudPredictionScoringViewSet(ViewSet):
             'message': 'Scoring Started {}'.format(str(datetime.now())),
         }
         return JsonResponse(json)
+
+
+class DebugViewSet(ViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    @safety_lock
+    def list(self, request):
+        open_file = open(settings.DEBUG_LOG_FILE, 'rb')
+        response = FileResponse(open_file, content_type="text/csv")
+        response['Content-Disposition'] = 'attachment; filename="%s"' % settings.DEBUG_LOG_FILE
+        return response
