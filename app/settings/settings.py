@@ -317,3 +317,5 @@ SECURE_BROWSER_XSS_FILTER = True
 FRAUD_PREDICTION_CACHE_DIR = os.path.normpath(join(os.path.dirname(BASE_DIR), 'fraud_prediction_cache'))
 # Secret key for accessing fraud prediction scoring endpoint
 FRAUD_PREDICTION_SECRET_KEY = os.environ.get('FRAUD_PREDICTION_SECRET_KEY')
+
+CELERY_BROKER = 'amqp://admin:mypass@rabbit:5672'
