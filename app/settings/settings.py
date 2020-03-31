@@ -250,8 +250,7 @@ LOGGING = {
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
-            'level': 'INFO',
-            'handlers': ['console', 'sentry'],
+            'level': 'DEBUG'
         },
     },
     'loggers': {
