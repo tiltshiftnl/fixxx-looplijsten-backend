@@ -22,14 +22,22 @@ class Command(BaseCommand):
     help = 'Uses the fraud prediction model to score and store Predictions'
 
     def handle(self, *args, **options):
-        LOGGER.info('Started scoring')
-        print('Started scoring')
+        LOGGER.info('Started scoring Logger')
+        print('Started scoring Print')
+
+        LOGGER.info('Scoring module {}'.format(str(score)))
+        print('Scoring module {}'.format(str(score)))
 
         dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
+        LOGGER.info('Get all db configs')
+        print('Get all db configs')
         case_ids = self.get_case_ids_to_score()
+        LOGGER.info('get case ids to score')
+        print('get case ids to score')
         cache_dir = settings.FRAUD_PREDICTION_CACHE_DIR
         self.clear_cache_dir(cache_dir)
         LOGGER.info('Cleared cache')
+        print('Cleared cache')
 
         try:
             scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
@@ -88,10 +96,14 @@ class Command(BaseCommand):
         try:
             files = glob.glob(os.path.join(dir, '*'))
             LOGGER.info('clearing', files)
+            print('clearing', files)
             for f in files:
+                LOGGER.info('removing {}'.format(f))
+                print('removing {}'.format(f))
                 os.remove(f)
         except Exception as e:
             LOGGER.error('Something when wrong while removing cached scoring files: {}'.format(str(e)))
+            print('Something when wrong while removing cached scoring files: {}'.format(str(e)))
 
     def clean_dictionary(self, dictionary):
         '''
