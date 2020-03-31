@@ -23,35 +23,23 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         LOGGER.info('Started scoring Logger')
-        print('Started scoring Print')
-
-        LOGGER.info('Scoring module {}'.format(str(score)))
-        print('Scoring module {}'.format(str(score)))
-
         dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
         LOGGER.info('Get all db configs')
-        print('Get all db configs')
         case_ids = self.get_case_ids_to_score()
         LOGGER.info('get case ids to score')
-        print('get case ids to score')
         cache_dir = settings.FRAUD_PREDICTION_CACHE_DIR
         self.clear_cache_dir(cache_dir)
         LOGGER.info('Cleared cache')
-        print('Cleared cache')
 
         try:
             scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
             LOGGER.info('init scoring logger')
-            print('init scoring print')
             results = scorer.score(zaak_ids=case_ids, zaken_con=connections[settings.BWV_DATABASE_NAME])
             LOGGER.info('retrieved results')
-            print('retrieved results')
             results = results.to_dict(orient='index')
             LOGGER.info('results to dict')
-            print('results to dict')
         except Exception as e:
             LOGGER.error('Could not calculate prediction scores: {}'.format(str(e)))
-            print('Could not calculate prediction scores: {}'.format(str(e)))
             return
 
         for case_id in case_ids:
@@ -60,10 +48,8 @@ class Command(BaseCommand):
                 self.create_or_update_prediction(case_id, result)
             except Exception as e:
                 LOGGER.error('Could not create or update prediction for {}: {}'.format(case_id, str(e)))
-                print('Could not create or update prediction for {}: {}'.format(case_id, str(e)))
 
         LOGGER.info('Finished scoring..')
-        print('Finished scoring..')
 
     def get_all_database_configs(self, keys=[]):
         config = {}
@@ -96,14 +82,11 @@ class Command(BaseCommand):
         try:
             files = glob.glob(os.path.join(dir, '*'))
             LOGGER.info('clearing', files)
-            print('clearing', files)
             for f in files:
                 LOGGER.info('removing {}'.format(f))
-                print('removing {}'.format(f))
                 os.remove(f)
         except Exception as e:
             LOGGER.error('Something when wrong while removing cached scoring files: {}'.format(str(e)))
-            print('Something when wrong while removing cached scoring files: {}'.format(str(e)))
 
     def clean_dictionary(self, dictionary):
         '''

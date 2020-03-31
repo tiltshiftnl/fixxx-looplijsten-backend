@@ -252,8 +252,25 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'level': 'DEBUG'
         },
+        'applogfile': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'maxBytes': 1024*1024*15,  # 15MB
+            'backupCount': 10,
+        },
     },
     'loggers': {
+        'woonfraude_model': {
+            'handlers': ['applogfile', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'api': {
+            'handlers': ['applogfile', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
         'mozilla_django_oidc': {
             'handlers': ['console'],
             'level': 'DEBUG'
