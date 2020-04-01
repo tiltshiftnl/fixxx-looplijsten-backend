@@ -1,8 +1,9 @@
 # TODO: Add tests
+import os
+from multiprocessing import Process
+import logging
 from django.conf import settings
 from django.http import FileResponse
-import threading
-import logging
 from datetime import datetime
 from django.core import management
 from django.http import JsonResponse
@@ -24,13 +25,15 @@ class FraudPredictionScoringViewSet(ViewSet):
     def background_process(self):
         LOGGER.info('Started scoring background process')
         print('Started scoring background process')
+        if hasattr(os, 'getppid'):
+            LOGGER.info('Scoring process: {}'.format(os.getpid()))
         management.call_command(fraud_predict.Command())
 
     @safety_lock
     def create(self, request):
-        t = threading.Thread(target=self.background_process)
-        t.setDaemon(True)
-        t.start()
+        p = Process(target=self.background_process)
+        p.start()
+        p.join()
 
         json = {
             'message': 'Scoring Started {}'.format(str(datetime.now())),
