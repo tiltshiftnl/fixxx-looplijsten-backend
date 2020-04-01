@@ -23,7 +23,6 @@ pipeline {
     DOCKER_IMAGE = "fixxx/looplijsten"
     BWV_SYNC_DOCKER_IMAGE = "fixxx/looplijsten-bwv-sync"
     APP = "looplijsten-api"
-    DOCKER_REGISTRY = "repo.secure.amsterdam.nl"
     DOCKER_IMAGE_URL = "${DOCKER_REGISTRY_NO_PROTOCOL}/fixxx/looplijsten"
     INTEGRALE_AANPAK_ONDERMIJNING_KEY = credentials('deploy_key_integrale_aanpak_ondermijning')
   }
@@ -74,7 +73,7 @@ pipeline {
     stage("Build bwv-sync image") {
       steps {
         script {
-          def image = docker.build("${env.DOCKER_REGISTRY}/${env.BWV_SYNC_DOCKER_IMAGE}:${env.COMMIT_HASH}",
+          def image = docker.build("${DOCKER_REGISTRY_NO_PROTOCOL}/${env.BWV_SYNC_DOCKER_IMAGE}:${env.COMMIT_HASH}",
             "--no-cache " +
             "--shm-size 1G " +
             " ./bwv_sync")
