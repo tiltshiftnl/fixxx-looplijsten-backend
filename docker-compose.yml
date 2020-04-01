@@ -19,7 +19,10 @@ services:
       POSTGRES_USER: looplijsten
       POSTGRES_PASSWORD: insecure
   api:
-    build: ./app/
+    build:
+      context: ./app
+      args:
+        - "INTEGRALE_AANPAK_ONDERMIJNING_CREDS=${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}"
     ports:
       - "8000:8000"
     links:

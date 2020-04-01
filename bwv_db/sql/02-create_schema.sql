@@ -1,3 +1,24 @@
+create sequence public.import_adres_wzs_id_seq
+  increment 1
+  start 249
+  minvalue 1
+  maxvalue 9223372036854775807
+  cache 1;
+
+create sequence public.import_stadia_wzs_id_seq
+  increment 1
+  start 190714
+  minvalue 1
+  maxvalue 9223372036854775807
+  cache 1;
+
+create sequence public.import_wvs_wzs_id_seq
+  increment 1
+  start 102671
+  minvalue 1
+  maxvalue 9223372036854775807
+  cache 1;
+
 create table bwv_benb_meldingen (
   datum_melding timestamp without time zone,
   wng_id        bigint
@@ -104,4 +125,40 @@ create table bwv_vakantieverhuur (
   datum_einde_verhuur   timestamp without time zone,
   wng_id                bigint,
   annuleer_date         timestamp without time zone
+);
+
+create table bwv_vakantieverhuur_annuleren (
+  id                    numeric(20,0),
+  identificatie         character varying(20),
+  datum_aanvang_verhuur timestamp without time zone,
+  datum_einde_verhuur   timestamp without time zone,
+  tijdstip_bericht      timestamp without time zone,
+  bsn                   character varying(9),
+  voorletters           character varying(5),
+  voornamen             character varying(30),
+  naam                  character varying(50),
+  woonplaats_naam       character varying(50),
+  straatnaam            character varying(50),
+  postcode              character varying(6),
+  huisnummer            character varying(10),
+  huislet               character varying(2),
+  huistoev              character varying(4),
+  wng_id                bigint,
+  user_created          character varying(30),
+  date_created          character varying(30),
+  user_modified         character varying(30),
+  date_modified         timestamp without time zone,
+  bericht               text,
+  identificatie_annul   character varying(20)
+);
+
+create table bwv_woningen (
+  id            bigint,
+  shortstay     character varying(1),
+  benb_melding  character varying(1)
+);
+
+create table sync_log (
+  start     timestamp with time zone,
+  finished  timestamp with time zone
 );

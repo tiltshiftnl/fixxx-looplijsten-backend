@@ -22,7 +22,7 @@ export PGUSER=<DB_USER>;
 export PGPASSWORD=<DB_PASS>;
 #echo "<DB_PASS>" > ~/.pgpass;
 #chmod 600 ~/.pgpass;
-for f in /dumps/*.backup; do
+for f in /dumps/*.dump; do
   pg_restore -d <DB_NAME> "$f";
 done
 EOF
