@@ -3,8 +3,6 @@ import os
 import threading
 from multiprocessing import Process
 import logging
-from django.conf import settings
-from django.http import FileResponse
 from datetime import datetime
 from django.http import JsonResponse
 from rest_framework.viewsets import ViewSet
@@ -47,14 +45,3 @@ class FraudPredictionScoringViewSet(ViewSet):
             'message': 'Scoring Started {}'.format(str(datetime.now())),
         }
         return JsonResponse(json)
-
-
-class DebugViewSet(ViewSet):
-    permission_classes = (IsAuthenticated,)
-
-    @safety_lock
-    def list(self, request):
-        open_file = open(settings.DEBUG_LOG_FILE, 'rb')
-        response = FileResponse(open_file, content_type="text/csv")
-        response['Content-Disposition'] = 'attachment; filename="%s"' % settings.DEBUG_LOG_FILE
-        return response
