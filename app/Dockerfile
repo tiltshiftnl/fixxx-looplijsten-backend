@@ -17,7 +17,6 @@ RUN mkdir -p ${DIRECTORYLIST} && chown datapunt ${DIRECTORYLIST}
 # Setup application
 WORKDIR /app
 COPY requirements.txt /app/
-RUN echo ${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}
 RUN git clone -b latest --single-branch https://${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning
 RUN pip install --no-cache-dir /tmp/integrale_aanpak_ondermijning
 RUN pip install --no-cache-dir -r requirements.txt
