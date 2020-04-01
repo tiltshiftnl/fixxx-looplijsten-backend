@@ -21,7 +21,8 @@ create table bwv_hotline_melding (
   melder_naam       character varying(40),
   melder_emailadres character varying(40),
   melder_telnr      character varying(16),
-  situatie_schets   character varying(1500)
+  situatie_schets   character varying(1500),
+  id                integer
 );
 
 create table import_adres (
@@ -34,7 +35,13 @@ create table import_adres (
   postcode      character varying(6),
   landelijk_bag character varying(64),
   sbw_omschr    character varying(64),
-  kmrs          numeric(17,1)
+  kmrs          numeric(17,1),
+  wzs_lon       double precision,
+  wzs_lat       double precision,
+  inwnrs        double precision,
+  a_dam_bag     character varying(14),
+  pvh_omschr    character varying(50),
+  sbv_omschr    character varying(50)
 );
 
 create table import_stadia (
@@ -44,7 +51,8 @@ create table import_stadia (
   peildatum  date,
   einddatum  date,
   sta_oms    character varying(64),
-  stadia_id  character varying(32)
+  stadia_id  character varying(32),
+  wvs_nr     smallint
 );
 
 create table import_wvs (
@@ -54,7 +62,16 @@ create table import_wvs (
   afs_code              character varying(64),
   nuttig_woonoppervlak  numeric(64,0),
   vloeroppervlak_totaal numeric(64,0),
-  zaak_id               character varying(32)
+  zaak_id               character varying(32),
+  mededelingen          character varying(2000),
+  begindatum            date,
+  einddatum             timestamp without time zone,
+  afs_oms               character varying(50),
+  eigenaar              character varying(30),
+  kamer_aantal          smallint,
+  afg_code_beh          character varying(10),
+  beh_code              character varying(10),
+  bedrag_huur           integer
 );
 
 create table bwv_medewerkers (
@@ -64,12 +81,13 @@ create table bwv_medewerkers (
 );
 
 create table bwv_personen (
-  id            integer,
-  ads_id_wa     integer,
-  geslacht      character varying(1),
-  voorletters   character varying(5),
-  geboortedatum timestamp without time zone,
-  naam          character varying(30)
+  id                integer,
+  ads_id_wa         integer,
+  geslacht          character varying(1),
+  voorletters       character varying(5),
+  geboortedatum     timestamp without time zone,
+  naam              character varying(30),
+  gezinsverhouding  character varying(10)
 );
 
 create table bwv_personen_hist (
@@ -77,7 +95,8 @@ create table bwv_personen_hist (
  ads_id                integer,
  vertrekdatum_adres    timestamp without time zone,
  vestigingsdatum_adres timestamp without time zone,
- overlijdensdatum      timestamp without time zone
+ overlijdensdatum      timestamp without time zone,
+ vertrekdatum_adam     timestamp without time zone
 );
 
 create table bwv_vakantieverhuur (
