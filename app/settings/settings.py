@@ -255,6 +255,16 @@ LOGGING = {
         },
     },
     'loggers': {
+        'woonfraude_model': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'api': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
         'mozilla_django_oidc': {
             'handlers': ['console'],
             'level': 'DEBUG'

@@ -1,3 +1,4 @@
+import logging
 from time import process_time
 from api.cases.const import STADIA, ISSUEMELDING
 from utils.queries_planner import get_cases_from_bwv
@@ -7,6 +8,8 @@ from api.planner.utils import filter_cases_with_missing_coordinates, sort_with_s
 from api.planner.utils import shorten_if_necessary, calculate_geo_distances
 from api.fraudprediction.utils import get_fraud_prediction
 from api.fraudprediction.models import FraudPrediction
+
+LOGGER = logging.getLogger(__name__)
 
 class ItineraryGenerateAlgorithm():
     ''' An abstract class which forms the basis of itinerary generating algorithms '''
@@ -41,6 +44,8 @@ class ItineraryGenerateAlgorithm():
         Returns a list of eligible cases using the settings object
         '''
         cases = get_cases_from_bwv(self.opening_date, self.projects, self.stadia)
+        LOGGER.info('Total list of cases: {}'.format(len(cases)))
+
         filter_stadia = self.__get_filter_stadia__()
 
         filtered_cases = filter_cases(cases, filter_stadia)
@@ -51,6 +56,7 @@ class ItineraryGenerateAlgorithm():
         filtered_cases = remove_cases_from_list(filtered_cases, exclude_cases)
 
         if not filter_cases:
+            LOGGER.warning('No eligible cases found')
             raise ValueError('No eligible cases found')
 
         return filtered_cases
@@ -83,6 +89,8 @@ class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
     def generate(self):
         cases = self.__get_eligible_cases__()
 
+        LOGGER.info('Generating list with {} eligible cases'.format(len(cases)))
+
         # The cluster size cannot be larger then the number of unplanned cases
         cluster_size = min(self.target_length, len(cases))
 
@@ -91,6 +99,7 @@ class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
 
         # Select the best list and append it to the itinerary
         if not clusters:
+            LOGGER.warning('Could not generate clusters')
             return []
 
         # Get the best list, shorten it, and sort it by primary stadium
