@@ -1,18 +1,18 @@
 # TODO: Add tests
 import os
+import threading
 from multiprocessing import Process
 import logging
 from django.conf import settings
 from django.http import FileResponse
 from datetime import datetime
-from django.core import management
 from django.http import JsonResponse
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from api.fraudprediction.permissions import FraudPredicionApiKeyAuth
 from utils.safety_lock import safety_lock
-from api.fraudprediction.management.commands import fraud_predict
+from api.fraudprediction.fraud_predict import FraudPredict
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,17 +23,25 @@ class FraudPredictionScoringViewSet(ViewSet):
     permission_classes = [FraudPredicionApiKeyAuth | IsAuthenticated]
 
     def background_process(self):
-        LOGGER.info('Started scoring background process')
-        print('Started scoring background process')
-        if hasattr(os, 'getppid'):
-            LOGGER.info('Scoring process: {}'.format(os.getpid()))
-        management.call_command(fraud_predict.Command())
+
+        def process():
+            LOGGER.info('Started scoring background process')
+
+            if hasattr(os, 'getppid'):
+                LOGGER.info('Scoring process: {}'.format(os.getpid()))
+
+            fraud_predict = FraudPredict()
+            fraud_predict.start()
+
+        p = Process(target=process)
+        p.start()
+        p.join()
 
     @safety_lock
     def create(self, request):
-        p = Process(target=self.background_process)
-        p.start()
-        p.join()
+        t = threading.Thread(target=self.background_process)
+        t.setDaemon(True)
+        t.start()
 
         json = {
             'message': 'Scoring Started {}'.format(str(datetime.now())),

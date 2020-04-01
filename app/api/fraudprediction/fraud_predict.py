@@ -3,7 +3,6 @@ import math
 import logging
 import os
 import glob
-from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import connections
 from woonfraude_model import score
@@ -18,10 +17,9 @@ DATABASE_CONFIG_KEYS = ['adres', 'bwv_adres_periodes', 'bbga', 'hotline',
                         'personen', 'personen_hist', 'stadia', 'zaken']
 SCORE_STARTING_FROM_DATE = '2019-01-01'
 
-class Command(BaseCommand):
-    help = 'Uses the fraud prediction model to score and store Predictions'
+class FraudPredict():
 
-    def handle(self, *args, **options):
+    def start(self):
         LOGGER.info('Started scoring Logger')
         dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
         LOGGER.info('Get all db configs')
