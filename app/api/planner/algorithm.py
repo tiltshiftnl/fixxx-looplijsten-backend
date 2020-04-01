@@ -33,6 +33,11 @@ class ItineraryGenerateAlgorithm():
         '''
         Gets a list of filter stadia
         '''
+        # Note: this might have to change at some point.
+        # If not primary and secondary stadia are set, include all stadia
+        if not self.primary_stadium and not self.secondary_stadia:
+            return STADIA
+
         filter_stadia = self.secondary_stadia + [ISSUEMELDING]
         if self.primary_stadium:
             filter_stadia = filter_stadia + [self.primary_stadium]
@@ -48,12 +53,21 @@ class ItineraryGenerateAlgorithm():
 
         filter_stadia = self.__get_filter_stadia__()
 
+        LOGGER.info('Filter stadia: {}'.format(str(filter_stadia)))
+        LOGGER.info('Exclude stadia: {}'.format(str(self.exclude_stadia)))
+
         filtered_cases = filter_cases(cases, filter_stadia)
+        LOGGER.info('Total cases after filtering stadia: {}'.format(len(filtered_cases)))
+
         filtered_cases = filter_out_cases(filtered_cases, self.exclude_stadia)
+        LOGGER.info('Total cases after excluding stadia: {}'.format(len(filtered_cases)))
+
         filtered_cases = filter_cases_with_missing_coordinates(filtered_cases)
+        LOGGER.info('Total cases after filtering on missing coordinates: {}'.format(len(filtered_cases)))
 
         exclude_cases = [{'case_id': case.case_id} for case in self.exclude_cases]
         filtered_cases = remove_cases_from_list(filtered_cases, exclude_cases)
+        LOGGER.info('Total cases after removing exclude cases: {}'.format(len(filtered_cases)))
 
         if not filter_cases:
             LOGGER.warning('No eligible cases found')
