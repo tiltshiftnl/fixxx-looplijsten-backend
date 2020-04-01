@@ -56,51 +56,7 @@ services:
       python /app/manage.py collectstatic --noinput &&
       python /app/manage.py migrate --noinput &&
       uwsgi --py-auto-reload=1"
-  rabbit:  
-    hostname: rabbit
-    image: rabbitmq:latest
-    environment:
-        - RABBITMQ_DEFAULT_USER=admin
-        - RABBITMQ_DEFAULT_PASS=mypass
-    ports:
-        - "5673:5672"
-  celery:
-    build: ./app/
-    links:        
-        - rabbit
-        - database
-        - bwv_db
-    environment:
-      - DJANGO_SETTINGS_MODULE=settings.settings
-      - DJANGO_SECRET_KEY=local
-      - DJANGO_DEBUG=True
-      - DJANGO_ALLOWED_HOSTS=0.0.0.0,localhost
-      - CORS_ORIGIN_WHITELIST=http://0.0.0.0:3000,http://localhost:3000
-      - DATABASE_NAME=looplijsten
-      - DATABASE_USER=looplijsten
-      - DATABASE_PASSWORD=insecure
-      - BWV_DB_NAME=looplijsten_bwv
-      - BWV_DB_USER=looplijsten_bwv
-      - BWV_DB_PASSWORD=insecure
-      - UWSGI_HTTP=0.0.0.0:8000
-      - UWSGI_MASTER=1
-      - UWSGI_STATIC_INDEX=index.html
-      - UWSGI_STATIC_MAP=/static=/static
-      - UWSGI_CALLABLE=application
-      - UWSGI_VACUUM=1
-      - UWSGI_STATIC_EXPIRES=/* 3600
-      - UWSGI_OFFLOAD_THREADS=1
-      - UWSGI_HARAKIRI=1000
-      - UWSGI_DIE_ON_TERM=1
-      - UWSGI_MODULE=wsgi:application
-      - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
-    volumes:
-      - ./app:/app
-      - ./api/deploy:/deploy   
-    depends_on:
-        - api
-        - rabbit
-    command: celery -A test_celery worker --concurrency=20 --loglevel=info
+
 networks:
   default:
     name: looplijsten_backend
