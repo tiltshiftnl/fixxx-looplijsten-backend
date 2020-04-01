@@ -18,14 +18,17 @@ dst_host="${BWV_DB_HOST}"
 dst_db="${BWV_DB_NAME}"
 dst_user="${BWV_DB_USER}"
 dst_pw="${BWV_DB_PASSWORD}"
-
-timestamp_start="$(TZ="Europe/Amsterdam" date "+%Y-%m-%d %H:%M:%S Europe/Amsterdam")"
-if test "${ENVIRONMENT}" = "acceptance"; then
-anonymize=true
-else
-anonymize=false
-fi
+fraud_prediction_secret_key="${FRAUD_PREDICTION_SECRET_KEY}"
 logfile="/tmp/bwv-sync.log"
+timestamp_start="$(TZ="Europe/Amsterdam" date "+%Y-%m-%d %H:%M:%S Europe/Amsterdam")"
+
+if test "${ENVIRONMENT}" = "acceptance"; then
+  anonymize=true
+  url="https://acc.api.top.amsterdam.nl"
+else
+  anonymize=false
+  url="https://api.top.amsterdam.nl"
+fi
 
 # The views/tables to sync and the table to sync them to.
 # Format: <source view/table>,<destination table>
@@ -65,3 +68,8 @@ done
 timestamp_finished="$(TZ="Europe/Amsterdam" date "+%Y-%m-%d %H:%M:%S Europe/Amsterdam")"
 PGPASSWORD="${dst_pw}" psql -h "$dst_host" -U "$dst_user" -d "$dst_db" -c \
   "UPDATE sync_log set finished = '${timestamp_finished}' where start = '${timestamp_start}';"
+
+curl "${url}/api/v1/fraud-prediction/scoring/" \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "Authorization: ${fraud_prediction_secret_key}"
