@@ -5,7 +5,7 @@ RUN cargo build --release
 
 FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y cron postgresql-client
+RUN apt-get update && apt-get install -y cron postgresql-client curl
 
 COPY --from=pg_anonymize /app/target/release/pg_anonymize /usr/local/bin/
 COPY pg_anonymize.conf /etc/
