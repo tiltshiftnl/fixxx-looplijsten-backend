@@ -21,25 +21,21 @@ class FraudPredictionScoringViewSet(ViewSet):
     permission_classes = [FraudPredicionApiKeyAuth | IsAuthenticated]
 
     def background_process(self):
+        LOGGER.info('Started scoring background process')
 
-        def process():
-            LOGGER.info('Started scoring background process')
+        if hasattr(os, 'getppid'):
+            LOGGER.info('Scoring process: {}'.format(os.getpid()))
 
-            if hasattr(os, 'getppid'):
-                LOGGER.info('Scoring process: {}'.format(os.getpid()))
-
-            fraud_predict = FraudPredict()
-            fraud_predict.start()
-
-        p = Process(target=process)
-        p.start()
-        p.join()
+        fraud_predict = FraudPredict()
+        fraud_predict.start()
 
     @safety_lock
     def create(self, request):
-        t = threading.Thread(target=self.background_process)
-        t.setDaemon(True)
-        t.start()
+        if hasattr(os, 'getppid'):
+            LOGGER.info('Process kicking off scoring: {}'.format(os.getpid()))
+
+        p = Process(target=self.background_process)
+        p.start()
 
         json = {
             'message': 'Scoring Started {}'.format(str(datetime.now())),
