@@ -1,0 +1,63 @@
+<div class="form-group">
+  <label for="length_of_lists">Length of lists:</label>
+  <input id="length_of_lists" class="form-control" type="number" name="length_of_lists" value="{{length_of_lists}}" />
+</div>
+
+<div class="form-group">
+  <label for="opening_date">Date:</label>
+  <input id="opening_date" class="form-control" type="text" name="opening_date" value="{{selected_opening_date}}" />
+</div>
+
+<div class="form-group">
+  <label for="opening_reasons">Projects:</label>
+  <div class="multi-select-wrapper">
+    <select id="opening_reasons" name="opening_reasons" multiple>
+      {% for opening_reason in opening_reasons %}
+      <option value="{{opening_reason}}" {% if opening_reason in selected_opening_reasons %} selected {% endif %}>
+        {{opening_reason}}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+
+  <label for="main_stadium">Include:</label>
+  <div class="multi-select-wrapper">
+    <select id="main_stadium" name="main_stadium">
+      <option value="">None</option>
+      {% for stadium in stadia %}
+      <option value="{{stadium}}" {% if stadium == main_stadium %} selected {% endif %}>
+        {{stadium}}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+  <label for="stadia">Also Include:</label>
+  <div class="multi-select-wrapper">
+    <select id="stadia" name="stadia" multiple>
+      {% for stadium in stadia %}
+      <option value="{{stadium}}" {% if stadium in selected_stadia %} selected {% endif %}>
+        {{stadium}}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<div class="form-group">
+  <label for="exclude_stadia">Exclude:</label>
+  <div class="multi-select-wrapper">
+    <select id="exclude_stadia" name="exclude_stadia" multiple>
+      {% for stadium in stadia %}
+      <option value="{{stadium}}" {% if stadium in selected_exclude_stadia %} selected {% endif %}>
+        {{stadium}}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
