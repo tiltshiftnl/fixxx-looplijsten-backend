@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 import json
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views import View
@@ -11,8 +12,36 @@ from constance.backends.database.models import Constance
 
 from utils.safety_lock import safety_lock
 from api.planner.serializers import WeekListSerializer
-from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA, ONDERZOEK_BUITENDIENST
+from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
+from api.planner.algorithm import ItineraryKnapsackList
+from api.planner.utils import remove_cases_from_list
+
+class SettingsMock(SimpleNamespace):
+    '''
+    Creates a mock settings objects using context data. Should only be used for prototyping.
+    '''
+
+    def __init__(self, context):
+        super().__init__()
+        self.opening_date = context['selected_opening_date']
+        self.target_length = context['length_of_lists']
+
+        self.projects = SimpleNamespace()
+        self.projects.all = lambda: [SimpleNamespace(name=project)
+                                     for project in context['selected_projects']]
+
+        if context.get('main_stadium', None):
+            self.primary_stadium = SimpleNamespace(name=context['main_stadium'])
+
+        self.secondary_stadia = SimpleNamespace()
+        self.secondary_stadia.all = lambda: [SimpleNamespace(
+            name=project) for project in context['selected_stadia']]
+
+        self.exclude_stadia = SimpleNamespace()
+        self.exclude_stadia.all = lambda: [SimpleNamespace(name=project)
+                                           for project in context['selected_exclude_stadia']]
+
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/admin/login/'
@@ -20,55 +49,74 @@ class AlgorithmView(LoginRequiredMixin, View):
 
     def get_context_data(self):
         key, _ = Constance.objects.get_or_create(key=settings.CONSTANCE_MAPS_KEY)
-
         return {
-            'opening_reasons': PROJECTS,
+            'projects': PROJECTS,
+            'selected_projects': PROJECTS_WITHOUT_SAHARA,
             'stadia': STADIA,
             'selected_stadia': [],
-            'main_stadium': ONDERZOEK_BUITENDIENST,
+            'main_stadium': None,
             'selected_exclude_stadia': [],
-            'number_of_lists': 2,
+            'selected_opening_date': '2019-01-01',
+            'number_of_lists': 1,
             'length_of_lists': 8,
             'maps_key': key.value,
+            'weight_distance': 1,
+            'weight_fraud_probability': 1,
+            'weight_primary_stadium': 1,
+            'weight_secondary_stadium': 1,
+            'weight_issuemelding': 1,
         }
 
     @safety_lock
     def get(self, request, *args, **kwargs):
         context_data = self.get_context_data()
 
-        opening_date = '2019-01-01'
-        opening_reasons = PROJECTS_WITHOUT_SAHARA
-        context_data['selected_opening_date'] = opening_date
-        context_data['selected_opening_reasons'] = opening_reasons
+        settings = SettingsMock(context_data)
+        generator = ItineraryKnapsackList(settings)
+        unplanned_cases = generator.__get_eligible_cases__()
+
+        context_data['planning'] = {
+            'planned_cases': [],
+            'unplanned_cases': unplanned_cases,
+        }
 
         return render(request, self.template_name, context_data)
 
     @safety_lock
     def post(self, request, *args, **kwargs):
         opening_date = request.POST.get('opening_date')
-        opening_reasons = request.POST.getlist('opening_reasons')
-        number_of_lists = int(request.POST.get('number_of_lists'))
+        projects = request.POST.getlist('projects')
         length_of_lists = int(request.POST.get('length_of_lists'))
         stadia = request.POST.getlist('stadia')
         exclude_stadia = request.POST.getlist('exclude_stadia')
         main_stadium = request.POST.get('main_stadium')
 
+        weight_distance = float(request.POST.get('weight_distance'))
+        weight_fraud_probability = float(request.POST.get('weight_fraud_probability'))
+        weight_primary_stadium = float(request.POST.get('weight_primary_stadium'))
+        weight_secondary_stadium = float(request.POST.get('weight_secondary_stadium'))
+        weight_issuemelding = float(request.POST.get('weight_issuemelding'))
+
         context_data = self.get_context_data()
         context_data['selected_opening_date'] = opening_date
-        context_data['selected_opening_reasons'] = opening_reasons
-        context_data['number_of_lists'] = number_of_lists
+        context_data['selected_projects'] = projects
         context_data['length_of_lists'] = length_of_lists
         context_data['selected_stadia'] = stadia
         context_data['selected_exclude_stadia'] = exclude_stadia
         context_data['main_stadium'] = main_stadium
+        context_data['weight_distance'] = weight_distance
+        context_data['weight_fraud_probability'] = weight_fraud_probability
+        context_data['weight_primary_stadium'] = weight_primary_stadium
+        context_data['weight_secondary_stadium'] = weight_secondary_stadium
+        context_data['weight_issuemelding'] = weight_issuemelding
 
         post = {
             "opening_date": opening_date,
-            "opening_reasons": opening_reasons,
+            "projects": projects,
             "lists": [
                 {
-                    "number_of_lists": number_of_lists,
                     "length_of_lists": length_of_lists,
+                    "number_of_lists": 1,
                     "secondary_stadia": stadia,
                     "exclude_stadia": exclude_stadia,
                 }
@@ -78,6 +126,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         if main_stadium:
             post["lists"][0]["primary_stadium"] = main_stadium
 
+        # TODO: Look into adding the weights to the serializer as well
         serializer = WeekListSerializer(data=post)
         is_valid = serializer.is_valid()
         if not is_valid:
@@ -86,7 +135,17 @@ class AlgorithmView(LoginRequiredMixin, View):
                 'errors': serializer.errors
             }, status=HttpResponseBadRequest.status_code)
 
-        context_data['planning'] = {}
+        settings = SettingsMock(context_data)
+        generator = ItineraryKnapsackList(settings)
+
+        eligible_cases = generator.__get_eligible_cases__()
+        planned_cases = generator.generate()
+        unplanned_cases = remove_cases_from_list(eligible_cases, planned_cases)
+
+        context_data['planning'] = {
+            'planned_cases': planned_cases,
+            'unplanned_cases': unplanned_cases
+        }
 
         return render(request, self.template_name, context_data)
 

@@ -210,7 +210,13 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
 
             distance = distances[index]
             normalized_inverse_distance = (max_distance - distance) / max_distance
-            fraud_probability = fraud_predictions[case_id].fraud_probability
+
+            try:
+                fraud_probability = fraud_predictions[case_id].fraud_probability
+            except Exception as e:
+                LOGGER.error(e)
+                fraud_probability = 0
+
             has_primary_stadium = stadium == self.primary_stadium
             has_secondary_stadium = stadium in self.secondary_stadia
             has_issuemelding_stadium = stadium == ISSUEMELDING

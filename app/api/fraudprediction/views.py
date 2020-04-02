@@ -1,6 +1,5 @@
 # TODO: Add tests
 import os
-import threading
 from multiprocessing import Process
 import logging
 from datetime import datetime

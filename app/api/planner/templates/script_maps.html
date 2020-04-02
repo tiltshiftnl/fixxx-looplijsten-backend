@@ -31,31 +31,21 @@
       });
 
     var planning = JSON.parse(document.getElementById('planning').textContent);
-    // TODO: Uncomment this when planning is working again
-    var unplanned_cases = []; //planning['unplanned_cases']
-    var planned_cases = []; //planning['lists']
+    var unplanned_cases = planning['unplanned_cases'];
+    var planned_cases = planning['planned_cases'];
 
     // Place the unused cases
     icons = getUnusedPin();
-
     for (var i = 0; i < unplanned_cases.length; i++) {
       var item = unplanned_cases[i];
       placeCase(item, map, icons);
     }
 
-
     // Place the planned cases
+    var icons = getIndexedColorPin(0);
     for (var i = 0; i < planned_cases.length; i++) {
-      var lists = planned_cases[i]['itineraries'];
-      for (var x = 0; x < lists.length; x++) {
-        var list = lists[x];
-        var icons = getIndexedColorPin(x);
-
-        for (var j = 0; j < list.length; j++) {
-          var item = list[j];
-          placeCase(item, map, icons);
-        }
-      }
+      var item = planned_cases[i];
+      placeCase(item, map, icons);
     }
   }
 </script>

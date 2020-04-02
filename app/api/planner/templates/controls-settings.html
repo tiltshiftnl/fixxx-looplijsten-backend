@@ -9,11 +9,11 @@
 </div>
 
 <div class="form-group">
-  <label for="opening_reasons">Projects:</label>
+  <label for="projects">Projects:</label>
   <div class="multi-select-wrapper">
-    <select id="opening_reasons" name="opening_reasons" multiple>
-      {% for opening_reason in opening_reasons %}
-      <option value="{{opening_reason}}" {% if opening_reason in selected_opening_reasons %} selected {% endif %}>
+    <select id="projects" name="projects" multiple>
+      {% for opening_reason in projects %}
+      <option value="{{opening_reason}}" {% if opening_reason in selected_projects %} selected {% endif %}>
         {{opening_reason}}
       </option>
       {% endfor %}
@@ -23,7 +23,7 @@
 
 <div class="form-group">
 
-  <label for="main_stadium">Include:</label>
+  <label for="main_stadium">Primary Stadium:</label>
   <div class="multi-select-wrapper">
     <select id="main_stadium" name="main_stadium">
       <option value="">None</option>
@@ -37,7 +37,7 @@
 </div>
 
 <div class="form-group">
-  <label for="stadia">Also Include:</label>
+  <label for="stadia">Secondary Stadia:</label>
   <div class="multi-select-wrapper">
     <select id="stadia" name="stadia" multiple>
       {% for stadium in stadia %}

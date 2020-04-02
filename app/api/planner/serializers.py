@@ -31,8 +31,9 @@ class ListSerializer(serializers.Serializer):
 
         return data
 
-# TODO: we'll probably need to rename this at some point: it's used for checking settings, and requesting generated lists
+# TODO: we'll probably need to rename this at some point: it's used for checking settings,
+# and requesting generated lists
 class WeekListSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
-    opening_reasons = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
+    projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
     lists = ListSerializer(required=True, many=True)

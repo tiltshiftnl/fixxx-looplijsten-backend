@@ -2,7 +2,7 @@ from api.cases import const
 
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
-    "opening_reasons": const.PROJECTS_WITHOUT_SAHARA,
+    "projects": const.PROJECTS_WITHOUT_SAHARA,
     "lists": [
         {
             "name": "Maandag Ochtend",
