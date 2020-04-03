@@ -1,5 +1,6 @@
 import logging
 from time import process_time
+from joblib import Parallel, delayed
 from api.cases.const import STADIA, ISSUEMELDING
 from utils.queries_planner import get_cases_from_bwv
 from api.planner.clustering import optics_clustering
@@ -213,8 +214,8 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
 
             try:
                 fraud_probability = fraud_predictions[case_id].fraud_probability
-            except Exception as e:
-                LOGGER.error(e)
+            except Exception:
+                LOGGER.warning('Fraud probability does not exist: {}'.format(case_id))
                 fraud_probability = 0
 
             has_primary_stadium = stadium == self.primary_stadium
@@ -256,7 +257,17 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         best_list = max(candidates, key=lambda candidate: candidate['score'])
         return best_list['list']
 
+    def parallelized_function(self, case, cases, fraud_predictions, index):
+        # t = process_time()
+        suggestions = super().generate(case, cases, fraud_predictions)
+        suggestions = self.shorten_list(suggestions)
+        score = self.score_list(suggestions)
+        # print('DONE {} of {}: {}'.format(index, len(cases), process_time() - t))
+
+        return {'score': score, 'list': suggestions}
+
     def generate(self, location=None):
+        t = process_time()
         # For a location, just get the suggestions
         if location:
             suggestions = super().generate(location)
@@ -267,16 +278,16 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         cases = self.__get_eligible_cases__()
         fraud_predictions = self.__get_fraud_predictions__()
 
-        candidates = []
-        for index, case in enumerate(cases):
-            t = process_time()
-            suggestions = super().generate(case, cases, fraud_predictions)
-            suggestions = self.shorten_list(suggestions)
-            score = self.score_list(suggestions)
-            candidate = {'score': score, 'list': suggestions}
-            candidates.append(candidate)
-            print('DONE {} of {}: {}'.format(index, len(cases), process_time() - t))
+        import multiprocessing
+        jobs = multiprocessing.cpu_count()
+
+        # prefer="threads"
+        candidates = Parallel(n_jobs=jobs, backend='multiprocessing')(delayed(self.parallelized_function)(
+            case, cases, fraud_predictions, index) for index, case in enumerate(cases))
 
         best_list = self.get_best_list(candidates)
+
+        print('DONE {}'.format(process_time() - t))
+        print('With {} cpus'.format(jobs))
 
         return best_list
