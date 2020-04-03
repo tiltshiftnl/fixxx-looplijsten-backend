@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 DATABASE_CONFIG_KEYS = ['adres', 'bwv_adres_periodes', 'bbga', 'hotline',
                         'personen', 'personen_hist', 'stadia', 'zaken']
-SCORE_STARTING_FROM_DATE = '2019-01-01'
+SCORE_STARTING_FROM_DATE = '2018-01-01'
 
 class FraudPredict():
 

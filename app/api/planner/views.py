@@ -136,7 +136,9 @@ class AlgorithmView(LoginRequiredMixin, View):
             }, status=HttpResponseBadRequest.status_code)
 
         settings = SettingsMock(context_data)
-        generator = ItineraryKnapsackList(settings)
+        settings_weights = SettingsWeightMock(context_data)
+
+        generator = ItineraryKnapsackList(settings, settings_weights)
 
         eligible_cases = generator.__get_eligible_cases__()
         planned_cases = generator.generate()
@@ -211,3 +213,17 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         planner_settings.save()
 
         return JsonResponse(data)
+
+
+class SettingsWeightMock(SimpleNamespace):
+    '''
+    Creates a mock settings weight objects using context data. Should only be used for prototyping.
+    '''
+
+    def __init__(self, context):
+        super().__init__()
+        self.distance = context['weight_distance']
+        self.fraud_probability = context['weight_fraud_probability']
+        self.primary_stadium = context['weight_primary_stadium']
+        self.secondary_stadium = context['weight_secondary_stadium']
+        self.issuemelding = context['weight_issuemelding']

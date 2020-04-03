@@ -1,3 +1,4 @@
+import multiprocessing
 import logging
 from time import process_time
 from joblib import Parallel, delayed
@@ -56,6 +57,8 @@ class ItineraryGenerateAlgorithm():
 
         LOGGER.info('Filter stadia: {}'.format(str(filter_stadia)))
         LOGGER.info('Exclude stadia: {}'.format(str(self.exclude_stadia)))
+        LOGGER.info('Projects: {}'.format(str(self.projects)))
+        LOGGER.info('Opening date: {}'.format(str(self.opening_date)))
 
         filtered_cases = filter_cases(cases, filter_stadia)
         LOGGER.info('Total cases after filtering stadia: {}'.format(len(filtered_cases)))
@@ -149,6 +152,19 @@ class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
 
 
 class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
+    def __init__(self, settings, settings_weights=None):
+        super().__init__(settings)
+
+        if settings_weights:
+            self.weights = ItineraryKnapsackSuggestions.Weights(
+                distance=settings_weights.distance,
+                fraud_probability=settings_weights.fraud_probability,
+                primary_stadium=settings_weights.primary_stadium,
+                secondary_stadium=settings_weights.secondary_stadium,
+                issuemelding=settings_weights.issuemelding
+            )
+        else:
+            self.weights = ItineraryKnapsackSuggestions.Weights()
 
     class Weights():
         '''
@@ -156,11 +172,11 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         '''
 
         def __init__(self,
-                     distance=1,
-                     fraud_probability=1,
-                     primary_stadium=1,
-                     secondary_stadium=.5,
-                     issuemelding=1):
+                     distance=2.5,
+                     fraud_probability=2,
+                     primary_stadium=2.5,
+                     secondary_stadium=1,
+                     issuemelding=2.5):
 
             self.distance = distance
             self.fraud_probability = fraud_probability
@@ -175,7 +191,19 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
                 primary_stadium,
                 secondary_stadium,
                 issuemelding):
+
+            # TODO: improve readability of this
             return distance*self.distance + fraud_probability*self.fraud_probability + primary_stadium*self.primary_stadium + secondary_stadium*self.secondary_stadium + issuemelding*self.issuemelding
+
+        def __str__(self):
+            settings = {
+                'distance': self.distance,
+                'fraud_probability': self.fraud_probability,
+                'primary_stadium': self.primary_stadium,
+                'secondary_stadium': self.secondary_stadium,
+                'issuemelding': self.issuemelding
+            }
+            return str(settings)
 
     def get_score(
             self,
@@ -187,9 +215,8 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         '''
         Gets the score of our case
         '''
-        weights = ItineraryKnapsackSuggestions.Weights()
-        score = weights.score(distance, fraud_probability, has_primary_stadium,
-                              has_secondary_stadium, has_secondary_stadium)
+        score = self.weights.score(distance, fraud_probability, has_primary_stadium,
+                                   has_secondary_stadium, has_secondary_stadium)
         return score
 
     def generate(self, location, cases=[], fraud_predictions=[]):
@@ -249,20 +276,19 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
     def shorten_list(self, list):
         '''
         Shortens the list to target_length
-        TODO: Cases on the same address should be counted as one item on the list
         '''
+        # Make sure the list is sorted on distance first
         return list[:self.target_length]
 
     def get_best_list(self, candidates):
         best_list = max(candidates, key=lambda candidate: candidate['score'])
+
         return best_list['list']
 
     def parallelized_function(self, case, cases, fraud_predictions, index):
-        # t = process_time()
         suggestions = super().generate(case, cases, fraud_predictions)
         suggestions = self.shorten_list(suggestions)
         score = self.score_list(suggestions)
-        # print('DONE {} of {}: {}'.format(index, len(cases), process_time() - t))
 
         return {'score': score, 'list': suggestions}
 
@@ -278,16 +304,14 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         cases = self.__get_eligible_cases__()
         fraud_predictions = self.__get_fraud_predictions__()
 
-        import multiprocessing
         jobs = multiprocessing.cpu_count()
-
-        # prefer="threads"
         candidates = Parallel(n_jobs=jobs, backend='multiprocessing')(delayed(self.parallelized_function)(
             case, cases, fraud_predictions, index) for index, case in enumerate(cases))
 
         best_list = self.get_best_list(candidates)
+        best_list = sorted(best_list, key=lambda case: case['distance'])
 
-        print('DONE {}'.format(process_time() - t))
-        print('With {} cpus'.format(jobs))
+        LOGGER.info('DONE {}'.format(process_time() - t))
+        LOGGER.info('With {} cpus'.format(jobs))
 
         return best_list
