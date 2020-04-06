@@ -1,15 +1,38 @@
 import logging
+from sklearn.cluster import OPTICS
 from api.cases.const import ISSUEMELDING
 from api.planner.clustering import optics_clustering
-from api.planner.utils import get_best_list
-from api.planner.utils import sort_with_stadium
-from api.planner.utils import shorten_if_necessary
+from api.planner.utils import get_best_list, get_case_coordinates, sort_with_stadium, shorten_if_necessary
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
 
 LOGGER = logging.getLogger(__name__)
 
 class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
     '''Generates an itinerary using a clustering algorithm'''
+    MIN_SAMPLE_SIZE = 3
+
+    def optics_clustering(self, cluster_size, cases):
+        if cluster_size < self.MIN_SAMPLE_SIZE:
+            return [], cases
+
+        coordinates = get_case_coordinates(cases)
+        clusters = OPTICS(min_samples=3, min_cluster_size=cluster_size).fit(coordinates)
+
+        clustering_labels = clusters.labels_
+        n_lists = max(clustering_labels) + 1
+
+        groups = [[] for i in range(0, n_lists)]
+        unplanned_cases = []
+
+        for i in range(0, len(cases)):
+            group = clustering_labels[i]
+            case = cases[i]
+            if group == -1:
+                unplanned_cases.append(case)
+            else:
+                groups[group].append(case)
+
+        return groups, unplanned_cases
 
     def generate(self):
         cases = self.__get_eligible_cases__()
