@@ -5,6 +5,7 @@ from api.cases.const import ISSUEMELDING
 from api.planner.utils import calculate_geo_distances
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
 
+
 LOGGER = logging.getLogger(__name__)
 
 class Weights():
@@ -117,7 +118,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
 class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
 
     def get_best_list(self, candidates):
-        best_list = max(candidates, key=lambda candidate: candidate['score'])
+        best_list = max(candidates, key=lambda candidate: candidate.get('score'))
         return best_list['list']
 
     def parallelized_function(self, case, cases, fraud_predictions, index):
@@ -130,8 +131,11 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
     # TODO: Use a case_id here instead of location
     def generate(self, location=None):
         if location:
+            # Get the given location's location
             suggestions = super().generate(location)
-            return self.shorten_list(suggestions)
+            # TODO: Make sure the case is in here (sort with case id attribute, so the case is first)
+            suggestions = suggestions[:self.target_length]
+            return suggestions
 
         # If no location is given, generate all possible lists, and choose the best one
         cases = self.__get_eligible_cases__()
@@ -145,4 +149,4 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         best_list = self.get_best_list(candidates)
         best_list = sorted(best_list, key=lambda case: case['distance'])
 
-        return best_list
+        return best_list, candidates

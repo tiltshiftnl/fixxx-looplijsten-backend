@@ -1,7 +1,6 @@
 import logging
 from sklearn.cluster import OPTICS
 from api.cases.const import ISSUEMELDING
-from api.planner.clustering import optics_clustering
 from api.planner.utils import get_best_list, get_case_coordinates, sort_with_stadium, shorten_if_necessary
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
 
@@ -43,7 +42,7 @@ class ItineraryGenerateCluster(ItineraryGenerateAlgorithm):
         cluster_size = min(self.target_length, len(cases))
 
         # Do a clustering using this subset
-        clusters, rest = optics_clustering(cluster_size, cases)
+        clusters, rest = self.optics_clustering(cluster_size, cases)
 
         # Select the best list and append it to the itinerary
         if not clusters:

@@ -144,12 +144,13 @@ class AlgorithmView(LoginRequiredMixin, View):
         generator = ItineraryKnapsackList(settings, settings_weights)
 
         eligible_cases = generator.__get_eligible_cases__()
-        planned_cases = generator.generate()
+        planned_cases, all_lists = generator.generate()
         unplanned_cases = remove_cases_from_list(eligible_cases, planned_cases)
 
         context_data['planning'] = {
             'planned_cases': planned_cases,
-            'unplanned_cases': unplanned_cases
+            'unplanned_cases': unplanned_cases,
+            'all_lists': all_lists
         }
 
         return render(request, self.template_name, context_data)
