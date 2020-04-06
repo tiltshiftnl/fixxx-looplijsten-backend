@@ -65,7 +65,7 @@ class AlgorithmView(LoginRequiredMixin, View):
             'weight_primary_stadium': 0.75,
             'weight_secondary_stadium': 0.5,
             'weight_issuemelding': 1,
-            'start_case_id': None,
+            'start_case_id': '',
         }
 
     @safety_lock
@@ -91,7 +91,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         stadia = request.POST.getlist('stadia')
         exclude_stadia = request.POST.getlist('exclude_stadia')
         main_stadium = request.POST.get('main_stadium')
-        start_case_id = request.POST.get('start_case_id', None)
+        start_case_id = request.POST.get('start_case_id', '')
 
         weight_distance = float(request.POST.get('weight_distance'))
         weight_fraud_prediction = float(request.POST.get('weight_fraud_prediction'))
@@ -130,6 +130,7 @@ class AlgorithmView(LoginRequiredMixin, View):
             post["lists"][0]["primary_stadium"] = main_stadium
 
         # TODO: Look into adding the weights to the serializer as well
+        # TODO: More importantly, look into adding the starting case id to the serializer
         serializer = WeekListSerializer(data=post)
         is_valid = serializer.is_valid()
         if not is_valid:
@@ -144,7 +145,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         generator = ItineraryKnapsackList(settings, settings_weights)
 
         eligible_cases = generator.__get_eligible_cases__()
-        planned_cases, all_lists = generator.generate()
+        planned_cases, all_lists = generator.generate(start_case_id)
         unplanned_cases = remove_cases_from_list(eligible_cases, planned_cases)
 
         context_data['planning'] = {

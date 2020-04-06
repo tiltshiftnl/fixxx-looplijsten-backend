@@ -2,9 +2,9 @@ import multiprocessing
 import logging
 from joblib import Parallel, delayed
 from api.cases.const import ISSUEMELDING
-from api.planner.utils import calculate_geo_distances
+from api.planner.utils import calculate_geo_distances, remove_cases_from_list
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
-
+from utils.queries import get_case
 
 LOGGER = logging.getLogger(__name__)
 
@@ -87,7 +87,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         return score
 
     def get_center(self, location):
-        return (location['lat'], location['lng'])
+        return (location.get('lat'), location.get('lng'))
 
     def generate(self, location, cases=[], fraud_predictions=[]):
         if not cases:
@@ -128,18 +128,22 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         score = sum([case['score'] for case in suggestions])
         return {'score': score, 'list': suggestions}
 
-    # TODO: Use a case_id here instead of location
-    def generate(self, location=None):
-        if location:
-            # Get the given location's location
-            suggestions = super().generate(location)
-            # TODO: Make sure the case is in here (sort with case id attribute, so the case is first)
-            suggestions = suggestions[:self.target_length]
-            return suggestions
+    def generate(self, start_case_id=None):
+        fraud_predictions = self.__get_fraud_predictions__()
+
+        if start_case_id:
+            case = get_case(start_case_id)
+            case['fraud_prediction'] = fraud_predictions.get(start_case_id, None)
+
+            suggestions = super().generate(case)
+            suggestions = remove_cases_from_list(suggestions, [case])
+            suggestions = suggestions[:self.target_length - 1]
+            suggestions = [case] + suggestions
+
+            return suggestions, []
 
         # If no location is given, generate all possible lists, and choose the best one
         cases = self.__get_eligible_cases__()
-        fraud_predictions = self.__get_fraud_predictions__()
 
         # Run in parallel processes to improve speed
         jobs = multiprocessing.cpu_count()
