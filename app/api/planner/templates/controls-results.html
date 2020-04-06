@@ -6,7 +6,7 @@
   </br>
   <small>{{case.distance|floatformat}}m</small>
   </br>
-  <small>{% widthratio case.fraud_probability 1 100 %}% fraud</small>
+  <small>{% widthratio case.fraud_prediction.fraud_probability 1 100 %}% fraud</small>
   </br>
   <small>{{case.score}} score</small>
 </p>

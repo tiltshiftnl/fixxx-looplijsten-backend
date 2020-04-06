@@ -14,7 +14,7 @@ from utils.safety_lock import safety_lock
 from api.planner.serializers import WeekListSerializer
 from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
-from api.planner.algorithm import ItineraryKnapsackList
+from api.planner.algorithm.knapsack import ItineraryKnapsackList
 from api.planner.utils import remove_cases_from_list
 
 class SettingsMock(SimpleNamespace):
@@ -41,7 +41,7 @@ class SettingsMock(SimpleNamespace):
         self.exclude_stadia = SimpleNamespace()
         self.exclude_stadia.all = lambda: [SimpleNamespace(name=project)
                                            for project in context['selected_exclude_stadia']]
-
+        self.start_case_id = context['start_case_id']
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/admin/login/'
@@ -65,6 +65,7 @@ class AlgorithmView(LoginRequiredMixin, View):
             'weight_primary_stadium': 0.75,
             'weight_secondary_stadium': 0.5,
             'weight_issuemelding': 1,
+            'start_case_id': None,
         }
 
     @safety_lock
@@ -90,6 +91,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         stadia = request.POST.getlist('stadia')
         exclude_stadia = request.POST.getlist('exclude_stadia')
         main_stadium = request.POST.get('main_stadium')
+        start_case_id = request.POST.get('start_case_id', None)
 
         weight_distance = float(request.POST.get('weight_distance'))
         weight_fraud_prediction = float(request.POST.get('weight_fraud_prediction'))
@@ -109,6 +111,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['weight_primary_stadium'] = weight_primary_stadium
         context_data['weight_secondary_stadium'] = weight_secondary_stadium
         context_data['weight_issuemelding'] = weight_issuemelding
+        context_data['start_case_id'] = start_case_id
 
         post = {
             "opening_date": opening_date,

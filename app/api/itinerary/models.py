@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.admin.utils import flatten
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
-from api.planner.algorithm import ItineraryGenerateCluster, ItineraryGenerateSuggestions
+from api.planner.algorithm.clustering import ItineraryGenerateCluster
+from api.planner.algorithm.suggestions import ItineraryGenerateSuggestions
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
