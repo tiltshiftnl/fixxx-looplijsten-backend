@@ -158,7 +158,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         if settings_weights:
             self.weights = ItineraryKnapsackSuggestions.Weights(
                 distance=settings_weights.distance,
-                fraud_probability=settings_weights.fraud_probability,
+                fraud_prediction=settings_weights.fraud_prediction,
                 primary_stadium=settings_weights.primary_stadium,
                 secondary_stadium=settings_weights.secondary_stadium,
                 issuemelding=settings_weights.issuemelding
@@ -172,14 +172,14 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         '''
 
         def __init__(self,
-                     distance=2.5,
-                     fraud_probability=2,
-                     primary_stadium=2.5,
-                     secondary_stadium=1,
-                     issuemelding=2.5):
+                     distance=1,
+                     fraud_prediction=0.75,
+                     primary_stadium=0.75,
+                     secondary_stadium=0.5,
+                     issuemelding=1):
 
             self.distance = distance
-            self.fraud_probability = fraud_probability
+            self.fraud_prediction = fraud_prediction
             self.primary_stadium = primary_stadium
             self.secondary_stadium = secondary_stadium
             self.issuemelding = issuemelding
@@ -187,18 +187,22 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         def score(
                 self,
                 distance,
-                fraud_probability,
+                fraud_prediction,
                 primary_stadium,
                 secondary_stadium,
                 issuemelding):
 
-            # TODO: improve readability of this
-            return distance*self.distance + fraud_probability*self.fraud_probability + primary_stadium*self.primary_stadium + secondary_stadium*self.secondary_stadium + issuemelding*self.issuemelding
+            values = [distance, fraud_prediction, primary_stadium, secondary_stadium, issuemelding]
+            weights = [self.distance, self.fraud_prediction,
+                       self.primary_stadium, self.secondary_stadium, self.issuemelding]
+
+            products = [value*weight for value, weight in zip(values, weights)]
+            return sum(products)
 
         def __str__(self):
             settings = {
                 'distance': self.distance,
-                'fraud_probability': self.fraud_probability,
+                'fraud_prediction': self.fraud_prediction,
                 'primary_stadium': self.primary_stadium,
                 'secondary_stadium': self.secondary_stadium,
                 'issuemelding': self.issuemelding
@@ -208,15 +212,15 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
     def get_score(
             self,
             distance,
-            fraud_probability,
+            fraud_prediction,
             has_primary_stadium,
             has_secondary_stadium,
             has_issuemelding):
         '''
         Gets the score of our case
         '''
-        score = self.weights.score(distance, fraud_probability, has_primary_stadium,
-                                   has_secondary_stadium, has_secondary_stadium)
+        score = self.weights.score(distance, fraud_prediction, has_primary_stadium,
+                                   has_secondary_stadium, has_issuemelding)
         return score
 
     def generate(self, location, cases=[], fraud_predictions=[]):
@@ -240,9 +244,11 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
             normalized_inverse_distance = (max_distance - distance) / max_distance
 
             try:
+                fraud_prediction = fraud_predictions[case_id].fraud_prediction
                 fraud_probability = fraud_predictions[case_id].fraud_probability
             except Exception:
                 LOGGER.warning('Fraud probability does not exist: {}'.format(case_id))
+                fraud_prediction = False
                 fraud_probability = 0
 
             has_primary_stadium = stadium == self.primary_stadium
@@ -251,14 +257,15 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
 
             score = self.get_score(
                 normalized_inverse_distance,
-                fraud_probability,
+                fraud_prediction,
                 has_primary_stadium,
                 has_secondary_stadium,
                 has_issuemelding_stadium)
 
             # Store in case dictionary
             case['distance'] = distance
-            case['fraud_prediction'] = fraud_probability
+            case['fraud_prediction'] = fraud_prediction
+            case['fraud_probability'] = fraud_probability
             case['score'] = score
 
         # Sort the cases based on score
