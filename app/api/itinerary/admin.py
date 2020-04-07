@@ -33,4 +33,4 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(ItineraryItem)
 class ItineraryItemAdmim(admin.ModelAdmin):
-    fields = ('itinerary', 'case', 'position')
+    fields = ('itinerary', 'case', 'position', 'checked')
