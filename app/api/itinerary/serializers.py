@@ -3,6 +3,7 @@ from rest_framework import serializers
 from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
 from api.cases.serializers import CaseSimpleSerializer, CaseSerializer, ProjectSerializer, StadiumSerializer
 from api.cases.models import Project, Stadium, Case
+from api.users.serializers import UserSerializer
 
 class NoteCrudSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,9 +11,11 @@ class NoteCrudSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'itinerary_item')
 
 class NoteSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+
     class Meta:
         model = Note
-        fields = ('id', 'text')
+        fields = ('id', 'text', 'author')
 
 class ItinerarySettingsSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(many=True)
@@ -32,7 +35,7 @@ class ItineraryItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItineraryItem
-        fields = ('id', 'position', 'notes', 'case', 'checked ')
+        fields = ('id', 'position', 'notes', 'case', 'checked')
 
 class ItineraryItemUpdateSerializer(serializers.ModelSerializer):
     position = serializers.FloatField(required=False)
