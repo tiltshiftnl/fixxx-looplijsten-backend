@@ -1,8 +1,8 @@
 from api.users.serializers import UserIdSerializer
 from rest_framework import serializers
 from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
-from api.cases.serializers import CaseSerializer, ProjectSerializer, StadiumSerializer
-from api.cases.models import Project, Stadium
+from api.cases.serializers import CaseSimpleSerializer, CaseSerializer, ProjectSerializer, StadiumSerializer
+from api.cases.models import Project, Stadium, Case
 
 class NoteCrudSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,11 +19,12 @@ class ItinerarySettingsSerializer(serializers.ModelSerializer):
     primary_stadium = StadiumSerializer()
     secondary_stadia = StadiumSerializer(many=True)
     exclude_stadia = StadiumSerializer(many=True)
+    start_case = CaseSimpleSerializer(required=False)
 
     class Meta:
         model = ItinerarySettings
         fields = ('opening_date', 'target_length', 'projects',
-                  'primary_stadium', 'secondary_stadia', 'exclude_stadia')
+                  'primary_stadium', 'secondary_stadia', 'exclude_stadia', 'start_case')
 
 class ItineraryItemSerializer(serializers.ModelSerializer):
     case = CaseSerializer(read_only=True)
@@ -94,6 +95,16 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
         return projects
 
+    def __get_start_case_from_settings__(self, settings):
+        ''' Returns a Case object from the settings '''
+        try:
+            case_dict = settings.get('start_case', None)
+            case_id = case_dict.get('case_id', None)
+            case = Case.get(case_id)
+            return case
+        except Exception:
+            return None
+
     def create(self, validated_data):
         itinerary = Itinerary.objects.create()
 
@@ -111,14 +122,17 @@ class ItinerarySerializer(serializers.ModelSerializer):
         primary_stadium = self.__get_stadium_from_settings__(settings, 'primary_stadium')
         secondary_stadia = self.__get_stadia_from_settings__(settings, 'secondary_stadia')
         exclude_stadia = self.__get_stadia_from_settings__(settings, 'exclude_stadia')
+        start_case = self.__get_start_case_from_settings__(settings)
 
         # First create the settings
         itinerary_settings = ItinerarySettings.objects.create(
             opening_date=opening_date,
             itinerary=itinerary,
             primary_stadium=primary_stadium,
-            target_length=target_length
+            target_length=target_length,
+            start_case=start_case
         )
+
         # Next, add the many-to-many relations of the itinerary_Settings
         itinerary_settings.projects.set(projects)
         itinerary_settings.secondary_stadia.set(secondary_stadia)

@@ -3,6 +3,11 @@ from api.cases.models import Case, Project, Stadium
 from api.cases.const import STADIA, PROJECTS
 from api.fraudprediction.serializers import FraudPredictionSerializer
 
+class CaseSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Case
+        fields = ('case_id',)
+
 class CaseSerializer(serializers.ModelSerializer):
     fraud_prediction = FraudPredictionSerializer(required=False, read_only=True)
 

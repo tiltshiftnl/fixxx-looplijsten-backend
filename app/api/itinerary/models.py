@@ -148,6 +148,8 @@ class ItinerarySettings(models.Model):
     exclude_stadia = models.ManyToManyField(to=Stadium,
                                             related_name='settings_as_exclude_stadia')
 
+    start_case = models.ForeignKey(Case, on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return self.itinerary.__str__()
 
