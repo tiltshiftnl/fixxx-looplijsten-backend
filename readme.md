@@ -3,7 +3,7 @@ plannen en inzien van efficiëntere looplijsten, bedoeld voor toezichthouders en
 
 # Prerequisites
 
-- [Docker](https://docs.docker.com/docker-for-mac/install/)  
+- [Docker](https://docs.docker.com/docker-for-mac/install/)
 
 # Local Development
 
@@ -16,7 +16,7 @@ To rebuild (for example, when dependencies are added requirements.txt):
 ```bash
 docker-compose build --build-arg INTEGRALE_AANPAK_ONDERMIJNING_CREDS={GITLAB_ACCESS_TOKEN_HERE}
 ```
-Replace the {GITLAB_ACCESS_TOKEN_HERE} access token with your private token. 
+Replace the {GITLAB_ACCESS_TOKEN_HERE} access token with your private token.
 This token can be acquired through the private Amsterdam gitlab woonfraude repository.
 
 Run a command inside the docker container:
