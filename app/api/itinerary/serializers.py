@@ -32,12 +32,14 @@ class ItineraryItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItineraryItem
-        fields = ('id', 'position', 'notes', 'case')
+        fields = ('id', 'position', 'notes', 'case', 'checked ')
 
 class ItineraryItemUpdateSerializer(serializers.ModelSerializer):
+    position = serializers.FloatField(required=False)
+
     class Meta:
         model = ItineraryItem
-        fields = ('id', 'position')
+        fields = ('id', 'position', 'checked')
 
 class ItineraryItemCreateSerializer(serializers.ModelSerializer):
     case_id = serializers.CharField(required=True)
