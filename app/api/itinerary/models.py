@@ -2,8 +2,7 @@ from django.db import models
 from django.contrib.admin.utils import flatten
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
-from api.planner.algorithm.clustering import ItineraryGenerateCluster
-from api.planner.algorithm.suggestions import ItineraryGenerateSuggestions
+from api.planner.algorithm.knapsack import ItineraryKnapsackSuggestions, ItineraryKnapsackList
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
@@ -63,7 +62,7 @@ class Itinerary(models.Model):
         Returns a list of suggested cases which can be added to this itinerary
         '''
         # Initialise using this itinerary's settings
-        generator = ItineraryGenerateSuggestions(self.settings)
+        generator = ItineraryKnapsackSuggestions(self.settings)
 
         # Exclude the cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)
@@ -80,7 +79,7 @@ class Itinerary(models.Model):
         Returns a list of cases based on the settings which can be added to this itinerary
         '''
         # Initialise using this itinerary's settings
-        generator = ItineraryGenerateCluster(self.settings)
+        generator = ItineraryKnapsackList(self.settings)
 
         # Exclude cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)

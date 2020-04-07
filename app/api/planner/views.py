@@ -41,7 +41,9 @@ class SettingsMock(SimpleNamespace):
         self.exclude_stadia = SimpleNamespace()
         self.exclude_stadia.all = lambda: [SimpleNamespace(name=project)
                                            for project in context['selected_exclude_stadia']]
-        self.start_case_id = context['start_case_id']
+
+        self.start_case = SimpleNamespace()
+        self.start_case.case_id = context['start_case_id']
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/admin/login/'
@@ -145,13 +147,12 @@ class AlgorithmView(LoginRequiredMixin, View):
         generator = ItineraryKnapsackList(settings, settings_weights)
 
         eligible_cases = generator.__get_eligible_cases__()
-        planned_cases, all_lists = generator.generate(start_case_id)
+        planned_cases = generator.generate()
         unplanned_cases = remove_cases_from_list(eligible_cases, planned_cases)
 
         context_data['planning'] = {
             'planned_cases': planned_cases,
-            'unplanned_cases': unplanned_cases,
-            'all_lists': all_lists
+            'unplanned_cases': unplanned_cases
         }
 
         return render(request, self.template_name, context_data)

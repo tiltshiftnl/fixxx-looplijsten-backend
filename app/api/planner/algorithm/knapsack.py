@@ -128,19 +128,19 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         score = sum([case['score'] for case in suggestions])
         return {'score': score, 'list': suggestions}
 
-    def generate(self, start_case_id=None):
+    def generate(self):
         fraud_predictions = self.__get_fraud_predictions__()
 
-        if start_case_id:
-            case = get_case(start_case_id)
-            case['fraud_prediction'] = fraud_predictions.get(start_case_id, None)
+        if self.start_case_id:
+            case = get_case(self.start_case_id)
+            case['fraud_prediction'] = fraud_predictions.get(self.start_case_id, None)
 
             suggestions = super().generate(case)
             suggestions = remove_cases_from_list(suggestions, [case])
             suggestions = suggestions[:self.target_length - 1]
             suggestions = [case] + suggestions
 
-            return suggestions, []
+            return suggestions
 
         # If no location is given, generate all possible lists, and choose the best one
         cases = self.__get_eligible_cases__()
@@ -153,4 +153,4 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         best_list = self.get_best_list(candidates)
         best_list = sorted(best_list, key=lambda case: case['distance'])
 
-        return best_list, candidates
+        return best_list

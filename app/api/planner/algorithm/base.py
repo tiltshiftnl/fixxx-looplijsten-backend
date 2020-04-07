@@ -26,6 +26,11 @@ class ItineraryGenerateAlgorithm():
         self.exclude_stadia = [stadium.name for stadium in settings.exclude_stadia.all()]
         self.exclude_cases = []
 
+        try:
+            self.start_case_id = settings.start_case.case_id
+        except AttributeError:
+            self.start_case_id = None
+
     def __get_filter_stadia__(self):
         '''
         Gets a list of filter stadia
