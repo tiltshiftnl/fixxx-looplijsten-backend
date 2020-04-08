@@ -6,9 +6,11 @@ from api.cases.models import Project, Stadium, Case
 from api.users.serializers import UserSerializer
 
 class NoteCrudSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+
     class Meta:
         model = Note
-        fields = ('id', 'text', 'itinerary_item')
+        fields = ('id', 'text', 'itinerary_item', 'author')
 
 class NoteSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
