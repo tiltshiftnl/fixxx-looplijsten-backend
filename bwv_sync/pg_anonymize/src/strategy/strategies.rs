@@ -84,6 +84,6 @@ pub(crate) fn melding(toezichthouder_codes: &Vec<String>) -> String {
     if rand::random() {
         format!("{}\\n{}", content, melding(toezichthouder_codes))
     } else {
-        content
+        content.chars().take(1800).collect()
     }
 }
