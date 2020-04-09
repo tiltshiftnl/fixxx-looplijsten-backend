@@ -61,6 +61,18 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CaseSerializer
 
+    def __add_fraud_prediction__(self, cases):
+        '''
+        Enriches the cases with fraud predictions
+        '''
+        cases = cases.copy()
+
+        for case in cases:
+            case_id = case.get('case_id')
+            case['fraud_prediction'] = get_fraud_prediction(case_id)
+
+        return cases
+
     def __add_teams__(self, cases, itineraries_created_at):
         '''
         Enriches the cases with teams
@@ -71,7 +83,8 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
 
         for case in cases:
             # Map the objects so that they're easily accessible through the case_id
-            mapped_cases[case.get('case_id')] = case
+            case_id = case.get('case_id')
+            mapped_cases[case_id] = case
             # Add a teams arrar to the case object as well
             case['teams'] = []
 
@@ -88,7 +101,6 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
                 mapped_case = mapped_cases.get(case_id, {'teams': []})
                 serialized_team = ItineraryTeamMemberSerializer(team, many=True)
                 mapped_case['teams'].append(serialized_team.data)
-                mapped_case['fraud_prediction'] = get_fraud_prediction(case_id)
 
         return cases
 
@@ -104,6 +116,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
             return HttpResponseBadRequest('Missing steet number is required')
         else:
             items = q.get_search_results(postal_code, street_number, suffix)
+            items = self.__add_fraud_prediction__(items)
             items = self.__add_teams__(items, datetime.now())
 
             return JsonResponse({'cases': items})
