@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ViewSet
@@ -8,8 +8,9 @@ from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateMod
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, NotFound
 from rest_framework.decorators import action
+
 
 from api.itinerary.models import Itinerary, ItineraryItem, Note
 from api.users.models import User
@@ -35,6 +36,13 @@ class ItineraryViewSet(
     queryset = Itinerary.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['created_at']
+
+    def get_object(self):
+        MESSAGE = "De looplijst is niet gevonden. De lijst is misschien verwijderd door een andere gebruiker."
+        try:
+            return super().get_object()
+        except Http404:
+            raise NotFound(MESSAGE)
 
     def __get_all_itineraries__(self, user, date=None):
         itineraries = Itinerary.objects.filter(team_members__user=user)
@@ -62,14 +70,15 @@ class ItineraryViewSet(
             raise APIException('Could not read date query parameter: {}'.format(e))
 
     def __get_serialized_team__(self, itinerary_pk):
-        itinerary = get_object_or_404(Itinerary, pk=itinerary_pk)
+        itinerary = self.get_object()
+        # itinerary = get_object_or_404(Itinerary, pk=itinerary_pk)
         team_members = itinerary.team_members
         team_members_serialized = ItineraryTeamMemberSerializer(team_members, many=True)
 
         return Response({'team_members': team_members_serialized.data})
 
     def __replace_team_members__(self, itinerary_pk, user_ids):
-        itinerary = get_object_or_404(Itinerary, pk=itinerary_pk)
+        itinerary = self.get_object()
         serializer = ItineraryTeamMemberSerializer(data=user_ids, many=True)
 
         if not serializer.is_valid():
@@ -92,13 +101,11 @@ class ItineraryViewSet(
             return self.__get_serialized_team__(pk)
 
     # TODO: Figure out how to add the safety lock decorator
-    # TODO: Use a smarted suggestions function later
     @action(detail=True, methods=['get'])
     def suggestions(self, request, pk):
         ''' Returns a list of suggestions for the given itinerary '''
-        itinerary = get_object_or_404(Itinerary, pk=pk)
+        itinerary = self.get_object()
         cases = itinerary.get_suggestions()
-
         return JsonResponse({'cases': cases})
 
     @safety_lock
