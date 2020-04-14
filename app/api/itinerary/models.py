@@ -62,6 +62,10 @@ class Itinerary(models.Model):
         '''
         Returns a list of suggested cases which can be added to this itinerary
         '''
+        # If no cases exists the suggestions algorithm won't work, this is a safe fallback
+        if not self.get_cases():
+            return self.get_cases_from_settings()
+
         # Initialise using this itinerary's settings
         generator = ItineraryKnapsackSuggestions(self.settings)
 
