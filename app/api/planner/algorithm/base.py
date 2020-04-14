@@ -14,7 +14,7 @@ class ItineraryGenerateAlgorithm():
     def __init__(self, settings):
         self.opening_date = settings.opening_date
         self.stadia = STADIA
-        self.target_length = settings.target_length
+        self.target_length = int(settings.target_length)
 
         try:
             self.primary_stadium = settings.primary_stadium.name
