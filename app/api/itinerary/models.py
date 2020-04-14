@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.admin.utils import flatten
+from django.core.validators import MinValueValidator, MaxValueValidator
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
 from api.planner.algorithm.knapsack import ItineraryKnapsackSuggestions, ItineraryKnapsackList
@@ -124,7 +125,8 @@ class ItinerarySettings(models.Model):
     opening_date = models.DateField(blank=False,
                                     null=False)
 
-    target_length = models.IntegerField(default=6)
+    target_length = models.IntegerField(default=6,
+                                        validators=[MinValueValidator(1), MaxValueValidator(20)])
 
     itinerary = models.OneToOneField(Itinerary,
                                      on_delete=models.CASCADE,
