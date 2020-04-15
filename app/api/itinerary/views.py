@@ -71,7 +71,6 @@ class ItineraryViewSet(
 
     def __get_serialized_team__(self, itinerary_pk):
         itinerary = self.get_object()
-        # itinerary = get_object_or_404(Itinerary, pk=itinerary_pk)
         team_members = itinerary.team_members
         team_members_serialized = ItineraryTeamMemberSerializer(team_members, many=True)
 

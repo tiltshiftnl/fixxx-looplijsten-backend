@@ -7,7 +7,7 @@ from django.conf import settings
 from django.db import connections
 from woonfraude_model import score
 from utils.queries_planner import get_cases_from_bwv
-from api.cases.const import STADIA, PROJECTS
+from api.cases.const import STADIA, PROJECTS, STARTING_FROM_DATE
 
 from api.fraudprediction.models import FraudPrediction
 
@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 DATABASE_CONFIG_KEYS = ['adres', 'bwv_adres_periodes', 'bbga', 'hotline',
                         'personen', 'personen_hist', 'stadia', 'zaken']
-SCORE_STARTING_FROM_DATE = '2018-01-01'
+SCORE_STARTING_FROM_DATE = STARTING_FROM_DATE
 
 class FraudPredict():
 

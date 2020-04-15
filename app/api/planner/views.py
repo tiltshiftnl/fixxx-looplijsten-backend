@@ -157,7 +157,6 @@ class AlgorithmView(LoginRequiredMixin, View):
 
         return render(request, self.template_name, context_data)
 
-
 class ConstantsProjectsViewSet(ViewSet):
     """
     Retrieve the projects constants which are used for cases
@@ -177,7 +176,6 @@ class ConstantsStadiaViewSet(ViewSet):
     @safety_lock
     def list(self, request):
         return JsonResponse({'constants': STADIA})
-
 
 class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     """
@@ -219,7 +217,6 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         planner_settings.save()
 
         return JsonResponse(data)
-
 
 class SettingsWeightMock(SimpleNamespace):
     '''
