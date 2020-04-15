@@ -33,18 +33,9 @@ class ItineraryGenerateAlgorithm():
 
     def __get_filter_stadia__(self):
         '''
-        Gets a list of filter stadia
+        Gets a list of filter stadia to filter on
         '''
-        # Note: this might have to change at some point.
-        # If not primary and secondary stadia are set, include all stadia
-        if not self.primary_stadium and not self.secondary_stadia:
-            return STADIA
-
-        filter_stadia = self.secondary_stadia + [ISSUEMELDING]
-        if self.primary_stadium:
-            filter_stadia = filter_stadia + [self.primary_stadium]
-
-        return filter_stadia
+        return STADIA
 
     def __get_eligible_cases__(self):
         '''
