@@ -145,6 +145,10 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         # If no location is given, generate all possible lists, and choose the best one
         cases = self.__get_eligible_cases__()
 
+        if not cases:
+            LOGGER.warning('No eligible cases, could not generate best list')
+            return []
+
         # Run in parallel processes to improve speed
         jobs = multiprocessing.cpu_count()
         candidates = Parallel(n_jobs=jobs, backend='multiprocessing')(delayed(self.parallelized_function)(

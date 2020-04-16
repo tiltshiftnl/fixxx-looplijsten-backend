@@ -12,6 +12,10 @@ class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
 
         cases = self.__get_eligible_cases__()
 
+        if not cases:
+            LOGGER.warning('No eligible cases, could not generate suggestions')
+            return []
+
         # Calculate a list of distances for each case
         center = (location['lat'], location['lng'])
         distances = calculate_geo_distances(center, cases)

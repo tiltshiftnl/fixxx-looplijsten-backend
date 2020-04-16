@@ -1,5 +1,5 @@
 import logging
-from api.cases.const import STADIA, ISSUEMELDING
+from api.cases.const import STADIA
 from utils.queries_planner import get_cases_from_bwv
 from api.planner.utils import filter_cases, remove_cases_from_list
 from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases
@@ -64,9 +64,9 @@ class ItineraryGenerateAlgorithm():
         filtered_cases = remove_cases_from_list(filtered_cases, exclude_cases)
         LOGGER.info('Total cases after removing exclude cases: {}'.format(len(filtered_cases)))
 
-        if not filter_cases:
+        if not filtered_cases:
             LOGGER.warning('No eligible cases found')
-            raise ValueError('No eligible cases found')
+            return []
 
         return filtered_cases
 
