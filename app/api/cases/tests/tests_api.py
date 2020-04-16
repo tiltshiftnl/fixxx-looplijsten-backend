@@ -1,3 +1,5 @@
+# TODO: Incorporate fraud_prediction
+
 from unittest.mock import patch, Mock
 from rest_framework.test import APITestCase
 from django.urls import reverse
@@ -114,6 +116,7 @@ class CaseViewSetTest(APITestCase):
             'import_adres': FOO_IMPORT_ADRES,
             'import_stadia': FOO_IMPORT_STADIA,
             'bwv_tmp': FOO_BWV_TEMP,
+            'fraud_prediction': None,
             'statements': FOO_STATEMENTS,
             'vakantie_verhuur': FOO_RENTAL_INFORMATION,
             'bag_data': FOO_BAG_DATA,
@@ -256,5 +259,5 @@ class CaseSearchViewSetTest(APITestCase):
         response = client.get(url, self.MOCK_SEARCH_QUERY_PARAMETERS)
 
         # Tests if the response contains the mock data with an added teams array
-        expected_response = {'cases': [{'case_id': CASE_ID, 'teams': []}]}
+        expected_response = {'cases': [{'case_id': CASE_ID, 'fraud_prediction': None, 'teams': []}]}
         self.assertEqual(response.json(), expected_response)

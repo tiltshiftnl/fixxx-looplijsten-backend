@@ -1,6 +1,7 @@
 """
 Tests for the health util functions
 """
+import json
 from django.test import TestCase
 from unittest.mock import Mock, patch
 from api.health.utils import is_table_filled_query, get_health_response, assert_health_table
@@ -8,7 +9,7 @@ from api.health.utils import assert_health_database_tables, assert_health_generi
 
 DATABASE_NAME = 'foo-test-db'
 TABLE_NAME = 'foo-table'
-SUCCESS_MESSAGE = 'foo-success'
+SUCCESS_MESSAGE = {'message': 'foo-success'}
 ERROR_MESSAGE = 'foo-error'
 
 class GetHealthResponseTests(TestCase):
@@ -17,7 +18,7 @@ class GetHealthResponseTests(TestCase):
         get_health_response executes the given function
         '''
         health_check = Mock()
-        get_health_response(health_check, 'success_message')
+        get_health_response(health_check, SUCCESS_MESSAGE)
         health_check.assert_called()
 
     def test_get_health_response_success(self):
@@ -34,7 +35,7 @@ class GetHealthResponseTests(TestCase):
         '''
         health_check = Mock()
         response = get_health_response(health_check, SUCCESS_MESSAGE)
-        self.assertEquals(str(response.content, 'utf-8'), SUCCESS_MESSAGE)
+        self.assertEquals(json.loads(response.content), SUCCESS_MESSAGE)
 
     def test_get_health_response_fail(self):
         '''
@@ -50,7 +51,7 @@ class GetHealthResponseTests(TestCase):
         '''
         health_check = Mock(side_effect=Exception(ERROR_MESSAGE))
         response = get_health_response(health_check, SUCCESS_MESSAGE)
-        self.assertEquals(str(response.content, 'utf-8'), ERROR_MESSAGE)
+        self.assertEquals(json.loads(response.content), {'error': ERROR_MESSAGE})
 
     def test_is_table_filled_query(self):
         '''
