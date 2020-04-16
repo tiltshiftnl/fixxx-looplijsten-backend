@@ -37,14 +37,6 @@ pipeline {
       }
     }
 
-    stage("Run tests") {
-      steps {
-        script {
-          sh "docker-compose run --rm api python manage.py test"
-          sh "docker-compose down --rmi local || true"
-        }
-      }
-    }
 
     stage("Build docker image") {
       // We only build a docker image when we're not deploying to production,
@@ -82,6 +74,15 @@ pipeline {
         }
       }
     }
+
+    stage("Run tests") {
+      steps {
+        script {
+          sh "docker-compose run --rm api python manage.py test"
+          sh "docker-compose down --rmi local || true"
+        }
+      }
+    }    
 
     stage("Push and deploy acceptance image") {
       when {
