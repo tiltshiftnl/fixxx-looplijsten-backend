@@ -129,7 +129,7 @@ class ItinerarySettings(models.Model):
     opening_date = models.DateField(blank=False,
                                     null=False)
 
-    target_length = models.IntegerField(default=6,
+    target_length = models.IntegerField(default=8,
                                         validators=[MinValueValidator(1), MaxValueValidator(20)])
 
     itinerary = models.OneToOneField(Itinerary,

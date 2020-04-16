@@ -3,8 +3,7 @@ from api.cases.const import PROJECTS, STADIA
 
 class ListSerializer(serializers.Serializer):
     name = serializers.CharField(required=False)
-    number_of_lists = serializers.IntegerField(required=True)
-    length_of_lists = serializers.IntegerField(required=True)
+    length_of_lists = serializers.IntegerField(min_value=1)
     primary_stadium = serializers.ChoiceField(required=False, choices=STADIA)
     secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
     exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
