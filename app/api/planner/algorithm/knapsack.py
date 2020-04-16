@@ -121,12 +121,37 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         best_list = max(candidates, key=lambda candidate: candidate.get('score'))
         return best_list['list']
 
+    def is_same_address(self, case_a, case_b):
+        same_street = case_a.get('street_name') == case_b.get('street_name')
+        same_number = case_a.get('street_number') == case_b.get('street_number')
+        return same_street and same_number
+
+    def shorten_list(self, cases_all):
+        cases_all = cases_all.copy()
+        cases_all.reverse()
+        cases = []
+
+        counter = self.target_length
+
+        while counter > 0 and len(cases_all):
+            case = cases_all.pop()
+            cases.append(case)
+            counter -= 1
+
+            if len(cases_all):
+                next_case = cases_all[-1]
+
+                if self.is_same_address(case, next_case):
+                    counter += 1
+
+        return cases
+
     def parallelized_function(self, case, cases, fraud_predictions, index):
         suggestions = super().generate(case, cases, fraud_predictions)
-        suggestions = suggestions[:self.target_length]
+        cases = self.shorten_list(suggestions)
 
-        score = sum([case['score'] for case in suggestions])
-        return {'score': score, 'list': suggestions}
+        score = sum([case['score'] for case in cases])
+        return {'score': score, 'list': cases}
 
     def generate(self):
         fraud_predictions = self.__get_fraud_predictions__()
