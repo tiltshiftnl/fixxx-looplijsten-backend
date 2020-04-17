@@ -1,6 +1,6 @@
 # TODO: Add tests
 import os
-from multiprocessing import Process, log_to_stderr, get_start_method
+from multiprocessing import Process
 import logging
 from datetime import datetime
 from django.http import JsonResponse
@@ -11,8 +11,7 @@ from api.fraudprediction.permissions import FraudPredicionApiKeyAuth
 from utils.safety_lock import safety_lock
 from api.fraudprediction.fraud_predict import FraudPredict
 
-LOGGER = log_to_stderr()
-LOGGER.setLevel(logging.INFO)
+LOGGER = logging.getLogger(__name__)
 
 class FraudPredictionScoringViewSet(ViewSet):
     """
@@ -34,7 +33,6 @@ class FraudPredictionScoringViewSet(ViewSet):
         if hasattr(os, 'getppid'):
             LOGGER.info('Process kicking off scoring: {}'.format(os.getpid()))
 
-        LOGGER.info(get_start_method())
         p = Process(target=self.background_process)
         p.start()
 
