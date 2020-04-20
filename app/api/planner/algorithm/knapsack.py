@@ -4,6 +4,7 @@ from joblib import Parallel, delayed
 from api.cases.const import ISSUEMELDING
 from api.planner.utils import calculate_geo_distances, remove_cases_from_list
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
+from api.planner.const import SCORING_WEIGHTS
 from utils.queries import get_case
 
 LOGGER = logging.getLogger(__name__)
@@ -14,11 +15,11 @@ class Weights():
     '''
 
     def __init__(self,
-                 distance=1,
-                 fraud_prediction=0.75,
-                 primary_stadium=0.75,
-                 secondary_stadium=0.5,
-                 issuemelding=1):
+                 distance=SCORING_WEIGHTS.DISTANCE,
+                 fraud_prediction=SCORING_WEIGHTS.FRAUD_PREDICTION,
+                 primary_stadium=SCORING_WEIGHTS.PRIMARY_STADIUM,
+                 secondary_stadium=SCORING_WEIGHTS.SECONDARY_STADIUM,
+                 issuemelding=SCORING_WEIGHTS.ISSUEMELDING):
 
         self.distance = distance
         self.fraud_prediction = fraud_prediction

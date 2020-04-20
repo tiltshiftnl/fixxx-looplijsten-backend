@@ -1,4 +1,13 @@
 from api.cases import const
+from enum import Enum
+
+class SCORING_WEIGHTS(Enum):
+    DISTANCE = 0.5
+    FRAUD_PREDICTION = 1
+    PRIMARY_STADIUM = 0.75
+    SECONDARY_STADIUM = 0.5
+    ISSUEMELDING = 0.75
+
 
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",

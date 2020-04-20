@@ -13,9 +13,10 @@ from constance.backends.database.models import Constance
 from utils.safety_lock import safety_lock
 from api.planner.serializers import WeekListSerializer
 from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
-from api.planner.const import EXAMPLE_PLANNER_SETTINGS
+from api.planner.const import EXAMPLE_PLANNER_SETTINGS, SCORING_WEIGHTS
 from api.planner.algorithm.knapsack import ItineraryKnapsackList
 from api.planner.utils import remove_cases_from_list
+
 
 class SettingsMock(SimpleNamespace):
     '''
@@ -62,11 +63,11 @@ class AlgorithmView(LoginRequiredMixin, View):
             'number_of_lists': 1,
             'length_of_lists': 8,
             'maps_key': key.value,
-            'weight_distance': 1,
-            'weight_fraud_prediction': 0.75,
-            'weight_primary_stadium': 0.75,
-            'weight_secondary_stadium': 0.5,
-            'weight_issuemelding': 1,
+            'weight_distance': SCORING_WEIGHTS.DISTANCE,
+            'weight_fraud_prediction': SCORING_WEIGHTS.FRAUD_PREDICTION,
+            'weight_primary_stadium': SCORING_WEIGHTS.PRIMARY_STADIUM,
+            'weight_secondary_stadium': SCORING_WEIGHTS.SECONDARY_STADIUM,
+            'weight_issuemelding': SCORING_WEIGHTS.ISSUEMELDING,
             'start_case_id': '',
         }
 
