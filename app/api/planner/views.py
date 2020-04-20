@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from constance.backends.database.models import Constance
 
 from utils.safety_lock import safety_lock
-from api.planner.serializers import WeekListSerializer
+from api.planner.serializers import PlannerSettingsSerializer
 from api.cases.const import STADIA, PROJECTS
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 
@@ -36,7 +36,7 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     Retrieves the planner settings which are used for generating lists
     """
     permission_classes = [IsAuthenticated]
-    serializer_class = WeekListSerializer
+    serializer_class = PlannerSettingsSerializer
 
     @safety_lock
     def list(self, request):
@@ -57,7 +57,7 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     @safety_lock
     def create(self, request):
         data = request.data
-        serializer = WeekListSerializer(data=data)
+        serializer = PlannerSettingsSerializer(data=data)
         is_valid = serializer.is_valid()
 
         if not is_valid:

@@ -7,7 +7,7 @@ from django.conf import settings
 from constance.backends.database.models import Constance
 
 from utils.safety_lock import safety_lock
-from api.planner.serializers import WeekListSerializer
+from api.planner.serializers import PlannerSettingsSerializer
 from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
 from api.planner.const import SCORING_WEIGHTS
 from api.planner.algorithm.knapsack import ItineraryKnapsackList
@@ -99,7 +99,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         if main_stadium:
             post["lists"][0]["primary_stadium"] = main_stadium
 
-        serializer = WeekListSerializer(data=post)
+        serializer = PlannerSettingsSerializer(data=post)
         is_valid = serializer.is_valid()
         if not is_valid:
             return JsonResponse({

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from api.cases.const import PROJECTS, STADIA
 
-class ListSerializer(serializers.Serializer):
+class PlannerListSettingsSerializer(serializers.Serializer):
     name = serializers.CharField(required=False)
     length_of_lists = serializers.IntegerField(required=False, min_value=1)
     primary_stadium = serializers.ChoiceField(required=False, choices=STADIA)
@@ -30,9 +30,7 @@ class ListSerializer(serializers.Serializer):
 
         return data
 
-# TODO: we'll probably need to rename this at some point: it's used for checking settings,
-# and requesting generated lists
-class WeekListSerializer(serializers.Serializer):
+class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
-    lists = ListSerializer(required=True, many=True)
+    lists = PlannerListSettingsSerializer(required=True, many=True)
