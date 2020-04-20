@@ -11,7 +11,7 @@ from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteView
 from api.cases.views import CaseViewSet, CaseSearchViewSet
 from api.health.views import health_default, health_bwv
 from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView, UserListView
-from api.planner.views import AlgorithmView
+from api.planner.views_sandbox import AlgorithmView
 from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
 from api.fraudprediction.views import FraudPredictionScoringViewSet
 
