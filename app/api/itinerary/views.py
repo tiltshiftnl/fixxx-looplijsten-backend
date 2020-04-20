@@ -11,14 +11,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import APIException, NotFound
 from rest_framework.decorators import action
 
-
 from api.itinerary.models import Itinerary, ItineraryItem, Note
 from api.users.models import User
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
 from api.itinerary.serializers import ItineraryTeamMemberSerializer, ItineraryItemCreateSerializer
 from api.itinerary.serializers import ItineraryItemUpdateSerializer
 from api.cases.models import Case
-
 from utils.safety_lock import safety_lock
 
 class ItineraryViewSet(

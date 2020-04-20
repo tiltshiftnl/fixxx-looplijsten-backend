@@ -5,7 +5,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
 from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 from utils.safety_lock import safety_lock
 import utils.queries as q
@@ -18,6 +17,7 @@ from api.itinerary.models import Itinerary
 from api.fraudprediction.utils import get_fraud_prediction
 from api.cases.const import PROJECTS, STARTING_FROM_DATE, STADIA
 from api.planner.utils import remove_cases_from_list
+from api.cases.swagger_parameters import unplanned_parameters, case_search_parameters
 
 class CaseViewSet(ViewSet):
     """
@@ -58,13 +58,7 @@ class CaseViewSet(ViewSet):
 
         return JsonResponse(data)
 
-    date_parameter = openapi.Parameter('date', openapi.IN_QUERY,
-                                       description="Date", type=openapi.FORMAT_DATE)
-
-    stadium_parameter = openapi.Parameter('stadium', openapi.IN_QUERY,
-                                          description="Stadium", type=openapi.TYPE_STRING)
-
-    @swagger_auto_schema(method='get', manual_parameters=[date_parameter, stadium_parameter])
+    @swagger_auto_schema(method='get', manual_parameters=unplanned_parameters)
     @action(detail=False, methods=['get'])
     # TODO: Figure out how to add the safety lock decorator
     def unplanned(self, request):
@@ -142,20 +136,24 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
 
         return cases
 
+    @swagger_auto_schema(method='get', manual_parameters=case_search_parameters)
+    @action(detail=False, methods=['get'])
     @safety_lock
     def list(self, request):
-        # TODO: Document these parameters using swagger_auto_schema
+        '''
+        Returns a list of cases found with the given parameters
+        '''
         postal_code = request.GET.get('postalCode', None)
         street_number = request.GET.get('streetNumber', None)
-        suffix = request.GET.get('suffix', None)
+        suffix = request.GET.get('suffix', '')
 
         if postal_code is None:
             return HttpResponseBadRequest('Missing postal code is required')
         elif not street_number:
             return HttpResponseBadRequest('Missing steet number is required')
         else:
-            items = q.get_search_results(postal_code, street_number, suffix)
-            items = self.__add_fraud_prediction__(items)
-            items = self.__add_teams__(items, datetime.now())
+            cases = q.get_search_results(postal_code, street_number, suffix)
+            cases = self.__add_fraud_prediction__(cases)
+            cases = self.__add_teams__(cases, datetime.now())
 
-            return JsonResponse({'cases': items})
+            return JsonResponse({'cases': cases})
