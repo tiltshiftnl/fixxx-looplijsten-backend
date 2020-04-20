@@ -234,7 +234,7 @@ class CaseSearchViewSetTest(APITestCase):
         response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
 
         # Tests if the search function was called with all the given parameters
-        mock_q.get_search_results.assert_called_with(*MOCK_SEARCH_QUERY_PARAMETERS.values(), None)
+        mock_q.get_search_results.assert_called_with(*MOCK_SEARCH_QUERY_PARAMETERS.values(), '')
 
         # Tests if a success response code is given
         self.assertEqual(response.status_code, status.HTTP_200_OK)
