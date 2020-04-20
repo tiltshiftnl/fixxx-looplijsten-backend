@@ -15,27 +15,27 @@ class Weights():
     '''
 
     def __init__(self,
-                 distance=SCORING_WEIGHTS.DISTANCE,
-                 fraud_prediction=SCORING_WEIGHTS.FRAUD_PREDICTION,
-                 primary_stadium=SCORING_WEIGHTS.PRIMARY_STADIUM,
-                 secondary_stadium=SCORING_WEIGHTS.SECONDARY_STADIUM,
-                 issuemelding=SCORING_WEIGHTS.ISSUEMELDING):
+                 distance=SCORING_WEIGHTS.DISTANCE.value,
+                 fraud_probability=SCORING_WEIGHTS.FRAUD_PROBABILITY.value,
+                 primary_stadium=SCORING_WEIGHTS.PRIMARY_STADIUM.value,
+                 secondary_stadium=SCORING_WEIGHTS.SECONDARY_STADIUM.value,
+                 issuemelding=SCORING_WEIGHTS.ISSUEMELDING.value):
 
         self.distance = distance
-        self.fraud_prediction = fraud_prediction
+        self.fraud_probability = fraud_probability
         self.primary_stadium = primary_stadium
         self.secondary_stadium = secondary_stadium
         self.issuemelding = issuemelding
 
     def score(self,
               distance,
-              fraud_prediction,
+              fraud_probability,
               primary_stadium,
               secondary_stadium,
               issuemelding):
 
-        values = [distance, fraud_prediction, primary_stadium, secondary_stadium, issuemelding]
-        weights = [self.distance, self.fraud_prediction,
+        values = [distance, fraud_probability, primary_stadium, secondary_stadium, issuemelding]
+        weights = [self.distance, self.fraud_probability,
                    self.primary_stadium, self.secondary_stadium, self.issuemelding]
 
         products = [value*weight for value, weight in zip(values, weights)]
@@ -44,7 +44,7 @@ class Weights():
     def __str__(self):
         settings = {
             'distance': self.distance,
-            'fraud_prediction': self.fraud_prediction,
+            'fraud_probability': self.fraud_probability,
             'primary_stadium': self.primary_stadium,
             'secondary_stadium': self.secondary_stadium,
             'issuemelding': self.issuemelding
@@ -61,7 +61,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         if settings_weights:
             self.weights = Weights(
                 distance=settings_weights.distance,
-                fraud_prediction=settings_weights.fraud_prediction,
+                fraud_probability=settings_weights.fraud_probability,
                 primary_stadium=settings_weights.primary_stadium,
                 secondary_stadium=settings_weights.secondary_stadium,
                 issuemelding=settings_weights.issuemelding)
@@ -71,7 +71,11 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         Gets the score of the given case
         '''
         distance = case['normalized_inverse_distance']
-        fraud_prediction = getattr(case['fraud_prediction'], 'fraud_prediction', False)
+
+        try:
+            fraud_probability = case['fraud_prediction'].get('fraud_probability')
+        except AttributeError:
+            fraud_probability = 0
 
         stadium = case['stadium']
         has_primary_stadium = stadium == self.primary_stadium
@@ -80,7 +84,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
 
         score = self.weights.score(
             distance,
-            fraud_prediction,
+            fraud_probability,
             has_primary_stadium,
             has_secondary_stadium,
             has_issuemelding_stadium)

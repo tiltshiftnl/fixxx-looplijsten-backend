@@ -63,11 +63,11 @@ class AlgorithmView(LoginRequiredMixin, View):
             'number_of_lists': 1,
             'length_of_lists': 8,
             'maps_key': key.value,
-            'weight_distance': SCORING_WEIGHTS.DISTANCE,
-            'weight_fraud_prediction': SCORING_WEIGHTS.FRAUD_PREDICTION,
-            'weight_primary_stadium': SCORING_WEIGHTS.PRIMARY_STADIUM,
-            'weight_secondary_stadium': SCORING_WEIGHTS.SECONDARY_STADIUM,
-            'weight_issuemelding': SCORING_WEIGHTS.ISSUEMELDING,
+            'weight_distance': SCORING_WEIGHTS.DISTANCE.value,
+            'weight_fraud_probability': SCORING_WEIGHTS.FRAUD_PROBABILITY.value,
+            'weight_primary_stadium': SCORING_WEIGHTS.PRIMARY_STADIUM.value,
+            'weight_secondary_stadium': SCORING_WEIGHTS.SECONDARY_STADIUM.value,
+            'weight_issuemelding': SCORING_WEIGHTS.ISSUEMELDING.value,
             'start_case_id': '',
         }
 
@@ -97,7 +97,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         start_case_id = request.POST.get('start_case_id', '')
 
         weight_distance = float(request.POST.get('weight_distance'))
-        weight_fraud_prediction = float(request.POST.get('weight_fraud_prediction'))
+        weight_fraud_probability = float(request.POST.get('weight_fraud_probability'))
         weight_primary_stadium = float(request.POST.get('weight_primary_stadium'))
         weight_secondary_stadium = float(request.POST.get('weight_secondary_stadium'))
         weight_issuemelding = float(request.POST.get('weight_issuemelding'))
@@ -110,7 +110,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['selected_exclude_stadia'] = exclude_stadia
         context_data['main_stadium'] = main_stadium
         context_data['weight_distance'] = weight_distance
-        context_data['weight_fraud_prediction'] = weight_fraud_prediction
+        context_data['weight_fraud_probability'] = weight_fraud_probability
         context_data['weight_primary_stadium'] = weight_primary_stadium
         context_data['weight_secondary_stadium'] = weight_secondary_stadium
         context_data['weight_issuemelding'] = weight_issuemelding
@@ -227,7 +227,7 @@ class SettingsWeightMock(SimpleNamespace):
     def __init__(self, context):
         super().__init__()
         self.distance = context['weight_distance']
-        self.fraud_prediction = context['weight_fraud_prediction']
+        self.fraud_probability = context['weight_fraud_probability']
         self.primary_stadium = context['weight_primary_stadium']
         self.secondary_stadium = context['weight_secondary_stadium']
         self.issuemelding = context['weight_issuemelding']
