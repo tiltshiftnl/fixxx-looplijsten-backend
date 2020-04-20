@@ -3,8 +3,6 @@ from api.cases.const import STADIA
 from utils.queries_planner import get_cases_from_bwv
 from api.planner.utils import filter_cases, remove_cases_from_list
 from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases
-from api.fraudprediction.models import FraudPrediction
-from api.fraudprediction.serializers import FraudPredictionSerializer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -69,19 +67,6 @@ class ItineraryGenerateAlgorithm():
             return []
 
         return filtered_cases
-
-    def __get_fraud_predictions__(self):
-        '''
-        Returns a dictionary of fraud probabilities mapped to case_ids
-        '''
-        fraud_predictions = FraudPrediction.objects.all()
-        fraud_prediction_dictionary = {}
-
-        for fraud_prediction in fraud_predictions:
-            fraud_prediction_dictionary[fraud_prediction.case_id] = FraudPredictionSerializer(
-                fraud_prediction).data
-
-        return fraud_prediction_dictionary
 
     def exclude(self, cases):
         '''

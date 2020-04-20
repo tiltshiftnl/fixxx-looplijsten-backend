@@ -6,6 +6,7 @@ from api.planner.utils import calculate_geo_distances, remove_cases_from_list
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
 from api.planner.const import SCORING_WEIGHTS
 from utils.queries import get_case
+from api.fraudprediction.utils import get_fraud_predictions
 
 LOGGER = logging.getLogger(__name__)
 
@@ -99,7 +100,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
             cases = self.__get_eligible_cases__()
 
         if not fraud_predictions:
-            fraud_predictions = self.__get_fraud_predictions__()
+            fraud_predictions = get_fraud_predictions()
 
         # Calculate a list of distances for each case
         center = self.get_center(location)
@@ -159,7 +160,7 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
         return {'score': score, 'list': cases}
 
     def generate(self):
-        fraud_predictions = self.__get_fraud_predictions__()
+        fraud_predictions = get_fraud_predictions()
 
         if self.start_case_id:
             case = get_case(self.start_case_id)
