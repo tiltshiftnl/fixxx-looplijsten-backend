@@ -2,26 +2,13 @@
 Tests for the health views
 """
 from django.test import TestCase
-import numpy as np
-from api.planner.utils import sort_by_postal_code, filter_cases, get_count, get_best_list
-from api.planner.utils import remove_cases_from_list, get_case_coordinates, calculate_distances
-from api.planner.utils import sort_with_stadium, filter_cases_with_missing_coordinates, filter_out_cases
-from api.planner.utils import shorten_if_necessary
+from api.planner.utils import filter_cases
+from api.planner.utils import remove_cases_from_list, get_case_coordinates
+from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases
 from api.cases.const import ISSUEMELDING, TWEEDE_CONTROLE, ONDERZOEK_BUITENDIENST
 
 # TODO: Split up in multiple classes
 class UtilsTests(TestCase):
-    def test_sort_by_postal_code(self):
-        case_a = {'postal_code': '1088XX'}
-        case_b = {'postal_code': '1077AA'}
-        case_c = {'postal_code': '1076AA'}
-
-        cases = [case_a, case_b, case_c]
-        result = sort_by_postal_code(cases)
-        expected = [case_c, case_b, case_a]
-
-        self.assertEquals(result, expected)
-
     def test_filter_cases(self):
         case_a = {'stadium': ONDERZOEK_BUITENDIENST}
         case_b = {'stadium': ISSUEMELDING}
@@ -57,94 +44,6 @@ class UtilsTests(TestCase):
         expected = [case_c]
 
         self.assertEquals(result, expected)
-
-    def test_get_count(self):
-        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
-        case_b = {'stadium': ONDERZOEK_BUITENDIENST}
-        case_c = {'stadium': TWEEDE_CONTROLE}
-
-        cases = [case_a, case_b, case_c]
-        result = get_count(cases, TWEEDE_CONTROLE)
-
-        self.assertEquals(result, 1)
-
-    def test_get_count_no_stadium(self):
-        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
-        case_b = {'stadium': ONDERZOEK_BUITENDIENST}
-        case_c = {'stadium': TWEEDE_CONTROLE}
-
-        cases = [case_a, case_b, case_c]
-        result = get_count(cases, [])
-
-        self.assertEquals(result, 0)
-
-    def test_get_count_multiple(self):
-        case_a = {'stadium': ONDERZOEK_BUITENDIENST}
-        case_b = {'stadium': ONDERZOEK_BUITENDIENST}
-        case_c = {'stadium': TWEEDE_CONTROLE}
-
-        cases = [case_a, case_b, case_c]
-        result = get_count(cases, ONDERZOEK_BUITENDIENST)
-
-        self.assertEquals(result, 2)
-
-    def test_get_best_list(self):
-
-        list_a = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': TWEEDE_CONTROLE}]
-        list_b = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST}]
-        list_c = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': TWEEDE_CONTROLE},
-            {'stadium': TWEEDE_CONTROLE}]
-        lists = [list_a, list_b, list_c]
-
-        best_list = get_best_list(lists, [ONDERZOEK_BUITENDIENST])
-        self.assertEquals(best_list, list_b)
-
-    def test_get_best_list_no_stadium(self):
-
-        list_a = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': TWEEDE_CONTROLE}]
-        list_b = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST}]
-        list_c = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': TWEEDE_CONTROLE},
-            {'stadium': TWEEDE_CONTROLE}]
-        lists = [list_a, list_b, list_c]
-
-        best_list = get_best_list(lists, [])
-        # Will just return the first list if no Stadium if given
-        self.assertEquals(best_list, list_a)
-
-    def test_get_best_list_multiple_stadia(self):
-
-        list_a = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': TWEEDE_CONTROLE}]
-        list_b = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ISSUEMELDING}]
-        list_c = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': TWEEDE_CONTROLE},
-            {'stadium': TWEEDE_CONTROLE}]
-        lists = [list_a, list_b, list_c]
-
-        best_list = get_best_list(lists, [ONDERZOEK_BUITENDIENST, ISSUEMELDING])
-        self.assertEquals(best_list, list_b)
 
     def test_remove_cases_from_list(self):
         case_a = {'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-a'}
@@ -186,71 +85,9 @@ class UtilsTests(TestCase):
         case_c = {'lat': 4, 'lng': 5, 'stadium': TWEEDE_CONTROLE, 'case_id': 'foo-c'}
         cases = [case_a, case_b, case_c]
         case_coordinates = get_case_coordinates(cases)
-        expected = np.array([
-            [0, 1],
-            [2, 3],
-            [4, 5]
-        ])
+        expected = [[0, 1], [2, 3], [4, 5]]
 
-        self.assertEquals(case_coordinates.all(), expected.all())
-
-    def test_get_case_distances(self):
-        case_a = {'lat': 0, 'lng': 1, 'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-a'}
-        case_b = {'lat': 0, 'lng': 2, 'stadium': ISSUEMELDING, 'case_id': 'foo-b'}
-
-        cases = [case_a, case_b]
-        center = [0, 0]
-        results = calculate_distances(center, cases)
-
-        self.assertEquals(results, [1, 2])
-
-        center = [0, 1]
-        results = calculate_distances(center, cases)
-
-        self.assertEquals(results, [0, 1])
-
-    def sort_with_stadium(self):
-        cases = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ISSUEMELDING},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ISSUEMELDING},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ISSUEMELDING}
-        ]
-
-        expected = [
-            {'stadium': ISSUEMELDING},
-            {'stadium': ISSUEMELDING},
-            {'stadium': ISSUEMELDING},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST}
-        ]
-
-        results = sort_with_stadium(cases, ISSUEMELDING)
-
-        self.assertEquals(expected, results)
-
-    def sort_with_no_stadium(self):
-        '''
-        Should return the given list if no stadium is given
-        '''
-        cases = [
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ISSUEMELDING},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ISSUEMELDING},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ONDERZOEK_BUITENDIENST},
-            {'stadium': ISSUEMELDING}
-        ]
-
-        results = sort_with_stadium(cases, None)
-
-        self.assertEquals(cases, results)
+        self.assertEquals(case_coordinates, expected)
 
     def test_filter_cases_with_missing_coordinates(self):
         '''
@@ -304,61 +141,5 @@ class UtilsTests(TestCase):
         cases = [case_a, case_b, case_c]
         result = filter_out_cases(cases, [TWEEDE_CONTROLE])
         expected = [case_a, case_b]
-
-        self.assertEquals(result, expected)
-
-    def test_shorten_if_necessary_normal(self):
-        '''
-        Does a normal shortening
-        '''
-        case_a = {'street_name': 'foo street A', 'street_number': 11}
-        case_b = {'street_name': 'foo street B', 'street_number': 12}
-        case_c = {'street_name': 'foo street C', 'street_number': 13}
-        cases = [case_a, case_b, case_c]
-
-        result = shorten_if_necessary(cases, 2)
-        expected = [case_a, case_b]
-
-        self.assertEquals(result, expected)
-
-    def test_shorten_if_necessary_extra(self):
-        '''
-        Doesn't shorten because of grouped addresses
-        '''
-        case_a = {'street_name': 'foo street A', 'street_number': 11}
-        case_b = {'street_name': 'foo street B', 'street_number': 12}
-        case_c = {'street_name': 'foo street C', 'street_number': 13}
-        cases = [case_c, case_a, case_b, case_c, case_c, case_c]
-
-        result = shorten_if_necessary(cases, 3)
-        expected = [case_a, case_b, case_c, case_c, case_c, case_c]
-
-        self.assertEquals(result, expected)
-
-    def test_shorten_if_necessary_multiple_extra(self):
-        '''
-        Doesn't shorten because of (multiple) grouped addresses
-        '''
-        case_a = {'street_name': 'foo street A', 'street_number': 11}
-        case_b = {'street_name': 'foo street B', 'street_number': 12}
-        case_c = {'street_name': 'foo street C', 'street_number': 13}
-        cases = [case_c, case_a, case_b, case_a, case_c, case_c, case_c]
-
-        result = shorten_if_necessary(cases, 6)
-        expected = [case_a, case_a, case_b, case_c, case_c, case_c, case_c]
-
-        self.assertEquals(result, expected)
-
-    def test_shorten_if_necessary_exceeding_length(self):
-        '''
-        Doesn't shorten because length_target exceeds the list length
-        '''
-        case_a = {'street_name': 'foo street A', 'street_number': 11}
-        case_b = {'street_name': 'foo street B', 'street_number': 12}
-        case_c = {'street_name': 'foo street C', 'street_number': 13}
-        cases = [case_c, case_a, case_b, case_c, case_c, case_c]
-
-        result = shorten_if_necessary(cases, 8)
-        expected = [case_a, case_b, case_c, case_c, case_c, case_c]
 
         self.assertEquals(result, expected)
