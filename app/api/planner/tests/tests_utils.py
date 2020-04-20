@@ -7,7 +7,6 @@ from api.planner.utils import remove_cases_from_list, get_case_coordinates
 from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases
 from api.cases.const import ISSUEMELDING, TWEEDE_CONTROLE, ONDERZOEK_BUITENDIENST
 
-# TODO: Split up in multiple classes
 class UtilsTests(TestCase):
     def test_filter_cases(self):
         case_a = {'stadium': ONDERZOEK_BUITENDIENST}

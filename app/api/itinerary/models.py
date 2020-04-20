@@ -195,7 +195,9 @@ class ItineraryItem(models.Model):
             return ''
 
     def set_position_to_last(self):
-        """ Sets this item's position to the last in the ItineraryItem list"""
+        '''
+        Sets this item's position to the last in the ItineraryItem list
+        '''
         itinerary_item_list = self.itinerary.items.all().order_by('position')
         itinerary_items = list(itinerary_item_list)
 
@@ -205,22 +207,33 @@ class ItineraryItem(models.Model):
             last_item = itinerary_items[-1]
             self.position = last_item.position + 1
 
-    def save(self, *args, **kwargs):
-        # If no position is given, set the last the last in list
-        if self.position is None:
-            self.set_position_to_last()
+    def check_items_same_position(self):
+        '''
+        Don't allow saving if another item in the list has the same position
+        '''
+        items_with_same_position = self.itinerary.items.all().filter(position=self.position)
+        items_with_same_position = items_with_same_position.exclude(pk=self.pk)
 
-        # Don't allow saving if another item in the list has the same position
-        objects_with_same_position = self.itinerary.items.all().filter(position=self.position).exclude(pk=self.pk)
-
-        if objects_with_same_position.exists():
+        if items_with_same_position.exists():
             raise ValueError('An item with this position already exists')
 
-        # Don't allow saving if the itinerary already contains the same case
-        objects_with_same_case = self.itinerary.items.all().filter(case=self.case).exclude(pk=self.pk)
+    def check_items_same_case(self):
+        '''
+        Don't allow saving if the itinerary already contains the same case
+        '''
+        items_with_same_case = self.itinerary.items.all().filter(case=self.case)
+        items_with_same_case = items_with_same_case.exclude(pk=self.pk)
 
-        if objects_with_same_case.exists():
+        if items_with_same_case.exists():
             raise ValueError('The itinerary already contains this case')
+
+    def save(self, *args, **kwargs):
+        if self.position is None:
+            # If no position is given, set the item to the last in list
+            self.set_position_to_last()
+
+        self.check_items_same_position()
+        self.check_items_same_case()
 
         super().save(*args, **kwargs)
 
