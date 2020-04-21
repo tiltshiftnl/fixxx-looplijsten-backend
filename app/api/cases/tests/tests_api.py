@@ -1,4 +1,3 @@
-# TODO: Add tests for unplanned cases endpoint
 from unittest.mock import patch, Mock
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -8,6 +7,7 @@ from constance.test import override_config
 from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
 from api.fraudprediction.models import FraudPrediction
 from api.fraudprediction.serializers import FraudPredictionSerializer
+from api.cases.const import ISSUEMELDING
 
 class CaseViewSetTest(APITestCase):
     """
@@ -298,3 +298,92 @@ class CaseSearchViewSetTest(APITestCase):
         fraud_prediction_response = response.json().get('cases')[0].get('fraud_prediction')
 
         self.assertEqual(expected_fraud_prediction, fraud_prediction_response)
+
+class UnplannedCasesTest(APITestCase):
+    """
+    Tests for the API endpoint for retrieving unplanned cases
+    """
+
+    def test_unauthenticated_request(self):
+        """
+        An unauthenticated request should not be possible
+        """
+
+        url = reverse('case-unplanned')
+        client = get_unauthenticated_client()
+        response = client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_without_date(self):
+        """
+        An authenticated request should fail if no date is given
+        """
+        url = reverse('case-unplanned')
+        client = get_authenticated_client()
+
+        response = client.get(url, {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_without_stadium(self):
+        """
+        An authenticated request should fail if no stadium is given
+        """
+        url = reverse('case-unplanned')
+        client = get_authenticated_client()
+
+        response = client.get(url, {'date': '2020-04-05'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_with_wrong_stadium(self):
+        """
+        An authenticated request should fail if unknown stadium is given
+        """
+        url = reverse('case-unplanned')
+        client = get_authenticated_client()
+
+        response = client.get(url, {'date': '2020-04-05', 'stadium': 'FOO'})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_with_wrong_date_format(self):
+        """
+        An authenticated request should fail if unknown stadium is given
+        """
+        url = reverse('case-unplanned')
+        client = get_authenticated_client()
+
+        response = client.get(url, {'date': 'FOO', 'stadium': ISSUEMELDING})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_with_correct_parameters(self):
+        """
+        An authenticated request should succeed with the right parameters
+        """
+        url = reverse('case-unplanned')
+        client = get_authenticated_client()
+
+        response = client.get(url, {'date': '2020-04-05', 'stadium': ISSUEMELDING})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_with_empty_list(self):
+        """
+        Should return an empty list if no cases are found
+        """
+        url = reverse('case-unplanned')
+        client = get_authenticated_client()
+
+        response = client.get(url, {'date': '2020-04-05', 'stadium': ISSUEMELDING})
+        self.assertEqual(response.json(), {'cases': []})
+
+    @patch('api.cases.views.Itinerary')
+    def test_with_filled_list(self, mock_itinerary_class):
+        """
+        Should return a list with cases (which include a fraud_prediction entry)
+        """
+        url = reverse('case-unplanned')
+        client = get_authenticated_client()
+
+        mock_itinerary_class.get_unplanned_cases = Mock()
+        mock_itinerary_class.get_unplanned_cases.return_value = [{'case_id': 'foo'}]
+
+        response = client.get(url, {'date': '2020-04-05', 'stadium': ISSUEMELDING})
+        self.assertEqual(response.json(), {'cases': [{'case_id': 'foo', 'fraud_prediction': None}]})

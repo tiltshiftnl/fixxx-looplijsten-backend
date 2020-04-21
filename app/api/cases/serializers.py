@@ -30,3 +30,10 @@ class StadiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadium
         fields = ('name', )
+
+class UnplannedCasesSerializer(serializers.Serializer):
+    '''
+    Serializer used to validate coming in from the unplanned-cases view
+    '''
+    date = serializers.DateField(required=True)
+    stadium = serializers.ChoiceField(required=True, choices=STADIA)

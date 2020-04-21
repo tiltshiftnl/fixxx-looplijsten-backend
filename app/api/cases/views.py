@@ -14,8 +14,8 @@ import utils.queries_bag_api as bag_api
 from api.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
 from api.itinerary.models import Itinerary
 from api.fraudprediction.utils import get_fraud_prediction, add_fraud_predictions
-from api.cases.const import STADIA
 from api.cases.swagger_parameters import unplanned_parameters, case_search_parameters
+from api.cases.serializers import UnplannedCasesSerializer
 
 class CaseViewSet(ViewSet):
     """
@@ -58,21 +58,20 @@ class CaseViewSet(ViewSet):
 
     # TODO: Figure out how to add the safety lock decorator
     @swagger_auto_schema(method='get', manual_parameters=unplanned_parameters)
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], name='unplanned')
     def unplanned(self, request):
         ''' Returns a list of unplanned cases, based on the given date and stadium '''
+        serializer = UnplannedCasesSerializer(data=request.GET)
+        is_valid = serializer.is_valid()
+
+        if not is_valid:
+            return JsonResponse({
+                'message': 'Could not validate data',
+                'errors': serializer.errors
+            }, status=HttpResponseBadRequest.status_code)
+
         date = request.GET.get('date')
         stadium = request.GET.get('stadium')
-
-        if not date:
-            return HttpResponseBadRequest('Missing date is required')
-
-        if not stadium:
-            return HttpResponseBadRequest('Missing stadium is required')
-
-        if stadium not in STADIA:
-            return HttpResponseBadRequest('Given stadium is incorrect')
-
         unplanned_cases = Itinerary.get_unplanned_cases(date, stadium)
         cases = add_fraud_predictions(unplanned_cases)
 
