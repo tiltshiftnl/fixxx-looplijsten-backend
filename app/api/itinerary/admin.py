@@ -1,5 +1,7 @@
 from django.contrib import admin
 from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
+from api.itinerary.serializers import ItinerarySerializer
+from django.http import JsonResponse
 
 class ItinerarySettingsInline(admin.StackedInline):
     fields = ('opening_date', 'target_length', 'projects',
@@ -25,6 +27,12 @@ class ItineraryAdmin(admin.ModelAdmin):
         ItineraryItemInline,
         ItinerarySettingsInline
     ]
+
+    actions = ['export_as_json']
+
+    def export_as_json(self, request, queryset):
+        serializer = ItinerarySerializer(queryset.all(), many=True)
+        return JsonResponse({'looplijsten': serializer.data})
 
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
