@@ -1,11 +1,13 @@
-# TODO: Incorporate fraud_prediction
-
+# TODO: Add tests for unplanned cases endpoint
 from unittest.mock import patch, Mock
 from rest_framework.test import APITestCase
-from django.urls import reverse
 from rest_framework import status
+from django.urls import reverse
 from constance.test import override_config
+
 from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
+from api.fraudprediction.models import FraudPrediction
+from api.fraudprediction.serializers import FraudPredictionSerializer
 
 class CaseViewSetTest(APITestCase):
     """
@@ -53,10 +55,11 @@ class CaseViewSetTest(APITestCase):
         # The response returns a 404
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    @patch('api.cases.views.get_fraud_prediction')
     @patch('api.cases.views.brk_api')
     @patch('api.cases.views.bag_api')
     @patch('api.cases.views.q')
-    def test_authenticated_requests_succeeds(self, mock_q, mock_bag_api, mock_brk_api):
+    def test_authenticated_requests_succeeds(self, mock_q, mock_bag_api, mock_brk_api, mock_fraud_prediction):
         """
         An authenticated request succeeds and contains all the necessary data
         """
@@ -99,6 +102,10 @@ class CaseViewSetTest(APITestCase):
         FOO_BRK_DATA = 'FOO_BRK_DATA'
         mock_brk_api.get_brk_data = Mock(return_value=FOO_BRK_DATA)
 
+        # Mock the fraud prediction
+        FOO_FRAUD_PREDICTION_DATA = {'FOO_FRAUD_PREDICTION': 'FOO_FRAUD_PREDICTION_DATA'}
+        mock_fraud_prediction.return_value = FOO_FRAUD_PREDICTION_DATA
+
         # Now that everythign is mocked, do the actual request
         MOCK_CASE_ID = 'FOO_ID'
         url = reverse('case-detail', kwargs={'pk': MOCK_CASE_ID})
@@ -116,7 +123,7 @@ class CaseViewSetTest(APITestCase):
             'import_adres': FOO_IMPORT_ADRES,
             'import_stadia': FOO_IMPORT_STADIA,
             'bwv_tmp': FOO_BWV_TEMP,
-            'fraud_prediction': None,
+            'fraud_prediction': FOO_FRAUD_PREDICTION_DATA,
             'statements': FOO_STATEMENTS,
             'vakantie_verhuur': FOO_RENTAL_INFORMATION,
             'bag_data': FOO_BAG_DATA,
@@ -261,3 +268,33 @@ class CaseSearchViewSetTest(APITestCase):
         # Tests if the response contains the mock data with an added teams array
         expected_response = {'cases': [{'case_id': CASE_ID, 'fraud_prediction': None, 'teams': []}]}
         self.assertEqual(response.json(), expected_response)
+
+    @patch('api.cases.views.q')
+    def test_search_with_fraud_prediction(self, mock_q):
+        """
+        The cases in a search result should contain a fraud_prediction if it's available
+        """
+        url = reverse('search-list')
+        client = get_authenticated_client()
+
+        CASE_ID = 'FOO-ID'
+
+        # Mock search function
+        FOO_SEARCH_RESULTS = [{'case_id': CASE_ID}]
+        mock_q.get_search_results = Mock(return_value=FOO_SEARCH_RESULTS)
+
+        # Create a fraud prediction object with the same CASE_ID
+        fraud_prediction = FraudPrediction.objects.create(
+            case_id=CASE_ID,
+            fraud_probability=0.6,
+            fraud_prediction=True,
+            business_rules={},
+            shap_values={}
+        )
+
+        response = client.get(url, self.MOCK_SEARCH_QUERY_PARAMETERS)
+
+        expected_fraud_prediction = FraudPredictionSerializer(fraud_prediction).data
+        fraud_prediction_response = response.json().get('cases')[0].get('fraud_prediction')
+
+        self.assertEqual(expected_fraud_prediction, fraud_prediction_response)
