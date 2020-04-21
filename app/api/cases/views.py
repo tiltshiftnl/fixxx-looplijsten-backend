@@ -10,13 +10,11 @@ from utils.safety_lock import safety_lock
 import utils.queries as q
 import utils.queries_brk_api as brk_api
 import utils.queries_bag_api as bag_api
-from utils.queries_planner import get_cases_from_bwv
 
 from api.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
 from api.itinerary.models import Itinerary
-from api.fraudprediction.utils import get_fraud_prediction
-from api.cases.const import PROJECTS, STARTING_FROM_DATE, STADIA
-from api.planner.utils import remove_cases_from_list
+from api.fraudprediction.utils import get_fraud_prediction, add_fraud_predictions
+from api.cases.const import STADIA
 from api.cases.swagger_parameters import unplanned_parameters, case_search_parameters
 
 class CaseViewSet(ViewSet):
@@ -58,30 +56,25 @@ class CaseViewSet(ViewSet):
 
         return JsonResponse(data)
 
+    # TODO: Figure out how to add the safety lock decorator
     @swagger_auto_schema(method='get', manual_parameters=unplanned_parameters)
     @action(detail=False, methods=['get'])
-    # TODO: Figure out how to add the safety lock decorator
     def unplanned(self, request):
         ''' Returns a list of unplanned cases, based on the given date and stadium '''
-        date = request.GET.get('date', None)
-        stadium = request.GET.get('stadium', None)
+        date = request.GET.get('date')
+        stadium = request.GET.get('stadium')
 
-        if date is None:
+        if not date:
             return HttpResponseBadRequest('Missing date is required')
-        elif not stadium:
+
+        if not stadium:
             return HttpResponseBadRequest('Missing stadium is required')
+
         if stadium not in STADIA:
             return HttpResponseBadRequest('Given stadium is incorrect')
 
-        planned_cases = Itinerary.get_cases_for_date(date)
-        exclude_cases = [{'case_id': case.case_id} for case in planned_cases]
-
-        all_cases = get_cases_from_bwv(STARTING_FROM_DATE, PROJECTS, [stadium])
-        cases = remove_cases_from_list(all_cases, exclude_cases)
-
-        for case in cases:
-            case_id = case.get('case_id')
-            case['fraud_prediction'] = get_fraud_prediction(case_id)
+        unplanned_cases = Itinerary.get_unplanned_cases(date, stadium)
+        cases = add_fraud_predictions(unplanned_cases)
 
         return JsonResponse({'cases': cases})
 

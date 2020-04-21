@@ -26,3 +26,16 @@ def get_fraud_predictions():
             fraud_prediction).data
 
     return fraud_prediction_dictionary
+
+
+def add_fraud_predictions(cases):
+    '''
+    Returns a list of case dictionaries, enriched with fraud_predictions
+    '''
+    cases = cases.copy()
+
+    for case in cases:
+        case_id = case.get('case_id')
+        case['fraud_prediction'] = get_fraud_prediction(case_id)
+
+    return cases

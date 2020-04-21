@@ -3,7 +3,10 @@ from django.contrib.admin.utils import flatten
 from django.core.validators import MinValueValidator, MaxValueValidator
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
+from api.cases.const import PROJECTS, STARTING_FROM_DATE
 from api.planner.algorithm.knapsack import ItineraryKnapsackSuggestions, ItineraryKnapsackList
+from api.planner.utils import remove_cases_from_list
+from utils.queries_planner import get_cases_from_bwv
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
@@ -31,6 +34,18 @@ class Itinerary(models.Model):
         itineraries = Itinerary.objects.filter(created_at=date)
         itineraries = [itinerary.get_cases() for itinerary in itineraries]
         cases = flatten(itineraries)
+
+        return cases
+
+    def get_unplanned_cases(date, stadium):
+        '''
+        Returns a list of unplanned cases which
+        '''
+        planned_cases = Itinerary.get_cases_for_date(date)
+        exclude_cases = [{'case_id': case.case_id} for case in planned_cases]
+
+        all_cases = get_cases_from_bwv(STARTING_FROM_DATE, PROJECTS, [stadium])
+        cases = remove_cases_from_list(all_cases, exclude_cases)
 
         return cases
 
