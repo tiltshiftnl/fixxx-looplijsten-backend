@@ -12,7 +12,7 @@ Start the dev server for local development:
 docker-compose up
 ```
 
-To rebuild (for example, when dependencies are added requirements.txt):
+To build:
 ```bash
 docker-compose build --build-arg INTEGRALE_AANPAK_ONDERMIJNING_CREDS=GITLAB_ACCESS_TOKEN_HERE
 ```

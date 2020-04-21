@@ -17,7 +17,9 @@ RUN mkdir -p ${DIRECTORYLIST} && chown datapunt ${DIRECTORYLIST}
 # Setup application
 WORKDIR /app
 COPY requirements.txt /app/
-RUN git clone -b latest --single-branch https://oauth2:${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning
+RUN git clone -b latest --single-branch https://${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning
+# Uncomment for local development environment:
+# RUN git clone -b latest --single-branch https://oauth2:${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.datapunt.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning
 RUN pip install --no-cache-dir /tmp/integrale_aanpak_ondermijning
 RUN pip install --no-cache-dir -r requirements.txt
 USER datapunt
