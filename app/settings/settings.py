@@ -308,3 +308,7 @@ SECURE_BROWSER_XSS_FILTER = True
 FRAUD_PREDICTION_CACHE_DIR = os.path.normpath(join(os.path.dirname(BASE_DIR), 'fraud_prediction_cache'))
 # Secret key for accessing fraud prediction scoring endpoint
 FRAUD_PREDICTION_SECRET_KEY = os.environ.get('FRAUD_PREDICTION_SECRET_KEY')
+
+# City central geolocation
+CITY_CENTRAL_LOCATION_LAT = 52.379189
+CITY_CENTRAL_LOCATION_LNG = 4.899431

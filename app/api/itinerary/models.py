@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.admin.utils import flatten
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.conf import settings
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
 from api.cases.const import PROJECTS, STARTING_FROM_DATE
@@ -13,19 +14,29 @@ class Itinerary(models.Model):
 
     created_at = models.DateField(auto_now_add=True)
 
-    def get_center(self):
+    def add_case(self, case_id, position=None):
         '''
-        Returns the center coordinates of the itinerary
+        Adds a case to the itinerary
         '''
-        cases = self.get_cases()
-        locations = [case.get_location() for case in cases]
-        locations_lng = [location['lng'] for location in locations]
-        locations_lat = [location['lat'] for location in locations]
+        case = Case.get(case_id=case_id)
+        used_cases = Itinerary.get_cases_for_date(self.created_at)
 
-        locations_lng = sum(locations_lng) / len(cases)
-        locations_lat = sum(locations_lat) / len(cases)
+        if case in used_cases:
+            raise ValueError('This case is already used in an itinerary for this date')
 
-        return {'lat': locations_lat, 'lng': locations_lng}
+        itinerary_item = ItineraryItem.objects.create(
+            case=case,
+            itinerary=self,
+            position=position)
+
+        return itinerary_item
+
+    def get_cases(self):
+        '''
+        Returns a list of cases for this itinerary
+        '''
+        cases = [item.case for item in self.items.all()]
+        return cases
 
     def get_cases_for_date(date):
         '''
@@ -49,38 +60,54 @@ class Itinerary(models.Model):
 
         return cases
 
-    def get_cases(self):
+    def add_team_members(self, user_ids):
         '''
-        Returns a list of cases for this itinerary
+        Addes team members to this itinerary
         '''
-        cases = [item.case for item in self.items.all()]
-        return cases
+        for user_id in user_ids:
+            user = User.objects.get(id=user_id)
+            ItineraryTeamMember.objects.create(user=user, itinerary=self)
 
-    def add_case(self, case_id, position):
+    def clear_team_members(self):
         '''
-        Adds a case to the itinerary
+        Removes all team members from this itinerary
         '''
-        case = Case.get(case_id=case_id)
-        used_cases = Itinerary.get_cases_for_date(self.created_at)
+        team_members = self.team_members.all()
 
-        if case in used_cases:
-            raise ValueError('This case is already used in an itinerary for this date')
+        for team_member in team_members:
+            team_member.delete()
 
-        itinerary_item = ItineraryItem.objects.create(
-            case=case,
-            itinerary=self,
-            position=position)
+    def get_center(self):
+        '''
+        Returns the center coordinates of the itinerary
+        '''
+        cases = self.get_cases()
 
-        return itinerary_item
+        if not cases:
+            return self.get_city_center()
+
+        locations = [case.get_location() for case in cases]
+        locations_lng = [location['lng'] for location in locations]
+        locations_lat = [location['lat'] for location in locations]
+
+        locations_lng = sum(locations_lng) / len(cases)
+        locations_lat = sum(locations_lat) / len(cases)
+
+        return {'lat': locations_lat, 'lng': locations_lng}
+
+    def get_city_center(self):
+        '''
+        Returns the city center (defined in the project settings)
+        '''
+        return {
+            'lat': settings.CITY_CENTRAL_LOCATION_LAT,
+            'lng': settings.CITY_CENTRAL_LOCATION_LNG
+        }
 
     def get_suggestions(self):
         '''
         Returns a list of suggested cases which can be added to this itinerary
         '''
-        # If no cases exists the suggestions algorithm won't work, this is a safe fallback
-        if not self.get_cases():
-            return self.get_cases_from_settings()
-
         # Initialise using this itinerary's settings
         generator = ItineraryKnapsackSuggestions(self.settings)
 
@@ -109,23 +136,6 @@ class Itinerary(models.Model):
         generated_list = generator.generate()
 
         return generated_list
-
-    def clear_team_members(self):
-        '''
-        Removes all team members from this itinerary
-        '''
-        team_members = self.team_members.all()
-
-        for team_member in team_members:
-            team_member.delete()
-
-    def add_team_members(self, user_ids):
-        '''
-        Addes team members to this itinerary
-        '''
-        for user_id in user_ids:
-            user = User.objects.get(id=user_id)
-            ItineraryTeamMember.objects.create(user=user, itinerary=self)
 
     def __str__(self):
         '''
