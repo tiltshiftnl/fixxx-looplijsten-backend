@@ -12,97 +12,72 @@ class SCORING_WEIGHTS(Enum):
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
     "projects": const.PROJECTS_WITHOUT_SAHARA,
-    "lists": [
-        {
-            "name": "Maandag Ochtend",
-            "length_of_lists": 6
+    "days": {
+        "monday": {
+            "day": {
+                "length_of_list": 6,
+                "primary_stadium": const.ONDERZOEK_BUITENDIENST,
+                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
+            },
+            "evening": {
+                "length_of_list": 6,
+                "primary_stadium": const.AVONDRONDE,
+                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+            },
         },
-        {
-            "name": "Maandag Middag",
-            "length_of_lists": 6
+        "tuesday": {
+            "day": {},
+            "evening": {
+                "length_of_list": 6,
+                "primary_stadium": const.AVONDRONDE,
+                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+            }
         },
-        {
-            "name": "Maandag Avond",
-            "length_of_lists": 6,
-            "primary_stadium": const.AVONDRONDE,
-            "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+        "wednesday": {
+            "day": {},
+            "evening": {
+                "length_of_list": 6,
+                "primary_stadium": const.AVONDRONDE,
+                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+            }
         },
-        {
-            "name": "Dinsdag Ochtend",
-            "length_of_lists": 6
+        "thursday": {
+            "day": {
+                "length_of_list": 6,
+                "primary_stadium": const.ONDERZOEK_BUITENDIENST,
+                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
+            },
+            "evening": {
+                "length_of_list": 6,
+                "primary_stadium": const.AVONDRONDE,
+                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+            }
         },
-        {
-            "name": "Dinsdag Middag",
-            "length_of_lists": 6
+        "friday": {
+            "day": {
+                "length_of_list": 6,
+                "primary_stadium": const.ONDERZOEK_BUITENDIENST,
+                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
+            },
+            "evening": {
+                "length_of_list": 6,
+                "primary_stadium": const.AVONDRONDE,
+                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+            }
         },
-        {
-            "name": "Dinsdag Avond",
-            "length_of_lists": 6,
-            "primary_stadium": const.AVONDRONDE,
-            "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+        "saturday": {
+            "day": {
+                "length_of_list": 6,
+                "primary_stadium": const.WEEKEND_BUITENDIENST_ONDERZOEK,
+                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+            }
         },
-        {
-            "name": "Woensdag Ochtend",
-            "length_of_lists": 6
-        },
-        {
-            "name": "Woensdag Middag",
-            "length_of_lists": 6
-        },
-        {
-            "name": "Woensdag Avond",
-            "length_of_lists": 6,
-            "primary_stadium": const.AVONDRONDE,
-            "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-        },
-        {
-            "name": "Donderdag Ochtend",
-            "number_of_lists": 2,
-            "length_of_lists": 6,
-            "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-            "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
-        },
-        {
-            "name": "Donderdag Middag",
-            "length_of_lists": 6,
-            "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-            "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
-        },
-        {
-            "name": "Donderdag Avond",
-            "length_of_lists": 6,
-            "primary_stadium": const.AVONDRONDE,
-            "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-        },
-        {
-            "name": "Vrijdag Ochtend",
-            "length_of_lists": 6,
-            "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-            "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
-        },
-        {
-            "name": "Vrijdag Middag",
-            "length_of_lists": 6,
-            "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-            "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
-        },
-        {
-            "name": "Vrijdag Avond",
-            "length_of_lists": 6,
-            "primary_stadium": const.AVONDRONDE,
-            "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-        },
-        {
-            "name": "Zaterdag Weekend",
-            "length_of_lists": 12,
-            "primary_stadium": const.WEEKEND_BUITENDIENST_ONDERZOEK,
-            "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-        },
-        {
-            "name": "Zondag Weekend",
-            "length_of_lists": 12,
-            "primary_stadium": const.WEEKEND_BUITENDIENST_ONDERZOEK,
-            "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+        "sunday": {
+            "day": {
+                "length_of_list": 6,
+                "primary_stadium": const.WEEKEND_BUITENDIENST_ONDERZOEK,
+                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+            }
         }
-    ]
+    }
 }

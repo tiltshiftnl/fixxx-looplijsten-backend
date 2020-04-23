@@ -2,8 +2,7 @@ from rest_framework import serializers
 from api.cases.const import PROJECTS, STADIA
 
 class PlannerListSettingsSerializer(serializers.Serializer):
-    name = serializers.CharField(required=False)
-    length_of_lists = serializers.IntegerField(required=False, min_value=1)
+    length_of_list = serializers.IntegerField(required=False, min_value=1, max_value=20, default=8)
     primary_stadium = serializers.ChoiceField(required=False, choices=STADIA)
     secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
     exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
@@ -30,7 +29,20 @@ class PlannerListSettingsSerializer(serializers.Serializer):
 
         return data
 
+class PlannerDaySettingsSerializer(serializers.Serializer):
+    day = PlannerListSettingsSerializer(required=False, many=False)
+    evening = PlannerListSettingsSerializer(required=False, many=False)
+
+class PlannerWeekSettingsSerializer(serializers.Serializer):
+    monday = PlannerDaySettingsSerializer(required=True)
+    tuesday = PlannerDaySettingsSerializer(required=True)
+    wednesday = PlannerDaySettingsSerializer(required=True)
+    thursday = PlannerDaySettingsSerializer(required=True)
+    friday = PlannerDaySettingsSerializer(required=True)
+    saturday = PlannerDaySettingsSerializer(required=True)
+    sunday = PlannerDaySettingsSerializer(required=True)
+
 class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
-    lists = PlannerListSettingsSerializer(required=True, many=True)
+    days = PlannerWeekSettingsSerializer(required=True)

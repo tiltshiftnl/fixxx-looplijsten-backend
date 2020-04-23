@@ -1,5 +1,4 @@
 from types import SimpleNamespace
-from django.http import JsonResponse, HttpResponseBadRequest
 from django.views import View
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,7 +6,6 @@ from django.conf import settings
 from constance.backends.database.models import Constance
 
 from utils.safety_lock import safety_lock
-from api.planner.serializers import PlannerSettingsSerializer
 from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
 from api.planner.const import SCORING_WEIGHTS
 from api.planner.algorithm.knapsack import ItineraryKnapsackList
@@ -28,7 +26,7 @@ class AlgorithmView(LoginRequiredMixin, View):
             'selected_exclude_stadia': [],
             'selected_opening_date': '2019-01-01',
             'number_of_lists': 1,
-            'length_of_lists': 8,
+            'length_of_list': 8,
             'maps_key': key.value,
             'weight_distance': SCORING_WEIGHTS.DISTANCE.value,
             'weight_fraud_probability': SCORING_WEIGHTS.FRAUD_PROBABILITY.value,
@@ -57,7 +55,7 @@ class AlgorithmView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         opening_date = request.POST.get('opening_date')
         projects = request.POST.getlist('projects')
-        length_of_lists = int(request.POST.get('length_of_lists'))
+        length_of_list = int(request.POST.get('length_of_list'))
         stadia = request.POST.getlist('stadia')
         exclude_stadia = request.POST.getlist('exclude_stadia')
         main_stadium = request.POST.get('main_stadium')
@@ -72,7 +70,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data = self.get_context_data()
         context_data['selected_opening_date'] = opening_date
         context_data['selected_projects'] = projects
-        context_data['length_of_lists'] = length_of_lists
+        context_data['length_of_list'] = length_of_list
         context_data['selected_stadia'] = stadia
         context_data['selected_exclude_stadia'] = exclude_stadia
         context_data['main_stadium'] = main_stadium
@@ -82,30 +80,6 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['weight_secondary_stadium'] = weight_secondary_stadium
         context_data['weight_issuemelding'] = weight_issuemelding
         context_data['start_case_id'] = start_case_id
-
-        post = {
-            "opening_date": opening_date,
-            "projects": projects,
-            "lists": [
-                {
-                    "length_of_lists": length_of_lists,
-                    "number_of_lists": 1,
-                    "secondary_stadia": stadia,
-                    "exclude_stadia": exclude_stadia,
-                }
-            ]
-        }
-
-        if main_stadium:
-            post["lists"][0]["primary_stadium"] = main_stadium
-
-        serializer = PlannerSettingsSerializer(data=post)
-        is_valid = serializer.is_valid()
-        if not is_valid:
-            return JsonResponse({
-                'message': 'Could not validate posted data',
-                'errors': serializer.errors
-            }, status=HttpResponseBadRequest.status_code)
 
         settings = SettingsMock(context_data)
         settings_weights = SettingsWeightMock(context_data)
@@ -146,7 +120,7 @@ class SettingsMock(SimpleNamespace):
     def __init__(self, context):
         super().__init__()
         self.opening_date = context['selected_opening_date']
-        self.target_length = context['length_of_lists']
+        self.target_length = context['length_of_list']
 
         self.projects = SimpleNamespace()
         self.projects.all = lambda: [SimpleNamespace(name=project)
