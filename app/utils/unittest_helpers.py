@@ -2,11 +2,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.test import APIClient
 from api.users.models import User
 
+AUTHENTICATED_CLIENT_EMAIL = 'f.foo@foo.com'
+
 def get_test_user():
     '''
     Creates and returns a test user
     '''
-    return User.objects.create(email='foo@foo.com')
+    return User.objects.get_or_create(email=AUTHENTICATED_CLIENT_EMAIL)[0]
 
 
 def get_authenticated_client():
