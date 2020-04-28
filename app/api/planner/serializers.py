@@ -1,3 +1,4 @@
+from django.conf import settings
 from rest_framework import serializers
 from api.cases.const import PROJECTS, STADIA
 
@@ -42,7 +43,28 @@ class PlannerWeekSettingsSerializer(serializers.Serializer):
     saturday = PlannerDaySettingsSerializer(required=True)
     sunday = PlannerDaySettingsSerializer(required=True)
 
+class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
+    range_start = serializers.IntegerField(
+        required=True,
+        min_value=settings.CITY_MIN_POSTAL_CODE,
+        max_value=settings.CITY_MAX_POSTAL_CODE)
+
+    range_end = serializers.IntegerField(
+        required=True,
+        min_value=settings.CITY_MIN_POSTAL_CODE,
+        max_value=settings.CITY_MAX_POSTAL_CODE)
+
+    def validate(self, data):
+        start_range = data.get('range_start')
+        end_range = data.get('range_end')
+
+        if end_range < start_range:
+            raise serializers.ValidationError("The start range can't be higher than the end range")
+
+        return data
+
 class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
+    postal_code = PlannerPostalCodeSettingsSerializer(required=False)
     days = PlannerWeekSettingsSerializer(required=True)

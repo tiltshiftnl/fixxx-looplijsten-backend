@@ -1,5 +1,5 @@
-from api.cases import const
 from enum import Enum
+from api.cases import const
 
 class SCORING_WEIGHTS(Enum):
     DISTANCE = 0.5
@@ -12,6 +12,11 @@ class SCORING_WEIGHTS(Enum):
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
     "projects": const.PROJECTS_WITHOUT_SAHARA,
+    # Optional postal code settings (see project settings for start and end range)
+    # "postal_code": {
+    #     "range_start": 1000,
+    #     "range_end": 1109
+    # },
     "days": {
         "monday": {
             "day": {

@@ -309,6 +309,8 @@ FRAUD_PREDICTION_CACHE_DIR = os.path.normpath(join(os.path.dirname(BASE_DIR), 'f
 # Secret key for accessing fraud prediction scoring endpoint
 FRAUD_PREDICTION_SECRET_KEY = os.environ.get('FRAUD_PREDICTION_SECRET_KEY')
 
-# City central geolocation
+# City central geolocation and postal code range
 CITY_CENTRAL_LOCATION_LAT = 52.379189
 CITY_CENTRAL_LOCATION_LNG = 4.899431
+CITY_MIN_POSTAL_CODE = 1000
+CITY_MAX_POSTAL_CODE = 1109
