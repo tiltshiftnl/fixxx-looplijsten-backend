@@ -55,10 +55,10 @@ class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
         max_value=settings.CITY_MAX_POSTAL_CODE)
 
     def validate(self, data):
-        start_range = data.get('range_start')
-        end_range = data.get('range_end')
+        range_start = data.get('range_start')
+        range_end = data.get('range_end')
 
-        if end_range < start_range:
+        if range_end < range_start:
             raise serializers.ValidationError("The start range can't be higher than the end range")
 
         return data
