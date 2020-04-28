@@ -5,6 +5,9 @@ from api.users.user_manager import UserManager
 from api.users.utils import generate_username
 
 class User(AbstractUser):
+    class Meta:
+        ordering = ['email']
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         unique=True,
