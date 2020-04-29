@@ -99,6 +99,9 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         if not cases:
             cases = self.__get_eligible_cases__()
 
+        if not cases:
+            return []
+
         if not fraud_predictions:
             fraud_predictions = get_fraud_predictions()
 
