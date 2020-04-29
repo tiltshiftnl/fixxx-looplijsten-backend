@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.admin.utils import flatten
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from api.users.models import User
 from api.cases.models import Case, Project, Stadium
@@ -157,6 +158,18 @@ class ItinerarySettings(models.Model):
     target_length = models.IntegerField(default=8,
                                         validators=[MinValueValidator(1), MaxValueValidator(20)])
 
+    postal_code_range_start = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
+                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
+
+    postal_code_range_end = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
+                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
+
     itinerary = models.OneToOneField(Itinerary,
                                      on_delete=models.CASCADE,
                                      null=False,
@@ -169,13 +182,18 @@ class ItinerarySettings(models.Model):
 
     primary_stadium = models.ForeignKey(to=Stadium,
                                         null=True,
+                                        blank=True,
                                         on_delete=models.CASCADE,
                                         related_name='settings_as_primary_stadium')
 
     secondary_stadia = models.ManyToManyField(to=Stadium,
+                                              null=True,
+                                              blank=True,
                                               related_name='settings_as_secondary_stadia')
 
     exclude_stadia = models.ManyToManyField(to=Stadium,
+                                            null=True,
+                                            blank=True,
                                             related_name='settings_as_exclude_stadia')
 
     start_case = models.ForeignKey(Case, on_delete=models.CASCADE, null=True, blank=True)
@@ -183,6 +201,21 @@ class ItinerarySettings(models.Model):
     def __str__(self):
         return self.itinerary.__str__()
 
+    def clean(self):
+        '''
+        Checks for postal code ranges
+        '''
+        if not self.postal_code_range_start and not self.postal_code_range_end:
+            return
+
+        elif self.postal_code_range_start and not self.postal_code_range_end:
+            raise ValidationError({'postal_code_range_end': ('Required if postal_code_range_start is set')})
+
+        elif not self.postal_code_range_start and self.postal_code_range_end:
+            raise ValidationError({'postal_code_range_start': ('Required if postal_code_range_end is set')})
+
+        elif self.postal_code_range_start > self.postal_code_range_end:
+            raise ValidationError({'postal_code_range_start': ('Must be smaller than postal_code_range_end')})
 
 class ItineraryTeamMember(models.Model):
     """ Member of an Itinerary Team """

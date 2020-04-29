@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.conf import settings
 from api.itinerary.models import ItinerarySettings, Itinerary
 from api.cases.models import Stadium, Project, Case
 
@@ -30,6 +31,7 @@ class ItinerarySettingsModelTest(TestCase):
         '''
         Test adding projects through ManyToManyField
         '''
+        self.assertEquals(ItinerarySettings.objects.count(), 0)
         itinerary_settings = self.get_new_itinerary_settings()
 
         projects = [
@@ -44,6 +46,7 @@ class ItinerarySettingsModelTest(TestCase):
         '''
         Test creating with primary_stadium
         '''
+        self.assertEquals(ItinerarySettings.objects.count(), 0)
         itinerary = Itinerary.objects.create()
         primary_stadium = Stadium.get('FOO_PRIMARY_STADIM')
         ItinerarySettings.objects.create(
@@ -51,6 +54,7 @@ class ItinerarySettingsModelTest(TestCase):
             itinerary=itinerary,
             primary_stadium=primary_stadium
         )
+        self.assertEquals(ItinerarySettings.objects.count(), 1)
 
     def test_create_with_secondary_stadia(self):
         '''
@@ -85,6 +89,7 @@ class ItinerarySettingsModelTest(TestCase):
         '''
         Test creating with start_case
         '''
+        self.assertEquals(ItinerarySettings.objects.count(), 0)
         itinerary = Itinerary.objects.create()
         case = Case.get('FOO_CASE_ID')
 
@@ -93,3 +98,68 @@ class ItinerarySettingsModelTest(TestCase):
             itinerary=itinerary,
             start_case=case
         )
+        self.assertEquals(ItinerarySettings.objects.count(), 1)
+
+    def test_with_postal_code_range(self):
+        '''
+        Test creating with postal code range
+        '''
+        self.assertEquals(ItinerarySettings.objects.count(), 0)
+        itinerary = Itinerary.objects.create()
+        FOO_MIN_RANGE = settings.CITY_MIN_POSTAL_CODE
+        FOO_MAX_RANGE = settings.CITY_MAX_POSTAL_CODE
+
+        ItinerarySettings.objects.create(
+            opening_date='2020-04-04',
+            itinerary=itinerary,
+            postal_code_range_start=FOO_MIN_RANGE,
+            postal_code_range_end=FOO_MAX_RANGE
+        )
+        self.assertEquals(ItinerarySettings.objects.count(), 1)
+
+    def test_with_postal_code_range_fail(self):
+        '''
+        Should fail if the range_start is larger than the range_end
+        '''
+        itinerary = Itinerary.objects.create()
+        FOO_MIN_RANGE = settings.CITY_MIN_POSTAL_CODE
+        FOO_MAX_RANGE = settings.CITY_MAX_POSTAL_CODE
+
+        with self.assertRaises(Exception):
+            itinerary_settings = ItinerarySettings.objects.create(
+                opening_date='2020-04-04',
+                itinerary=itinerary,
+                postal_code_range_start=FOO_MAX_RANGE,
+                postal_code_range_end=FOO_MIN_RANGE,
+            )
+            itinerary_settings.clean()
+
+    def test_with_postal_code_range_fail_missing_range_end(self):
+        '''
+        Should fail if the range_end is missing
+        '''
+        itinerary = Itinerary.objects.create()
+        FOO_MIN_RANGE = settings.CITY_MIN_POSTAL_CODE
+
+        with self.assertRaises(Exception):
+            itinerary_settings = ItinerarySettings.objects.create(
+                opening_date='2020-04-04',
+                itinerary=itinerary,
+                postal_code_range_start=FOO_MIN_RANGE
+            )
+            itinerary_settings.clean()
+
+    def test_with_postal_code_range_fail_missing_range_start(self):
+        '''
+        Should fail if the range_end is missing
+        '''
+        itinerary = Itinerary.objects.create()
+        FOO_MIN_RANGE = settings.CITY_MIN_POSTAL_CODE
+
+        with self.assertRaises(Exception):
+            itinerary_settings = ItinerarySettings.objects.create(
+                opening_date='2020-04-04',
+                itinerary=itinerary,
+                postal_code_range_end=FOO_MIN_RANGE
+            )
+            itinerary_settings.clean()

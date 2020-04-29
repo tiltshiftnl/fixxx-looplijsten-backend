@@ -4,8 +4,9 @@ from api.itinerary.serializers import ItinerarySerializer
 from django.http import JsonResponse
 
 class ItinerarySettingsInline(admin.StackedInline):
-    fields = ('opening_date', 'target_length', 'projects',
-              'primary_stadium', 'secondary_stadia', 'exclude_stadia', 'start_case')
+    fields = ('opening_date', 'target_length', 'postal_code_range_start',
+              'postal_code_range_end', 'projects', 'primary_stadium',
+              'secondary_stadia', 'exclude_stadia', 'start_case')
     model = ItinerarySettings
 
 class ItineraryTeamMemberInline(admin.StackedInline):
@@ -40,5 +41,5 @@ class NoteAdmin(admin.ModelAdmin):
 
 
 @admin.register(ItineraryItem)
-class ItineraryItemAdmim(admin.ModelAdmin):
+class ItineraryItemAdmin(admin.ModelAdmin):
     fields = ('itinerary', 'case', 'position', 'checked')
