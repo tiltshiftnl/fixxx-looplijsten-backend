@@ -217,6 +217,10 @@ class ItinerarySettings(models.Model):
         elif self.postal_code_range_start > self.postal_code_range_end:
             raise ValidationError({'postal_code_range_start': ('Must be smaller than postal_code_range_end')})
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
 class ItineraryTeamMember(models.Model):
     """ Member of an Itinerary Team """
 

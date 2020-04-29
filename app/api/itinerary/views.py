@@ -114,7 +114,10 @@ class ItineraryViewSet(
             raise APIException('Could not create itinerary: {}'.format(serializer.errors))
 
         # Create the itinerary
-        itinerary = serializer.create(request.data)
+        try:
+            itinerary = serializer.create(request.data)
+        except Exception as e:
+            raise APIException('Could not create itinerary: {}'.format(e))
 
         # Populate the itinerary with cases
         cases = itinerary.get_cases_from_settings()
