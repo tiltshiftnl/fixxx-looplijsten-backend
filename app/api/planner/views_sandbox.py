@@ -34,6 +34,8 @@ class AlgorithmView(LoginRequiredMixin, View):
             'weight_secondary_stadium': SCORING_WEIGHTS.SECONDARY_STADIUM.value,
             'weight_issuemelding': SCORING_WEIGHTS.ISSUEMELDING.value,
             'start_case_id': '',
+            'postal_code_range_start': None,
+            'postal_code_range_end': None
         }
 
     @safety_lock
@@ -67,6 +69,9 @@ class AlgorithmView(LoginRequiredMixin, View):
         weight_secondary_stadium = float(request.POST.get('weight_secondary_stadium'))
         weight_issuemelding = float(request.POST.get('weight_issuemelding'))
 
+        postal_code_range_start = int(request.POST.get('postal_code_range_start'))
+        postal_code_range_end = int(request.POST.get('postal_code_range_end'))
+
         context_data = self.get_context_data()
         context_data['selected_opening_date'] = opening_date
         context_data['selected_projects'] = projects
@@ -80,6 +85,8 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data['weight_secondary_stadium'] = weight_secondary_stadium
         context_data['weight_issuemelding'] = weight_issuemelding
         context_data['start_case_id'] = start_case_id
+        context_data['postal_code_range_start'] = postal_code_range_start
+        context_data['postal_code_range_end'] = postal_code_range_end
 
         settings = SettingsMock(context_data)
         settings_weights = SettingsWeightMock(context_data)
@@ -121,6 +128,8 @@ class SettingsMock(SimpleNamespace):
         super().__init__()
         self.opening_date = context['selected_opening_date']
         self.target_length = context['length_of_list']
+        self.postal_code_range_start = context['postal_code_range_start']
+        self.postal_code_range_end = context['postal_code_range_end']
 
         self.projects = SimpleNamespace()
         self.projects.all = lambda: [SimpleNamespace(name=project)

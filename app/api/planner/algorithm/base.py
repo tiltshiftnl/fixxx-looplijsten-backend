@@ -60,7 +60,10 @@ class ItineraryGenerateAlgorithm():
         filtered_cases = filter_cases_with_missing_coordinates(filtered_cases)
         LOGGER.info('Total cases after filtering on missing coordinates: {}'.format(len(filtered_cases)))
 
-        filtered_cases = filter_cases_with_postal_code(cases, self.start_range, self.end_rage)
+        filtered_cases = filter_cases_with_postal_code(
+            cases,
+            self.postal_code_range_start,
+            self.postal_code_range_end)
         LOGGER.info('Total cases after filtering on postal codes: {}'.format(len(filtered_cases)))
 
         exclude_cases = [{'case_id': case.case_id} for case in self.exclude_cases]
