@@ -3,9 +3,10 @@ Tests for the health views
 """
 from django.test import TestCase
 from api.planner.utils import filter_cases
-from api.planner.utils import remove_cases_from_list, get_case_coordinates
+from api.planner.utils import remove_cases_from_list, get_case_coordinates, filter_cases_with_postal_code
 from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases
 from api.cases.const import ISSUEMELDING, TWEEDE_CONTROLE, ONDERZOEK_BUITENDIENST
+
 
 class UtilsTests(TestCase):
     def test_filter_cases(self):
@@ -142,3 +143,43 @@ class UtilsTests(TestCase):
         expected = [case_a, case_b]
 
         self.assertEquals(result, expected)
+
+    def test_filter_cases_with_postal_code_empty_list(self):
+        '''
+        Should just return an empty list
+        '''
+        cases = filter_cases_with_postal_code([])
+        self.assertEqual(cases, [])
+
+    def test_filter_cases_with_postal_code_wrong_range(self):
+        '''
+        Should throw error if the start range is larger than end range
+        '''
+        FOO_START_RANGE = 2000
+        FOO_END_RANGE = 1000
+
+        with self.assertRaises(ValueError):
+            filter_cases_with_postal_code([], FOO_START_RANGE, FOO_END_RANGE)
+
+    def test_filter_cases_with_postal_code(self):
+        '''
+        Returns the cases which fall within the given range
+        '''
+        FOO_START_RANGE = 1000
+        FOO_END_RANGE = 2000
+
+        FOO_CASE_A = {'postal_code': '1055XX'}
+        FOO_CASE_B = {'postal_code': '2055XX'}
+        FOO_CASE_C = {'postal_code': '2000XX'}
+        FOO_CASE_D = {'postal_code': '1000XX'}
+        FOO_CASE_E = {'postal_code': '0000XX'}
+
+        cases = [FOO_CASE_A, FOO_CASE_B, FOO_CASE_C, FOO_CASE_D, FOO_CASE_E]
+
+        filtered_cases = filter_cases_with_postal_code(
+            cases,
+            FOO_START_RANGE,
+            FOO_END_RANGE
+        )
+
+        self.assertEquals(filtered_cases, [FOO_CASE_A, FOO_CASE_C, FOO_CASE_D])
