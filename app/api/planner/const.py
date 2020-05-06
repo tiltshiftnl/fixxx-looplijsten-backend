@@ -9,6 +9,8 @@ class SCORING_WEIGHTS(Enum):
     ISSUEMELDING = 0.75
 
 
+MAX_SUGGESTIONS_COUNT = 20
+
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
     "projects": const.PROJECTS_WITHOUT_SAHARA,

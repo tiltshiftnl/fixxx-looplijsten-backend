@@ -1,6 +1,7 @@
 import logging
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
 from api.planner.utils import calculate_geo_distances
+from api.planner.const import MAX_SUGGESTIONS_COUNT
 from api.fraudprediction.utils import get_fraud_prediction
 
 LOGGER = logging.getLogger(__name__)
@@ -26,5 +27,5 @@ class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
             case['fraud_prediction'] = get_fraud_prediction(case['case_id'])
 
         # Sort the cases based on distance
-        sorted_cases = sorted(cases, key=lambda case: case['distance'])
+        sorted_cases = sorted(cases, key=lambda case: case['distance'])[:MAX_SUGGESTIONS_COUNT]
         return sorted_cases

@@ -4,7 +4,7 @@ from joblib import Parallel, delayed
 from api.cases.const import ISSUEMELDING
 from api.planner.utils import calculate_geo_distances, remove_cases_from_list
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
-from api.planner.const import SCORING_WEIGHTS
+from api.planner.const import SCORING_WEIGHTS, MAX_SUGGESTIONS_COUNT
 from utils.queries import get_case
 from api.fraudprediction.utils import get_fraud_predictions
 
@@ -121,7 +121,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         # Sort the cases based on score
         sorted_cases = sorted(cases, key=lambda case: case['score'], reverse=True)
 
-        return sorted_cases
+        return sorted_cases[:MAX_SUGGESTIONS_COUNT]
 
 
 class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
