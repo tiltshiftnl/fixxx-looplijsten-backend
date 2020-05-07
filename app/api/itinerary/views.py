@@ -86,16 +86,19 @@ class ItineraryViewSet(
         itinerary.clear_team_members()
         itinerary.add_team_members(user_ids)
 
-    # TODO: Figure out how to add the safety lock decorator
     @action(detail=True, methods=['get', 'put'])
     def team(self, request, pk):
-        if request.method == 'GET':
-            return self.__get_serialized_team__(pk)
+        @safety_lock
+        def safety_function(self, request, pk):
+            if request.method == 'GET':
+                return self.__get_serialized_team__(pk)
 
-        if request.method == 'PUT':
-            new_team_members = request.data.get('team_members')
-            self.__replace_team_members__(pk, new_team_members)
-            return self.__get_serialized_team__(pk)
+            if request.method == 'PUT':
+                new_team_members = request.data.get('team_members')
+                self.__replace_team_members__(pk, new_team_members)
+                return self.__get_serialized_team__(pk)
+
+        return safety_function(self, request, pk)
 
     # TODO: Figure out how to add the safety lock decorator
     @action(detail=True, methods=['get'])
