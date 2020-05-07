@@ -56,26 +56,29 @@ class CaseViewSet(ViewSet):
 
         return JsonResponse(data)
 
-    # TODO: Figure out how to add the safety lock decorator
     @swagger_auto_schema(method='get', manual_parameters=unplanned_parameters)
     @action(detail=False, methods=['get'], name='unplanned')
     def unplanned(self, request):
         ''' Returns a list of unplanned cases, based on the given date and stadium '''
-        serializer = UnplannedCasesSerializer(data=request.GET)
-        is_valid = serializer.is_valid()
+        @safety_lock
+        def safety(self, request):
+            serializer = UnplannedCasesSerializer(data=request.GET)
+            is_valid = serializer.is_valid()
 
-        if not is_valid:
-            return JsonResponse({
-                'message': 'Could not validate data',
-                'errors': serializer.errors
-            }, status=HttpResponseBadRequest.status_code)
+            if not is_valid:
+                return JsonResponse({
+                    'message': 'Could not validate data',
+                    'errors': serializer.errors
+                }, status=HttpResponseBadRequest.status_code)
 
-        date = request.GET.get('date')
-        stadium = request.GET.get('stadium')
-        unplanned_cases = Itinerary.get_unplanned_cases(date, stadium)
-        cases = add_fraud_predictions(unplanned_cases)
+            date = request.GET.get('date')
+            stadium = request.GET.get('stadium')
+            unplanned_cases = Itinerary.get_unplanned_cases(date, stadium)
+            cases = add_fraud_predictions(unplanned_cases)
 
-        return JsonResponse({'cases': cases})
+            return JsonResponse({'cases': cases})
+
+        return safety(self, request)
 
 class CaseSearchViewSet(ViewSet, ListAPIView):
     """
