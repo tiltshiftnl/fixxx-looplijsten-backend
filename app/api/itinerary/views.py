@@ -100,13 +100,16 @@ class ItineraryViewSet(
 
         return safety_function(self, request, pk)
 
-    # TODO: Figure out how to add the safety lock decorator
     @action(detail=True, methods=['get'])
     def suggestions(self, request, pk):
         ''' Returns a list of suggestions for the given itinerary '''
-        itinerary = self.get_object()
-        cases = itinerary.get_suggestions()
-        return JsonResponse({'cases': cases})
+        @safety_lock
+        def safety(self, request, pk):
+            itinerary = self.get_object()
+            cases = itinerary.get_suggestions()
+            return JsonResponse({'cases': cases})
+
+        return safety(self, request, pk)
 
     @safety_lock
     @transaction.atomic

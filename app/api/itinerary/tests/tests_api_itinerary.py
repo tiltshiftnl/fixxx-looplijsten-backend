@@ -3,8 +3,9 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from constance.test import override_config
 from freezegun import freeze_time
+from unittest.mock import patch
 
-from api.itinerary.models import Itinerary
+from api.itinerary.models import Itinerary, ItinerarySettings
 from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client, get_test_user
 
 class ItineraryViewsGetTest(APITestCase):
@@ -299,3 +300,51 @@ class ItineraryViewsDeleteTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Itinerary.objects.count(), 0)
+
+
+class ItineraryViewsSuggestionsTest(APITestCase):
+    """
+    Tests for the API endpoint for retrieving suggestions
+    """
+
+    def test_unauthenticated_request_get_suggestions(self):
+        """
+        An unauthenticated request should not be possible
+        """
+        itinerary = Itinerary.objects.create()
+
+        url = reverse('itinerary-suggestions', kwargs={'pk': itinerary.id})
+        client = get_unauthenticated_client()
+        response = client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    @override_config(ALLOW_DATA_ACCESS=False)
+    def test_safety_locked_request_get_suggestions(self):
+        """
+        An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
+        """
+        itinerary = Itinerary.objects.create()
+
+        url = reverse('itinerary-suggestions', kwargs={'pk': itinerary.id})
+        client = get_authenticated_client()
+        response = client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch('api.itinerary.views.Itinerary.get_suggestions')
+    def test_get_suggestions(self, mock_get_suggestions):
+        """
+        A working authenticated request should return suggestions
+        """
+        mock_get_suggestions.return_value = 'FOO_SUGGESTIONS'
+
+        itinerary = Itinerary.objects.create()
+        ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+
+        url = reverse('itinerary-suggestions', kwargs={'pk': itinerary.id})
+        client = get_authenticated_client()
+        response = client.get(url)
+
+        expected_response = {
+            'cases': 'FOO_SUGGESTIONS'
+        }
+        self.assertEqual(expected_response, response.json())
