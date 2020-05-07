@@ -1,6 +1,8 @@
 import json
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.conf import settings
+from django.utils.decorators import method_decorator
+
 from rest_framework.viewsets import ViewSet
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -11,26 +13,28 @@ from api.planner.serializers import PlannerSettingsSerializer
 from api.cases.const import STADIA, PROJECTS
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 
+@method_decorator(safety_lock, 'list')
 class ConstantsProjectsViewSet(ViewSet):
     """
     Retrieve the projects constants which are used for cases
     """
     permission_classes = [IsAuthenticated]
 
-    @safety_lock
     def list(self, request):
         return JsonResponse({'constants': PROJECTS})
 
+@method_decorator(safety_lock, 'list')
 class ConstantsStadiaViewSet(ViewSet):
     """
     Retrieve the stadia constants which are used for cases
     """
     permission_classes = [IsAuthenticated]
 
-    @safety_lock
     def list(self, request):
         return JsonResponse({'constants': STADIA})
 
+@method_decorator(safety_lock, 'list')
+@method_decorator(safety_lock, 'create')
 class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     """
     Retrieves the planner settings which are used for generating lists
@@ -38,7 +42,6 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PlannerSettingsSerializer
 
-    @safety_lock
     def list(self, request):
         planner_settings, _ = Constance.objects.get_or_create(key=settings.CONSTANCE_PLANNER_SETTINGS_KEY)
         settings_data = planner_settings.value
@@ -54,7 +57,6 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
 
         return JsonResponse(settings_data)
 
-    @safety_lock
     def create(self, request):
         data = request.data
         serializer = PlannerSettingsSerializer(data=data)

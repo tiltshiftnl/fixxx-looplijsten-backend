@@ -4,6 +4,7 @@ from multiprocessing import Process
 import logging
 from datetime import datetime
 from django.http import JsonResponse
+from django.utils.decorators import method_decorator
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 
@@ -13,6 +14,7 @@ from api.fraudprediction.fraud_predict import FraudPredict
 
 LOGGER = logging.getLogger(__name__)
 
+@method_decorator(safety_lock, 'create')
 class FraudPredictionScoringViewSet(ViewSet):
     """
     A view for triggering fraud scoring
@@ -28,7 +30,6 @@ class FraudPredictionScoringViewSet(ViewSet):
         fraud_predict = FraudPredict()
         fraud_predict.start()
 
-    @safety_lock
     def create(self, request):
         if hasattr(os, 'getppid'):
             LOGGER.info('Process kicking off scoring: {}'.format(os.getpid()))

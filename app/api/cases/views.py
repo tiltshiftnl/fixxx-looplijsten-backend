@@ -1,5 +1,7 @@
 from datetime import datetime
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.utils.decorators import method_decorator
+
 from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListAPIView
@@ -17,6 +19,8 @@ from api.fraudprediction.utils import get_fraud_prediction, add_fraud_prediction
 from api.cases.swagger_parameters import unplanned_parameters, case_search_parameters
 from api.cases.serializers import UnplannedCasesSerializer
 
+@method_decorator(safety_lock, 'retrieve')
+@method_decorator(safety_lock, 'unplanned')
 class CaseViewSet(ViewSet):
     """
     A Viewset for showing a single Case in detail
@@ -24,7 +28,6 @@ class CaseViewSet(ViewSet):
 
     permission_classes = [IsAuthenticated]
 
-    @safety_lock
     def retrieve(self, request, pk):
         case_id = pk
         related_case_ids = q.get_related_case_ids(case_id)
@@ -60,25 +63,21 @@ class CaseViewSet(ViewSet):
     @action(detail=False, methods=['get'], name='unplanned')
     def unplanned(self, request):
         ''' Returns a list of unplanned cases, based on the given date and stadium '''
-        @safety_lock
-        def safety(self, request):
-            serializer = UnplannedCasesSerializer(data=request.GET)
-            is_valid = serializer.is_valid()
+        serializer = UnplannedCasesSerializer(data=request.GET)
+        is_valid = serializer.is_valid()
 
-            if not is_valid:
-                return JsonResponse({
-                    'message': 'Could not validate data',
-                    'errors': serializer.errors
-                }, status=HttpResponseBadRequest.status_code)
+        if not is_valid:
+            return JsonResponse({
+                'message': 'Could not validate data',
+                'errors': serializer.errors
+            }, status=HttpResponseBadRequest.status_code)
 
-            date = request.GET.get('date')
-            stadium = request.GET.get('stadium')
-            unplanned_cases = Itinerary.get_unplanned_cases(date, stadium)
-            cases = add_fraud_predictions(unplanned_cases)
+        date = request.GET.get('date')
+        stadium = request.GET.get('stadium')
+        unplanned_cases = Itinerary.get_unplanned_cases(date, stadium)
+        cases = add_fraud_predictions(unplanned_cases)
 
-            return JsonResponse({'cases': cases})
-
-        return safety(self, request)
+        return JsonResponse({'cases': cases})
 
 class CaseSearchViewSet(ViewSet, ListAPIView):
     """
@@ -87,6 +86,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = CaseSerializer
+    queryset = ''
 
     def __add_fraud_prediction__(self, cases):
         '''

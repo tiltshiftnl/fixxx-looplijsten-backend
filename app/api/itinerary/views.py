@@ -3,6 +3,8 @@ from django.db import transaction
 from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.utils.decorators import method_decorator
+
 from rest_framework.viewsets import ViewSet
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
 from rest_framework.generics import GenericAPIView
@@ -19,6 +21,11 @@ from api.itinerary.serializers import ItineraryItemUpdateSerializer
 from api.cases.models import Case
 from utils.safety_lock import safety_lock
 
+@method_decorator(safety_lock, name='team')
+@method_decorator(safety_lock, name='suggestions')
+@method_decorator(safety_lock, name='create')
+@method_decorator(safety_lock, name='destroy')
+@method_decorator(safety_lock, name='list')
 class ItineraryViewSet(
         ViewSet,
         GenericAPIView,
@@ -88,30 +95,21 @@ class ItineraryViewSet(
 
     @action(detail=True, methods=['get', 'put'])
     def team(self, request, pk):
-        @safety_lock
-        def safety_function(self, request, pk):
-            if request.method == 'GET':
-                return self.__get_serialized_team__(pk)
+        if request.method == 'GET':
+            return self.__get_serialized_team__(pk)
 
-            if request.method == 'PUT':
-                new_team_members = request.data.get('team_members')
-                self.__replace_team_members__(pk, new_team_members)
-                return self.__get_serialized_team__(pk)
-
-        return safety_function(self, request, pk)
+        if request.method == 'PUT':
+            new_team_members = request.data.get('team_members')
+            self.__replace_team_members__(pk, new_team_members)
+            return self.__get_serialized_team__(pk)
 
     @action(detail=True, methods=['get'])
     def suggestions(self, request, pk):
         ''' Returns a list of suggestions for the given itinerary '''
-        @safety_lock
-        def safety(self, request, pk):
-            itinerary = self.get_object()
-            cases = itinerary.get_suggestions()
-            return JsonResponse({'cases': cases})
+        itinerary = self.get_object()
+        cases = itinerary.get_suggestions()
+        return JsonResponse({'cases': cases})
 
-        return safety(self, request, pk)
-
-    @safety_lock
     @transaction.atomic
     def create(self, request):
         serializer = ItinerarySerializer(data=request.data)
@@ -137,11 +135,6 @@ class ItineraryViewSet(
 
         return Response(serializer.data)
 
-    @safety_lock
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
-
-    @safety_lock
     def list(self, request):
         date = self.__get_date_from_query_parameter__(request)
         user = get_object_or_404(User, id=request.user.id)
@@ -152,6 +145,9 @@ class ItineraryViewSet(
         })
 
 
+@method_decorator(safety_lock, name='update')
+@method_decorator(safety_lock, name='destroy')
+@method_decorator(safety_lock, name='create')
 class ItineraryItemViewSet(
         ViewSet,
         GenericAPIView,
@@ -171,18 +167,6 @@ class ItineraryItemViewSet(
             return ItineraryItemUpdateSerializer
         return ItineraryItemSerializer
 
-    @safety_lock
-    def update(self, request, *args, **kwargs):
-        try:
-            return super().update(request, *args, **kwargs)
-        except Exception as e:
-            raise APIException(str(e))
-
-    @safety_lock
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
-
-    @safety_lock
     def create(self, request):
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(data=request.data)
@@ -200,6 +184,10 @@ class ItineraryItemViewSet(
         return Response(serializer.data)
 
 
+@method_decorator(safety_lock, name='retrieve')
+@method_decorator(safety_lock, name='update')
+@method_decorator(safety_lock, name='destroy')
+@method_decorator(safety_lock, name='create')
 class NoteViewSet(
         ViewSet,
         GenericAPIView,
@@ -213,21 +201,11 @@ class NoteViewSet(
     serializer_class = NoteCrudSerializer
     queryset = Note.objects.all()
 
-    @safety_lock
     def retrieve(self, request, pk=None):
         note = get_object_or_404(self.queryset, pk=pk)
         serializer = NoteCrudSerializer(note)
         return Response(serializer.data)
 
-    @safety_lock
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
-
-    @safety_lock
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
-
-    @safety_lock
     def create(self, request):
         # Get the current user and it's itinerary
         user = get_object_or_404(User, id=request.user.id)
