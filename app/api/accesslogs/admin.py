@@ -14,7 +14,7 @@ class LogEntryAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-    search_fields = ('request_user_email', 'request_uri', )
+    search_fields = ('request_user_email', 'request_uri',)
 
     list_display = ('request_uri', 'request_method', 'response_status_code',
                     'request_user_email', 'created_at')

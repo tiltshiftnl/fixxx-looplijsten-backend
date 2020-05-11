@@ -16,10 +16,12 @@ from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
 
+
 @method_decorator(safety_lock, 'get')
 class UserListView(ViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
 
 @method_decorator(safety_lock, 'get')
 class IsAuthenticatedView(APIView):
@@ -29,6 +31,7 @@ class IsAuthenticatedView(APIView):
         permission_class = IsAuthenticated()
         is_authenticated = permission_class.has_permission(request, self)
         return Response({'is_authenticated': is_authenticated})
+
 
 @method_decorator(safety_lock, 'post')
 class ObtainAuthTokenOIDC(APIView):

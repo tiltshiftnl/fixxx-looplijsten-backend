@@ -7,6 +7,7 @@ FOO_CASE_ID_A = 'FOO_CASE_ID_A'
 FOO_CASE_ID_B = 'FOO_CASE_ID_B'
 FOO_CASE_C_ID = 'FOO_CASE_C_ID'
 
+
 class ItineraryItemModelTest(TestCase):
     def get_itinerary_item(self):
         '''

@@ -5,6 +5,7 @@ from django.db import connections
 
 logger = logging.getLogger(__name__)
 
+
 def query_to_list(cursor):
     columns = [col[0] for col in cursor.description]
 
@@ -12,8 +13,10 @@ def query_to_list(cursor):
         dict(zip(columns, row)) for row in cursor.fetchall()
     ]
 
+
 def __get_bwv_cursor__():
     return connections[settings.BWV_DATABASE_NAME].cursor()
+
 
 def do_query(query, args=None):
     try:

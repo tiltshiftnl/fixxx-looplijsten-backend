@@ -1,4 +1,3 @@
-
 """
 Tests for query_helpers
 """

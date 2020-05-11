@@ -79,6 +79,7 @@ class CaseViewSet(ViewSet):
 
         return JsonResponse({'cases': cases})
 
+
 class CaseSearchViewSet(ViewSet, ListAPIView):
     """
     A temporary search ViewSet for listing cases

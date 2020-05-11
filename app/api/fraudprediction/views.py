@@ -15,6 +15,7 @@ from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
 
+
 @method_decorator(safety_lock, 'create')
 class FraudPredictionScoringViewSet(ViewSet):
     """

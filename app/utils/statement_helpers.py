@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 Helper function to parse and process BWV 'mededelingen' (statements) text
 '''
 
+
 def parse_date(raw_date):
     '''
     The BWV date for statements contains string dates in the following format: '17-OKT-19'

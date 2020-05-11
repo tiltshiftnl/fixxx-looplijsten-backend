@@ -1,5 +1,6 @@
 from django.db import migrations
 
+
 def set_positions(apps, schema_editor):
     # We can't import the Person model directly as it may be a newer
     # version than this migration expects. We use the historical version.
@@ -12,8 +13,8 @@ def set_positions(apps, schema_editor):
         item.position = index
         item.save()
 
-class Migration(migrations.Migration):
 
+class Migration(migrations.Migration):
     dependencies = [
         ('itinerary', '0020_itineraryitem_position'),
     ]

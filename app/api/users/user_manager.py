@@ -1,5 +1,6 @@
 from django.contrib.auth.models import BaseUserManager
 
+
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 

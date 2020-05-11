@@ -120,12 +120,12 @@ class ItineraryViewsGetTest(APITestCase):
                     'team_members': [
                         {'id': itinerary_a.team_members.all()[0].id,
                          'user': {
-                            'id': str(user.id),
-                            'email': user.email,
-                            'username': user.username,
-                            'first_name': user.first_name,
-                            'last_name': user.last_name,
-                            'full_name': user.full_name}}],
+                             'id': str(user.id),
+                             'email': user.email,
+                             'username': user.username,
+                             'first_name': user.first_name,
+                             'last_name': user.last_name,
+                             'full_name': user.full_name}}],
                     'items': [],
                     'settings': None
                 },
@@ -135,12 +135,12 @@ class ItineraryViewsGetTest(APITestCase):
                     'team_members': [
                         {'id': itinerary_b.team_members.all()[0].id,
                          'user': {
-                            'id': str(user.id),
-                            'email': user.email,
-                            'username': user.username,
-                            'first_name': user.first_name,
-                            'last_name': user.last_name,
-                            'full_name': user.full_name}}],
+                             'id': str(user.id),
+                             'email': user.email,
+                             'username': user.username,
+                             'first_name': user.first_name,
+                             'last_name': user.last_name,
+                             'full_name': user.full_name}}],
                     'items': [],
                     'settings': None
                 }
@@ -174,12 +174,12 @@ class ItineraryViewsGetTest(APITestCase):
                     'team_members': [
                         {'id': itinerary.team_members.all()[0].id,
                          'user': {
-                            'id': str(user.id),
-                            'email': user.email,
-                            'username': user.username,
-                            'first_name': user.first_name,
-                            'last_name': user.last_name,
-                            'full_name': user.full_name}}],
+                             'id': str(user.id),
+                             'email': user.email,
+                             'username': user.username,
+                             'first_name': user.first_name,
+                             'last_name': user.last_name,
+                             'full_name': user.full_name}}],
                     'items': [],
                     'settings': None}]}
 

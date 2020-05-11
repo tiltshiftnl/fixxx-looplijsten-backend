@@ -5,6 +5,7 @@ from api.fraudprediction.serializers import FraudPredictionSerializer
 
 LOGGER = logging.getLogger(__name__)
 
+
 def get_fraud_prediction(case_id):
     try:
         fraud_prediction = FraudPrediction.objects.get(case_id=case_id)

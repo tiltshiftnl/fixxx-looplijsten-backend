@@ -20,12 +20,12 @@ INSTALLED_APPS = (
     'corsheaders',
 
     # Third party apps
-    'rest_framework',            # utilities for rest apis
-    'django_filters',            # for filtering rest endpoints
-    'drf_yasg',                  # for generating real Swagger/OpenAPI 2.0 specifications
+    'rest_framework',  # utilities for rest apis
+    'django_filters',  # for filtering rest endpoints
+    'drf_yasg',  # for generating real Swagger/OpenAPI 2.0 specifications
     'constance',
     'constance.backends.database',  # for dynamic configurations in admin
-    'mozilla_django_oidc',       # for authentication
+    'mozilla_django_oidc',  # for authentication
 
     # Your apps
     'api.users',
@@ -51,7 +51,6 @@ MIDDLEWARE = (
 )
 
 ROOT_URLCONF = 'api.urls'
-
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 WSGI_APPLICATION = 'app.wsgi.application'
@@ -126,7 +125,6 @@ TEMPLATES = [
     },
 ]
 
-
 # Password Validation
 # https://docs.djangoproject.com/en/2.0/topics/auth/passwords/#module-django.contrib.auth.password_validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -178,7 +176,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
 CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
 CORS_ORIGIN_ALLOW_ALL = False
-
 
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
@@ -245,7 +242,6 @@ OIDC_OP_JWKS_ENDPOINT = os.getenv('OIDC_OP_JWKS_ENDPOINT',
 
 OIDC_USE_NONCE = True
 
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -272,7 +268,6 @@ LOGGING = {
         },
     }
 }
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=4),

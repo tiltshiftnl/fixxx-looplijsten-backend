@@ -32,9 +32,11 @@ class PlannerListSettingsSerializer(serializers.Serializer):
 
         return data
 
+
 class PlannerDaySettingsSerializer(serializers.Serializer):
     day = PlannerListSettingsSerializer(required=False, many=False)
     evening = PlannerListSettingsSerializer(required=False, many=False)
+
 
 class PlannerWeekSettingsSerializer(serializers.Serializer):
     monday = PlannerDaySettingsSerializer(required=True)
@@ -44,6 +46,7 @@ class PlannerWeekSettingsSerializer(serializers.Serializer):
     friday = PlannerDaySettingsSerializer(required=True)
     saturday = PlannerDaySettingsSerializer(required=True)
     sunday = PlannerDaySettingsSerializer(required=True)
+
 
 class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
     range_start = serializers.IntegerField(
@@ -64,6 +67,7 @@ class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
             raise serializers.ValidationError("The start range can't be higher than the end range")
 
         return data
+
 
 class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)

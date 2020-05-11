@@ -43,6 +43,7 @@ class HealthViewsTests(TestCase):
             tables=BWV_TABLES
         )
 
+
 class HealthViewsUrlsTests(TestCase):
     @patch('api.health.views.assert_health_generic')
     def test_health_default_url_view(self, mock_assert_health_generic):

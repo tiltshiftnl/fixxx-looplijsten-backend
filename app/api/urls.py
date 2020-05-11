@@ -39,29 +39,29 @@ api_router.register(r'fraud-prediction/scoring', FraudPredictionScoringViewSet,
                     basename='fraud-prediction-score')
 
 urlpatterns = [
-    # Admin environment
-    path('admin/', admin.site.urls),
+                  # Admin environment
+                  path('admin/', admin.site.urls),
 
-    # Algorithm sandbox environment
-    path('algorithm/', AlgorithmView.as_view(), name='algorithm'),
+                  # Algorithm sandbox environment
+                  path('algorithm/', AlgorithmView.as_view(), name='algorithm'),
 
-    # Health check urls
-    path('looplijsten/health', health_default, name='health-default'),
-    path('looplijsten/health_bwv', health_bwv, name='health-bwv'),
+                  # Health check urls
+                  path('looplijsten/health', health_default, name='health-default'),
+                  path('looplijsten/health_bwv', health_bwv, name='health-bwv'),
 
-    # The API for requesting data
-    path('api/v1/', include(api_router.urls)),
+                  # The API for requesting data
+                  path('api/v1/', include(api_router.urls)),
 
-    # Authentication endpoint for exchanging an OIDC code for a token
-    path('api/v1/oidc-authenticate/', ObtainAuthTokenOIDC.as_view(), name='oidc-authenticate'),
+                  # Authentication endpoint for exchanging an OIDC code for a token
+                  path('api/v1/oidc-authenticate/', ObtainAuthTokenOIDC.as_view(), name='oidc-authenticate'),
 
-    # Endpoint for checking if user is authenticated
-    path('api/v1/is-authenticated/', IsAuthenticatedView.as_view(), name='is-authenticated'),
+                  # Endpoint for checking if user is authenticated
+                  path('api/v1/is-authenticated/', IsAuthenticatedView.as_view(), name='is-authenticated'),
 
-    # Swagger/OpenAPI documentation
-    path('api/v1/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+                  # Swagger/OpenAPI documentation
+                  path('api/v1/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # JSON handlers for errors
 handler500 = 'rest_framework.exceptions.server_error'

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('fraudprediction', '0002_fraudprediction_synch_date'),
     ]

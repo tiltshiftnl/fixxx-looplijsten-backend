@@ -80,6 +80,7 @@ class ItineraryItemViewsCreateTest(APITestCase):
         itinerary_items = list(itinerary.items.all())
         self.assertEqual(POSITION, itinerary_items[0].position)
 
+
 class ItineraryItemViewsDeleteTest(APITestCase):
     """
     Tests for the API endpoint for deleting Itinerary Items

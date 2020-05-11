@@ -28,10 +28,10 @@ from utils.safety_lock import safety_lock
 @method_decorator(safety_lock, name='destroy')
 @method_decorator(safety_lock, name='list')
 class ItineraryViewSet(
-        ViewSet,
-        GenericAPIView,
-        DestroyModelMixin,
-        CreateModelMixin
+    ViewSet,
+    GenericAPIView,
+    DestroyModelMixin,
+    CreateModelMixin
 ):
     """
     CRUD for itineraries and teams
@@ -150,11 +150,11 @@ class ItineraryViewSet(
 @method_decorator(safety_lock, name='destroy')
 @method_decorator(safety_lock, name='create')
 class ItineraryItemViewSet(
-        ViewSet,
-        GenericAPIView,
-        CreateModelMixin,
-        UpdateModelMixin,
-        DestroyModelMixin):
+    ViewSet,
+    GenericAPIView,
+    CreateModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin):
     """
     A view for adding/removing an item to a user's itinerary
     """
@@ -190,11 +190,11 @@ class ItineraryItemViewSet(
 @method_decorator(safety_lock, name='destroy')
 @method_decorator(safety_lock, name='create')
 class NoteViewSet(
-        ViewSet,
-        GenericAPIView,
-        CreateModelMixin,
-        UpdateModelMixin,
-        DestroyModelMixin):
+    ViewSet,
+    GenericAPIView,
+    CreateModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin):
     """
     A view for adding/updating/removing a note
     """

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 def get_days_in_range(start_date, end_date):
     '''
     Return the number of days within a range

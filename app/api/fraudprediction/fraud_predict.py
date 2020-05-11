@@ -18,6 +18,7 @@ DATABASE_CONFIG_KEYS = ['adres', 'bwv_adres_periodes', 'bbga', 'hotline',
                         'personen', 'personen_hist', 'stadia', 'zaken']
 SCORE_STARTING_FROM_DATE = STARTING_FROM_DATE
 
+
 class FraudPredict():
 
     def start(self):

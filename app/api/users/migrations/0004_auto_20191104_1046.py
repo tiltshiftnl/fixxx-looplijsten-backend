@@ -6,7 +6,6 @@ from api.users import user_manager
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('users', '0003_auto_20191104_1040'),
     ]

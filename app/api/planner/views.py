@@ -24,6 +24,7 @@ class ConstantsProjectsViewSet(ViewSet):
     def list(self, request):
         return JsonResponse({'constants': PROJECTS})
 
+
 @method_decorator(safety_lock, 'list')
 class ConstantsStadiaViewSet(ViewSet):
     """
@@ -33,6 +34,7 @@ class ConstantsStadiaViewSet(ViewSet):
 
     def list(self, request):
         return JsonResponse({'constants': STADIA})
+
 
 @method_decorator(safety_lock, 'list')
 @method_decorator(safety_lock, 'create')

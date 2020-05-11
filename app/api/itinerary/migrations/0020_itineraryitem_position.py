@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('itinerary', '0019_remove_itineraryitem_position'),
     ]

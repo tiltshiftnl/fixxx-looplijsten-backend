@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('itinerary', '0034_itinerarysettings_target_itinerary_length'),
         ('cases', '0008_auto_20200309_1302'),

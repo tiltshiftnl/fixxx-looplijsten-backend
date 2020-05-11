@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('itinerary', '0031_itinerarysettings'),
     ]
@@ -14,6 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='itinerarysettings',
             name='itinerary',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='settings', to='itinerary.Itinerary', unique=True),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='settings',
+                                    to='itinerary.Itinerary', unique=True),
         ),
     ]

@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('itinerary', '0011_auto_20191113_1516'),
@@ -28,6 +27,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='itinerary',
             name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    to=settings.AUTH_USER_MODEL),
         ),
     ]

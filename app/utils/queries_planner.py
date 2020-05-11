@@ -1,5 +1,6 @@
 from utils.query_helpers import do_query
 
+
 def get_eligible_stadia(stages):
     '''
     Gets stadia which are eligible for planning
@@ -30,6 +31,7 @@ def get_eligible_stadia(stages):
         stadia_dictionary[case_id] = stadium
 
     return stadia_dictionary
+
 
 def get_eligible_cases(starting_date, projects):
     '''
@@ -63,6 +65,7 @@ def get_eligible_cases(starting_date, projects):
 
     return cases
 
+
 def match_cases_to_stages(cases, stages):
     '''
     Returns a list of cases which have been matched to stages
@@ -78,6 +81,7 @@ def match_cases_to_stages(cases, stages):
             filtered_cases.append({**case, **stage})
 
     return filtered_cases
+
 
 def get_cases_from_bwv(starting_date, projects, stages):
     # Due to a flaw in the BWV database design, there is no direct relationship

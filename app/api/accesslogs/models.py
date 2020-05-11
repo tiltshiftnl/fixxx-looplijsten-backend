@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class LogEntry(models.Model):
     '''
     A request log entry

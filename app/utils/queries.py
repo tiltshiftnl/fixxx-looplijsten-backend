@@ -4,7 +4,6 @@ from utils.statement_helpers import parse_statement
 
 
 def get_search_results(postal_code, street_number, suffix):
-
     suffix = suffix.replace(' ', '')
     suffix_query = ''
 
@@ -301,6 +300,7 @@ def get_case_basics(case_id):
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
+
 
 def get_bwv_tmp(case_id, adres_id):
     case_count = get_case_count(adres_id)

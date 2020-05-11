@@ -7,6 +7,7 @@ from api.planner.utils import calculate_geo_distances
 
 LOGGER = logging.getLogger(__name__)
 
+
 class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
     ''' Generates a list of suggestion based on a given location '''
 

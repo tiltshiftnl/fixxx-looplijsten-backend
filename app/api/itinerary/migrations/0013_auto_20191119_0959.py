@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('itinerary', '0012_auto_20191119_0859'),
     ]
@@ -15,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='itinerary',
             name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, unique=True),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL,
+                                    unique=True),
         ),
     ]

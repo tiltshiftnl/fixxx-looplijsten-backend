@@ -1,4 +1,3 @@
-
 BED_AND_BREAKFAST = "Bed en breakfast 2019"
 BURGWALLEN_PROJECT_OUDEZIJDE = "Burgwallenproject Oudezijde"
 CORPO_RICO = "Corpo-rico"

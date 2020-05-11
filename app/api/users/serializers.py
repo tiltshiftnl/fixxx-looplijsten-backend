@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class UserIdSerializer(serializers.Serializer):
     id = serializers.UUIDField(required=True)
     email = serializers.EmailField(read_only=True)
@@ -7,6 +8,7 @@ class UserIdSerializer(serializers.Serializer):
     first_name = serializers.CharField(read_only=True)
     last_name = serializers.CharField(read_only=True)
     full_name = serializers.CharField()
+
 
 class UserSerializer(serializers.Serializer):
     id = serializers.UUIDField(required=True)

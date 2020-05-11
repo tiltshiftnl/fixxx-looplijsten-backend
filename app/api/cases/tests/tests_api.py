@@ -301,6 +301,7 @@ class CaseSearchViewSetTest(APITestCase):
 
         self.assertEqual(expected_fraud_prediction, fraud_prediction_response)
 
+
 class UnplannedCasesTest(APITestCase):
     """
     Tests for the API endpoint for retrieving unplanned cases

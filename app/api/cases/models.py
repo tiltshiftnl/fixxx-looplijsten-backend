@@ -38,6 +38,7 @@ class Case(models.Model):
             return self.case_id
         return ''
 
+
 class Project(models.Model):
     CHOICES = [(project, project) for project in PROJECTS]
 
@@ -53,6 +54,7 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Stadium(models.Model):
     CHOICES = [(stadium, stadium) for stadium in STADIA]

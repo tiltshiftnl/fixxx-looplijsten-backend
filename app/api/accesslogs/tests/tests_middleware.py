@@ -18,6 +18,7 @@ FOO_USER_ID = 'FOO_USER_ID'
 FOO_RESPONSE = 'FOO Response'
 FOO_RESPONSE_STATUS_CODE = '200'
 
+
 def get_response_mock(request):
     response = Mock()
     response.response = FOO_RESPONSE
@@ -30,6 +31,7 @@ REQUEST.path = FOO_URI
 REQUEST.META = FOO_META
 REQUEST.method = FOO_REQUEST_METHOD
 REQUEST.user = AnonymousUser()
+
 
 class AccessLogsMiddlewareTest(TestCase):
 

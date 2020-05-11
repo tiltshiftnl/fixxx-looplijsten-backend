@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('itinerary', '0041_auto_20200414_1443'),
     ]
@@ -14,6 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='itinerarysettings',
             name='target_length',
-            field=models.IntegerField(default=8, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(20)]),
+            field=models.IntegerField(default=8, validators=[django.core.validators.MinValueValidator(1),
+                                                             django.core.validators.MaxValueValidator(20)]),
         ),
     ]

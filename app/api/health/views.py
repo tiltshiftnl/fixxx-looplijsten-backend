@@ -19,11 +19,13 @@ BWV_TABLES = [
     'import_wvs',
 ]
 
+
 def health_default(request):
     def assert_default_health():
         assert_health_generic(database_name=settings.DEFAULT_DATABASE_NAME)
 
     return get_health_response(assert_default_health, SUCCESS_DICTIONARY_DEFAULT)
+
 
 def health_bwv(request):
     def assert_bwv_health():

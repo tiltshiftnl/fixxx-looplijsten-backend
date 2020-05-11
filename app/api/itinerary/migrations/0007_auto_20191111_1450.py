@@ -7,7 +7,6 @@ from django.utils.timezone import utc
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('users', '0006_team'),
         ('itinerary', '0006_itineraryitem_stadium'),

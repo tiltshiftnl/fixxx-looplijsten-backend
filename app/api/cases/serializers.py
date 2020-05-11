@@ -10,6 +10,7 @@ class CaseSimpleSerializer(serializers.ModelSerializer):
         model = Case
         fields = ('case_id',)
 
+
 class CaseSerializer(serializers.ModelSerializer):
     fraud_prediction = FraudPredictionSerializer(required=False, read_only=True)
 
@@ -23,7 +24,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('name', )
+        fields = ('name',)
 
 
 class StadiumSerializer(serializers.ModelSerializer):
@@ -31,7 +32,8 @@ class StadiumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stadium
-        fields = ('name', )
+        fields = ('name',)
+
 
 class UnplannedCasesSerializer(serializers.Serializer):
     '''

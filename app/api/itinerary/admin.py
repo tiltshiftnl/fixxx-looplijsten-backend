@@ -11,15 +11,18 @@ class ItinerarySettingsInline(admin.StackedInline):
               'secondary_stadia', 'exclude_stadia', 'start_case')
     model = ItinerarySettings
 
+
 class ItineraryTeamMemberInline(admin.StackedInline):
-    fields = ('user', )
+    fields = ('user',)
     model = ItineraryTeamMember
     extra = 0
+
 
 class ItineraryItemInline(admin.StackedInline):
     fields = ('case',)
     model = ItineraryItem
     extra = 0
+
 
 @admin.register(Itinerary)
 class ItineraryAdmin(admin.ModelAdmin):
@@ -36,6 +39,7 @@ class ItineraryAdmin(admin.ModelAdmin):
     def export_as_json(self, request, queryset):
         serializer = ItinerarySerializer(queryset.all(), many=True)
         return JsonResponse({'looplijsten': serializer.data})
+
 
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):

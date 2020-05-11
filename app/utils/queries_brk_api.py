@@ -8,10 +8,12 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+
 def get_token():
     key = settings.CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY
     token, created = Constance.objects.get_or_create(key=key)
     return token.value
+
 
 def get_expiry():
     key = settings.CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY
@@ -21,10 +23,12 @@ def get_expiry():
     if not expiry == '':
         return expiry
 
+
 def set_constance(key, value):
     constance_object, created = Constance.objects.get_or_create(key=key)
     constance_object.value = value
     constance_object.save()
+
 
 def set_token(token):
     set_constance(
@@ -32,11 +36,13 @@ def set_token(token):
         token
     )
 
+
 def set_expiry(expiry):
     set_constance(
         settings.CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY,
         expiry
     )
+
 
 def request_new_token():
     payload = {

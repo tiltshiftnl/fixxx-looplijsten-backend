@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('cases', '0012_auto_20200407_1141'),
         ('itinerary', '0044_auto_20200429_0937'),
@@ -16,26 +15,33 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='itinerarysettings',
             name='exclude_stadia',
-            field=models.ManyToManyField(blank=True, null=True, related_name='settings_as_exclude_stadia', to='cases.Stadium'),
+            field=models.ManyToManyField(blank=True, null=True, related_name='settings_as_exclude_stadia',
+                                         to='cases.Stadium'),
         ),
         migrations.AlterField(
             model_name='itinerarysettings',
             name='postal_code_range_end',
-            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1000), django.core.validators.MaxValueValidator(1109)]),
+            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1000),
+                                                                         django.core.validators.MaxValueValidator(
+                                                                             1109)]),
         ),
         migrations.AlterField(
             model_name='itinerarysettings',
             name='postal_code_range_start',
-            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1000), django.core.validators.MaxValueValidator(1109)]),
+            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1000),
+                                                                         django.core.validators.MaxValueValidator(
+                                                                             1109)]),
         ),
         migrations.AlterField(
             model_name='itinerarysettings',
             name='primary_stadium',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='settings_as_primary_stadium', to='cases.Stadium'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE,
+                                    related_name='settings_as_primary_stadium', to='cases.Stadium'),
         ),
         migrations.AlterField(
             model_name='itinerarysettings',
             name='secondary_stadia',
-            field=models.ManyToManyField(blank=True, null=True, related_name='settings_as_secondary_stadia', to='cases.Stadium'),
+            field=models.ManyToManyField(blank=True, null=True, related_name='settings_as_secondary_stadia',
+                                         to='cases.Stadium'),
         ),
     ]

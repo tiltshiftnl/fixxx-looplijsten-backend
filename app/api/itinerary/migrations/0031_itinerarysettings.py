@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('cases', '0007_project_state'),
         ('itinerary', '0030_auto_20200305_1601'),
@@ -18,10 +17,13 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('opening_date', models.DateField()),
                 ('exclude_states', models.ManyToManyField(related_name='settings_as_exclude_state', to='cases.State')),
-                ('itinerary', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='settings', to='itinerary.Itinerary')),
-                ('primary_state', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='settings_as_primary_state', to='cases.State')),
+                ('itinerary', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='settings',
+                                                to='itinerary.Itinerary')),
+                ('primary_state', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                                    related_name='settings_as_primary_state', to='cases.State')),
                 ('projects', models.ManyToManyField(related_name='settings', to='cases.Project')),
-                ('secondary_states', models.ManyToManyField(related_name='settings_as_secondary_state', to='cases.State')),
+                ('secondary_states',
+                 models.ManyToManyField(related_name='settings_as_secondary_state', to='cases.State')),
             ],
         ),
     ]

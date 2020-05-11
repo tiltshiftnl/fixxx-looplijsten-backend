@@ -8,8 +8,11 @@ from django.test import TestCase
 from utils.safety_lock import safety_lock
 
 MOCK_RETURN = 'Foo'
+
+
 def mock_function():
     return MOCK_RETURN
+
 
 class SafetyLockTest(TestCase):
 

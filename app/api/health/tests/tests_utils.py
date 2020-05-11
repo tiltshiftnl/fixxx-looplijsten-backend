@@ -14,6 +14,7 @@ TABLE_NAME = 'foo-table'
 SUCCESS_MESSAGE = {'message': 'foo-success'}
 ERROR_MESSAGE = 'foo-error'
 
+
 class GetHealthResponseTests(TestCase):
     def test_get_health_response_execute(self):
         '''
@@ -67,6 +68,7 @@ class GetHealthResponseTests(TestCase):
             query
         )
 
+
 class TableFilledQueryTests(TestCase):
     def test_is_table_filled_query(self):
         '''
@@ -79,6 +81,7 @@ class TableFilledQueryTests(TestCase):
             "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'foo-table'",
             query
         )
+
 
 class HealthTableTests(TestCase):
     @patch('api.health.utils.connections')

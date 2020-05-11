@@ -150,6 +150,7 @@ class Itinerary(models.Model):
 
         return string
 
+
 class ItinerarySettings(models.Model):
     """
     Settings for an itinerary
@@ -223,6 +224,7 @@ class ItinerarySettings(models.Model):
         self.full_clean()
         return super().save(*args, **kwargs)
 
+
 class ItineraryTeamMember(models.Model):
     """ Member of an Itinerary Team """
 
@@ -241,6 +243,7 @@ class ItineraryTeamMember(models.Model):
 
     def __str__(self):
         return self.user.full_name
+
 
 class ItineraryItem(models.Model):
     """ Single Itinerary item """
@@ -265,7 +268,7 @@ class ItineraryItem(models.Model):
         itinerary_item_list = self.itinerary.items.all().order_by('position')
         itinerary_items = list(itinerary_item_list)
 
-        if(len(itinerary_items) == 0):
+        if (len(itinerary_items) == 0):
             self.position = 1
         else:
             last_item = itinerary_items[-1]
@@ -300,6 +303,7 @@ class ItineraryItem(models.Model):
         self.check_items_same_case()
 
         super().save(*args, **kwargs)
+
 
 class Note(models.Model):
     """ A note for an Itinerary Item """

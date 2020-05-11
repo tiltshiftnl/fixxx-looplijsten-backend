@@ -14,12 +14,14 @@ class NoteCrudSerializer(serializers.ModelSerializer):
         model = Note
         fields = ('id', 'text', 'itinerary_item', 'author')
 
+
 class NoteSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
 
     class Meta:
         model = Note
         fields = ('id', 'text', 'author')
+
 
 class ItinerarySettingsSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(many=True)
@@ -34,6 +36,7 @@ class ItinerarySettingsSerializer(serializers.ModelSerializer):
                   'primary_stadium', 'secondary_stadia', 'exclude_stadia',
                   'start_case', 'postal_code_range_start', 'postal_code_range_end')
 
+
 class ItineraryItemSerializer(serializers.ModelSerializer):
     case = CaseSerializer(read_only=True)
     notes = NoteSerializer(read_only=True, many=True)
@@ -42,12 +45,14 @@ class ItineraryItemSerializer(serializers.ModelSerializer):
         model = ItineraryItem
         fields = ('id', 'position', 'notes', 'case', 'checked')
 
+
 class ItineraryItemUpdateSerializer(serializers.ModelSerializer):
     position = serializers.FloatField(required=False)
 
     class Meta:
         model = ItineraryItem
         fields = ('id', 'position', 'checked')
+
 
 class ItineraryItemCreateSerializer(serializers.ModelSerializer):
     case_id = serializers.CharField(required=True)
@@ -74,6 +79,7 @@ class ItineraryTeamMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItineraryTeamMember
         fields = ('id', 'user',)
+
 
 class ItinerarySerializer(serializers.ModelSerializer):
     items = ItineraryItemSerializer(read_only=True, many=True)

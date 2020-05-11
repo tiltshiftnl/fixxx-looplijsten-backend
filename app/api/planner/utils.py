@@ -1,5 +1,6 @@
 from geopy.distance import distance
 
+
 def filter_out_cases(cases, stadia=[]):
     '''
     Returns a list of cases without the given stadia
@@ -12,6 +13,7 @@ def filter_out_cases(cases, stadia=[]):
 
     return list(filter(lambda case: has_stadium(case), cases))
 
+
 def filter_cases(cases, stadia):
     '''
     Returns a list of cases with the given stadia
@@ -23,6 +25,7 @@ def filter_cases(cases, stadia):
         return case['stadium'] in stadia
 
     return list(filter(lambda case: has_stadium(case), cases))
+
 
 def remove_cases_from_list(cases, cases_to_remove):
     '''
@@ -37,6 +40,7 @@ def remove_cases_from_list(cases, cases_to_remove):
 
     return new_list
 
+
 def get_case_coordinates(cases):
     '''
     Maps the cases to an array of coordinates
@@ -44,6 +48,7 @@ def get_case_coordinates(cases):
     coordinates = list(map(lambda case: [case['lat'], case['lng']], cases))
 
     return coordinates
+
 
 def calculate_geo_distances(center, cases):
     '''
@@ -59,6 +64,7 @@ def filter_cases_with_missing_coordinates(cases):
     '''
     Cases with polluted data (missing coordinates) are removed
     '''
+
     def has_missing_coordinates(case):
         return case.get('lat') is not None and case.get('lng')
 

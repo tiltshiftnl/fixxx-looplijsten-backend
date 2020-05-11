@@ -12,6 +12,7 @@ from utils.queries import get_case
 
 LOGGER = logging.getLogger(__name__)
 
+
 class Weights():
     '''
     A configurable weight object which is used in our scoring function
@@ -23,7 +24,6 @@ class Weights():
                  primary_stadium=SCORING_WEIGHTS.PRIMARY_STADIUM.value,
                  secondary_stadium=SCORING_WEIGHTS.SECONDARY_STADIUM.value,
                  issuemelding=SCORING_WEIGHTS.ISSUEMELDING.value):
-
         self.distance = distance
         self.fraud_probability = fraud_probability
         self.primary_stadium = primary_stadium
@@ -36,12 +36,11 @@ class Weights():
               primary_stadium,
               secondary_stadium,
               issuemelding):
-
         values = [distance, fraud_probability, primary_stadium, secondary_stadium, issuemelding]
         weights = [self.distance, self.fraud_probability,
                    self.primary_stadium, self.secondary_stadium, self.issuemelding]
 
-        products = [value*weight for value, weight in zip(values, weights)]
+        products = [value * weight for value, weight in zip(values, weights)]
         return sum(products)
 
     def __str__(self):

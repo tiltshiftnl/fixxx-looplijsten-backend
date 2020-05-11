@@ -8,6 +8,7 @@ from api.users.models import User
 
 USER_EMAIL = 'foo@foo.com'
 
+
 class UserModelTest(TestCase):
 
     def test_create_user(self):

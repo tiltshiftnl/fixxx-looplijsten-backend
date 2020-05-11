@@ -5,6 +5,7 @@ from api.users.models import User
 
 AUTHENTICATED_CLIENT_EMAIL = 'f.foo@foo.com'
 
+
 def get_test_user():
     '''
     Creates and returns a test user
@@ -22,6 +23,7 @@ def get_authenticated_client():
     client = APIClient()
     client.credentials(HTTP_AUTHORIZATION='Bearer {}'.format(access_token))
     return client
+
 
 def get_unauthenticated_client():
     '''

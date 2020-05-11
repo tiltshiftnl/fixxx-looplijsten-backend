@@ -16,6 +16,7 @@ ACCESS_INFO_REALM = 'realm_access'
 
 LOGGER = logging.getLogger(__name__)
 
+
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
 
     @safety_lock

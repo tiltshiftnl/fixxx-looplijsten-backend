@@ -98,6 +98,7 @@ class GetBagSearchQueryTest(TestCase):
 
         self.assertEquals(result, 'postcode_foo hsnr_foo hsltr_foo')
 
+
 class DoBagSearchAddressTest(TestCase):
 
     @patch('utils.queries_bag_api.get_bag_search_query')

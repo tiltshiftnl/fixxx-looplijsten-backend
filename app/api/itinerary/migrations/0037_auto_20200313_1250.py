@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('itinerary', '0036_auto_20200309_1528'),
     ]

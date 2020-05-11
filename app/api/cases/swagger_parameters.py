@@ -17,7 +17,6 @@ stadium = openapi.Parameter(
 
 unplanned_parameters = [date, stadium]
 
-
 '''
 Manual parameters for the case search view in Swagger API documentation
 '''

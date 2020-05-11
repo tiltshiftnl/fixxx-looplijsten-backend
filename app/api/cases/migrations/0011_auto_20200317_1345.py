@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('cases', '0010_auto_20200313_1250'),
     ]
@@ -13,6 +12,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stadium',
             name='name',
-            field=models.CharField(choices=[('2de Controle', '2de Controle'), ('2de hercontrole', '2de hercontrole'), ('3de Controle', '3de Controle'), ('3de hercontrole', '3de hercontrole'), ('Avondronde', 'Avondronde'), ('Hercontrole', 'Hercontrole'), ('Onderzoek advertentie', 'Onderzoek advertentie'), ('Onderzoek buitendienst', 'Onderzoek buitendienst'), ('Weekend buitendienstonderzoek', 'Weekend buitendienstonderzoek'), ('Issuemelding', 'Issuemelding')], max_length=255, unique=True),
+            field=models.CharField(choices=[('2de Controle', '2de Controle'), ('2de hercontrole', '2de hercontrole'),
+                                            ('3de Controle', '3de Controle'), ('3de hercontrole', '3de hercontrole'),
+                                            ('Avondronde', 'Avondronde'), ('Hercontrole', 'Hercontrole'),
+                                            ('Onderzoek advertentie', 'Onderzoek advertentie'),
+                                            ('Onderzoek buitendienst', 'Onderzoek buitendienst'),
+                                            ('Weekend buitendienstonderzoek', 'Weekend buitendienstonderzoek'),
+                                            ('Issuemelding', 'Issuemelding')], max_length=255, unique=True),
         ),
     ]

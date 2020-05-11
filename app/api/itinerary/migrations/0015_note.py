@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('itinerary', '0014_auto_20191120_0856'),
     ]
@@ -16,7 +15,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField()),
-                ('itinerary_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notes', to='itinerary.ItineraryItem')),
+                ('itinerary_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notes',
+                                                     to='itinerary.ItineraryItem')),
             ],
         ),
     ]

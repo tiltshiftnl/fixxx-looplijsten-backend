@@ -21,6 +21,7 @@ MOCK_AUTH_REQUEST.data.code = MOCK_AUTH_CODE
 MOCK_AUTH_REQUEST.META = {}
 MOCK_AUTH_REQUEST.META['HTTP_REFERER'] = 'FOO REDIRECT'
 
+
 class AuthTest(TestCase):
 
     @override_config(ALLOW_DATA_ACCESS=False)

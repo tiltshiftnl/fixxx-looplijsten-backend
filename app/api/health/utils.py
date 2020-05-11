@@ -23,6 +23,7 @@ def is_table_filled_query(table):
     '''
     return "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = '{}'".format(table)
 
+
 def assert_health_table(database_name, table):
     '''
     Given a database and one table, checks if the table is filled with at least on entry
@@ -32,6 +33,7 @@ def assert_health_table(database_name, table):
     cursor.execute(query)
     row = cursor.fetchone()
     assert row[0] > 0, 'The {} table in {} is empty'.format(table, database_name)
+
 
 def assert_health_database_tables(database_name, tables):
     '''
@@ -48,6 +50,7 @@ def assert_health_generic(database_name):
     cursor = connections[database_name].cursor()
     cursor.execute('select 1')
     assert cursor.fetchone()
+
 
 def get_bwv_sync_times():
     query = """SELECT start, finished FROM sync_log ORDER BY start DESC"""

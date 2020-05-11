@@ -7,6 +7,7 @@ from utils.queries_planner import get_cases_from_bwv
 
 LOGGER = logging.getLogger(__name__)
 
+
 class ItineraryGenerateAlgorithm():
     ''' An abstract class which forms the basis of itinerary generating algorithms '''
 
