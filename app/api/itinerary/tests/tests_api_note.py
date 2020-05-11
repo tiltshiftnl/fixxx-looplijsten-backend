@@ -1,9 +1,11 @@
-from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
 from constance.test import override_config
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 from api.itinerary.models import Itinerary, ItineraryItem, Note
 from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client, get_test_user
+
 
 class NoteViewsCreateTest(APITestCase):
     """

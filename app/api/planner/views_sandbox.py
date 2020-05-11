@@ -1,15 +1,17 @@
 from types import SimpleNamespace
-from django.views import View
-from django.shortcuts import render
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.conf import settings
-from constance.backends.database.models import Constance
 
-from utils.safety_lock import safety_lock
+from constance.backends.database.models import Constance
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
+from django.views import View
+
 from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
-from api.planner.const import SCORING_WEIGHTS
 from api.planner.algorithm.knapsack import ItineraryKnapsackList
+from api.planner.const import SCORING_WEIGHTS
 from api.planner.utils import remove_cases_from_list
+from utils.safety_lock import safety_lock
+
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/admin/login/'

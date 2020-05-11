@@ -3,9 +3,12 @@
 Tests for query_helpers
 """
 from unittest.mock import patch, Mock
-from django.test import TestCase
+
 from django.db import Error
+from django.test import TestCase
+
 from utils.query_helpers import return_first_or_empty, do_query
+
 
 # TODO: Write tests for query_to_list
 

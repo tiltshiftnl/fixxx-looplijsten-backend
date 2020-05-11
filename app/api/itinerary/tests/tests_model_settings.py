@@ -1,7 +1,9 @@
-from django.test import TestCase
 from django.conf import settings
-from api.itinerary.models import ItinerarySettings, Itinerary
+from django.test import TestCase
+
 from api.cases.models import Stadium, Project, Case
+from api.itinerary.models import ItinerarySettings, Itinerary
+
 
 class ItinerarySettingsModelTest(TestCase):
 

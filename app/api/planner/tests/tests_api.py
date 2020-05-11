@@ -1,10 +1,12 @@
-from rest_framework.test import APITestCase
+from constance.test import override_config
 from django.urls import reverse
 from rest_framework import status
-from constance.test import override_config
-from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
-from app.api.planner.const import EXAMPLE_PLANNER_SETTINGS
+from rest_framework.test import APITestCase
+
 from app.api.cases.const import PROJECTS, STADIA
+from app.api.planner.const import EXAMPLE_PLANNER_SETTINGS
+from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
+
 
 class ConstantsProjectsViewSet(APITestCase):
     """

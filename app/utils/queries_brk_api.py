@@ -1,7 +1,8 @@
 # TODO: Write tests for these functions
-import requests
 import logging
 from datetime import datetime, timedelta
+
+import requests
 from constance.backends.database.models import Constance
 from django.conf import settings
 

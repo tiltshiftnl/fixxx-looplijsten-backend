@@ -2,7 +2,9 @@
 Tests for helpers
 """
 from django.test import TestCase
+
 from api.users.utils import generate_username
+
 
 class GenerateUsernameTest(TestCase):
 

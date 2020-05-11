@@ -1,9 +1,10 @@
 """
 Tests for cases models
 """
-from api.users.models import User
-from django.test import TestCase
 from django.db import transaction
+from django.test import TestCase
+
+from api.users.models import User
 
 USER_EMAIL = 'foo@foo.com'
 

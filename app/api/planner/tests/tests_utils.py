@@ -2,10 +2,11 @@
 Tests for the health views
 """
 from django.test import TestCase
-from api.planner.utils import filter_cases
-from api.planner.utils import remove_cases_from_list, get_case_coordinates, filter_cases_with_postal_code
-from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases
+
 from api.cases.const import ISSUEMELDING, TWEEDE_CONTROLE, ONDERZOEK_BUITENDIENST
+from api.planner.utils import filter_cases
+from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases
+from api.planner.utils import remove_cases_from_list, get_case_coordinates, filter_cases_with_postal_code
 
 
 class UtilsTests(TestCase):

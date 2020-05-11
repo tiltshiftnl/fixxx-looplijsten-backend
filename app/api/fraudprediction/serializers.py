@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from api.fraudprediction.models import FraudPrediction
+
 
 class FraudPredictionSerializer(serializers.ModelSerializer):
     class Meta:

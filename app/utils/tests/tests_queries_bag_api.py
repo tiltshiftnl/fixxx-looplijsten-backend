@@ -1,11 +1,14 @@
 """
 Tests for BAG queries
 """
-from django.test import TestCase
-from django.conf import settings
-from utils.queries_bag_api import get_bag_search_query, do_bag_search_address, do_bag_search_id, get_bag_data
-from utils.queries_bag_api import do_bag_search
 from unittest.mock import patch, Mock
+
+from django.conf import settings
+from django.test import TestCase
+
+from utils.queries_bag_api import do_bag_search
+from utils.queries_bag_api import get_bag_search_query, do_bag_search_address, do_bag_search_id, get_bag_data
+
 
 class GetBagSearchQueryTest(TestCase):
 

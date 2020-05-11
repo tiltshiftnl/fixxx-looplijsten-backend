@@ -1,9 +1,11 @@
-import os
-from os.path import join
-from datetime import timedelta
 import json
+import os
+from datetime import timedelta
+from os.path import join
+
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

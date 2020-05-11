@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+
 from utils import queries
 
 logger = logging.getLogger(__name__)

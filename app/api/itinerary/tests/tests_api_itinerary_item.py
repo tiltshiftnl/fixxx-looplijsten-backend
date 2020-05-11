@@ -1,10 +1,12 @@
-from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
 from constance.test import override_config
-from api.itinerary.models import Itinerary, ItineraryItem
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 from api.cases.models import Case
+from api.itinerary.models import Itinerary, ItineraryItem
 from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
+
 
 class ItineraryItemViewsCreateTest(APITestCase):
     """

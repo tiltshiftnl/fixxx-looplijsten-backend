@@ -1,6 +1,8 @@
-from django.contrib.auth.models import AnonymousUser
-from api.accesslogs.models import LogEntry
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
+
+from api.accesslogs.models import LogEntry
+
 
 class LoggingMiddleware:
     def __init__(self, get_response):

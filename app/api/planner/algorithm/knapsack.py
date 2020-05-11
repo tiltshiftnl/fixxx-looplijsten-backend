@@ -1,12 +1,14 @@
-import multiprocessing
 import logging
+import multiprocessing
+
 from joblib import Parallel, delayed
+
 from api.cases.const import ISSUEMELDING
-from api.planner.utils import calculate_geo_distances, remove_cases_from_list
+from api.fraudprediction.utils import get_fraud_predictions
 from api.planner.algorithm.base import ItineraryGenerateAlgorithm
 from api.planner.const import SCORING_WEIGHTS, MAX_SUGGESTIONS_COUNT
+from api.planner.utils import calculate_geo_distances, remove_cases_from_list
 from utils.queries import get_case
-from api.fraudprediction.utils import get_fraud_predictions
 
 LOGGER = logging.getLogger(__name__)
 

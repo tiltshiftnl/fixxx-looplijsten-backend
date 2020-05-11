@@ -1,8 +1,11 @@
 import uuid
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from api.users.user_manager import UserManager
 from api.users.utils import generate_username
+
 
 class User(AbstractUser):
     class Meta:

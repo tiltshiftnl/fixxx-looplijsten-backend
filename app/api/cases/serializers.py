@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from api.cases.models import Case, Project, Stadium
+
 from api.cases.const import STADIA, PROJECTS
+from api.cases.models import Case, Project, Stadium
 from api.fraudprediction.serializers import FraudPredictionSerializer
+
 
 class CaseSimpleSerializer(serializers.ModelSerializer):
     class Meta:

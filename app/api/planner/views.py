@@ -1,17 +1,18 @@
 import json
-from django.http import JsonResponse, HttpResponseBadRequest
-from django.conf import settings
-from django.utils.decorators import method_decorator
 
-from rest_framework.viewsets import ViewSet
+from constance.backends.database.models import Constance
+from django.conf import settings
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.utils.decorators import method_decorator
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from constance.backends.database.models import Constance
+from rest_framework.viewsets import ViewSet
 
-from utils.safety_lock import safety_lock
-from api.planner.serializers import PlannerSettingsSerializer
 from api.cases.const import STADIA, PROJECTS
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
+from api.planner.serializers import PlannerSettingsSerializer
+from utils.safety_lock import safety_lock
+
 
 @method_decorator(safety_lock, 'list')
 class ConstantsProjectsViewSet(ViewSet):

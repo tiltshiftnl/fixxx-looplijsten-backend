@@ -1,15 +1,16 @@
 import logging
+
 from django.http import HttpResponseBadRequest
 from django.utils.decorators import method_decorator
-
-from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics
-from api.users.models import User
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from api.users.auth import OIDCAuthenticationBackend
+from api.users.models import User
 from api.users.serializers import UserSerializer
 from utils.safety_lock import safety_lock
 

@@ -1,6 +1,8 @@
 from django.test import TestCase
+
 from api.itinerary.models import Itinerary, ItineraryTeamMember
 from api.users.models import User
+
 
 class TeamMemberModelTest(TestCase):
     def test_create_team_member(self):

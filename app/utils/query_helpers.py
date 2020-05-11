@@ -1,6 +1,7 @@
 import logging
-from django.db import connections
+
 from django.conf import settings
+from django.db import connections
 
 logger = logging.getLogger(__name__)
 

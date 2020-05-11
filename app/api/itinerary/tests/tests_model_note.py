@@ -1,7 +1,8 @@
 from django.test import TestCase
 
-from api.users.models import User
 from api.itinerary.models import ItineraryItem, Itinerary, Note
+from api.users.models import User
+
 
 class NoteModelTest(TestCase):
     def test_create_note(self):

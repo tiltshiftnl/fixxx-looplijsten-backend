@@ -1,9 +1,11 @@
 """
 Tests for cases models
 """
-from django.test import TestCase
-from django.db.utils import IntegrityError
 from unittest.mock import Mock
+
+from django.db.utils import IntegrityError
+from django.test import TestCase
+
 from api.cases.models import Case, Project, Stadium
 from api.fraudprediction.models import FraudPrediction
 

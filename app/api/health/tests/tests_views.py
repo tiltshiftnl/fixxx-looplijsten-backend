@@ -1,11 +1,13 @@
 """
 Tests for the health views
 """
+from unittest.mock import patch, Mock
+
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
-from unittest.mock import patch, Mock
+
 from api.health.views import health_default, health_bwv, BWV_TABLES
-from django.conf import settings
 from app.utils.unittest_helpers import get_unauthenticated_client
 
 

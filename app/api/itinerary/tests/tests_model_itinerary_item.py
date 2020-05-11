@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from api.itinerary.models import Itinerary, ItineraryItem
 from api.cases.models import Case
+from api.itinerary.models import Itinerary, ItineraryItem
 
 FOO_CASE_ID_A = 'FOO_CASE_ID_A'
 FOO_CASE_ID_B = 'FOO_CASE_ID_B'

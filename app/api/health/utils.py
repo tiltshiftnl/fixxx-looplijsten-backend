@@ -1,6 +1,8 @@
 from django.db import connections
 from django.http import JsonResponse
+
 from utils.query_helpers import do_query
+
 
 def get_health_response(health_checks, success_dictionary):
     '''

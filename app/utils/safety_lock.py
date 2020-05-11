@@ -1,5 +1,6 @@
-from django.http import Http404
 from constance import config
+from django.http import Http404
+
 
 def safety_lock(func):
     '''

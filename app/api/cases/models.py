@@ -1,7 +1,9 @@
 from django.db import models
-from utils.queries import get_case
+
 from api.cases.const import PROJECTS, STADIA
 from api.fraudprediction.models import FraudPrediction
+from utils.queries import get_case
+
 
 class Case(models.Model):
     class Meta:

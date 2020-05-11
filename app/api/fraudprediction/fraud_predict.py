@@ -1,15 +1,16 @@
 # TODO: Add tests
-import math
-import logging
-import os
 import glob
+import logging
+import math
+import os
+
 from django.conf import settings
 from django.db import connections
 from woonfraude_model import score
-from utils.queries_planner import get_cases_from_bwv
-from api.cases.const import STADIA, PROJECTS, STARTING_FROM_DATE
 
+from api.cases.const import STADIA, PROJECTS, STARTING_FROM_DATE
 from api.fraudprediction.models import FraudPrediction
+from utils.queries_planner import get_cases_from_bwv
 
 LOGGER = logging.getLogger(__name__)
 

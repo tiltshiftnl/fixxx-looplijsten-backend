@@ -1,13 +1,15 @@
 from unittest.mock import patch, Mock
-from rest_framework.test import APITestCase
-from rest_framework import status
-from django.urls import reverse
-from constance.test import override_config
 
-from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
+from constance.test import override_config
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from api.cases.const import ISSUEMELDING
 from api.fraudprediction.models import FraudPrediction
 from api.fraudprediction.serializers import FraudPredictionSerializer
-from api.cases.const import ISSUEMELDING
+from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
+
 
 class CaseViewSetTest(APITestCase):
     """

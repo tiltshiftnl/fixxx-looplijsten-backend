@@ -1,10 +1,10 @@
 """
 Tests for accesslogs models
 """
-from api.accesslogs.models import LogEntry
-from django.test import TestCase
 from django.db.utils import DataError
+from django.test import TestCase
 
+from api.accesslogs.models import LogEntry
 
 FOO_URI = 'FOO_URI'
 FOO_META = 'FOO_META'

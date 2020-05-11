@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from api.accesslogs.models import LogEntry
+
 
 @admin.register(LogEntry)
 class LogEntryAdmin(admin.ModelAdmin):

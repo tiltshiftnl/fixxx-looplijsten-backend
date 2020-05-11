@@ -1,9 +1,10 @@
 """
 Tests for safey_lock
 """
-from django.test import TestCase
-from django.http import Http404
 from constance.test import override_config
+from django.http import Http404
+from django.test import TestCase
+
 from utils.safety_lock import safety_lock
 
 MOCK_RETURN = 'Foo'

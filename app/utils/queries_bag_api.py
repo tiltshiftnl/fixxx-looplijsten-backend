@@ -1,6 +1,8 @@
-import requests
 import logging
+
+import requests
 from django.conf import settings
+
 from utils.queries import get_import_adres
 
 logger = logging.getLogger(__name__)

@@ -2,10 +2,12 @@
 Tests for the health util functions
 """
 import json
-from django.test import TestCase
 from unittest.mock import Mock, patch
-from api.health.utils import is_table_filled_query, get_health_response, assert_health_table
+
+from django.test import TestCase
+
 from api.health.utils import assert_health_database_tables, assert_health_generic
+from api.health.utils import is_table_filled_query, get_health_response, assert_health_table
 
 DATABASE_NAME = 'foo-test-db'
 TABLE_NAME = 'foo-table'

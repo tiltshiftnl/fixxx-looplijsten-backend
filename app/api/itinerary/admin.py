@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.http import JsonResponse
+
 from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
 from api.itinerary.serializers import ItinerarySerializer
-from django.http import JsonResponse
+
 
 class ItinerarySettingsInline(admin.StackedInline):
     fields = ('opening_date', 'target_length', 'postal_code_range_start',

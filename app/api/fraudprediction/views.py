@@ -1,16 +1,17 @@
 # TODO: Add tests
-import os
-from multiprocessing import Process
 import logging
+import os
 from datetime import datetime
+from multiprocessing import Process
+
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
-from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ViewSet
 
+from api.fraudprediction.fraud_predict import FraudPredict
 from api.fraudprediction.permissions import FraudPredicionApiKeyAuth
 from utils.safety_lock import safety_lock
-from api.fraudprediction.fraud_predict import FraudPredict
 
 LOGGER = logging.getLogger(__name__)
 

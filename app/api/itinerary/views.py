@@ -1,25 +1,26 @@
 from datetime import datetime
+
 from django.db import transaction
 from django.http import JsonResponse, Http404
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from django.utils.decorators import method_decorator
-
-from rest_framework.viewsets import ViewSet
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
-from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import APIException, NotFound
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
+from rest_framework.exceptions import APIException, NotFound
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
 
+from api.cases.models import Case
 from api.itinerary.models import Itinerary, ItineraryItem, Note
-from api.users.models import User
+from api.itinerary.serializers import ItineraryItemUpdateSerializer
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer
 from api.itinerary.serializers import ItineraryTeamMemberSerializer, ItineraryItemCreateSerializer
-from api.itinerary.serializers import ItineraryItemUpdateSerializer
-from api.cases.models import Case
+from api.users.models import User
 from utils.safety_lock import safety_lock
+
 
 @method_decorator(safety_lock, name='team')
 @method_decorator(safety_lock, name='suggestions')

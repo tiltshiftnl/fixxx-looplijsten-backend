@@ -1,6 +1,8 @@
 from django.conf import settings
 from rest_framework import serializers
+
 from api.cases.const import PROJECTS, STADIA
+
 
 class PlannerListSettingsSerializer(serializers.Serializer):
     length_of_list = serializers.IntegerField(required=False, min_value=1, max_value=20, default=8)

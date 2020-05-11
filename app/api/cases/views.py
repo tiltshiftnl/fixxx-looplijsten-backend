@@ -1,23 +1,23 @@
 from datetime import datetime
+
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.utils.decorators import method_decorator
-
-from rest_framework.viewsets import ViewSet
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import ListAPIView
-from rest_framework.decorators import action
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import action
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ViewSet
 
-from utils.safety_lock import safety_lock
 import utils.queries as q
-import utils.queries_brk_api as brk_api
 import utils.queries_bag_api as bag_api
-
-from api.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
-from api.itinerary.models import Itinerary
-from api.fraudprediction.utils import get_fraud_prediction, add_fraud_predictions
-from api.cases.swagger_parameters import unplanned_parameters, case_search_parameters
+import utils.queries_brk_api as brk_api
 from api.cases.serializers import UnplannedCasesSerializer
+from api.cases.swagger_parameters import unplanned_parameters, case_search_parameters
+from api.fraudprediction.utils import get_fraud_prediction, add_fraud_predictions
+from api.itinerary.models import Itinerary
+from api.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
+from utils.safety_lock import safety_lock
+
 
 @method_decorator(safety_lock, 'retrieve')
 @method_decorator(safety_lock, 'unplanned')

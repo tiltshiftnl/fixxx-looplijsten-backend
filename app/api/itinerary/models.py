@@ -1,14 +1,16 @@
-from django.db import models
-from django.contrib.admin.utils import flatten
-from django.core.validators import MinValueValidator, MaxValueValidator
-from django.core.exceptions import ValidationError
 from django.conf import settings
-from api.users.models import User
-from api.cases.models import Case, Project, Stadium
+from django.contrib.admin.utils import flatten
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+
 from api.cases.const import PROJECTS, STARTING_FROM_DATE
+from api.cases.models import Case, Project, Stadium
 from api.planner.algorithm.knapsack import ItineraryKnapsackSuggestions, ItineraryKnapsackList
 from api.planner.utils import remove_cases_from_list
+from api.users.models import User
 from utils.queries_planner import get_cases_from_bwv
+
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """

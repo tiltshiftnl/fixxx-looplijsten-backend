@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from api.cases.models import Case, Project, Stadium
+
 
 @admin.register(Case)
 class CaseAdmin(admin.ModelAdmin):

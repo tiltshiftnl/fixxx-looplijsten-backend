@@ -1,19 +1,19 @@
 from django.conf import settings
-from django.urls import path, include
 from django.conf.urls.static import static
 from django.contrib import admin
-from rest_framework.routers import DefaultRouter
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
+from django.urls import path, include
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+from rest_framework.routers import DefaultRouter
 
-from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
 from api.cases.views import CaseViewSet, CaseSearchViewSet
-from api.health.views import health_default, health_bwv
-from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView, UserListView
-from api.planner.views_sandbox import AlgorithmView
-from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
 from api.fraudprediction.views import FraudPredictionScoringViewSet
+from api.health.views import health_default, health_bwv
+from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteViewSet
+from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
+from api.planner.views_sandbox import AlgorithmView
+from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView, UserListView
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"

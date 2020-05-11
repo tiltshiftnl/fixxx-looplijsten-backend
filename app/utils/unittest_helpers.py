@@ -1,5 +1,6 @@
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from api.users.models import User
 
 AUTHENTICATED_CLIENT_EMAIL = 'f.foo@foo.com'

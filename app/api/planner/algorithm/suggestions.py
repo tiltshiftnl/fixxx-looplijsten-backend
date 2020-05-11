@@ -1,8 +1,9 @@
 import logging
-from api.planner.algorithm.base import ItineraryGenerateAlgorithm
-from api.planner.utils import calculate_geo_distances
-from api.planner.const import MAX_SUGGESTIONS_COUNT
+
 from api.fraudprediction.utils import get_fraud_prediction
+from api.planner.algorithm.base import ItineraryGenerateAlgorithm
+from api.planner.const import MAX_SUGGESTIONS_COUNT
+from api.planner.utils import calculate_geo_distances
 
 LOGGER = logging.getLogger(__name__)
 

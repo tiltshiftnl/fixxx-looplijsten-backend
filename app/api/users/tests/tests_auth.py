@@ -4,12 +4,14 @@ Note: It's possible to write more extensive tests for the auth module, but the m
 intention with these tests is to make sure a User is created of synched when authenticating
 with the OIDC provider
 """
-from constance.test import override_config
-from api.users.auth import OIDCAuthenticationBackend
 from unittest.mock import Mock
-from django.test import TestCase
-from django.http.response import Http404
+
+from constance.test import override_config
 from django.core.exceptions import SuspiciousOperation
+from django.http.response import Http404
+from django.test import TestCase
+
+from api.users.auth import OIDCAuthenticationBackend
 from app.utils.unittest_helpers import get_test_user
 
 MOCK_AUTH_CODE = 'FOO_CODE'

@@ -1,9 +1,11 @@
-from api.users.serializers import UserIdSerializer
 from rest_framework import serializers
-from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
-from api.cases.serializers import CaseSimpleSerializer, CaseSerializer, ProjectSerializer, StadiumSerializer
+
 from api.cases.models import Project, Stadium, Case
+from api.cases.serializers import CaseSimpleSerializer, CaseSerializer, ProjectSerializer, StadiumSerializer
+from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
+from api.users.serializers import UserIdSerializer
 from api.users.serializers import UserSerializer
+
 
 class NoteCrudSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)

@@ -1,9 +1,11 @@
 import logging
-from mozilla_django_oidc import auth
-from django.contrib.auth.models import Group
-from django.db import transaction
-from django.core.exceptions import SuspiciousOperation
+
 from django.conf import settings
+from django.contrib.auth.models import Group
+from django.core.exceptions import SuspiciousOperation
+from django.db import transaction
+from mozilla_django_oidc import auth
+
 from utils.safety_lock import safety_lock
 
 CLAIMS_FIRST_NAME = 'FirstName'

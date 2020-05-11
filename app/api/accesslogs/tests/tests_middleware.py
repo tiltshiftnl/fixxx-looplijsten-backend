@@ -1,9 +1,11 @@
 """
 Tests for accesslogs middleware
 """
-from django.test import TestCase
-from django.contrib.auth.models import AnonymousUser
 from unittest.mock import Mock
+
+from django.contrib.auth.models import AnonymousUser
+from django.test import TestCase
+
 from api.accesslogs.middleware import LoggingMiddleware
 from api.accesslogs.models import LogEntry
 

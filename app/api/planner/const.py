@@ -1,5 +1,7 @@
 from enum import Enum
+
 from api.cases import const
+
 
 class SCORING_WEIGHTS(Enum):
     DISTANCE = 0.5

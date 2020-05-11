@@ -1,13 +1,15 @@
-from django.test import TestCase
-from django.core.exceptions import ValidationError
-from django.conf import settings
-from freezegun import freeze_time
 from datetime import datetime
 from unittest.mock import patch, Mock
 
-from api.itinerary.models import Itinerary, ItineraryItem, ItinerarySettings
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.test import TestCase
+from freezegun import freeze_time
+
 from api.cases.models import Case
+from api.itinerary.models import Itinerary, ItineraryItem, ItinerarySettings
 from api.users.models import User
+
 
 class ItineraryModelTest(TestCase):
     def test_create_itinerary(self):

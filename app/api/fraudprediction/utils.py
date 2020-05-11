@@ -1,7 +1,7 @@
 import logging
+
 from api.fraudprediction.models import FraudPrediction
 from api.fraudprediction.serializers import FraudPredictionSerializer
-
 
 LOGGER = logging.getLogger(__name__)
 
