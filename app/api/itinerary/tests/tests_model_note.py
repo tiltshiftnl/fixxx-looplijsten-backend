@@ -18,7 +18,7 @@ class NoteModelTest(TestCase):
 
         self.assertEqual(Note.objects.count(), 1)
 
-    def test_mutliple_authors(self):
+    def test_multiple_authors(self):
         """
         Multiple authors can leave notes on the same ItineraryItem
         """
