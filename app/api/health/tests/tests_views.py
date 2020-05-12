@@ -14,18 +14,18 @@ from app.utils.unittest_helpers import get_unauthenticated_client
 class HealthViewsTests(TestCase):
     @patch('api.health.views.assert_health_generic')
     def test_health_default(self, mock_assert_health_generic):
-        '''
+        """
         health_default calls assert_health_generic with the correct database
-        '''
+        """
         mock_request = Mock()
         health_default(mock_request)
         mock_assert_health_generic.assert_called_with(database_name=settings.DEFAULT_DATABASE_NAME)
 
     @patch('api.health.views.assert_health_generic')
     def test_health_bwv(self, mock_assert_health_generic):
-        '''
+        """
         health_bwv calls assert_health_generic with the correct bwv database
-        '''
+        """
         mock_request = Mock()
         health_bwv(mock_request)
         mock_assert_health_generic.assert_called_with(database_name=settings.BWV_DATABASE_NAME)
@@ -33,9 +33,9 @@ class HealthViewsTests(TestCase):
     @patch('api.health.views.assert_health_generic')
     @patch('api.health.views.assert_health_database_tables')
     def test_health_bwv_tables(self, mock_assert_health_database_tables, mock_assert_health_generic):
-        '''
+        """
         health_bwv calls assert_health_database_tables with the correct bwv database and tables
-        '''
+        """
         mock_request = Mock()
         health_bwv(mock_request)
         mock_assert_health_database_tables.assert_called_with(

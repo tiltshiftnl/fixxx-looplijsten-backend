@@ -61,9 +61,9 @@ class ItineraryViewSet(
         return serializer.data
 
     def __get_date_from_query_parameter__(self, request):
-        '''
+        """
         Returns a datetime date object if the query parameters contained a date
-        '''
+        """
         date_string = self.request.query_params.get('created_at', None)
 
         if not date_string:
@@ -106,7 +106,7 @@ class ItineraryViewSet(
 
     @action(detail=True, methods=['get'])
     def suggestions(self, request, pk):
-        ''' Returns a list of suggestions for the given itinerary '''
+        """ Returns a list of suggestions for the given itinerary """
         itinerary = self.get_object()
         cases = itinerary.get_suggestions()
         return JsonResponse({'cases': cases})

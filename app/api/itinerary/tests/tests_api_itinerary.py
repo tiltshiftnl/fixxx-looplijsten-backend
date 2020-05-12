@@ -52,9 +52,9 @@ class ItineraryViewsGetTest(APITestCase):
         self.assertEqual(response.json(), expected_response_json)
 
     def test_itinerary_without_user_get(self):
-        '''
+        """
         Should return an empty response if no users are associated with itinerary
-        '''
+        """
         Itinerary.objects.create()
         url = reverse('itinerary-list')
         client = get_authenticated_client()
@@ -68,9 +68,9 @@ class ItineraryViewsGetTest(APITestCase):
         self.assertEqual(response.json(), expected_response_json)
 
     def test_itinerary_with_user_get(self):
-        '''
+        """
         Should return a filled response if the authenticed user is associated with itinerary
-        '''
+        """
         itinerary = Itinerary.objects.create()
         user = get_test_user()
         itinerary.add_team_members([user.id])
@@ -99,9 +99,9 @@ class ItineraryViewsGetTest(APITestCase):
         self.assertEqual(response.json(), expected_respsonse)
 
     def test_multiple_itineraries_for_user(self):
-        '''
+        """
         Should return multiple itineraries that are associated with user
-        '''
+        """
         itinerary_a = Itinerary.objects.create()
         itinerary_b = Itinerary.objects.create()
         user = get_test_user()
@@ -152,9 +152,9 @@ class ItineraryViewsGetTest(APITestCase):
 
     @freeze_time("2020-04-02")
     def test_itinerary_with_date(self):
-        '''
+        """
         Should return itineraries for a given date if created_at date is included
-        '''
+        """
         itinerary = Itinerary.objects.create()
         user = get_test_user()
         itinerary.add_team_members([user.id])
@@ -188,9 +188,9 @@ class ItineraryViewsGetTest(APITestCase):
 
     @freeze_time("2020-04-02")
     def test_no_itineraries_with_date(self):
-        '''
+        """
         Returns an empty list if no itineraries exist for given date
-        '''
+        """
         itinerary = Itinerary.objects.create()
         user = get_test_user()
         itinerary.add_team_members([user.id])
@@ -291,9 +291,9 @@ class ItineraryViewsDeleteTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete(self):
-        '''
+        """
         Removes a itinerary object using a delete request
-        '''
+        """
         itinerary = Itinerary.objects.create()
 
         url = reverse('itinerary-detail', kwargs={'pk': itinerary.id})

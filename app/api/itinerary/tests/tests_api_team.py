@@ -36,9 +36,9 @@ class ItineraryTeamsViewsTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_itinerary_without_team(self):
-        '''
+        """
         Should return an empty response if no team is associated to itinerary
-        '''
+        """
         itinerary = Itinerary.objects.create()
         url = reverse('itinerary-team', kwargs={'pk': itinerary.id})
         client = get_authenticated_client()
@@ -48,9 +48,9 @@ class ItineraryTeamsViewsTest(APITestCase):
         self.assertEqual(response.json()['team_members'], [])
 
     def test_itinerary_with_team(self):
-        '''
+        """
         Should return a list of user objects
-        '''
+        """
         itinerary = Itinerary.objects.create()
         user_a = User.objects.create(email='foo_a@foo.com')
         user_b = User.objects.create(email='foo_b@foo.com')
@@ -69,9 +69,9 @@ class ItineraryTeamsViewsTest(APITestCase):
         self.assertEqual(response_team_members[1]['user']['email'], user_b.email)
 
     def test_itinerary_add_team(self):
-        '''
+        """
         Adds a team to an itinerary through the API
-        '''
+        """
         itinerary = Itinerary.objects.create()
         user_a = User.objects.create(email='foo_a@foo.com')
         user_b = User.objects.create(email='foo_b@foo.com')
@@ -93,9 +93,9 @@ class ItineraryTeamsViewsTest(APITestCase):
         self.assertEquals([user_a, user_b], team_members)
 
     def test_itinerary_update_team(self):
-        '''
+        """
         Upate a team to an itinerary through the API
-        '''
+        """
         itinerary = Itinerary.objects.create()
         user_a = User.objects.create(email='foo_a@foo.com')
         user_b = User.objects.create(email='foo_b@foo.com')

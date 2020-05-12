@@ -75,9 +75,9 @@ class CaseModelTest(TestCase):
         self.assertEqual(location, {'lat': 0, 'lng': 1})
 
     def test_fraud_prediction_property(self):
-        '''
+        """
         Fraud prediction can be accessed through a case property
-        '''
+        """
         CASE_ID = 'FOO'
         case = Case.get(CASE_ID)
         fraud_prediction = FraudPrediction.objects.create(
@@ -113,9 +113,9 @@ class ProjectModelTest(TestCase):
         self.assertEqual(Project.objects.count(), 1)
 
     def test_name_unique(self):
-        '''
+        """
         Tests uniqueness of names
-        '''
+        """
         NAME = 'FOO'
         self.assertEqual(Project.objects.count(), 0)
         Project.objects.create(name=NAME)
@@ -154,9 +154,9 @@ class StadiumModelTest(TestCase):
         self.assertEqual(Stadium.objects.count(), 1)
 
     def test_name_unique(self):
-        '''
+        """
         Tests uniqueness of names
-        '''
+        """
         NAME = 'FOO'
         self.assertEqual(Stadium.objects.count(), 0)
         Stadium.objects.create(name=NAME)

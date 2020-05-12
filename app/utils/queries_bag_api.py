@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 def get_bag_search_query(address):
-    '''
+    """
     Constructs a BAG search query using the address data
-    '''
+    """
     sttnaam = address.get('postcode')
     hsnr = address.get('hsnr')
 
@@ -24,9 +24,9 @@ def get_bag_search_query(address):
 
 
 def do_bag_search_address(address):
-    '''
+    """
     Search BAG using a BWV address
-    '''
+    """
     query = get_bag_search_query(address)
 
     try:
@@ -46,9 +46,9 @@ def do_bag_search_address(address):
 
 
 def do_bag_search_id(address):
-    '''
+    """
     Search BAG using a BWV 'landelijk BAG ID'
-    '''
+    """
 
     id = address['landelijk_bag']
 
@@ -69,10 +69,10 @@ def do_bag_search_id(address):
 
 
 def do_bag_search(address):
-    '''
+    """
     Search BAG. Uses a BAG id, or an address from BWV. Both contain inconsistencies in BWV.
     Here they are used together to get the best results.
-    '''
+    """
 
     # First search using an addresss
     address_search = do_bag_search_address(address)

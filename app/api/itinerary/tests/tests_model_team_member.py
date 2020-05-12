@@ -6,9 +6,9 @@ from api.users.models import User
 
 class TeamMemberModelTest(TestCase):
     def test_create_team_member(self):
-        '''
+        """
         TeamMember can be created
-        '''
+        """
         user = User.objects.create(email='foo@foo.com')
         itinerary = Itinerary.objects.create()
 
@@ -17,9 +17,9 @@ class TeamMemberModelTest(TestCase):
         self.assertEqual(ItineraryTeamMember.objects.count(), 1)
 
     def test_reverse_relationship_itinerary(self):
-        '''
+        """
         An Itinerary's team can be accessed using the reverse relationship
-        '''
+        """
         user_a = User.objects.create(email='foo_a@foo.com')
         user_b = User.objects.create(email='foo_b@foo.com')
         itinerary = Itinerary.objects.create()
@@ -30,9 +30,9 @@ class TeamMemberModelTest(TestCase):
         self.assertEqual(itinerary.team_members.count(), 2)
 
     def test_reverse_relationship_user(self):
-        '''
+        """
         Teams can be accessed from users using the reverse relationship
-        '''
+        """
         user = User.objects.create(email='foo@foo.com')
         itinerary_a = Itinerary.objects.create()
         itinerary_b = Itinerary.objects.create()
@@ -43,9 +43,9 @@ class TeamMemberModelTest(TestCase):
         self.assertEqual(user.teams.count(), 2)
 
     def test_string_representation(self):
-        '''
+        """
         String representation of the team member should be its full name
-        '''
+        """
         user = User.objects.create(email='f.foo@foo.com')
         itinerary = Itinerary.objects.create()
         itinerary_team_member = ItineraryTeamMember.objects.create(user=user, itinerary=itinerary)

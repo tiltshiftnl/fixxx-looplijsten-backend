@@ -1,8 +1,8 @@
 from drf_yasg import openapi
 
-'''
+"""
 Manual parameters for the unplanned view in Swagger API documentation
-'''
+"""
 date = openapi.Parameter(
     name='date',
     in_=openapi.IN_QUERY,
@@ -17,9 +17,9 @@ stadium = openapi.Parameter(
 
 unplanned_parameters = [date, stadium]
 
-'''
+"""
 Manual parameters for the case search view in Swagger API documentation
-'''
+"""
 postal_code = openapi.Parameter(
     name='postalCode',
     in_=openapi.IN_QUERY,

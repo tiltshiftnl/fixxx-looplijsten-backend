@@ -2,10 +2,10 @@ from datetime import datetime
 
 
 def get_days_in_range(start_date, end_date):
-    '''
+    """
     Return the number of days within a range
     Any days that fall outside of the current year are not counted
-    '''
+    """
     if end_date < start_date:
         raise ValueError('The end date is earlier then start date')
 

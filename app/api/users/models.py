@@ -27,9 +27,9 @@ class User(AbstractUser):
 
     @property
     def full_name(self):
-        '''
+        """
         Parses and returns last name from email (f.foo will return F. Foo)
-        '''
+        """
 
         def capitalize(string):
             return string.capitalize()

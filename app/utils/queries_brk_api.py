@@ -96,9 +96,9 @@ def get_brk_request_headers():
 
 
 def get_brk_data(bag_id):
-    '''
+    """
     Does an authenticated request to BRK, and returns the owners of a given bag_id location
-    '''
+    """
     try:
         if not bag_id:
             raise Exception('No BAG ID given for BRK request')

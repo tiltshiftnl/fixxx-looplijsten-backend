@@ -2,9 +2,9 @@ from utils.query_helpers import do_query
 
 
 def get_eligible_stadia(stages):
-    '''
+    """
     Gets stadia which are eligible for planning
-    '''
+    """
 
     query = """
             SELECT
@@ -34,9 +34,9 @@ def get_eligible_stadia(stages):
 
 
 def get_eligible_cases(starting_date, projects):
-    '''
+    """
     Gets cases which are eligible for planning
-    '''
+    """
 
     query = """
             SELECT
@@ -67,10 +67,10 @@ def get_eligible_cases(starting_date, projects):
 
 
 def match_cases_to_stages(cases, stages):
-    '''
+    """
     Returns a list of cases which have been matched to stages
     The result is a filtered list of cases which are still open and can be planned
-    '''
+    """
     filtered_cases = []
 
     for case in cases:

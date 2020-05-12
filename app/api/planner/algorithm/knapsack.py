@@ -14,9 +14,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class Weights():
-    '''
+    """
     A configurable weight object which is used in our scoring function
-    '''
+    """
 
     def __init__(self,
                  distance=SCORING_WEIGHTS.DISTANCE.value,
@@ -69,9 +69,9 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
                 issuemelding=settings_weights.issuemelding)
 
     def get_score(self, case):
-        '''
+        """
         Gets the score of the given case
-        '''
+        """
         distance = case['normalized_inverse_distance']
 
         try:

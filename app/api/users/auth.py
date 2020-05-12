@@ -98,11 +98,11 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
 
         user_info[CLAIMS_ROLES] = roles
 
-        '''
+        """
         NOTE: This is a temporary patch to support the capitalized user info email,
         instead of the lower capital email which is supposed to be retrieved using the
         (not yet supported) email scope.
-        '''
+        """
         user_info['email'] = user_info.get('Email')
 
         return user_info

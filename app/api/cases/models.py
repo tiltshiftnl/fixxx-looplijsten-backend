@@ -9,9 +9,9 @@ class Case(models.Model):
     class Meta:
         ordering = ['case_id']
 
-    '''
+    """
     A simple case model
-    '''
+    """
     case_id = models.CharField(max_length=255, null=True, blank=False)
 
     def get(case_id):

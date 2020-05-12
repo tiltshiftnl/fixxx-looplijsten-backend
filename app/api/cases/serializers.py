@@ -36,8 +36,8 @@ class StadiumSerializer(serializers.ModelSerializer):
 
 
 class UnplannedCasesSerializer(serializers.Serializer):
-    '''
+    """
     Serializer used to validate coming in from the unplanned-cases view
-    '''
+    """
     date = serializers.DateField(required=True)
     stadium = serializers.ChoiceField(required=True, choices=STADIA)

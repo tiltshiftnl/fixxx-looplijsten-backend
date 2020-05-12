@@ -5,16 +5,16 @@ from utils import queries
 
 logger = logging.getLogger(__name__)
 # TODO: Tests for this
-'''
+"""
 Helper function to parse and process BWV 'mededelingen' (statements) text
-'''
+"""
 
 
 def parse_date(raw_date):
-    '''
+    """
     The BWV date for statements contains string dates in the following format: '17-OKT-19'
     This function parses this date and returns a universal date object
-    '''
+    """
 
     months = ['JAN', 'FEB', 'MRT', 'APR', 'MEI', 'JUN', 'JUL', 'AUG', 'SEP', 'OKT', 'NOV', 'DEC']
     raw_day, raw_month, raw_year = raw_date.split('-')
@@ -28,9 +28,9 @@ def parse_date(raw_date):
 
 
 def parse_statement(raw_statements):
-    '''
+    """
     Parses a raw statements string and normalizes the date
-    '''
+    """
     DELIMITER = '[SPLIT]'
     split_statements = raw_statements.split('\n')
     split_statements = split_statements[:-1]

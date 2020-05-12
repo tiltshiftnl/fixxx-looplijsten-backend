@@ -2,9 +2,9 @@ from django.db import models
 
 
 class LogEntry(models.Model):
-    '''
+    """
     A request log entry
-    '''
+    """
     # Request user information can be null for anonymous requests
     request_user_email = models.CharField(max_length=255, null=True, editable=False)
     request_user_id = models.CharField(max_length=255, null=True, editable=False)
@@ -17,9 +17,9 @@ class LogEntry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=False, editable=False)
 
     def save(self, *args, **kwargs):
-        '''
+        """
         A log entry can only be added once, and should not be editable
-        '''
+        """
         is_new = self.pk is None
 
         if is_new:

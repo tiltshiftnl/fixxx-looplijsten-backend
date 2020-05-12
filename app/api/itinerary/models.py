@@ -18,9 +18,9 @@ class Itinerary(models.Model):
     created_at = models.DateField(auto_now_add=True)
 
     def add_case(self, case_id, position=None):
-        '''
+        """
         Adds a case to the itinerary
-        '''
+        """
         case = Case.get(case_id=case_id)
         used_cases = Itinerary.get_cases_for_date(self.created_at)
 
@@ -35,16 +35,16 @@ class Itinerary(models.Model):
         return itinerary_item
 
     def get_cases(self):
-        '''
+        """
         Returns a list of cases for this itinerary
-        '''
+        """
         cases = [item.case for item in self.items.all()]
         return cases
 
     def get_cases_for_date(date):
-        '''
+        """
         returns a list of cases which are already in itineraries for a given date
-        '''
+        """
         itineraries = Itinerary.objects.filter(created_at=date)
         itineraries = [itinerary.get_cases() for itinerary in itineraries]
         cases = flatten(itineraries)
@@ -52,9 +52,9 @@ class Itinerary(models.Model):
         return cases
 
     def get_unplanned_cases(date, stadium):
-        '''
+        """
         Returns a list of unplanned cases which
-        '''
+        """
         planned_cases = Itinerary.get_cases_for_date(date)
         exclude_cases = [{'case_id': case.case_id} for case in planned_cases]
 
@@ -64,26 +64,26 @@ class Itinerary(models.Model):
         return cases
 
     def add_team_members(self, user_ids):
-        '''
+        """
         Addes team members to this itinerary
-        '''
+        """
         for user_id in user_ids:
             user = User.objects.get(id=user_id)
             ItineraryTeamMember.objects.create(user=user, itinerary=self)
 
     def clear_team_members(self):
-        '''
+        """
         Removes all team members from this itinerary
-        '''
+        """
         team_members = self.team_members.all()
 
         for team_member in team_members:
             team_member.delete()
 
     def get_center(self):
-        '''
+        """
         Returns the center coordinates of the itinerary
-        '''
+        """
         cases = self.get_cases()
 
         if not cases:
@@ -99,18 +99,18 @@ class Itinerary(models.Model):
         return {'lat': locations_lat, 'lng': locations_lng}
 
     def get_city_center(self):
-        '''
+        """
         Returns the city center (defined in the project settings)
-        '''
+        """
         return {
             'lat': settings.CITY_CENTRAL_LOCATION_LAT,
             'lng': settings.CITY_CENTRAL_LOCATION_LNG
         }
 
     def get_suggestions(self):
-        '''
+        """
         Returns a list of suggested cases which can be added to this itinerary
-        '''
+        """
         # Initialise using this itinerary's settings
         generator = ItineraryKnapsackSuggestions(self.settings)
 
@@ -125,9 +125,9 @@ class Itinerary(models.Model):
         return generated_list
 
     def get_cases_from_settings(self):
-        '''
+        """
         Returns a list of cases based on the settings which can be added to this itinerary
-        '''
+        """
         # Initialise using this itinerary's settings
         generator = ItineraryKnapsackList(self.settings)
 
@@ -141,9 +141,9 @@ class Itinerary(models.Model):
         return generated_list
 
     def __str__(self):
-        '''
+        """
         A string representation of this itinerary
-        '''
+        """
         team_members = self.team_members.all()
         team_members = [str(member) for member in team_members]
         string = ', '.join(team_members)
@@ -205,9 +205,9 @@ class ItinerarySettings(models.Model):
         return self.itinerary.__str__()
 
     def clean(self):
-        '''
+        """
         Checks for postal code ranges
-        '''
+        """
         if not self.postal_code_range_start and not self.postal_code_range_end:
             return
 
@@ -262,9 +262,9 @@ class ItineraryItem(models.Model):
             return ''
 
     def set_position_to_last(self):
-        '''
+        """
         Sets this item's position to the last in the ItineraryItem list
-        '''
+        """
         itinerary_item_list = self.itinerary.items.all().order_by('position')
         itinerary_items = list(itinerary_item_list)
 
@@ -275,9 +275,9 @@ class ItineraryItem(models.Model):
             self.position = last_item.position + 1
 
     def check_items_same_position(self):
-        '''
+        """
         Don't allow saving if another item in the list has the same position
-        '''
+        """
         items_with_same_position = self.itinerary.items.all().filter(position=self.position)
         items_with_same_position = items_with_same_position.exclude(pk=self.pk)
 
@@ -285,9 +285,9 @@ class ItineraryItem(models.Model):
             raise ValueError('An item with this position already exists')
 
     def check_items_same_case(self):
-        '''
+        """
         Don't allow saving if the itinerary already contains the same case
-        '''
+        """
         items_with_same_case = self.itinerary.items.all().filter(case=self.case)
         items_with_same_case = items_with_same_case.exclude(pk=self.pk)
 

@@ -62,7 +62,7 @@ class CaseViewSet(ViewSet):
     @swagger_auto_schema(method='get', manual_parameters=unplanned_parameters)
     @action(detail=False, methods=['get'], name='unplanned')
     def unplanned(self, request):
-        ''' Returns a list of unplanned cases, based on the given date and stadium '''
+        """ Returns a list of unplanned cases, based on the given date and stadium """
         serializer = UnplannedCasesSerializer(data=request.GET)
         is_valid = serializer.is_valid()
 
@@ -90,9 +90,9 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
     queryset = ''
 
     def __add_fraud_prediction__(self, cases):
-        '''
+        """
         Enriches the cases with fraud predictions
-        '''
+        """
         cases = cases.copy()
 
         for case in cases:
@@ -102,9 +102,9 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         return cases
 
     def __add_teams__(self, cases, itineraries_created_at):
-        '''
+        """
         Enriches the cases with teams
-        '''
+        """
         # Enrich the search result data with teams whose itinerary contains this item
         mapped_cases = {}
         cases = cases.copy()
@@ -136,9 +136,9 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
     @action(detail=False, methods=['get'])
     @safety_lock
     def list(self, request):
-        '''
+        """
         Returns a list of cases found with the given parameters
-        '''
+        """
         postal_code = request.GET.get('postalCode', None)
         street_number = request.GET.get('streetNumber', None)
         suffix = request.GET.get('suffix', '')

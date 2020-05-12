@@ -88,7 +88,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
     settings = ItinerarySettingsSerializer(read_only=True)
 
     def __get_stadia_from_settings__(self, settings, list_name):
-        ''' Returns a list of Stadium objects from settings '''
+        """ Returns a list of Stadium objects from settings """
         stadia = settings.get(list_name, [])
         stadia = [stadium.get('name') for stadium in stadia]
         stadia = [Stadium.get(name=stadium) for stadium in stadia]
@@ -96,7 +96,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
         return stadia
 
     def __get_stadium_from_settings__(self, settings, name):
-        ''' Returns a single Stadium object from settings '''
+        """ Returns a single Stadium object from settings """
         if settings.get(name, None):
             stadium = settings.get(name).get('name')
             stadium = Stadium.get(name=stadium)
@@ -104,7 +104,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
             return stadium
 
     def __get_projects_from_settings__(self, settings):
-        ''' Returns the Projects objects from settings '''
+        """ Returns the Projects objects from settings """
         projects = settings.get('projects', [])
         projects = [project.get('name') for project in projects]
         projects = [Project.get(name=project) for project in projects]
@@ -112,7 +112,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
         return projects
 
     def __get_start_case_from_settings__(self, settings):
-        ''' Returns a Case object from the settings '''
+        """ Returns a Case object from the settings """
         try:
             case_dict = settings.get('start_case', None)
             case_id = case_dict.get('case_id', None)
