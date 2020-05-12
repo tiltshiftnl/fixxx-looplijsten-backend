@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+
 from django.test import TestCase
 
 from api.fraudprediction.permissions import FraudPredictionApiKeyAuth

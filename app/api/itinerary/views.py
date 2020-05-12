@@ -121,15 +121,15 @@ class ItineraryViewSet(
         # Create the itinerary
         try:
             itinerary = serializer.create(request.data)
+            cases = itinerary.get_cases_from_settings()
+            assert len(cases), "Not enough cases available for given settings"
         except Exception as e:
             raise APIException('Could not create itinerary: {}'.format(e))
 
         # Populate the itinerary with cases
-        cases = itinerary.get_cases_from_settings()
         for case in cases:
             case_id = case.get('case_id')
-            case = Case.get(case_id=case_id)
-            ItineraryItem.objects.create(itinerary=itinerary, case=case)
+            itinerary.add_case(case_id)
 
         # Serialize the itinerary again
         serializer = ItinerarySerializer(itinerary)

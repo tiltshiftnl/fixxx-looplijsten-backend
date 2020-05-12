@@ -1,5 +1,4 @@
 import logging
-
 from api.cases.const import STADIA
 from api.planner.utils import filter_cases, remove_cases_from_list, filter_cases_with_postal_code
 from api.planner.utils import filter_cases_with_missing_coordinates, filter_out_cases

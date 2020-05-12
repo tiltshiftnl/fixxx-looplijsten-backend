@@ -13,7 +13,7 @@ from utils.queries import get_case
 LOGGER = logging.getLogger(__name__)
 
 
-class Weights():
+class Weights:
     """
     A configurable weight object which is used in our scoring function
     """
@@ -94,7 +94,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
         return score
 
     def get_center(self, location):
-        return (location.get('lat'), location.get('lng'))
+        return location.get('lat'), location.get('lng')
 
     def generate(self, location, cases=[], fraud_predictions=[]):
         if not cases:

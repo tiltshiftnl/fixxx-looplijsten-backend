@@ -69,7 +69,7 @@ class ItineraryViewsGetTest(APITestCase):
 
     def test_itinerary_with_user_get(self):
         """
-        Should return a filled response if the authenticed user is associated with itinerary
+        Should return a filled response if the authenticated user is associated with itinerary
         """
         itinerary = Itinerary.objects.create()
         user = get_test_user()
@@ -233,11 +233,43 @@ class ItineraryViewsCreateTest(APITestCase):
         response = client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_create(self):
+    @patch('api.itinerary.views.Itinerary.get_cases_from_settings')
+    def test_create_fail(self, mock_get_cases_from_settings):
         """
-        Should succeed and create an itinerary
+        Should fail and create no Itinerary if no cases are available
         """
         self.assertEqual(Itinerary.objects.count(), 0)
+        mock_get_cases_from_settings.return_value = []
+
+        url = reverse('itinerary-list')
+        client = get_authenticated_client()
+        user = get_test_user()
+
+        response = client.post(
+            url,
+            {
+                "team_members": [{"user": {"id": user.id}}],
+                "settings": {
+                    "opening_date": "2020-04-24",
+                    "target_length": 8,
+                }
+            },
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(Itinerary.objects.count(), 0)
+
+    @patch('api.itinerary.views.Itinerary.get_cases_from_settings')
+    def test_create(self, mock_get_cases_from_settings):
+        """
+        Should succeed and create an Itinerary if cases are available
+        """
+        self.assertEqual(Itinerary.objects.count(), 0)
+        mock_get_cases_from_settings.return_value = [
+            {'case_id': 'FOO_CASE_ID_A'},
+            {'case_id': 'FOO_CASE_ID_B'},
+        ]
 
         url = reverse('itinerary-list')
         client = get_authenticated_client()
@@ -257,6 +289,15 @@ class ItineraryViewsCreateTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Itinerary.objects.count(), 1)
+
+        itinerary = Itinerary.objects.all()[0]
+
+        cases = itinerary.get_cases()
+        self.assertEqual(cases[0].case_id, 'FOO_CASE_ID_A')
+        self.assertEqual(cases[1].case_id, 'FOO_CASE_ID_B')
+
+
+
 
 
 class ItineraryViewsDeleteTest(APITestCase):
