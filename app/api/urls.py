@@ -2,6 +2,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic.base import RedirectView
+
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
@@ -61,7 +63,11 @@ urlpatterns = [
                   # Swagger/OpenAPI documentation
                   path('api/v1/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
+                  # Temporary redirect for meetup
+                  path('meetup', RedirectView.as_view(url='https://meet.google.com/ags-apae-wqs')),
+
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 # JSON handlers for errors
 handler500 = 'rest_framework.exceptions.server_error'
