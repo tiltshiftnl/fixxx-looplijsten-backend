@@ -66,14 +66,14 @@ PROJECTS_WITHOUT_SAHARA = [
 ]
 
 # NOTE: More stages exist, but they are currently not used by this application
+ONDERZOEK_BUITENDIENST = "Onderzoek buitendienst"
 TWEEDE_CONTROLE = "2de Controle"
-TWEEDE_HERCONTROLE = "2de hercontrole"
 DERDE_CONTROLE = "3de Controle"
+HERCONTROLE = "Hercontrole"
+TWEEDE_HERCONTROLE = "2de hercontrole"
 DERDE_HERCONTROLE = "3de hercontrole"
 AVONDRONDE = "Avondronde"
-HERCONTROLE = "Hercontrole"
 ONDERZOEK_ADVERTENTIE = "Onderzoek advertentie"
-ONDERZOEK_BUITENDIENST = "Onderzoek buitendienst"
 WEEKEND_BUITENDIENST_ONDERZOEK = "Weekend buitendienstonderzoek"
 ISSUEMELDING = "Issuemelding"
 

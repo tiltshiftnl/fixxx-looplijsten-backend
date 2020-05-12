@@ -6,7 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
 
-from api.cases.const import STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
+from api.cases.const import ONDERZOEK_BUITENDIENST, TWEEDE_CONTROLE, DERDE_CONTROLE, AVONDRONDE, \
+    WEEKEND_BUITENDIENST_ONDERZOEK, STADIA, PROJECTS, PROJECTS_WITHOUT_SAHARA
 from api.planner.algorithm.knapsack import ItineraryKnapsackList
 from api.planner.const import SCORING_WEIGHTS
 from api.planner.utils import remove_cases_from_list
@@ -23,9 +24,9 @@ class AlgorithmView(LoginRequiredMixin, View):
             'projects': PROJECTS,
             'selected_projects': PROJECTS_WITHOUT_SAHARA,
             'stadia': STADIA,
-            'selected_stadia': [],
-            'main_stadium': None,
-            'selected_exclude_stadia': [],
+            'selected_stadia': [TWEEDE_CONTROLE, DERDE_CONTROLE],
+            'main_stadium': ONDERZOEK_BUITENDIENST,
+            'selected_exclude_stadia': [AVONDRONDE, WEEKEND_BUITENDIENST_ONDERZOEK],
             'selected_opening_date': '2019-01-01',
             'number_of_lists': 1,
             'length_of_list': 8,
@@ -36,8 +37,8 @@ class AlgorithmView(LoginRequiredMixin, View):
             'weight_secondary_stadium': SCORING_WEIGHTS.SECONDARY_STADIUM.value,
             'weight_issuemelding': SCORING_WEIGHTS.ISSUEMELDING.value,
             'start_case_id': '',
-            'postal_code_range_start': None,
-            'postal_code_range_end': None
+            'postal_code_range_start': 1000,
+            'postal_code_range_end': 1108
         }
 
     @safety_lock
