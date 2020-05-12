@@ -62,9 +62,9 @@ class UtilsTests(TestCase):
         self.assertEquals(result, expected)
 
     def test_remove_cases_from_list_safety_fallback(self):
-        '''
-        Wil still succeed if tiems from the cases_to_remove don't exist in the cases list
-        '''
+        """
+        Wil still succeed if items from the cases_to_remove don't exist in the cases list
+        """
         case_a = {'stadium': ONDERZOEK_BUITENDIENST, 'case_id': 'foo-a'}
         case_b = {'stadium': ISSUEMELDING, 'case_id': 'foo-b'}
         case_c = {'stadium': TWEEDE_CONTROLE, 'case_id': 'foo-c'}
@@ -91,9 +91,9 @@ class UtilsTests(TestCase):
         self.assertEquals(case_coordinates, expected)
 
     def test_filter_cases_with_missing_coordinates(self):
-        '''
+        """
         Should filter out cases with missing coordinates
-        '''
+        """
         valid_case = {'stadium': ISSUEMELDING, 'lat': 12, 'lng': -69}
         cases = [
             {'stadium': ONDERZOEK_BUITENDIENST},
@@ -146,16 +146,16 @@ class UtilsTests(TestCase):
         self.assertEquals(result, expected)
 
     def test_filter_cases_with_postal_code_empty_list(self):
-        '''
+        """
         Should just return an empty list
-        '''
+        """
         cases = filter_cases_with_postal_code([])
         self.assertEqual(cases, [])
 
     def test_filter_cases_with_postal_code_wrong_range(self):
-        '''
+        """
         Should throw error if the start range is larger than end range
-        '''
+        """
         FOO_START_RANGE = 2000
         FOO_END_RANGE = 1000
 
@@ -163,9 +163,9 @@ class UtilsTests(TestCase):
             filter_cases_with_postal_code([], FOO_START_RANGE, FOO_END_RANGE)
 
     def test_filter_cases_with_postal_code(self):
-        '''
+        """
         Returns the cases which fall within the given range
-        '''
+        """
         FOO_START_RANGE = 1000
         FOO_END_RANGE = 2000
 

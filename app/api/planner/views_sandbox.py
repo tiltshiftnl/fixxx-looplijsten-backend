@@ -108,9 +108,9 @@ class AlgorithmView(LoginRequiredMixin, View):
 
 
 class SettingsWeightMock(SimpleNamespace):
-    '''
+    """
     Creates a mock settings weight objects using context data. Should only be used for prototyping.
-    '''
+    """
 
     def __init__(self, context):
         super().__init__()
@@ -122,9 +122,9 @@ class SettingsWeightMock(SimpleNamespace):
 
 
 class SettingsMock(SimpleNamespace):
-    '''
+    """
     Creates a mock settings objects using context data. Should only be used for prototyping.
-    '''
+    """
 
     def __init__(self, context):
         super().__init__()

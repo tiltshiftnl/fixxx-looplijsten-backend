@@ -9,7 +9,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ItineraryGenerateAlgorithm():
-    ''' An abstract class which forms the basis of itinerary generating algorithms '''
+    """ An abstract class which forms the basis of itinerary generating algorithms """
 
     def __init__(self, settings):
         self.opening_date = settings.opening_date
@@ -34,15 +34,15 @@ class ItineraryGenerateAlgorithm():
             self.start_case_id = None
 
     def __get_filter_stadia__(self):
-        '''
+        """
         Gets a list of filter stadia to filter on
-        '''
+        """
         return STADIA
 
     def __get_eligible_cases__(self):
-        '''
+        """
         Returns a list of eligible cases using the settings object
-        '''
+        """
         cases = get_cases_from_bwv(self.opening_date, self.projects, self.stadia)
         LOGGER.info('Total list of cases: {}'.format(len(cases)))
 
@@ -79,9 +79,9 @@ class ItineraryGenerateAlgorithm():
         return filtered_cases
 
     def exclude(self, cases):
-        '''
+        """
         Makes sure the givens are not used when generating a list
-        '''
+        """
         self.exclude_cases = cases
 
     def generate(self):
