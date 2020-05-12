@@ -1,8 +1,8 @@
 from datetime import datetime
-from pytz import UTC
 
 from django.test import TestCase
 from freezegun import freeze_time
+from pytz import UTC
 
 from api.fraudprediction.models import FraudPrediction
 
