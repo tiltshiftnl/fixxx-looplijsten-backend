@@ -68,17 +68,17 @@ class FraudPredict():
         return config
 
     def get_case_ids_to_score(self):
-        '''
+        """
         Returns a list of case ids which are eligible for scoring
-        '''
+        """
         cases = get_cases_from_bwv(SCORE_STARTING_FROM_DATE, PROJECTS, STADIA)
         case_ids = [case.get('case_id') for case in cases]
         return case_ids
 
     def clear_cache_dir(self, dir):
-        '''
+        """
         Clears the contents of the given directory
-        '''
+        """
         try:
             files = glob.glob(os.path.join(dir, '*'))
             for f in files:
@@ -88,9 +88,9 @@ class FraudPredict():
             LOGGER.error('Something when wrong while removing cached scoring files: {}'.format(str(e)))
 
     def clean_dictionary(self, dictionary):
-        '''
+        """
         Replaces dictionary NaN values with 0
-        '''
+        """
         dictionary = dictionary.copy()
 
         for key, value in dictionary.items():

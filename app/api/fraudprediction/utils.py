@@ -16,9 +16,9 @@ def get_fraud_prediction(case_id):
 
 
 def get_fraud_predictions():
-    '''
+    """
     Returns a dictionary of all fraud predictions mapped to case_ids
-    '''
+    """
     fraud_predictions = FraudPrediction.objects.all()
     fraud_prediction_dictionary = {}
 
@@ -30,9 +30,9 @@ def get_fraud_predictions():
 
 
 def add_fraud_predictions(cases):
-    '''
+    """
     Returns a list of case dictionaries, enriched with fraud_predictions
-    '''
+    """
     cases = cases.copy()
 
     for case in cases:

@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet
 
 from api.fraudprediction.fraud_predict import FraudPredict
-from api.fraudprediction.permissions import FraudPredicionApiKeyAuth
+from api.fraudprediction.permissions import FraudPredictionApiKeyAuth
 from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
@@ -21,7 +21,7 @@ class FraudPredictionScoringViewSet(ViewSet):
     """
     A view for triggering fraud scoring
     """
-    permission_classes = [FraudPredicionApiKeyAuth | IsAuthenticated]
+    permission_classes = [FraudPredictionApiKeyAuth | IsAuthenticated]
 
     def background_process(self):
         LOGGER.info('Started scoring background process')
