@@ -13,7 +13,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from api.cases.models import Case
 from api.itinerary.models import Itinerary, ItineraryItem, Note
 from api.itinerary.serializers import ItineraryItemUpdateSerializer
 from api.itinerary.serializers import ItinerarySerializer, ItineraryItemSerializer, NoteCrudSerializer

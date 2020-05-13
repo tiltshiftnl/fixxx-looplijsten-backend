@@ -7,7 +7,7 @@ from utils.query_helpers import do_query
 def get_health_response(health_checks, success_dictionary):
     """
     Executes the given health_checks function, 
-    and returns a response based on the funciton's success
+    and returns a response based on the function's success
     """
     try:
         health_checks()
