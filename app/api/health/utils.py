@@ -1,8 +1,10 @@
+import logging
 from django.db import connections
 from django.http import JsonResponse
 
 from utils.query_helpers import do_query
 
+LOGGER = logging.getLogger(__name__)
 
 def get_health_response(health_checks, success_dictionary):
     """
@@ -39,16 +41,22 @@ def assert_health_database_tables(database_name, tables):
     """
     Given a database and it's tables, this checks if all tables are filled
     """
+    LOGGER.info('Health Check TABLES')
     for table in tables:
+        LOGGER.info('Health Check TABLE {}'.format(table))
         assert_health_table(database_name, table)
-
+        LOGGER.info('Health Check TABLE {} DONE'.format(table))
+    LOGGER.info('Health Check TABLES DONE')
 
 def assert_health_generic(database_name):
     """
     A basic check to see if a connection with the given database can be made
     """
+    LOGGER.info('Health Check GENERIC START')
     cursor = connections[database_name].cursor()
+    LOGGER.info('Health Check GENERIC CURSOR DONE')
     cursor.execute('select 1')
+    LOGGER.info('Health Check EXECUTE DONE')
     assert cursor.fetchone()
 
 
