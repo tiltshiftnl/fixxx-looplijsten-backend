@@ -17,6 +17,7 @@ BWV_TABLES = [
     'import_adres',
     'import_stadia',
     'import_wvs',
+    'sync_log'
 ]
 
 def health_default(request):

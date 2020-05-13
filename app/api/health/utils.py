@@ -8,7 +8,6 @@ def get_health_response(health_checks, success_dictionary):
     Executes the given health_checks function, 
     and returns a response based on the function's success
     """
-    health_checks()
     try:
         health_checks()
     except Exception as e:
@@ -32,15 +31,24 @@ def assert_health_table(database_name, table):
     query = is_table_filled_query(table)
     cursor.execute(query)
     row = cursor.fetchone()
-    assert row[0] > 0, 'The {} table in {} is empty'.format(table, database_name)
-
+    assert row, 'The {} table in the {} database does not exist'.format(table, database_name)
+    assert row[0] > 0, 'The {} table in the {} database is empty'.format(table, database_name)
 
 def assert_health_database_tables(database_name, tables):
     """
     Given a database and it's tables, this checks if all tables are filled
     """
+    errors = []
+
     for table in tables:
-        assert_health_table(database_name, table)
+        try:
+            assert_health_table(database_name, table)
+        except Exception as e:
+            errors += str(e)
+
+    if len(errors):
+        raise Exception(''.join(errors))
+
 
 def assert_health_generic(database_name):
     """
