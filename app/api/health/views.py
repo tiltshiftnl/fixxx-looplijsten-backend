@@ -12,7 +12,6 @@ BWV_TABLES = [
     'bwv_personen',
     'bwv_personen_hist',
     'bwv_vakantieverhuur',
-    'bwv_vakantieverhuur_annuleren',
     'bwv_woningen',
     'import_adres',
     'import_stadia',
