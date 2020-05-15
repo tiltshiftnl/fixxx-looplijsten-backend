@@ -14,6 +14,8 @@ from utils.queries_planner import get_cases_from_bwv
 
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
+    suggestionAlgorithm = ItineraryKnapsackSuggestions
+    itineraryAlgorithm = ItineraryKnapsackList
 
     created_at = models.DateField(auto_now_add=True)
 
@@ -112,7 +114,7 @@ class Itinerary(models.Model):
         Returns a list of suggested cases which can be added to this itinerary
         """
         # Initialise using this itinerary's settings
-        generator = ItineraryKnapsackSuggestions(self.settings)
+        generator = self.suggestionAlgorithm(self.settings)
 
         # Exclude the cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)
@@ -129,7 +131,7 @@ class Itinerary(models.Model):
         Returns a list of cases based on the settings which can be added to this itinerary
         """
         # Initialise using this itinerary's settings
-        generator = ItineraryKnapsackList(self.settings)
+        generator = self.itineraryAlgorithm(self.settings)
 
         # Exclude cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)
