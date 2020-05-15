@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.utils.decorators import method_decorator
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -17,6 +16,7 @@ from api.fraudprediction.utils import get_fraud_prediction, add_fraud_prediction
 from api.itinerary.models import Itinerary
 from api.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
 from utils.safety_lock import safety_lock
+from drf_spectacular.utils import extend_schema
 
 
 @method_decorator(safety_lock, 'retrieve')
@@ -59,7 +59,7 @@ class CaseViewSet(ViewSet):
 
         return JsonResponse(data)
 
-    @swagger_auto_schema(method='get', manual_parameters=unplanned_parameters)
+    @extend_schema(parameters=unplanned_parameters, description='Unplanned Cases')
     @action(detail=False, methods=['get'], name='unplanned')
     def unplanned(self, request):
         """ Returns a list of unplanned cases, based on the given date and stadium """
@@ -132,7 +132,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
 
         return cases
 
-    @swagger_auto_schema(method='get', manual_parameters=case_search_parameters)
+    @extend_schema(parameters=case_search_parameters, description='Search query parameters')
     @action(detail=False, methods=['get'])
     @safety_lock
     def list(self, request):

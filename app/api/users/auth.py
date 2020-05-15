@@ -63,7 +63,6 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         user.save()
 
         self.update_groups(user, claims)
-
         return user
 
     def update_user(self, user, claims):

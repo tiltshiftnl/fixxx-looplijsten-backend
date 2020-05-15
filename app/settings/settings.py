@@ -21,8 +21,8 @@ INSTALLED_APPS = (
 
     # Third party apps
     'rest_framework',  # utilities for rest apis
-    'django_filters',  # for filtering rest endpoints
-    'drf_yasg',  # for generating real Swagger/OpenAPI 2.0 specifications
+    'django_filters',  # for filtering rest endpoints,
+    'drf_spectacular', # for generating real OpenAPI 3.0 documentation
     'constance',
     'constance.backends.database',  # for dynamic configurations in admin
     'mozilla_django_oidc',  # for authentication
@@ -153,6 +153,7 @@ AUTHENTICATION_BACKENDS = (
 # Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'PAGE_SIZE': 100,
     'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
     'DEFAULT_RENDERER_CLASSES': (
@@ -177,16 +178,10 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS').split(',')
 CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST').split(',')
 CORS_ORIGIN_ALLOW_ALL = False
 
-SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': False,
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'header',
-            'scheme': 'bearer'
-        }
-    }
+SPECTACULAR_SETTINGS = {
+    'SCHEMA_PATH_PREFIX': '/api/v[0-9]/',
+    'TITLE': 'Toezicht op pad API',
+    'VERSION': 'v1',
 }
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'

@@ -1,45 +1,45 @@
-from drf_yasg import openapi
+from drf_spectacular.utils import OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 """
 Manual parameters for the unplanned view in Swagger API documentation
 """
-date = openapi.Parameter(
+date = OpenApiParameter(
     name='date',
-    in_=openapi.IN_QUERY,
-    description="Date",
-    type=openapi.FORMAT_DATE)
+    type=OpenApiTypes.DATE,
+    location=OpenApiParameter.QUERY,
+    description='Date'
+)
 
-stadium = openapi.Parameter(
+stadium = OpenApiParameter(
     name='stadium',
-    in_=openapi.IN_QUERY,
-    description="Stadium",
-    type=openapi.TYPE_STRING)
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description='Stadium'
+)
 
 unplanned_parameters = [date, stadium]
 
-"""
-Manual parameters for the case search view in Swagger API documentation
-"""
-postal_code = openapi.Parameter(
+postal_code = OpenApiParameter(
     name='postalCode',
-    in_=openapi.IN_QUERY,
-    required=True,
-    description="Postal Code",
-    type=openapi.TYPE_STRING)
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description='Postal Code'
+)
 
-street_number = openapi.Parameter(
+street_number = OpenApiParameter(
     name='streetNumber',
-    in_=openapi.IN_QUERY,
-    required=True,
-    description="Street Number",
-    type=openapi.TYPE_STRING)
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description='Street Number'
+)
 
-suffix = openapi.Parameter(
+suffix = OpenApiParameter(
     name='suffix',
-    in_=openapi.IN_QUERY,
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
     required=False,
-    description="Suffix",
-    default='',
-    type=openapi.TYPE_STRING)
+    description='Suffix'
+)
 
 case_search_parameters = [postal_code, street_number, suffix]
