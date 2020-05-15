@@ -65,10 +65,10 @@ def filter_cases_with_missing_coordinates(cases):
     Cases with polluted data (missing coordinates) are removed
     """
 
-    def has_missing_coordinates(case):
-        return case.get('lat') is not None and case.get('lng')
+    def has_coordinates(case):
+        return case.get('lat', None) and case.get('lng', None)
 
-    return list(filter(lambda case: has_missing_coordinates(case), cases))
+    return list(filter(lambda case: has_coordinates(case), cases))
 
 
 def filter_cases_with_postal_code(cases, start_range=None, end_rage=None):
