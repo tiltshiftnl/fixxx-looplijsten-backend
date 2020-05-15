@@ -29,5 +29,5 @@ class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
             case['fraud_prediction'] = get_fraud_prediction(case['case_id'])
 
         # Sort the cases based on distance
-        sorted_cases = sorted(cases, key=lambda case: case['distance'])[:MAX_SUGGESTIONS_COUNT]
+        sorted_cases = sorted(cases, key=lambda item: item['distance'])[:MAX_SUGGESTIONS_COUNT]
         return sorted_cases
