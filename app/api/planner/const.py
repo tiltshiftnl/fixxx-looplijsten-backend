@@ -4,7 +4,7 @@ from api.cases import const
 
 
 class SCORING_WEIGHTS(Enum):
-    DISTANCE = 0.5
+    DISTANCE = 1
     FRAUD_PROBABILITY = 1
     PRIMARY_STADIUM = 0.75
     SECONDARY_STADIUM = 0.5
