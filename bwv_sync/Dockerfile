@@ -5,7 +5,7 @@ RUN cargo build --release
 
 FROM ubuntu:latest
 
-RUN apt-get update && apt-get install -y cron postgresql-client curl
+RUN apt-get update && apt-get install -y cron postgresql-client curl tzdata
 
 COPY --from=pg_anonymize /app/target/release/pg_anonymize /usr/local/bin/
 COPY pg_anonymize.conf /etc/
@@ -17,6 +17,12 @@ RUN crontab /etc/cron.d/bwv-sync
 COPY bwv-sync.sh /usr/local/bin/looplijsten_bwv_sync.sh
 RUN chmod 755 /usr/local/bin/looplijsten_bwv_sync.sh
 
+COPY entrypoint.sh /
+RUN chmod 755 /entrypoint.sh
+
 RUN touch /var/log/cron.log
 
-CMD ["cron", "-f"]
+ENV TZ=Europe/Amsterdam
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+CMD /entrypoint.sh
