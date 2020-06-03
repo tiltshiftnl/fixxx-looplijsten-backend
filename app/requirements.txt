@@ -1,6 +1,7 @@
 # Core
 Django==3.0.5
 
+
 # Rest apis
 djangorestframework==3.11.0
 django-cors-headers==3.2.1
@@ -26,3 +27,6 @@ djangorestframework-simplejwt==4.4.0
 # Algorithm toolbox
 geopy==1.21.0
 joblib==0.14.1
+
+scikit-learn==0.22.1
+numpy==1.18.1
