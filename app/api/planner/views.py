@@ -8,7 +8,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet
 
-from api.cases.const import STADIA, PROJECTS
+from api.cases.const import STADIA, PROJECTS, ISSUEMELDING
 from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 from api.planner.serializers import PlannerSettingsSerializer
 from utils.safety_lock import safety_lock
@@ -33,7 +33,9 @@ class ConstantsStadiaViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        return JsonResponse({'constants': STADIA})
+        constants_stadia = STADIA[:]
+        constants_stadia.remove(ISSUEMELDING)
+        return JsonResponse({'constants': constants_stadia})
 
 
 @method_decorator(safety_lock, 'list')
