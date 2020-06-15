@@ -3,6 +3,9 @@ set -u   # crash on missing env variables
 set -e   # stop on any error
 set -x
 
+echo Run tests
+yes yes | python manage.py test --noinput
+
 echo Collecting static files
 python manage.py collectstatic --no-input
 
