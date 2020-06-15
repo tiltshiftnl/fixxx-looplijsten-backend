@@ -271,26 +271,30 @@ class ItineraryModelTest(TestCase):
         self.assertEqual(city_center['lat'], settings.CITY_CENTRAL_LOCATION_LAT)
         self.assertEqual(city_center['lng'], settings.CITY_CENTRAL_LOCATION_LNG)
 
-    @patch('api.itinerary.models.ItineraryKnapsackSuggestions')
-    def test_get_suggestions(self, MockItineraryKnapsackSuggestions):
+    def test_get_suggestions(self):
         """
         Calls the ItineraryKnapsackSuggestions generate and exclude functions
-        """
+        """        
+        Itinerary.suggestionAlgorithm = Mock()
         itinerary = Itinerary.objects.create()
-        ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
-
+        settings = ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+        
         itinerary.get_suggestions()
-        MockItineraryKnapsackSuggestions().exclude.assert_called()
-        MockItineraryKnapsackSuggestions().generate.assert_called()
+        
+        itinerary.suggestionAlgorithm.assert_called_with(settings)
+        itinerary.suggestionAlgorithm().exclude.assert_called()
+        itinerary.suggestionAlgorithm().generate.assert_called()
 
-    @patch('api.itinerary.models.ItineraryKnapsackList')
-    def test_get_cases_from_settings(self, ItineraryKnapsackList):
+    def test_get_cases_from_settings(self):
         """
         Calls the ItineraryKnapsackList generate and exclude functions
         """
+        Itinerary.itineraryAlgorithm = Mock()
         itinerary = Itinerary.objects.create()
-        ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
-
+        settings = ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+                
         itinerary.get_cases_from_settings()
-        ItineraryKnapsackList().exclude.assert_called()
-        ItineraryKnapsackList().generate.assert_called()
+
+        itinerary.itineraryAlgorithm.assert_called_with(settings)
+        itinerary.itineraryAlgorithm().exclude.assert_called()
+        itinerary.itineraryAlgorithm().generate.assert_called()
