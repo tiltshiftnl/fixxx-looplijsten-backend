@@ -28,5 +28,5 @@ djangorestframework-simplejwt==4.4.0
 geopy==1.21.0
 joblib==0.14.1
 
-scikit-learn==0.22.1
+scikit-learn==0.23.1
 numpy==1.18.5
