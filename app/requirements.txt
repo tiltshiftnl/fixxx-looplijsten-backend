@@ -1,5 +1,5 @@
 # Core
-Django==3.0.5
+Django==3.0.7
 
 
 # Rest apis
@@ -8,7 +8,7 @@ django-cors-headers==3.2.1
 drf-spectacular==0.9.8
 
 # Logging
-sentry-sdk==0.14.3
+sentry-sdk==0.14.4
 
 # Testing
 freezegun==0.3.15
@@ -25,8 +25,7 @@ mozilla-django-oidc==1.2.3
 djangorestframework-simplejwt==4.4.0
 
 # Algorithm toolbox
-geopy==1.21.0
+geopy==1.22.0
 joblib==0.15.1
-
 scikit-learn==0.22.1
 numpy==1.18.5
