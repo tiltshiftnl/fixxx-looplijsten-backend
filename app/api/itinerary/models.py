@@ -7,6 +7,7 @@ from django.db import models
 from api.cases.const import PROJECTS, STARTING_FROM_DATE
 from api.cases.models import Case, Project, Stadium
 from api.planner.algorithm.knapsack import ItineraryKnapsackSuggestions, ItineraryKnapsackList
+from api.planner.algorithm.clustering import ItineraryGenerateCluster
 from api.planner.utils import remove_cases_from_list
 from api.users.models import User
 from utils.queries_planner import get_cases_from_bwv
@@ -15,7 +16,7 @@ from utils.queries_planner import get_cases_from_bwv
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
     suggestionAlgorithm = ItineraryKnapsackSuggestions
-    itineraryAlgorithm = ItineraryKnapsackList
+    itineraryAlgorithm = ItineraryGenerateCluster
 
     created_at = models.DateField(auto_now_add=True)
 
