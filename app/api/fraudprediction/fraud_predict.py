@@ -39,6 +39,7 @@ class FraudPredict():
             results = results.to_dict(orient='index')
             LOGGER.info('results to dict')
         except Exception as e:
+            LOGGER.error(e)
             LOGGER.error('Could not calculate prediction scores: {}'.format(str(e)))
             return
 
