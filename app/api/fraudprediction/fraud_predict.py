@@ -3,10 +3,16 @@ import glob
 import logging
 import math
 import os
+from unittest.mock import Mock
 
 from django.conf import settings
 from django.db import connections
-from woonfraude_model import score
+
+try:
+  from woonfraude_model import score
+except Exception as e: 
+  # TODO: Solve this later
+  score = Mock()
 
 from api.cases.const import STADIA, PROJECTS, STARTING_FROM_DATE
 from api.fraudprediction.models import FraudPrediction
