@@ -73,7 +73,7 @@ pub(crate) fn melding(toezichthouder_codes: &Vec<String>) -> String {
         element(&["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "SEP", "OKT", "NOV", "DEC"]),
         rng.gen_range(10, 20)
     );
-    let no_words = rng.gen_range(5, 20);
+    let no_words = rng.gen_range(3, 10);
     let content = format!(
         "{}({}): {}",
         element(&toezichthouder_codes),
