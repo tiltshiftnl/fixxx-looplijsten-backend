@@ -11,7 +11,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.http.response import Http404
 from django.test import TestCase
 
-from api.users.auth import OIDCAuthenticationBackend
+from api.users.auth_grip import OIDCAuthenticationBackend
 from app.utils.unittest_helpers import get_test_user
 
 MOCK_AUTH_CODE = 'FOO_CODE'

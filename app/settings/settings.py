@@ -10,6 +10,9 @@ from api.planner.const import EXAMPLE_PLANNER_SETTINGS
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Local development settings
+LOCAL_DEVELOPMENT_AUTHENTICATION = os.getenv('LOCAL_DEVELOPMENT_AUTHENTICATION', False) == 'True'
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -147,7 +150,7 @@ AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'api.users.auth.OIDCAuthenticationBackend',
+    'api.users.auth.AuthenticationBackend',
 )
 
 # Django Rest Framework

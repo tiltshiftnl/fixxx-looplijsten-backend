@@ -52,6 +52,7 @@ services:
       - UWSGI_DIE_ON_TERM=1
       - UWSGI_MODULE=wsgi:application
       - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
+      - LOCAL_DEVELOPMENT_AUTHENTICATION=False
     volumes:
       - ./app:/app
       - ./api/deploy:/deploy

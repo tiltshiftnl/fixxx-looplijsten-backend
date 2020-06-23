@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.users.auth import OIDCAuthenticationBackend
+from api.users.auth import AuthenticationBackend
 from api.users.models import User
 from api.users.serializers import UserSerializer
 from utils.safety_lock import safety_lock
@@ -44,7 +44,7 @@ class ObtainAuthTokenOIDC(APIView):
             LOGGER.error('Could not authenticate: No authentication code found')
             return HttpResponseBadRequest('No authentication code found')
 
-        authentication_backend = OIDCAuthenticationBackend()
+        authentication_backend = AuthenticationBackend()
 
         try:
             user = authentication_backend.authenticate(request)

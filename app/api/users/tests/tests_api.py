@@ -78,13 +78,13 @@ class ObtainAuthTokenOIDCTest(APITestCase):
 
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @patch('api.users.views.OIDCAuthenticationBackend')
-    def test_with_authentication_code(self, mock_OIDCAuthenticationBackend):
+    @patch('api.users.views.AuthenticationBackend')
+    def test_with_authentication_code(self, mock_AuthenticationBackend):
         """
         succeeds if an authentication code is sent
         """
-        mock_OIDCAuthenticationBackend.authenticate = Mock()
-        mock_OIDCAuthenticationBackend.authenticate.return_value = get_test_user()
+        mock_AuthenticationBackend.authenticate = Mock()
+        mock_AuthenticationBackend.authenticate.return_value = get_test_user()
 
         url = reverse('oidc-authenticate')
         client = get_unauthenticated_client()
@@ -94,13 +94,13 @@ class ObtainAuthTokenOIDCTest(APITestCase):
 
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
-    @patch('api.users.views.OIDCAuthenticationBackend')
-    def test_with_authentication_code_response(self, mock_OIDCAuthenticationBackend):
+    @patch('api.users.views.AuthenticationBackend')
+    def test_with_authentication_code_response(self, mock_AuthenticationBackend):
         """
         Returns a refresh and access token if authentication is succesful
         """
-        mock_OIDCAuthenticationBackend.authenticate = Mock()
-        mock_OIDCAuthenticationBackend.authenticate.return_value = get_test_user()
+        mock_AuthenticationBackend.authenticate = Mock()
+        mock_AuthenticationBackend.authenticate.return_value = get_test_user()
 
         url = reverse('oidc-authenticate')
         client = get_unauthenticated_client()
@@ -116,14 +116,14 @@ class ObtainAuthTokenOIDCTest(APITestCase):
         self.assertIsNotNone(token_response['access'])
         self.assertIsNotNone(token_response['user'])
 
-    @patch('api.users.views.OIDCAuthenticationBackend')
-    def test_with_failing_authentication_code(self, mock_OIDCAuthenticationBackend):
+    @patch('api.users.views.AuthenticationBackend')
+    def test_with_failing_authentication_code(self, mock_AuthenticationBackend):
         """
         Returns a bad request if the authentication using the code fails
         """
         # Mock the authenticate dependencies
         mock_authenticate = Mock()
-        mock_OIDCAuthenticationBackend.return_value = mock_authenticate
+        mock_AuthenticationBackend.return_value = mock_authenticate
         # Calling the authenticate calls a side effect containing an exception.
         # This should cause the authenticate request to fail
         mock_authenticate.authenticate = Mock(side_effect=Exception('FOO Exception'))
