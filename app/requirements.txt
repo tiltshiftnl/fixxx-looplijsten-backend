@@ -1,6 +1,6 @@
 # Core
 Django==3.0.7
-
+psycopg2
 
 # Rest apis
 djangorestframework==3.11.0
