@@ -8,12 +8,6 @@ from unittest.mock import Mock
 from django.conf import settings
 from django.db import connections
 
-try:
-  from woonfraude_model import score
-except Exception as e: 
-  # TODO: Solve this later
-  score = Mock()
-
 from api.cases.const import STADIA, PROJECTS, STARTING_FROM_DATE
 from api.fraudprediction.models import FraudPrediction
 from utils.queries_planner import get_cases_from_bwv
@@ -27,6 +21,7 @@ SCORE_STARTING_FROM_DATE = STARTING_FROM_DATE
 
 class FraudPredict():
 
+
     def start(self):
         LOGGER.info('Started scoring Logger')
         dbconfig = self.get_all_database_configs(DATABASE_CONFIG_KEYS)
@@ -36,6 +31,14 @@ class FraudPredict():
         cache_dir = settings.FRAUD_PREDICTION_CACHE_DIR
         self.clear_cache_dir(cache_dir)
         LOGGER.info('Cleared cache')
+
+        # Scoring library is optional for local development. This makes sure it's available.
+        try:
+          LOGGER.info('Importing scoring library')
+          from woonfraude_model import score
+        except ModuleNotFoundError as e:   
+          LOGGER.error('Could not import library. Scoring failed.')
+          return
 
         try:
             scorer = score.Scorer(cache_dir=cache_dir, dbconfig=dbconfig)
