@@ -3,6 +3,7 @@ LABEL maintainer="datapunt@amsterdam.nl"
 
 ENV PYTHONUNBUFFERED 1
 ARG INTEGRALE_AANPAK_ONDERMIJNING_CREDS
+ARG INTEGRALE_AANPAK_ONDERMIJNING_PERSONAL_ACCESS_TOKEN
 
 # Setup Certificates for ADP/Motiv
 COPY certificates/adp_rootca.crt /usr/local/share/ca-certificates/extras/adp_rootca.crt
@@ -17,11 +18,20 @@ RUN mkdir -p ${DIRECTORYLIST} && chown datapunt ${DIRECTORYLIST}
 # Setup application
 WORKDIR /app
 COPY requirements.txt /app/
-RUN git clone -b latest --single-branch https://${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.data.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning
-# Note: uncomment for installing on local development environment using a personal access token:
-# RUN git clone -b latest --single-branch https://oauth2:${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.data.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning
-RUN pip install --no-cache-dir /tmp/integrale_aanpak_ondermijning
+
+RUN mkdir /tmp/integrale_aanpak_ondermijning
+
+# Clone the private cto-fraude-aanpak library using a deploy token
+RUN if [ "x$INTEGRALE_AANPAK_ONDERMIJNING_CREDS" = "x" ] ; then echo INTEGRALE_AANPAK_ONDERMIJNING_CREDS not provided ; else git clone -b latest --single-branch https://${INTEGRALE_AANPAK_ONDERMIJNING_CREDS}@git.data.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning ; fi
+
+# Clone the private cto-fraude-aanpak library using a personal access token
+RUN if [ "x$INTEGRALE_AANPAK_ONDERMIJNING_PERSONAL_ACCESS_TOKEN" = "x" ] ; then echo INTEGRALE_AANPAK_ONDERMIJNING_CREDS not provided ; else git clone -b latest --single-branch https://oauth2:${INTEGRALE_AANPAK_ONDERMIJNING_PERSONAL_ACCESS_TOKEN}@git.data.amsterdam.nl/cto-fraude-aanpak/integrale_aanpak_ondermijning /tmp/integrale_aanpak_ondermijning ; fi
+
+# Install the private cto-fraude-aanpak library
+RUN if [ "x$INTEGRALE_AANPAK_ONDERMIJNING_CREDS$INTEGRALE_AANPAK_ONDERMIJNING_PERSONAL_ACCESS_TOKEN" = "x" ] ; then echo Skipping cto-fraude-aanpak install ;  else pip install --no-cache-dir /tmp/integrale_aanpak_ondermijning ; fi
+
 RUN pip install --no-cache-dir -r requirements.txt
+
 USER datapunt
 
 COPY . /app/

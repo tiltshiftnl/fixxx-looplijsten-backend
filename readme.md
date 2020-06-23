@@ -14,7 +14,7 @@ docker-compose up
 
 To build:
 ```bash
-docker-compose build --build-arg INTEGRALE_AANPAK_ONDERMIJNING_CREDS=GITLAB_ACCESS_TOKEN_HERE
+docker-compose build --build-arg INTEGRALE_AANPAK_ONDERMIJNING_PERSONAL_ACCESS_TOKEN=GITLAB_PERSONAL_ACCESS_TOKEN_HERE
 ```
 Replace the GITLAB_ACCESS_TOKEN_HERE access token with your private token.
 This token can be acquired through the private Amsterdam gitlab woonfraude repository.
