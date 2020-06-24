@@ -12,7 +12,7 @@ from api.planner.algorithm.knapsack import ItineraryKnapsackList
 from api.planner.const import SCORING_WEIGHTS
 from api.planner.utils import remove_cases_from_list
 from utils.safety_lock import safety_lock
-
+from utils.queries_zaken_api import get_cases
 
 class AlgorithmView(LoginRequiredMixin, View):
     login_url = '/admin/login/'
@@ -20,6 +20,7 @@ class AlgorithmView(LoginRequiredMixin, View):
 
     def get_context_data(self):
         key, _ = Constance.objects.get_or_create(key=settings.CONSTANCE_MAPS_KEY)
+        zaken_data = get_cases()
         return {
             'projects': PROJECTS,
             'selected_projects': PROJECTS_WITHOUT_SAHARA,
@@ -38,7 +39,8 @@ class AlgorithmView(LoginRequiredMixin, View):
             'weight_issuemelding': SCORING_WEIGHTS.ISSUEMELDING.value,
             'start_case_id': '',
             'postal_code_range_start': 1000,
-            'postal_code_range_end': 1108
+            'postal_code_range_end': 1108,
+            'zaken_data': zaken_data
         }
 
     @safety_lock

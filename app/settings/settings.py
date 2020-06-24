@@ -284,7 +284,11 @@ BRK_ACCESS_URL = os.getenv('BRK_ACCESS_URL')
 BRK_API_OBJECT_EXPAND_URL = os.getenv(
     'BRK_API_OBJECT_EXPAND_URL', 'https://acc.api.data.amsterdam.nl/brk/object-expand/')
 
+# BAG Access request settings
 BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
+
+# Zaken Access request settings
+ZAKEN_API_URL = os.getenv('ZAKEN_API_URL')
 
 # Settings to improve security
 is_secure_environment = True if ENVIRONMENT in ['production', 'acceptance'] else False

@@ -2,6 +2,8 @@ version: '3.5'
 
 services:
   bwv_db:
+    networks:
+      - looplijsten_backend
     build: ./bwv_db
     ports:
       - "5410:5432"
@@ -10,6 +12,8 @@ services:
       POSTGRES_USER: looplijsten_bwv
       POSTGRES_PASSWORD: insecure
   database:
+    networks:
+      - looplijsten_backend    
     image: amsterdam/postgres11
     shm_size: '512m'
     ports:
@@ -19,6 +23,8 @@ services:
       POSTGRES_USER: looplijsten
       POSTGRES_PASSWORD: insecure
   api:
+    networks:
+        - looplijsten_backend
     build:
       context: ./app
       args:
@@ -54,6 +60,7 @@ services:
       - UWSGI_MODULE=wsgi:application
       - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
       - LOCAL_DEVELOPMENT_AUTHENTICATION=False
+      - ZAKEN_API_URL=http://zaak-gateway:8000/api/v1
     volumes:
       - ./app:/app
       - ./api/deploy:/deploy
@@ -63,6 +70,5 @@ services:
       uwsgi --py-auto-reload=1"
 
 networks:
-  default:
-    name: looplijsten_backend
-
+  looplijsten_backend:
+    driver: bridge
