@@ -328,5 +328,5 @@ class Note(models.Model):
 @receiver(signals.post_save, sender=ItineraryItem)
 def create_itinerary_item_signal(sender, instance, created, **kwargs):
     if created:
-        push_case(instance.case.case_id)
+        push_case(instance.case.bwv_data)
 
