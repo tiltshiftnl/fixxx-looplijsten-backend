@@ -1,3 +1,4 @@
+# TODO: Tests for this
 import logging
 import requests
 from django.conf import settings
@@ -55,3 +56,18 @@ def push_case(case):
             return response
         except Exception as e:
             logger.error(f'Could not push cases: {e}')
+
+
+def push_checked_action(case_id, check):
+    url = f'{settings.ZAKEN_API_URL}/push-check-action/'
+
+    for i in range(3):
+        try:
+            data = {
+                'identificatie': case_id,
+                'check_actie': check
+            }
+            response = requests.post(url, timeout=2, json=data)
+            return response
+        except Exception as e:
+            logger.error(f'Could not push action: {e}')

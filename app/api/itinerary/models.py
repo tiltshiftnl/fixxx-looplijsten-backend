@@ -12,7 +12,7 @@ from api.planner.algorithm.knapsack import ItineraryKnapsackSuggestions, Itinera
 from api.planner.utils import remove_cases_from_list
 from api.users.models import User
 from utils.queries_planner import get_cases_from_bwv
-from utils.queries_zaken_api import push_case
+from utils.queries_zaken_api import push_case, push_checked_action
 
 
 class Itinerary(models.Model):
@@ -324,9 +324,23 @@ class Note(models.Model):
         return self.text
 
 
+# TODO: Tests for this
 # Note: this should be moved to a dedicated signals file later on
 @receiver(signals.post_save, sender=ItineraryItem)
-def create_itinerary_item_signal(sender, instance, created, **kwargs):
+def create_itinerary_item_signal(instance, created, **kwargs):
     if created:
         push_case(instance.case.bwv_data)
+
+@receiver(signals.pre_save, sender=ItineraryItem)
+def checked_itinerary_item_signal(sender, instance, **kwargs):
+    try:
+        obj = sender.objects.get(pk=instance.pk)
+    except sender.DoesNotExist:
+        # Object does not exist yet, we only want to check if some fields have changes
+        pass
+    else:
+        if not obj.checked == instance.checked: # Field has changed
+            push_checked_action(instance.case.case_id, instance.checked)
+
+
 
