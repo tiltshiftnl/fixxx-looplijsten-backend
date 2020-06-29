@@ -1,5 +1,4 @@
 import logging
-
 import requests
 from django.conf import settings
 
@@ -16,6 +15,10 @@ def get_cases():
     except Exception as e:
         logger.error(f'Could not get cases: {e}')
 
+def datetime_to_date(date_time=None):
+    if not date_time:
+        return
+    return str(date_time.date())
 
 def push_case(case):
     url = f'{settings.ZAKEN_API_URL}/push/'
@@ -30,13 +33,24 @@ def push_case(case):
 
     address = f'{street_name} {street_number}{suffix_letter}{suffix}, {postal_code}'
 
+    start_date = case.get('start_date', None)
+    start_date = datetime_to_date(start_date)
+
+    end_date = case.get('end_date', None)
+    end_date = datetime_to_date(end_date)
+
     for i in range(3):
         try:
             data = {
                 'identificatie': case['case_id'],
                 'omschrijving': case['case_reason'],
-                'toelichting': address
+                'toelichting': address,
+                'startdatum': start_date,
             }
+
+            if end_date:
+                data['einddatum'] = end_date
+
             response = requests.post(url, timeout=2, json=data)
             return response
         except Exception as e:
