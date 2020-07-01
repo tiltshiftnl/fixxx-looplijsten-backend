@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from api.cases.const import PROJECTS, STARTING_FROM_DATE
 from api.cases.models import Case, Project, Stadium
 from api.planner.algorithm.knapsack import ItineraryKnapsackSuggestions, ItineraryKnapsackList
+from api.planner.algorithm.clustering import ItineraryGenerateCluster
 from api.planner.utils import remove_cases_from_list
 from api.users.models import User
 from utils.queries_planner import get_cases_from_bwv
@@ -18,7 +19,7 @@ from utils.queries_zaken_api import push_case, push_checked_action
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
     suggestionAlgorithm = ItineraryKnapsackSuggestions
-    itineraryAlgorithm = ItineraryKnapsackList
+    itineraryAlgorithm = ItineraryGenerateCluster
 
     created_at = models.DateField(auto_now_add=True)
 
@@ -328,9 +329,9 @@ class Note(models.Model):
 # Note: this should be moved to a dedicated signals file later on
 @receiver(signals.post_save, sender=ItineraryItem)
 def create_itinerary_item_signal(instance, created, **kwargs):
-    if created:
+    if created:        
         push_case(instance.case.bwv_data)
-
+        
 @receiver(signals.pre_save, sender=ItineraryItem)
 def checked_itinerary_item_signal(sender, instance, **kwargs):
     try:
