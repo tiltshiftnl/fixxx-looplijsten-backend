@@ -2,6 +2,7 @@
 import logging
 import requests
 from django.conf import settings
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,11 @@ def get_cases():
 def datetime_to_date(date_time=None):
     if not date_time:
         return
-    return str(date_time.date())
+    # return str(date_time.date())        
+    # TODO: Temporary fix for debugging
+    return str(datetime.now().date())
+    
+    
 
 def push_case(case):
     url = f'{settings.ZAKEN_API_URL}/push/'
