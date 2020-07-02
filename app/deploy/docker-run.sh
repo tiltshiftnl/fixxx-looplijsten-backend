@@ -13,6 +13,8 @@ chmod -R 777 /static
 # modify permission so scoring files can be cached
 chmod -R 700 /fraud_prediction_cache
 
+echo "Local development authentication $LOCAL_DEVELOPMENT_AUTHENTICATION"
+
 # run uwsgi
 cd /app/
-exec uwsgi
+exec uwsgi --master --processes 4 --threads 2
