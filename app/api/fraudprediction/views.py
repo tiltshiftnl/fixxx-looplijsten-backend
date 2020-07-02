@@ -36,7 +36,11 @@ class FraudPredictionScoringViewSet(ViewSet):
         if hasattr(os, 'getppid'):
             LOGGER.info('Process kicking off scoring: {}'.format(os.getpid()))
 
-        p = Process(target=self.background_process)
+        def detach_process():
+            p = Process(target=self.background_process)
+            p.start()
+
+        p = Process(target=detach_process)
         p.start()
 
         json = {

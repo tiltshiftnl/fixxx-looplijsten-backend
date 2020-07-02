@@ -211,6 +211,8 @@ def get_case(case_id):
     query = """
             SELECT
               import_wvs.zaak_id AS case_id,
+              import_wvs.begindatum AS start_date,
+              import_wvs.einddatum AS end_date,
               import_adres.postcode AS postal_code,
               import_adres.sttnaam AS street_name,
               import_adres.hsnr AS street_number,
