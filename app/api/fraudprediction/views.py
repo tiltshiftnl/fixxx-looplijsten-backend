@@ -15,6 +15,18 @@ from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
 
+run_old = Process.run
+
+def run_new(*args, **kwargs):
+    try:
+        run_old(*args, **kwargs)
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except Exception as e:
+        LOGGER.error(f'Something went wrong while running process: {str(e)}')
+
+Process.run = run_new
+
 
 @method_decorator(safety_lock, 'create')
 class FraudPredictionScoringViewSet(ViewSet):
@@ -31,6 +43,8 @@ class FraudPredictionScoringViewSet(ViewSet):
 
         fraud_predict = FraudPredict()
         fraud_predict.start()
+
+        LOGGER.info('Finished scoring background process')
 
     def create(self, request):
         if hasattr(os, 'getppid'):
