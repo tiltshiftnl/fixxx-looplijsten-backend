@@ -15,18 +15,6 @@ from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
 
-run_old = Process.run
-
-def run_new(*args, **kwargs):
-    try:
-        run_old(*args, **kwargs)
-    except (KeyboardInterrupt, SystemExit):
-        raise
-    except Exception as e:
-        LOGGER.error(f'Something went wrong while running process: {str(e)}')
-
-Process.run = run_new
-
 
 @method_decorator(safety_lock, 'create')
 class FraudPredictionScoringViewSet(ViewSet):
@@ -50,11 +38,7 @@ class FraudPredictionScoringViewSet(ViewSet):
         if hasattr(os, 'getppid'):
             LOGGER.info('Process kicking off scoring: {}'.format(os.getpid()))
 
-        def detach_process():
-            p = Process(target=self.background_process)
-            p.start()
-
-        p = Process(target=detach_process)
+        p = Process(target=self.background_process)
         p.start()
 
         json = {
