@@ -19,6 +19,7 @@ django-constance[database]==2.6.0
 # Other
 requests==2.24.0
 django-filter==2.3.0
+tenacity
 
 # Authentication
 mozilla-django-oidc==1.2.3

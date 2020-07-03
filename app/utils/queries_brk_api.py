@@ -1,7 +1,7 @@
 # TODO: Write tests for these functions
 import logging
 from datetime import datetime, timedelta
-
+from tenacity import retry, stop_after_attempt, after_log
 import requests
 from constance.backends.database.models import Constance
 from django.conf import settings
@@ -43,7 +43,7 @@ def set_expiry(expiry):
         expiry
     )
 
-
+@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
 def request_new_token():
     payload = {
         'grant_type': 'client_credentials',
@@ -51,23 +51,20 @@ def request_new_token():
         'client_secret': settings.BRK_ACCESS_CLIENT_SECRET,
     }
 
-    try:
-        token_request_url = settings.BRK_ACCESS_URL
 
-        response = requests.post(token_request_url, data=payload)
-        response.raise_for_status()
-        response_json = response.json()
+    token_request_url = settings.BRK_ACCESS_URL
 
-        access_token = response_json.get('access_token')
-        set_token(access_token)
+    response = requests.post(token_request_url, data=payload, timeout=0.5)
+    response.raise_for_status()
+    response_json = response.json()
 
-        expires_in = response_json.get('expires_in')
-        expiry = datetime.now() + timedelta(seconds=expires_in)
-        set_expiry(expiry)
+    access_token = response_json.get('access_token')
+    set_token(access_token)
 
-    except Exception as e:
-        logger.error('Requesting BRK access token failed: {}'.format(str(e)))
-        return {'error': str(e)}
+    expires_in = response_json.get('expires_in')
+    expiry = datetime.now() + timedelta(seconds=expires_in)
+    set_expiry(expiry)
+
 
 
 def get_brk_request_headers():
@@ -95,31 +92,37 @@ def get_brk_request_headers():
     return headers
 
 
+@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
+def request_brk_data(bag_id):
+    headers = get_brk_request_headers()
+    brk_data_request = requests.get(
+        settings.BRK_API_OBJECT_EXPAND_URL,
+        params={'verblijfsobjecten__id': bag_id},
+        headers=headers,
+        timeout=0.5
+    )
+    brk_data_request.raise_for_status()
+    brk_data = brk_data_request.json()
+    return brk_data
+
+
 def get_brk_data(bag_id):
     """
     Does an authenticated request to BRK, and returns the owners of a given bag_id location
     """
+    if not bag_id:
+        raise Exception('No BAG ID given for BRK request')
+
     try:
-        if not bag_id:
-            raise Exception('No BAG ID given for BRK request')
-
-        headers = get_brk_request_headers()
-        brk_data_request = requests.get(
-            settings.BRK_API_OBJECT_EXPAND_URL,
-            params={'verblijfsobjecten__id': bag_id},
-            headers=headers,
-            timeout=1.5
-        )
-
-        brk_data_request.raise_for_status()
-        brk_data = brk_data_request.json()
-        brk_owners = brk_data.get(
-            'results')[0].get('rechten')
-
-        return {
-            'owners': brk_owners
-        }
-
+        brk_data = request_brk_data(bag_id)
+        brk_owners = brk_data.get('results')[0].get('rechten')
+        brk_owners = {'owners': brk_owners}
+        return brk_owners
     except Exception as e:
         logger.error('Requesting BRK data failed: {}'.format(str(e)))
-        return {'owners': [], 'error': str(e)}
+        error_objects = {
+            'error': str(e),
+            'bag_id': bag_id,
+            'api_url': settings.BRK_API_OBJECT_EXPAND_URL,
+        }
+        return error_objects
