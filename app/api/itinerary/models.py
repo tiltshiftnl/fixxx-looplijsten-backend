@@ -163,18 +163,6 @@ class ItinerarySettings(models.Model):
     target_length = models.IntegerField(default=8,
                                         validators=[MinValueValidator(1), MaxValueValidator(20)])
 
-    postal_code_range_start = models.IntegerField(
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
-                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
-
-    postal_code_range_end = models.IntegerField(
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
-                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
-
     itinerary = models.OneToOneField(Itinerary,
                                      on_delete=models.CASCADE,
                                      null=False,
@@ -206,6 +194,27 @@ class ItinerarySettings(models.Model):
     def __str__(self):
         return self.itinerary.__str__()
 
+
+class PostalCodeRange(models.Model):
+    """ A postal code range for a setting """
+    itinerary_settings = models.ForeignKey(to=ItinerarySettings,
+                                        null=True,
+                                        blank=True,
+                                        on_delete=models.CASCADE,
+                                        related_name='postal_code_ranges')
+
+    postal_code_range_start = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
+                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
+
+    postal_code_range_end = models.IntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
+                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
+
     def clean(self):
         """
         Checks for postal code ranges
@@ -225,7 +234,6 @@ class ItinerarySettings(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         return super().save(*args, **kwargs)
-
 
 class ItineraryTeamMember(models.Model):
     """ Member of an Itinerary Team """
