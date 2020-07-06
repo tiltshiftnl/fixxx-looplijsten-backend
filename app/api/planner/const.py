@@ -16,17 +16,17 @@ MAX_SUGGESTIONS_COUNT = 20
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
     "projects": const.PROJECTS_WITHOUT_SAHARA,
-    # Optional postal code settings (see project settings for start and end range)
-    # "postal_code": {
-    #     "range_start": 1000,
-    #     "range_end": 1109
-    # },
     "days": {
         "monday": {
             "day": {
                 "length_of_list": 6,
                 "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
+                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE],
+                # Optional postal code settings (see project settings for start and end range)
+                "postal_code": {
+                    "range_start": 1000,
+                    "range_end": 1109
+                },
             },
             "evening": {
                 "length_of_list": 6,
