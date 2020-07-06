@@ -48,7 +48,7 @@ class PlannerWeekSettingsSerializer(serializers.Serializer):
     sunday = PlannerDaySettingsSerializer(required=True)
 
 
-class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
+class PlannerPostalCodeRangesSerializer(serializers.Serializer):
     range_start = serializers.IntegerField(
         required=True,
         min_value=settings.CITY_MIN_POSTAL_CODE,
@@ -72,5 +72,5 @@ class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
 class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
-    postal_code = PlannerPostalCodeSettingsSerializer(required=False)
+    postal_code_ranges = PlannerPostalCodeRangesSerializer(required=False, many=True)
     days = PlannerWeekSettingsSerializer(required=True)

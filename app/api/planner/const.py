@@ -16,11 +16,13 @@ MAX_SUGGESTIONS_COUNT = 20
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
     "projects": const.PROJECTS_WITHOUT_SAHARA,
-    # Optional postal code settings (see project settings for start and end range)
-    # "postal_code": {
-    #     "range_start": 1000,
-    #     "range_end": 1109
-    # },
+    # Optional postal code settings
+    "postal_code_ranges": [
+        {
+            "range_start": 1000,
+            "range_end": 1109
+        }
+    ],
     "days": {
         "monday": {
             "day": {
