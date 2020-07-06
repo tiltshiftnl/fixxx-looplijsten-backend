@@ -165,12 +165,13 @@ class ItinerarySerializer(serializers.ModelSerializer):
         # Get the postal code ranges from the settings
         postal_code_settings = validated_data.get('postal_code_settings')
         for postal_code_setting in postal_code_settings:
-            postal_code_range_start = postal_code_setting.get('range_start')
-            postal_code_range_end = postal_code_setting.get('range_end')
+            range_start = postal_code_setting.get('range_start')
+            range_end = postal_code_setting.get('range_end')
+
             PostalCodeSettings.objects.create(
                 itinerary=itinerary,
-                postal_code_range_start=postal_code_range_start,
-                postal_code_range_end=postal_code_range_end,
+                range_start=range_start,
+                range_end=range_end,
             )
 
         return itinerary

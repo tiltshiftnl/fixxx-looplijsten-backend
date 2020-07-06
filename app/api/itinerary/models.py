@@ -114,7 +114,7 @@ class Itinerary(models.Model):
         Returns a list of suggested cases which can be added to this itinerary
         """
         # Initialise using this itinerary's settings
-        generator = self.suggestionAlgorithm(self.settings)
+        generator = self.suggestionAlgorithm(self.settings, self.postal_code_settings.all())
 
         # Exclude the cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)
@@ -131,7 +131,7 @@ class Itinerary(models.Model):
         Returns a list of cases based on the settings which can be added to this itinerary
         """
         # Initialise using this itinerary's settings
-        generator = self.itineraryAlgorithm(self.settings)
+        generator = self.itineraryAlgorithm(self.settings, self.postal_code_settings.all())
 
         # Exclude cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)

@@ -10,12 +10,11 @@ LOGGER = logging.getLogger(__name__)
 class ItineraryGenerateAlgorithm():
     """ An abstract class which forms the basis of itinerary generating algorithms """
 
-    def __init__(self, settings):
+    def __init__(self, settings, postal_code_settings=[]):
         self.opening_date = settings.opening_date
         self.stadia = STADIA
         self.target_length = int(settings.target_length)
-        self.postal_code_range_start = 1000
-        self.postal_code_range_end = 1109
+        self.postal_code_ranges = [vars(postal_code_setting) for postal_code_setting in postal_code_settings]
 
         try:
             self.primary_stadium = settings.primary_stadium.name
@@ -61,10 +60,7 @@ class ItineraryGenerateAlgorithm():
         filtered_cases = filter_cases_with_missing_coordinates(filtered_cases)
         LOGGER.info('Total cases after filtering on missing coordinates: {}'.format(len(filtered_cases)))
 
-        filtered_cases = filter_cases_with_postal_code(
-            filtered_cases,
-            self.postal_code_range_start,
-            self.postal_code_range_end)
+        filtered_cases = filter_cases_with_postal_code(filtered_cases, self.postal_code_ranges)
         LOGGER.info('Total cases after filtering on postal codes: {}'.format(len(filtered_cases)))
 
         exclude_cases = [{'case_id': case.case_id} for case in self.exclude_cases]

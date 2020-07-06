@@ -149,8 +149,10 @@ class UtilsTests(TestCase):
         """
         Should just return an empty list
         """
-        cases = filter_cases_with_postal_code([])
-        self.assertEqual(cases, [])
+        FOO_CASE_A = {'postal_code': '1055XX'}
+        cases = [FOO_CASE_A]
+        filtered_cases = filter_cases_with_postal_code(cases, [])
+        self.assertEqual(cases, filtered_cases)
 
     def test_filter_cases_with_postal_code_wrong_range(self):
         """
@@ -158,9 +160,13 @@ class UtilsTests(TestCase):
         """
         FOO_START_RANGE = 2000
         FOO_END_RANGE = 1000
+        FOO_CASE_A = {'postal_code': '1055XX'}
+        cases = [FOO_CASE_A]
+
+        RANGES = [{'start_range': FOO_START_RANGE, 'end_range': FOO_END_RANGE}]
 
         with self.assertRaises(ValueError):
-            filter_cases_with_postal_code([], FOO_START_RANGE, FOO_END_RANGE)
+            filter_cases_with_postal_code(cases, RANGES)
 
     def test_filter_cases_with_postal_code(self):
         """
@@ -168,6 +174,7 @@ class UtilsTests(TestCase):
         """
         FOO_START_RANGE = 1000
         FOO_END_RANGE = 2000
+        RANGES = [{'start_range': FOO_START_RANGE, 'end_range': FOO_END_RANGE}]
 
         FOO_CASE_A = {'postal_code': '1055XX'}
         FOO_CASE_B = {'postal_code': '2055XX'}
@@ -177,10 +184,28 @@ class UtilsTests(TestCase):
 
         cases = [FOO_CASE_A, FOO_CASE_B, FOO_CASE_C, FOO_CASE_D, FOO_CASE_E]
 
-        filtered_cases = filter_cases_with_postal_code(
-            cases,
-            FOO_START_RANGE,
-            FOO_END_RANGE
-        )
+        filtered_cases = filter_cases_with_postal_code(cases, RANGES)
 
         self.assertEquals(filtered_cases, [FOO_CASE_A, FOO_CASE_C, FOO_CASE_D])
+
+
+    def test_filter_cases_with_multiple_postal_code_ranges(self):
+        """
+        Returns the cases which fall within the given range
+        """
+        RANGES = [
+            {'start_range': 1055, 'end_range': 1057},
+            {'start_range': 2000, 'end_range': 2050}
+        ]
+
+        FOO_CASE_A = {'postal_code': '1055XX'}
+        FOO_CASE_B = {'postal_code': '1056XX'}
+        FOO_CASE_C = {'postal_code': '1060XX'}
+        FOO_CASE_D = {'postal_code': '2000XX'}
+        FOO_CASE_E = {'postal_code': '2050XX'}
+
+        cases = [FOO_CASE_A, FOO_CASE_B, FOO_CASE_C, FOO_CASE_D, FOO_CASE_E]
+
+        filtered_cases = filter_cases_with_postal_code(cases, RANGES)
+
+        self.assertEquals(filtered_cases, [FOO_CASE_A, FOO_CASE_B, FOO_CASE_D, FOO_CASE_E])
