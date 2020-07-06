@@ -202,13 +202,13 @@ class PostalCodeSettings(models.Model):
                                      null=False,
                                      related_name='postal_code_settings')
 
-    postal_code_range_start = models.IntegerField(
+    range_start = models.IntegerField(
         null=False,
         blank=False,
         validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
                     MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
 
-    postal_code_range_end = models.IntegerField(
+    range_end = models.IntegerField(
         null=False,
         blank=False,
         validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
@@ -218,14 +218,14 @@ class PostalCodeSettings(models.Model):
         """
         Checks for postal code ranges
         """
-        if self.postal_code_range_start and not self.postal_code_range_end:
-            raise ValidationError({'postal_code_range_end': ('Required if postal_code_range_start is set')})
+        if self.range_start and not self.range_end:
+            raise ValidationError({'range_end': ('Required if range_start is set')})
 
-        elif not self.postal_code_range_start and self.postal_code_range_end:
-            raise ValidationError({'postal_code_range_start': ('Required if postal_code_range_end is set')})
+        elif not self.range_start and self.range_end:
+            raise ValidationError({'range_start': ('Required if range_end is set')})
 
-        elif self.postal_code_range_start > self.postal_code_range_end:
-            raise ValidationError({'postal_code_range_start': ('Must be smaller than postal_code_range_end')})
+        elif self.range_start > self.range_end:
+            raise ValidationError({'range_start': ('Must be smaller than range_end')})
 
     def save(self, *args, **kwargs):
         self.full_clean()

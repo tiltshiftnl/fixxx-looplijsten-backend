@@ -5,7 +5,7 @@ from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMe
 from api.itinerary.serializers import ItinerarySerializer
 
 class PostalCodeSettingsInline(admin.StackedInline):
-    fields = ('postal_code_range_start', 'postal_code_range_end')
+    fields = ('range_start', 'range_end')
     model = PostalCodeSettings
 
 class ItinerarySettingsInline(admin.StackedInline):

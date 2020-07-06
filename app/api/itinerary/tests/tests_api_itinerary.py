@@ -93,6 +93,7 @@ class ItineraryViewsGetTest(APITestCase):
                             'last_name': user.last_name,
                             'full_name': user.full_name}}],
                     'items': [],
+                    'postal_code_settings': [],
                     'settings': None}]}
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -127,6 +128,7 @@ class ItineraryViewsGetTest(APITestCase):
                              'last_name': user.last_name,
                              'full_name': user.full_name}}],
                     'items': [],
+                    'postal_code_settings': [],
                     'settings': None
                 },
                 {
@@ -142,6 +144,7 @@ class ItineraryViewsGetTest(APITestCase):
                              'last_name': user.last_name,
                              'full_name': user.full_name}}],
                     'items': [],
+                    'postal_code_settings': [],
                     'settings': None
                 }
             ]
@@ -181,6 +184,7 @@ class ItineraryViewsGetTest(APITestCase):
                              'last_name': user.last_name,
                              'full_name': user.full_name}}],
                     'items': [],
+                    'postal_code_settings': [],
                     'settings': None}]}
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

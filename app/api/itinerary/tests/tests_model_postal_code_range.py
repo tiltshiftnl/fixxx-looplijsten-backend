@@ -15,8 +15,8 @@ class ItinerarySettingsModelTest(TestCase):
 
         postal_code_range = PostalCodeSettings.objects.create(
             itinerary=itinerary,
-            postal_code_range_start=FOO_MIN_RANGE,
-            postal_code_range_end=FOO_MAX_RANGE
+            range_start=FOO_MIN_RANGE,
+            range_end=FOO_MAX_RANGE
         )
         postal_code_range.clean()
         self.assertEquals(PostalCodeSettings.objects.count(), 1)
@@ -31,8 +31,8 @@ class ItinerarySettingsModelTest(TestCase):
         with self.assertRaises(Exception):
             postal_code_range = PostalCodeSettings.objects.create(
                 itinerary=itinerary,
-                postal_code_range_start=FOO_MIN_RANGE,
-                postal_code_range_end=FOO_MIN_RANGE-1
+                range_start=FOO_MIN_RANGE,
+                range_end=FOO_MIN_RANGE-1
             )
             postal_code_range.clean()
 
@@ -46,7 +46,7 @@ class ItinerarySettingsModelTest(TestCase):
         with self.assertRaises(Exception):
             postal_code_range = PostalCodeSettings.objects.create(
                 itinerary=itinerary,
-                postal_code_range_start=FOO_MIN_RANGE,
+                range_start=FOO_MIN_RANGE,
             )
             postal_code_range.clean()
 
@@ -60,7 +60,7 @@ class ItinerarySettingsModelTest(TestCase):
         with self.assertRaises(Exception):
             postal_code_range = PostalCodeSettings.objects.create(
                 itinerary=itinerary,
-                postal_code_range_end=FOO_MAX_RANGE,
+                range_end=FOO_MAX_RANGE,
             )
             postal_code_range.clean()
 
@@ -76,8 +76,8 @@ class ItinerarySettingsModelTest(TestCase):
         for i in range(N_RANGES):
             postal_code_range = PostalCodeSettings.objects.create(
                 itinerary=itinerary,
-                postal_code_range_start=FOO_MIN_RANGE+i,
-                postal_code_range_end=FOO_MAX_RANGE
+                range_start=FOO_MIN_RANGE+i,
+                range_end=FOO_MAX_RANGE
             )
             postal_code_range.clean()
 

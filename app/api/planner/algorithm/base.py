@@ -14,8 +14,6 @@ class ItineraryGenerateAlgorithm():
         self.opening_date = settings.opening_date
         self.stadia = STADIA
         self.target_length = int(settings.target_length)
-        # self.postal_code_range_start = settings.postal_code_range_start
-        # self.postal_code_range_end = settings.postal_code_range_end
         self.postal_code_range_start = 1000
         self.postal_code_range_end = 1109
 

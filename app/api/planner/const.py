@@ -17,7 +17,7 @@ EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
     "projects": const.PROJECTS_WITHOUT_SAHARA,
     # Optional postal code settings
-    "postal_code_ranges": [
+    "postal_codes": [
         {
             "range_start": 1000,
             "range_end": 1109
