@@ -39,7 +39,7 @@ def do_bag_search_id(address):
     """
 
     id = address['landelijk_bag']
-    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': id}, timeout=1.5)
+    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': id}, timeout=0.5)
     return address_search.json()
 
 

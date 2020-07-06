@@ -5,7 +5,7 @@ def get_cases():
     url = f'{settings.ZAKEN_API_URL}/cases'
 
     def request():
-      response = requests.get(url, timeout=1.5)
+      response = requests.get(url, timeout=0.5)
       return response.json()
 
     try:
