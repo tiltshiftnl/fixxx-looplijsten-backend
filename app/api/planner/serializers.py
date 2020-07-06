@@ -3,32 +3,12 @@ from rest_framework import serializers
 
 from api.cases.const import PROJECTS, STADIA
 
-class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
-    range_start = serializers.IntegerField(
-        required=True,
-        min_value=settings.CITY_MIN_POSTAL_CODE,
-        max_value=settings.CITY_MAX_POSTAL_CODE)
-
-    range_end = serializers.IntegerField(
-        required=True,
-        min_value=settings.CITY_MIN_POSTAL_CODE,
-        max_value=settings.CITY_MAX_POSTAL_CODE)
-
-    def validate(self, data):
-        range_start = data.get('range_start')
-        range_end = data.get('range_end')
-
-        if range_end < range_start:
-            raise serializers.ValidationError("The start range can't be higher than the end range")
-        return data
-
 
 class PlannerListSettingsSerializer(serializers.Serializer):
     length_of_list = serializers.IntegerField(required=False, min_value=1, max_value=20, default=8)
     primary_stadium = serializers.ChoiceField(required=False, choices=STADIA)
     secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
     exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
-    postal_code = PlannerPostalCodeSettingsSerializer(required=False)
 
     def validate_mutual_exclusivity(self, stadia_a, stadia_b, message):
         for stadium in stadia_a:
@@ -68,7 +48,29 @@ class PlannerWeekSettingsSerializer(serializers.Serializer):
     sunday = PlannerDaySettingsSerializer(required=True)
 
 
+class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
+    range_start = serializers.IntegerField(
+        required=True,
+        min_value=settings.CITY_MIN_POSTAL_CODE,
+        max_value=settings.CITY_MAX_POSTAL_CODE)
+
+    range_end = serializers.IntegerField(
+        required=True,
+        min_value=settings.CITY_MIN_POSTAL_CODE,
+        max_value=settings.CITY_MAX_POSTAL_CODE)
+
+    def validate(self, data):
+        range_start = data.get('range_start')
+        range_end = data.get('range_end')
+
+        if range_end < range_start:
+            raise serializers.ValidationError("The start range can't be higher than the end range")
+
+        return data
+
+
 class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
+    postal_code = PlannerPostalCodeSettingsSerializer(required=False)
     days = PlannerWeekSettingsSerializer(required=True)
