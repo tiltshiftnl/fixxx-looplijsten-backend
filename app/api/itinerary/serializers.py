@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from api.cases.models import Project, Stadium, Case
 from api.cases.serializers import CaseSimpleSerializer, CaseSerializer, ProjectSerializer, StadiumSerializer
-from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
+from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings, PostalCodeSettings
 from api.users.serializers import UserIdSerializer
 from api.users.serializers import UserSerializer
 
@@ -21,6 +21,13 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = ('id', 'text', 'author')
+
+
+class PostalCodeSettingsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PostalCodeSettings
+        fields = ('postal_code_range_start', 'postal_code_range_end')
 
 
 class ItinerarySettingsSerializer(serializers.ModelSerializer):
@@ -86,6 +93,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
     created_at = serializers.DateField(read_only=True)
     team_members = ItineraryTeamMemberSerializer(many=True)
     settings = ItinerarySettingsSerializer(read_only=True)
+    postal_code_settings = PostalCodeSettingsSerializer(read_only=True, many=True, required=False)
 
     def __get_stadia_from_settings__(self, settings, list_name):
         """ Returns a list of Stadium objects from settings """
@@ -133,10 +141,6 @@ class ItinerarySerializer(serializers.ModelSerializer):
         opening_date = settings.get('opening_date')
         target_length = settings.get('target_length')
 
-        # TODO: Get multiple postal codes here
-        # postal_code_range_start = settings.get('postal_code_range_start', None)
-        # postal_code_range_end = settings.get('postal_code_range_end', None)
-
         # Get the projects and stadia from settings
         projects = self.__get_projects_from_settings__(settings)
         primary_stadium = self.__get_stadium_from_settings__(settings, 'primary_stadium')
@@ -158,8 +162,19 @@ class ItinerarySerializer(serializers.ModelSerializer):
         itinerary_settings.secondary_stadia.set(secondary_stadia)
         itinerary_settings.exclude_stadia.set(exclude_stadia)
 
+        # Get the postal code ranges from the settings
+        postal_code_settings = validated_data.get('postal_code_settings')
+        for postal_code_setting in postal_code_settings:
+            postal_code_range_start = postal_code_setting.get('postal_code_range_start')
+            postal_code_range_end = postal_code_setting.get('postal_code_range_end')
+            PostalCodeSettings.objects.create(
+                itinerary=itinerary,
+                postal_code_range_start=postal_code_range_start,
+                postal_code_range_end=postal_code_range_end,
+            )
+
         return itinerary
 
     class Meta:
         model = Itinerary
-        fields = ('id', 'created_at', 'team_members', 'items', 'settings')
+        fields = ('id', 'created_at', 'team_members', 'items', 'settings', 'postal_code_settings')
