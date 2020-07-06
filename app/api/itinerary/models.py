@@ -195,23 +195,22 @@ class ItinerarySettings(models.Model):
         return self.itinerary.__str__()
 
 
-class PostalCodeRange(models.Model):
-    """ A postal code range for a setting """
-    itinerary_settings = models.ForeignKey(to=ItinerarySettings,
-                                        null=True,
-                                        blank=True,
-                                        on_delete=models.CASCADE,
-                                        related_name='postal_code_ranges')
+class PostalCodeSettings(models.Model):
+    """ A postal code settings for an itinerary """
+    itinerary = models.ForeignKey(Itinerary,
+                                     on_delete=models.CASCADE,
+                                     null=False,
+                                     related_name='postal_code_settings')
 
     postal_code_range_start = models.IntegerField(
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
                     MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
 
     postal_code_range_end = models.IntegerField(
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
                     MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
 
@@ -219,10 +218,7 @@ class PostalCodeRange(models.Model):
         """
         Checks for postal code ranges
         """
-        if not self.postal_code_range_start and not self.postal_code_range_end:
-            return
-
-        elif self.postal_code_range_start and not self.postal_code_range_end:
+        if self.postal_code_range_start and not self.postal_code_range_end:
             raise ValidationError({'postal_code_range_end': ('Required if postal_code_range_start is set')})
 
         elif not self.postal_code_range_start and self.postal_code_range_end:

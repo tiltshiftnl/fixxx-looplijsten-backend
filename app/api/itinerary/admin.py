@@ -1,13 +1,15 @@
 from django.contrib import admin
 from django.http import JsonResponse
 
-from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings
+from api.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings, PostalCodeSettings
 from api.itinerary.serializers import ItinerarySerializer
 
+class PostalCodeSettingsInline(admin.StackedInline):
+    fields = ('postal_code_range_start', 'postal_code_range_end')
+    model = PostalCodeSettings
 
 class ItinerarySettingsInline(admin.StackedInline):
-    fields = ('opening_date', 'target_length', 'postal_code_range_start',
-              'postal_code_range_end', 'projects', 'primary_stadium',
+    fields = ('opening_date', 'target_length', 'projects', 'primary_stadium',
               'secondary_stadia', 'exclude_stadia', 'start_case')
     model = ItinerarySettings
 
@@ -31,7 +33,8 @@ class ItineraryAdmin(admin.ModelAdmin):
     inlines = [
         ItineraryTeamMemberInline,
         ItineraryItemInline,
-        ItinerarySettingsInline
+        ItinerarySettingsInline,
+        PostalCodeSettingsInline
     ]
 
     actions = ['export_as_json']
