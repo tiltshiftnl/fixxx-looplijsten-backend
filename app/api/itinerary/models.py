@@ -118,7 +118,7 @@ class Itinerary(models.Model):
         Returns a list of suggested cases which can be added to this itinerary
         """
         # Initialise using this itinerary's settings
-        generator = self.suggestionAlgorithm(self.settings)
+        generator = self.suggestionAlgorithm(self.settings, self.postal_code_settings.all())
 
         # Exclude the cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)
@@ -135,7 +135,7 @@ class Itinerary(models.Model):
         Returns a list of cases based on the settings which can be added to this itinerary
         """
         # Initialise using this itinerary's settings
-        generator = self.itineraryAlgorithm(self.settings)
+        generator = self.itineraryAlgorithm(self.settings, self.postal_code_settings.all())
 
         # Exclude cases which are already in itineraries
         cases = Itinerary.get_cases_for_date(self.created_at)
@@ -166,18 +166,6 @@ class ItinerarySettings(models.Model):
 
     target_length = models.IntegerField(default=8,
                                         validators=[MinValueValidator(1), MaxValueValidator(20)])
-
-    postal_code_range_start = models.IntegerField(
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
-                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
-
-    postal_code_range_end = models.IntegerField(
-        null=True,
-        blank=True,
-        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
-                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
 
     itinerary = models.OneToOneField(Itinerary,
                                      on_delete=models.CASCADE,
@@ -210,26 +198,42 @@ class ItinerarySettings(models.Model):
     def __str__(self):
         return self.itinerary.__str__()
 
+
+class PostalCodeSettings(models.Model):
+    """ A postal code settings for an itinerary """
+    itinerary = models.ForeignKey(Itinerary,
+                                     on_delete=models.CASCADE,
+                                     null=False,
+                                     related_name='postal_code_settings')
+
+    range_start = models.IntegerField(
+        null=False,
+        blank=False,
+        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
+                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
+
+    range_end = models.IntegerField(
+        null=False,
+        blank=False,
+        validators=[MinValueValidator(settings.CITY_MIN_POSTAL_CODE),
+                    MaxValueValidator(settings.CITY_MAX_POSTAL_CODE)])
+
     def clean(self):
         """
         Checks for postal code ranges
         """
-        if not self.postal_code_range_start and not self.postal_code_range_end:
-            return
+        if self.range_start and not self.range_end:
+            raise ValidationError({'range_end': ('Required if range_start is set')})
 
-        elif self.postal_code_range_start and not self.postal_code_range_end:
-            raise ValidationError({'postal_code_range_end': ('Required if postal_code_range_start is set')})
+        elif not self.range_start and self.range_end:
+            raise ValidationError({'range_start': ('Required if range_end is set')})
 
-        elif not self.postal_code_range_start and self.postal_code_range_end:
-            raise ValidationError({'postal_code_range_start': ('Required if postal_code_range_end is set')})
-
-        elif self.postal_code_range_start > self.postal_code_range_end:
-            raise ValidationError({'postal_code_range_start': ('Must be smaller than postal_code_range_end')})
+        elif self.range_start > self.range_end:
+            raise ValidationError({'range_start': ('Must be smaller than range_end')})
 
     def save(self, *args, **kwargs):
         self.full_clean()
         return super().save(*args, **kwargs)
-
 
 class ItineraryTeamMember(models.Model):
     """ Member of an Itinerary Team """

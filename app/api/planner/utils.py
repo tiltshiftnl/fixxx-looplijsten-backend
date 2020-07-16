@@ -71,22 +71,31 @@ def filter_cases_with_missing_coordinates(cases):
     return list(filter(lambda case: has_coordinates(case), cases))
 
 
-def filter_cases_with_postal_code(cases, start_range=None, end_rage=None):
+def filter_cases_with_postal_code(cases, ranges=[]):
     """
     Returns a list of cases for which the postal code falls within the given start and end range
     """
 
-    if not start_range or not end_rage:
+    if not ranges:
         return cases
 
-    if start_range > end_rage:
-        raise ValueError("Start range can't be larger than end_range")
+    def is_in_range(case, range):
+        range_start = range.get('range_start')
+        range_end = range.get('range_end')
 
-    def is_in_range(case, start_range, end_rage):
+        if range_start > range_end:
+            raise ValueError("Start range can't be larger than end_range")
+
         postal_code = case.get('postal_code')
         postal_code_numbers = int(postal_code[:4])
 
-        return start_range <= postal_code_numbers <= end_rage
+        return range_start <= postal_code_numbers <= range_end
 
-    cases = filter(lambda case: is_in_range(case, start_range, end_rage), cases)
+    def is_in_ranges(case, ranges):
+        for range in ranges:
+            if is_in_range(case, range):
+                return True
+        return False
+
+    cases = filter(lambda case: is_in_ranges(case, ranges), cases)
     return list(cases)

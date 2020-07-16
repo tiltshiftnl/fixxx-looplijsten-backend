@@ -72,5 +72,5 @@ class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
 class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
-    postal_code = PlannerPostalCodeSettingsSerializer(required=False)
+    postal_codes = PlannerPostalCodeSettingsSerializer(required=False, many=True)
     days = PlannerWeekSettingsSerializer(required=True)

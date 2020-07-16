@@ -120,7 +120,7 @@ class DoBagSearchAddressTest(TestCase):
         mock_requests_get.assert_called_with(
             settings.BAG_API_SEARCH_URL,
             params={'q': 'Foo Query'},
-            timeout=1.5
+            timeout=0.5
         )
 
 
@@ -142,7 +142,7 @@ class DoBagSearchIdTest(TestCase):
         mock_requests_get.assert_called_with(
             settings.BAG_API_SEARCH_URL,
             params={'q': 'Foo ID'},
-            timeout=1.5
+            timeout=0.5
         )
 
 
@@ -171,7 +171,7 @@ class GetBagDataTest(TestCase):
 
         get_bag_data('FOO ID')
 
-        mock_requests_get.assert_called_with(FOO_BAG_URI)
+        mock_requests_get.assert_called_with(FOO_BAG_URI, timeout=0.5)
 
 
 class DoBagSearchTest(TestCase):

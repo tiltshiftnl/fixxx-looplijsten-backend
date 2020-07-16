@@ -55,8 +55,8 @@ class Weights:
 
 
 class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
-    def __init__(self, settings, settings_weights=None):
-        super().__init__(settings)
+    def __init__(self, settings, postal_code_settings=[], settings_weights=None):
+        super().__init__(settings, postal_code_settings)
 
         self.weights = Weights()
 

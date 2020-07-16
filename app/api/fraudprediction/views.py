@@ -32,6 +32,8 @@ class FraudPredictionScoringViewSet(ViewSet):
         fraud_predict = FraudPredict()
         fraud_predict.start()
 
+        LOGGER.info('Finished scoring background process')
+
     def create(self, request):
         if hasattr(os, 'getppid'):
             LOGGER.info('Process kicking off scoring: {}'.format(os.getpid()))

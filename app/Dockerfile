@@ -30,6 +30,9 @@ RUN if [ "x$INTEGRALE_AANPAK_ONDERMIJNING_PERSONAL_ACCESS_TOKEN" = "x" ] ; then 
 # Install the private cto-fraude-aanpak library
 RUN if [ "x$INTEGRALE_AANPAK_ONDERMIJNING_CREDS$INTEGRALE_AANPAK_ONDERMIJNING_PERSONAL_ACCESS_TOKEN" = "x" ] ; then echo Skipping cto-fraude-aanpak install ;  else pip install --no-cache-dir /tmp/integrale_aanpak_ondermijning ; fi
 
+RUN apt-get update && apt-get install -y
+RUN pip install --upgrade pip
+RUN pip install uwsgi
 RUN pip install --no-cache-dir -r requirements.txt
 
 USER datapunt

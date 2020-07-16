@@ -1,7 +1,7 @@
 import logging
-
 import requests
 from django.conf import settings
+from tenacity import retry, stop_after_attempt, after_log
 
 from utils.queries import get_import_adres
 
@@ -23,50 +23,30 @@ def get_bag_search_query(address):
     return query.strip()
 
 
+@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
 def do_bag_search_address(address):
     """
     Search BAG using a BWV address
     """
     query = get_bag_search_query(address)
-
-    try:
-        address_search = requests.get(
-            settings.BAG_API_SEARCH_URL,
-            params={'q': query},
-            timeout=1.5
-        )
-    except requests.exceptions.Timeout:
-        address_search = requests.get(
-            settings.BAG_API_SEARCH_URL,
-            params={'q': query},
-            timeout=1.5
-        )
-
+    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': query}, timeout=0.5)
     return address_search.json()
 
-
+@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
 def do_bag_search_id(address):
     """
     Search BAG using a BWV 'landelijk BAG ID'
     """
 
     id = address['landelijk_bag']
-
-    try:
-        address_search = requests.get(
-            settings.BAG_API_SEARCH_URL,
-            params={'q': id},
-            timeout=1.5
-        )
-    except requests.exceptions.Timeout:
-        address_search = requests.get(
-            settings.BAG_API_SEARCH_URL,
-            params={'q': id},
-            timeout=1.5
-        )
-
+    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': id}, timeout=0.5)
     return address_search.json()
 
+
+@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
+def get_address_bag_data(address_uri):
+    address_bag_data = requests.get(address_uri, timeout=0.5)
+    return address_bag_data.json()
 
 def do_bag_search(address):
     """
@@ -90,13 +70,7 @@ def get_bag_data(wng_id):
         address_search = do_bag_search(address)
         # Do a request using the the objects href
         address_uri = address_search['results'][0]['_links']['self']['href']
-
-        try:
-            address_bag_data = requests.get(address_uri)
-        except requests.exceptions.Timeout:
-            address_bag_data = requests.get(address_uri)
-
-        return address_bag_data.json()
+        return get_address_bag_data(address_uri)
 
     except Exception as e:
         logger.error('Requesting BAG data failed: {}'.format(str(e)))

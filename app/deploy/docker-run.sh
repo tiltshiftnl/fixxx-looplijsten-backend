@@ -14,5 +14,4 @@ chmod -R 777 /static
 chmod -R 700 /fraud_prediction_cache
 
 # run uwsgi
-cd /app/
-exec uwsgi
+exec uwsgi --ini config.ini
