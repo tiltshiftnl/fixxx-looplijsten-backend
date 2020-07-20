@@ -289,7 +289,7 @@ BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
 
 # Zaken Access request settings
 # TODO: this shouldn't fall back on the acceptance, but let's keep it until this is configured
-ZAKEN_API_URL = os.getenv('ZAKEN_API_URL', 'https://acc.looplijst.top.amsterdam.nl/')
+ZAKEN_API_URL = os.getenv('ZAKEN_API_URL', 'https://acc.looplijst.top.amsterdam.nl')
 
 # Settings to improve security
 is_secure_environment = True if ENVIRONMENT in ['production', 'acceptance'] else False
