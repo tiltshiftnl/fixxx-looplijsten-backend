@@ -8,6 +8,19 @@ from utils.queries import get_import_adres
 logger = logging.getLogger(__name__)
 
 
+@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
+def get_bag_id(case):
+    street_name = case.get('street_name')
+    street_number = case.get('street_number')
+
+    suffix_letter = case.get('suffix_letter', '') or ''
+    suffix = case.get('suffix', '') or ''
+
+    query = '{} {} {}{}'.format(street_name, street_number, suffix_letter, suffix)
+    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': query}, timeout=0.5)
+    
+    return address_search.json().get('results', [])[0].get('adresseerbaar_object_id', None)    
+
 def get_bag_search_query(address):
     """
     Constructs a BAG search query using the address data

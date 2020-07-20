@@ -2,3 +2,4 @@ app/datasets/*.csv
 *.pyc
 *.backup
 .idea
+dumps

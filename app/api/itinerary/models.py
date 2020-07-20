@@ -5,6 +5,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
+from multiprocessing import Process
+
 
 from api.cases.const import PROJECTS, STARTING_FROM_DATE
 from api.cases.models import Case, Project, Stadium
@@ -19,7 +21,8 @@ from utils.queries_zaken_api import push_case, push_checked_action
 class Itinerary(models.Model):
     """ Itinerary for visiting cases """
     suggestionAlgorithm = ItineraryKnapsackSuggestions
-    itineraryAlgorithm = ItineraryGenerateCluster
+    # itineraryAlgorithm = ItineraryGenerateCluster
+    itineraryAlgorithm = ItineraryKnapsackList
 
     created_at = models.DateField(auto_now_add=True)
 
@@ -330,11 +333,13 @@ class Note(models.Model):
 
 
 # TODO: Tests for this
-# Note: this should be moved to a dedicated signals file later on
+# TODO: this should be moved to a dedicated signals file later on
+# TODO: Should log if a push fails
 @receiver(signals.post_save, sender=ItineraryItem)
 def create_itinerary_item_signal(instance, created, **kwargs):
-    if created:        
-        push_case(instance.case.bwv_data)
+    if created:
+        p = Process(target=push_case, args=(instance.case.bwv_data,))
+        p.start()
         
 @receiver(signals.pre_save, sender=ItineraryItem)
 def checked_itinerary_item_signal(sender, instance, **kwargs):
@@ -344,7 +349,7 @@ def checked_itinerary_item_signal(sender, instance, **kwargs):
         # Object does not exist yet, we only want to check if some fields have changes
         pass
     else:
-        if not obj.checked == instance.checked: # Field has changed
+        if not obj.checked == instance.checked: # Field has changed          
             push_checked_action(instance.case.case_id, instance.checked)
 
 

@@ -51,6 +51,7 @@ services:
       - LOCAL_DEVELOPMENT_AUTHENTICATION=True
       - ZAKEN_API_URL=http://zaak-gateway:8000/api/v1
       - UWSGI_HTTP=0.0.0.0:8000
+      - SECRET_KEY_TOP_ZAKEN=SECRET_KEY_TOP_ZAKEN
     volumes:
       - ./app:/app
       - ./api/deploy:/deploy
