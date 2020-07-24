@@ -36,7 +36,8 @@ INSTALLED_APPS = (
     'api.cases',
     'api.accesslogs',
     'api.planner',
-    'api.fraudprediction'
+    'api.fraudprediction',
+    'api.visits'
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/

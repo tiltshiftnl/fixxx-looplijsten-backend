@@ -13,6 +13,7 @@ from api.itinerary.views import ItineraryViewSet, ItineraryItemViewSet, NoteView
 from api.planner.views import ConstantsStadiaViewSet, ConstantsProjectsViewSet, SettingsPlannerViewSet
 from api.planner.views_sandbox import AlgorithmView
 from api.users.views import ObtainAuthTokenOIDC, IsAuthenticatedView, UserListView
+from api.visits.views import VisitViewSet
 
 admin.site.site_header = "Wonen looplijsten"
 admin.site.site_title = "Wonen looplijsten"
@@ -25,6 +26,7 @@ api_router.register(r'cases', CaseViewSet, basename='case')
 api_router.register(r'search', CaseSearchViewSet, basename='search')
 api_router.register(r'notes', NoteViewSet, basename='notes')
 api_router.register(r'users', UserListView, basename='users')
+api_router.register(r'visits', VisitViewSet, basename='visits')
 api_router.register(r'constants/projects', ConstantsProjectsViewSet, basename='constants-projects')
 api_router.register(r'constants/stadia', ConstantsStadiaViewSet, basename='constants-stadia')
 api_router.register(r'settings/planner', SettingsPlannerViewSet, basename='settings-planner')
