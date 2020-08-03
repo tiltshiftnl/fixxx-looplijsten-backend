@@ -289,8 +289,11 @@ BRK_API_OBJECT_EXPAND_URL = os.getenv(
 BAG_API_SEARCH_URL = 'https://api.data.amsterdam.nl/atlas/search/adres/'
 
 # Zaken Access request settings
-# TODO: this shouldn't fall back on the acceptance, but let's keep it until this is configured
-ZAKEN_API_URL = os.getenv('ZAKEN_API_URL', 'https://acc.looplijst.top.amsterdam.nl/api/v1')
+# TODO: Fix this later with proper environment variables
+if ENVIRONMENT == 'acceptance':
+    ZAKEN_API_URL = os.getenv('ZAKEN_API_URL', 'https://acc.looplijst.top.amsterdam.nl/api/v1')
+else:
+    ZAKEN_API_URL = os.getenv('ZAKEN_API_URL', None)
 
 # Settings to improve security
 is_secure_environment = True if ENVIRONMENT in ['production', 'acceptance'] else False

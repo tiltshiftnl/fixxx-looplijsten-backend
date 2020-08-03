@@ -10,6 +10,10 @@ logger = logging.getLogger(__name__)
 
 
 def get_cases():
+    if not settings.ZAKEN_API_URL:
+      logger.info('ZAKEN_API_URL is not configured in settings')
+      return {}
+
     url = f'{settings.ZAKEN_API_URL}/cases'
 
     try:
@@ -34,7 +38,12 @@ def get_headers():
     }  
     return headers
 
-def push_case(case):    
+@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
+def push_case(case):  
+    if not settings.ZAKEN_API_URL:
+      logger.info('ZAKEN_API_URL is not configured in settings')
+      return {}
+
     url = f'{settings.ZAKEN_API_URL}/push/'
 
     start_date = case.get('start_date')
@@ -52,16 +61,17 @@ def push_case(case):
     if end_date:
         end_date = datetime_to_date(end_date)
         data['end_date'] = end_date
+      
+    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    return response
 
-    @retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
-    def push_case_request(data):
-        response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
-        return response
-
-    return push_case_request(data)
 
 @retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
 def push_checked_action(case_id, check):
+    if not settings.ZAKEN_API_URL:
+      logger.info('ZAKEN_API_URL is not configured in settings')
+      return {}
+
     url = f'{settings.ZAKEN_API_URL}/push-check-action/'
     data = {'identification': case_id, 'check_action': check}    
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
