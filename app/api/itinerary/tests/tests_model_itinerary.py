@@ -7,7 +7,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from api.cases.models import Case
-from api.itinerary.models import Itinerary, ItineraryItem, ItinerarySettings
+from api.itinerary.models import Itinerary, ItineraryItem, ItinerarySettings, PostalCodeSettings
 from api.users.models import User
 
 
@@ -273,28 +273,33 @@ class ItineraryModelTest(TestCase):
 
     def test_get_suggestions(self):
         """
-        Calls the ItineraryKnapsackSuggestions generate and exclude functions
+        Calls the suggestionAlgorithm generate and exclude functions
         """        
         Itinerary.suggestionAlgorithm = Mock()
         itinerary = Itinerary.objects.create()
-        settings = ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+        ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+        PostalCodeSettings.objects.create(itinerary=itinerary, range_start=1000, range_end=1005)
+        PostalCodeSettings.objects.create(itinerary=itinerary, range_start=1010, range_end=1020)
         
         itinerary.get_suggestions()
         
-        itinerary.suggestionAlgorithm.assert_called_with(settings)
+        itinerary.suggestionAlgorithm.assert_called()
         itinerary.suggestionAlgorithm().exclude.assert_called()
         itinerary.suggestionAlgorithm().generate.assert_called()
 
     def test_get_cases_from_settings(self):
         """
-        Calls the ItineraryKnapsackList generate and exclude functions
+        Calls the itineraryAlgorithm generate and exclude functions
         """
         Itinerary.itineraryAlgorithm = Mock()
         itinerary = Itinerary.objects.create()
-        settings = ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
-                
+
+        ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+        PostalCodeSettings.objects.create(itinerary=itinerary, range_start=1000, range_end=1005)
+        PostalCodeSettings.objects.create(itinerary=itinerary, range_start=1010, range_end=1020)
+
         itinerary.get_cases_from_settings()
 
-        itinerary.itineraryAlgorithm.assert_called_with(settings)
+        itinerary.itineraryAlgorithm.assert_called()
         itinerary.itineraryAlgorithm().exclude.assert_called()
         itinerary.itineraryAlgorithm().generate.assert_called()
