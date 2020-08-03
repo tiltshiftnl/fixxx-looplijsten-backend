@@ -163,7 +163,7 @@ class UtilsTests(TestCase):
         FOO_CASE_A = {'postal_code': '1055XX'}
         cases = [FOO_CASE_A]
 
-        RANGES = [{'start_range': FOO_START_RANGE, 'end_range': FOO_END_RANGE}]
+        RANGES = [{'range_start': FOO_START_RANGE, 'range_end': FOO_END_RANGE}]
 
         with self.assertRaises(ValueError):
             filter_cases_with_postal_code(cases, RANGES)
@@ -174,7 +174,7 @@ class UtilsTests(TestCase):
         """
         FOO_START_RANGE = 1000
         FOO_END_RANGE = 2000
-        RANGES = [{'start_range': FOO_START_RANGE, 'end_range': FOO_END_RANGE}]
+        RANGES = [{'range_start': FOO_START_RANGE, 'range_end': FOO_END_RANGE}]
 
         FOO_CASE_A = {'postal_code': '1055XX'}
         FOO_CASE_B = {'postal_code': '2055XX'}
@@ -194,8 +194,8 @@ class UtilsTests(TestCase):
         Returns the cases which fall within the given range
         """
         RANGES = [
-            {'start_range': 1055, 'end_range': 1057},
-            {'start_range': 2000, 'end_range': 2050}
+            {'range_start': 1055, 'range_end': 1057},
+            {'range_start': 2000, 'range_end': 2050}
         ]
 
         FOO_CASE_A = {'postal_code': '1055XX'}
