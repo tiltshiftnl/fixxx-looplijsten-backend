@@ -10,9 +10,9 @@ from api.cases.models import Case
 from api.itinerary.models import Itinerary, ItineraryItem, ItinerarySettings, PostalCodeSettings
 from api.users.models import User
 
-
+@patch("django.db.models.signals.ModelSignal.send")
 class ItineraryModelTest(TestCase):
-    def test_create_itinerary(self):
+    def test_create_itinerary(self, mock):
         """
         An Itinerary object can be created
         """
@@ -21,16 +21,16 @@ class ItineraryModelTest(TestCase):
         self.assertEquals(Itinerary.objects.count(), 1)
 
     @freeze_time("2019-12-25")
-    def test_creation_date(self):
+    def test_creation_date(self, mock):
         """
         Test if the created_at is current date
         """
         itinerary = Itinerary.objects.create()
         self.assertEquals(itinerary.created_at, datetime(2019, 12, 25).date())
 
-    def test_add_case(self):
+    def test_add_case(self, mock):
         """
-        add_case function creates itinerary objects assocated with this itinerary
+        add_case function creates itinerary objects associated with this itinerary
         """
         itinerary = Itinerary.objects.create()
 
@@ -43,7 +43,7 @@ class ItineraryModelTest(TestCase):
         self.assertEquals(itinerary.items.count(), 2)
         self.assertEquals(ItineraryItem.objects.count(), 2)
 
-    def test_add_case_with_positions(self):
+    def test_add_case_with_positions(self, mock):
         """
         add_case with positions
         """
@@ -52,7 +52,8 @@ class ItineraryModelTest(TestCase):
 
         self.assertEquals(itinerary.items.all()[0].position, 3)
 
-    def test_add_case_same_position_fail(self):
+
+    def test_add_case_same_position_fail(self, mock):
         """
         add_case with same positions should fail
         """
@@ -62,7 +63,7 @@ class ItineraryModelTest(TestCase):
         with self.assertRaises(Exception):
             itinerary.add_case('FOO_CASE_ID_B', 3)
 
-    def test_add_same_cases_fail(self):
+    def test_add_same_cases_fail(self, mock):
         """
         add_case with same case should fail
         """
@@ -72,7 +73,7 @@ class ItineraryModelTest(TestCase):
         with self.assertRaises(Exception):
             itinerary.add_case('FOO_CASE_ID_A')
 
-    def test_get_cases(self):
+    def test_get_cases(self, mock):
         """
         get_cases should return the Itinerary's cases
         """
@@ -84,7 +85,7 @@ class ItineraryModelTest(TestCase):
 
         self.assertEquals(len(cases), 2)
 
-    def test_get_no_cases(self):
+    def test_get_no_cases(self, mock):
         """
         get_cases returns no cases if itinerary doesn't have cases
         """
@@ -93,7 +94,7 @@ class ItineraryModelTest(TestCase):
         self.assertEquals(len(cases), 0)
 
     @freeze_time("2019-12-25")
-    def test_get_cases_for_date(self):
+    def test_get_cases_for_date(self, mock):
         """
         Should return cases which are in itineraries for the given date
         """
@@ -109,7 +110,7 @@ class ItineraryModelTest(TestCase):
         self.assertEquals(cases, cases_expected)
 
     @freeze_time("2019-12-25")
-    def test_get_cases_for_date_empty(self):
+    def test_get_cases_for_date_empty(self, mock):
         """
         Should return cases which are in itineraries for the given date
         """
@@ -125,7 +126,7 @@ class ItineraryModelTest(TestCase):
         self.assertEquals(cases, [])
 
     @freeze_time("2019-12-25")
-    def test_get_cases_for_date_fail(self):
+    def test_get_cases_for_date_fail(self, mock):
         """
         Fails if the date is in the wrong format
         """
@@ -137,7 +138,7 @@ class ItineraryModelTest(TestCase):
 
     @freeze_time("2019-12-25")
     @patch('api.itinerary.models.get_cases_from_bwv')
-    def test_get_unplanned_cases(self, mock_get_cases_from_bwv):
+    def test_get_unplanned_cases(self, mock_get_cases_from_bwv, mock):
         """
         Should return cases which are in itineraries for the given date
         """
@@ -168,7 +169,7 @@ class ItineraryModelTest(TestCase):
 
     @freeze_time("2019-12-25")
     @patch('api.itinerary.models.get_cases_from_bwv')
-    def test_get_unplanned_cases_empty(self, mock_get_cases_from_bwv):
+    def test_get_unplanned_cases_empty(self, mock_get_cases_from_bwv, mock):
         """
         Should return all cases for another date
         """
@@ -196,7 +197,7 @@ class ItineraryModelTest(TestCase):
         cases = Itinerary.get_unplanned_cases("2018-01-01", 'FOO_STADIUM')
         self.assertEquals(cases, all_cases)
 
-    def test_add_team_members(self):
+    def test_add_team_members(self, mock):
         """
         Adds team members to the given itinerary
         """
@@ -213,7 +214,7 @@ class ItineraryModelTest(TestCase):
 
         self.assertEquals([user_a, user_b], team_member_users)
 
-    def test_clear_team_members(self):
+    def test_clear_team_members(self, mock):
         """
         Removes all associated team members
         """
@@ -229,7 +230,7 @@ class ItineraryModelTest(TestCase):
         itinerary.clear_team_members()
         self.assertEquals([], list(itinerary.team_members.all()))
 
-    def test_get_center(self):
+    def test_get_center(self, mock):
         """
         Returns the center (average) of a list of cases
         """
@@ -249,7 +250,7 @@ class ItineraryModelTest(TestCase):
 
         self.assertEqual(expected_center, center)
 
-    def test_get_center_no_cases(self):
+    def test_get_center_no_cases(self, mock):
         """
         Returns the city if no cases are present in the itinerary
         """
@@ -261,7 +262,7 @@ class ItineraryModelTest(TestCase):
 
         self.assertEqual(center, city_center)
 
-    def test_get_city_center(self):
+    def test_get_city_center(self, mock):
         """
         Returns coordinates which are defined in the project's settings
         """
@@ -271,23 +272,23 @@ class ItineraryModelTest(TestCase):
         self.assertEqual(city_center['lat'], settings.CITY_CENTRAL_LOCATION_LAT)
         self.assertEqual(city_center['lng'], settings.CITY_CENTRAL_LOCATION_LNG)
 
-    def test_get_suggestions(self):
+    def test_get_suggestions(self, mock):
         """
         Calls the suggestionAlgorithm generate and exclude functions
-        """        
+        """
         Itinerary.suggestionAlgorithm = Mock()
         itinerary = Itinerary.objects.create()
         ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
         PostalCodeSettings.objects.create(itinerary=itinerary, range_start=1000, range_end=1005)
         PostalCodeSettings.objects.create(itinerary=itinerary, range_start=1010, range_end=1020)
-        
+
         itinerary.get_suggestions()
-        
+
         itinerary.suggestionAlgorithm.assert_called()
         itinerary.suggestionAlgorithm().exclude.assert_called()
         itinerary.suggestionAlgorithm().generate.assert_called()
 
-    def test_get_cases_from_settings(self):
+    def test_get_cases_from_settings(self, mock):
         """
         Calls the itineraryAlgorithm generate and exclude functions
         """
