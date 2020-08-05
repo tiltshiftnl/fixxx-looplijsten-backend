@@ -96,7 +96,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         settings = SettingsMock(context_data)
         settings_weights = SettingsWeightMock(context_data)
 
-        generator = ItineraryKnapsackList(settings, settings_weights)
+        generator = ItineraryKnapsackList(settings=settings, settings_weights=settings_weights)
 
         eligible_cases = generator.__get_eligible_cases__()
         planned_cases = generator.generate()
