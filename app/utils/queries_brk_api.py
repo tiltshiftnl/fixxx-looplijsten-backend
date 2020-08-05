@@ -43,7 +43,6 @@ def set_expiry(expiry):
         expiry
     )
 
-@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
 def request_new_token():
     payload = {
         'grant_type': 'client_credentials',
