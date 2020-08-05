@@ -6,7 +6,7 @@ from os.path import join
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from api.planner.const import EXAMPLE_PLANNER_SETTINGS
+from apps.planner.const import EXAMPLE_PLANNER_SETTINGS
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -31,13 +31,13 @@ INSTALLED_APPS = (
     'mozilla_django_oidc',  # for authentication
 
     # Your apps
-    'api.users',
-    'api.itinerary',
-    'api.cases',
-    'api.accesslogs',
-    'api.planner',
-    'api.fraudprediction',
-    'api.visits'
+    'apps.users',
+    'apps.itinerary',
+    'apps.cases',
+    'apps.accesslogs',
+    'apps.planner',
+    'apps.fraudprediction',
+    'apps.visits'
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
@@ -51,10 +51,10 @@ MIDDLEWARE = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api.accesslogs.middleware.LoggingMiddleware'
+    'apps.accesslogs.middleware.LoggingMiddleware'
 )
 
-ROOT_URLCONF = 'api.urls'
+ROOT_URLCONF = 'apps.urls'
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 WSGI_APPLICATION = 'app.wsgi.application'
@@ -151,7 +151,7 @@ AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'api.users.auth.AuthenticationBackend',
+    'apps.users.auth.AuthenticationBackend',
 )
 
 # Django Rest Framework
@@ -213,7 +213,7 @@ sentry_sdk.init(
 
 OIDC_RP_CLIENT_ID = os.environ.get('OIDC_RP_CLIENT_ID')
 OIDC_RP_CLIENT_SECRET = os.environ.get('OIDC_RP_CLIENT_SECRET')
-OIDC_USERNAME_ALGO = 'api.users.utils.generate_username'
+OIDC_USERNAME_ALGO = 'apps.users.utils.generate_username'
 
 ACCEPTANCE_OIDC_REDIRECT_URL = 'https://acc.top.amsterdam.nl/authentication/callback'
 PRODUCTION_OIDC_REDIRECT_URL = 'https://top.amsterdam.nl/authentication/callback'
@@ -256,7 +256,7 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'api': {
+        'apps': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
