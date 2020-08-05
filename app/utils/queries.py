@@ -188,7 +188,8 @@ def get_import_stadia(case_id):
               begindatum,
               einddatum,
               peildatum,
-              sta_nr
+              sta_nr, 
+              stadia_id
             FROM
               import_stadia
             WHERE stadia_id LIKE %(case_id)s
