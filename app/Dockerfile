@@ -40,4 +40,4 @@ USER datapunt
 COPY . /app/
 COPY deploy /deploy/
 
-CMD ["/deploy/docker-run.sh"]
+CMD ["/deploy/entrypoint.sh"]

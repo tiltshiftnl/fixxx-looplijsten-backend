@@ -55,7 +55,7 @@ services:
     volumes:
       - ./app:/app
       - ./api/deploy:/deploy
-    command: bash -c "/app/deploy/docker-run.sh"
+    command: bash -c "/app/deploy/entrypoint.sh"
 
 networks:
   looplijsten_backend:
