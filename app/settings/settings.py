@@ -53,7 +53,7 @@ MIDDLEWARE = (
     "apps.accesslogs.middleware.LoggingMiddleware",
 )
 
-ROOT_URLCONF = "config.urls"
+ROOT_URLCONF = "settings.urls"
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 WSGI_APPLICATION = "app.wsgi.application"
