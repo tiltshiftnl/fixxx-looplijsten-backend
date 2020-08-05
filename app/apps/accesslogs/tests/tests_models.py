@@ -1,21 +1,19 @@
 """
 Tests for accesslogs models
 """
+from apps.accesslogs.models import LogEntry
 from django.db.utils import DataError
 from django.test import TestCase
 
-from apps.accesslogs.models import LogEntry
-
-FOO_URI = 'FOO_URI'
-FOO_META = 'FOO_META'
-FOO_REQUEST_METHOD = 'GET'
-FOO_REQUEST_STATUS_CODE = '200'
-FOO_USER_EMAIL = 'foo@foo.com'
-FOO_USER_ID = 'FOO_USER_ID'
+FOO_URI = "FOO_URI"
+FOO_META = "FOO_META"
+FOO_REQUEST_METHOD = "GET"
+FOO_REQUEST_STATUS_CODE = "200"
+FOO_USER_EMAIL = "foo@foo.com"
+FOO_USER_ID = "FOO_USER_ID"
 
 
 class AccessLogsModelTest(TestCase):
-
     def test_create_anonymous_log(self):
         """
         Create an anonymous log entry
@@ -26,7 +24,7 @@ class AccessLogsModelTest(TestCase):
             request_uri=FOO_URI,
             request_meta=FOO_META,
             request_method=FOO_REQUEST_METHOD,
-            response_status_code=FOO_REQUEST_STATUS_CODE
+            response_status_code=FOO_REQUEST_STATUS_CODE,
         )
 
         self.assertEqual(LogEntry.objects.count(), 1)
@@ -43,7 +41,7 @@ class AccessLogsModelTest(TestCase):
             request_uri=FOO_URI,
             request_meta=FOO_META,
             request_method=FOO_REQUEST_METHOD,
-            response_status_code=FOO_REQUEST_STATUS_CODE
+            response_status_code=FOO_REQUEST_STATUS_CODE,
         )
 
         self.assertEqual(LogEntry.objects.count(), 1)
@@ -57,10 +55,10 @@ class AccessLogsModelTest(TestCase):
             request_uri=FOO_URI,
             request_meta=FOO_META,
             request_method=FOO_REQUEST_METHOD,
-            response_status_code=FOO_REQUEST_STATUS_CODE
+            response_status_code=FOO_REQUEST_STATUS_CODE,
         )
 
-        log_entry.request_meta = 'EDIT'
+        log_entry.request_meta = "EDIT"
 
         with self.assertRaises(Exception):
             log_entry.save()
@@ -74,7 +72,7 @@ class AccessLogsModelTest(TestCase):
                 request_uri=FOO_URI,
                 request_meta=FOO_META,
                 request_method=FOO_REQUEST_METHOD,
-                response_status_code='LONG_STATUS_CODE'
+                response_status_code="LONG_STATUS_CODE",
             )
 
     def test_date_created(self):
@@ -86,7 +84,7 @@ class AccessLogsModelTest(TestCase):
             request_uri=FOO_URI,
             request_meta=FOO_META,
             request_method=FOO_REQUEST_METHOD,
-            response_status_code=FOO_REQUEST_STATUS_CODE
+            response_status_code=FOO_REQUEST_STATUS_CODE,
         )
 
         self.assertIsNotNone(log_entry.created_at)

@@ -5,13 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0036_auto_20200309_1528'),
+        ("itinerary", "0036_auto_20200309_1528"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='itinerarysettings',
-            old_name='target_itinerary_length',
-            new_name='target_length',
+            model_name="itinerarysettings",
+            old_name="target_itinerary_length",
+            new_name="target_length",
         ),
     ]

@@ -5,12 +5,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0010_auto_20191111_1557'),
+        ("itinerary", "0010_auto_20191111_1557"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='itinerary',
-            options={'ordering': ['-date']},
+            name="itinerary", options={"ordering": ["-date"]},
         ),
     ]

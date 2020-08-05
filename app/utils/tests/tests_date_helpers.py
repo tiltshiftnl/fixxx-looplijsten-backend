@@ -5,13 +5,11 @@ from datetime import datetime
 
 from django.test import TestCase
 from freezegun import freeze_time
-
 from utils.date_helpers import get_days_in_range
 
 
 @freeze_time("2019-12-25")
 class GetDaysInRangeTest(TestCase):
-
     def test_no_days_in_range(self):
         """
         When start date and end date are equal, days should be 0

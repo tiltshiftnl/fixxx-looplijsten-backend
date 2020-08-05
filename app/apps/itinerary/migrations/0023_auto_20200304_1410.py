@@ -8,28 +8,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('itinerary', '0022_auto_20191210_1357'),
+        ("itinerary", "0022_auto_20191210_1357"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='itinerary',
-            name='user',
-        ),
+        migrations.RemoveField(model_name="itinerary", name="user",),
         migrations.AddField(
-            model_name='itinerary',
-            name='created_at',
-            field=models.DateField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="itinerary",
+            name="created_at",
+            field=models.DateField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='itinerary',
-            name='enforcers',
-            field=models.ManyToManyField(related_name='enforcers', to=settings.AUTH_USER_MODEL),
+            model_name="itinerary",
+            name="enforcers",
+            field=models.ManyToManyField(
+                related_name="enforcers", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AddField(
-            model_name='itinerary',
-            name='supervisors',
-            field=models.ManyToManyField(related_name='supervisors', to=settings.AUTH_USER_MODEL),
+            model_name="itinerary",
+            name="supervisors",
+            field=models.ManyToManyField(
+                related_name="supervisors", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

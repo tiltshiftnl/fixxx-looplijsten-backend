@@ -21,19 +21,16 @@ def get_eligible_stadia(starting_date, stages):
             AND sta_oms IN %(stages)s
             """
 
-    args = {
-        'starting_date': starting_date,
-        'stages': tuple(stages)
-    }
+    args = {"starting_date": starting_date, "stages": tuple(stages)}
     stadia = do_query(query, args)
 
     # Parses the case_id from the stadia_id and maps it in dictionary to easily access the stadia
     stadia_dictionary = {}
     for stadium in stadia:
-        stadia_id = stadium['stadia_id']
-        case_id_raw = stadia_id.split('_')
+        stadia_id = stadium["stadia_id"]
+        case_id_raw = stadia_id.split("_")
         case_id_raw.pop()
-        case_id = '_'.join(case_id_raw)
+        case_id = "_".join(case_id_raw)
         stadia_dictionary[case_id] = stadium
 
     return stadia_dictionary
@@ -57,14 +54,12 @@ def get_eligible_cases(projects):
               import_adres.wzs_lat as lat
             FROM import_wvs
             INNER JOIN
-              import_adres ON import_adres.adres_id = import_wvs.adres_id            
-            WHERE beh_oms IN %(projects)s            
+              import_adres ON import_adres.adres_id = import_wvs.adres_id
+            WHERE beh_oms IN %(projects)s
             AND afs_code is NULL
             """
 
-    args = {
-        'projects': tuple(projects)
-    }
+    args = {"projects": tuple(projects)}
     cases = do_query(query, args)
 
     return cases
@@ -78,7 +73,7 @@ def match_cases_to_stages(cases, stages):
     filtered_cases = []
 
     for case in cases:
-        case_id = case.get('case_id')
+        case_id = case.get("case_id")
         stage = stages.get(case_id, None)
 
         if stage:

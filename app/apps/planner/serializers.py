@@ -1,11 +1,12 @@
+from apps.cases.const import PROJECTS, STADIA
 from django.conf import settings
 from rest_framework import serializers
 
-from apps.cases.const import PROJECTS, STADIA
-
 
 class PlannerListSettingsSerializer(serializers.Serializer):
-    length_of_list = serializers.IntegerField(required=False, min_value=1, max_value=20, default=8)
+    length_of_list = serializers.IntegerField(
+        required=False, min_value=1, max_value=20, default=8
+    )
     primary_stadium = serializers.ChoiceField(required=False, choices=STADIA)
     secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
     exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
@@ -20,15 +21,21 @@ class PlannerListSettingsSerializer(serializers.Serializer):
             raise serializers.ValidationError(message)
 
     def validate(self, data):
-        secondary_stadia = data.get('secondary_stadia', [])
-        exclude_stadia = data.get('exclude_stadia', [])
-        error_message = "exclude_stadia and secondary_stadia should be mutually exclusive"
-        self.validate_mutual_exclusivity(secondary_stadia, exclude_stadia, error_message)
+        secondary_stadia = data.get("secondary_stadia", [])
+        exclude_stadia = data.get("exclude_stadia", [])
+        error_message = (
+            "exclude_stadia and secondary_stadia should be mutually exclusive"
+        )
+        self.validate_mutual_exclusivity(
+            secondary_stadia, exclude_stadia, error_message
+        )
 
-        primary_stadium = data.get('primary_stadium', None)
+        primary_stadium = data.get("primary_stadium", None)
         if primary_stadium:
             error_message = "The primary_stadium cannot be in exclude_stadia "
-            self.validate_does_not_contain(primary_stadium, exclude_stadia, error_message)
+            self.validate_does_not_contain(
+                primary_stadium, exclude_stadia, error_message
+            )
 
         return data
 
@@ -52,19 +59,23 @@ class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
     range_start = serializers.IntegerField(
         required=True,
         min_value=settings.CITY_MIN_POSTAL_CODE,
-        max_value=settings.CITY_MAX_POSTAL_CODE)
+        max_value=settings.CITY_MAX_POSTAL_CODE,
+    )
 
     range_end = serializers.IntegerField(
         required=True,
         min_value=settings.CITY_MIN_POSTAL_CODE,
-        max_value=settings.CITY_MAX_POSTAL_CODE)
+        max_value=settings.CITY_MAX_POSTAL_CODE,
+    )
 
     def validate(self, data):
-        range_start = data.get('range_start')
-        range_end = data.get('range_end')
+        range_start = data.get("range_start")
+        range_end = data.get("range_end")
 
         if range_end < range_start:
-            raise serializers.ValidationError("The start range can't be higher than the end range")
+            raise serializers.ValidationError(
+                "The start range can't be higher than the end range"
+            )
 
         return data
 

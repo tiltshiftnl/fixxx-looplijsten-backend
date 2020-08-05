@@ -8,26 +8,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('itinerary', '0011_auto_20191113_1516'),
+        ("itinerary", "0011_auto_20191113_1516"),
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='itinerary',
-            options={},
-        ),
-        migrations.RemoveField(
-            model_name='itinerary',
-            name='date',
-        ),
-        migrations.RemoveField(
-            model_name='itinerary',
-            name='team',
-        ),
+        migrations.AlterModelOptions(name="itinerary", options={},),
+        migrations.RemoveField(model_name="itinerary", name="date",),
+        migrations.RemoveField(model_name="itinerary", name="team",),
         migrations.AddField(
-            model_name='itinerary',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE,
-                                    to=settings.AUTH_USER_MODEL),
+            model_name="itinerary",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

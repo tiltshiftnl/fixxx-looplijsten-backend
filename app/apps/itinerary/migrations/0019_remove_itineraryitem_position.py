@@ -5,12 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0018_itineraryitem_position'),
+        ("itinerary", "0018_itineraryitem_position"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='itineraryitem',
-            name='position',
-        ),
+        migrations.RemoveField(model_name="itineraryitem", name="position",),
     ]

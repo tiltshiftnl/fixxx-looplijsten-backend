@@ -5,22 +5,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0004_remove_itinerary_week'),
+        ("itinerary", "0004_remove_itinerary_week"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='itineraryitem',
-            name='case_id',
-        ),
+        migrations.RemoveField(model_name="itineraryitem", name="case_id",),
         migrations.AddField(
-            model_name='itineraryitem',
-            name='adres_id',
+            model_name="itineraryitem",
+            name="adres_id",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='itineraryitem',
-            name='wng_id',
+            model_name="itineraryitem",
+            name="wng_id",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

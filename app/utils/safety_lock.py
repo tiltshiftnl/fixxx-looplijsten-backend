@@ -8,9 +8,9 @@ def safety_lock(func):
     """
 
     def wrapper(*args, **kwargs):
-        if (config.ALLOW_DATA_ACCESS):
+        if config.ALLOW_DATA_ACCESS:
             return func(*args, **kwargs)
         else:
-            raise Http404('Not allowed to access data')
+            raise Http404("Not allowed to access data")
 
     return wrapper

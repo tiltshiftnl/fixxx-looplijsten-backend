@@ -1,54 +1,72 @@
+from apps.itinerary.models import (
+    Itinerary,
+    ItineraryItem,
+    ItinerarySettings,
+    ItineraryTeamMember,
+    Note,
+    PostalCodeSettings,
+)
+from apps.itinerary.serializers import ItinerarySerializer
 from django.contrib import admin
 from django.http import JsonResponse
 
-from apps.itinerary.models import Itinerary, ItineraryItem, Note, ItineraryTeamMember, ItinerarySettings, PostalCodeSettings
-from apps.itinerary.serializers import ItinerarySerializer
 
 class PostalCodeSettingsInline(admin.StackedInline):
-    fields = ('range_start', 'range_end')
+    fields = ("range_start", "range_end")
     model = PostalCodeSettings
 
+
 class ItinerarySettingsInline(admin.StackedInline):
-    fields = ('opening_date', 'target_length', 'projects', 'primary_stadium',
-              'secondary_stadia', 'exclude_stadia', 'start_case')
+    fields = (
+        "opening_date",
+        "target_length",
+        "projects",
+        "primary_stadium",
+        "secondary_stadia",
+        "exclude_stadia",
+        "start_case",
+    )
     model = ItinerarySettings
 
 
 class ItineraryTeamMemberInline(admin.StackedInline):
-    fields = ('user',)
+    fields = ("user",)
     model = ItineraryTeamMember
     extra = 0
 
 
 class ItineraryItemInline(admin.StackedInline):
-    fields = ('case',)
+    fields = ("case",)
     model = ItineraryItem
     extra = 0
 
 
 @admin.register(Itinerary)
 class ItineraryAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'created_at',)
+    list_display = (
+        "__str__",
+        "created_at",
+    )
 
     inlines = [
         ItineraryTeamMemberInline,
         ItineraryItemInline,
         ItinerarySettingsInline,
-        PostalCodeSettingsInline
+        PostalCodeSettingsInline,
     ]
 
-    actions = ['export_as_json']
+    actions = ["export_as_json"]
 
     def export_as_json(self, request, queryset):
         serializer = ItinerarySerializer(queryset.all(), many=True)
-        return JsonResponse({'looplijsten': serializer.data})
+        return JsonResponse({"looplijsten": serializer.data})
 
 
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
-    fields = ('itinerary_item', 'text', 'author')
+    fields = ("itinerary_item", "text", "author")
 
 
 @admin.register(ItineraryItem)
 class ItineraryItemAdmin(admin.ModelAdmin):
-    fields = ('itinerary', 'case', 'position', 'checked')
+    fields = ("itinerary", "case", "position", "checked")

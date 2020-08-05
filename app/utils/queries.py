@@ -4,13 +4,14 @@ from utils.statement_helpers import parse_statement
 
 
 def get_search_results(postal_code, street_number, suffix):
-    suffix = suffix.replace(' ', '')
-    suffix_query = ''
+    suffix = suffix.replace(" ", "")
+    suffix_query = ""
 
     if suffix:
         suffix_query = "WHERE LOWER(suffix) LIKE LOWER(%(suffix)s)"
 
-    query = """
+    query = (
+        """
             SELECT
               case_id
             FROM
@@ -33,17 +34,19 @@ def get_search_results(postal_code, street_number, suffix):
               )
             AS
               case_preselect
-            """ + suffix_query
+            """
+        + suffix_query
+    )
 
     args = {
-        'postal_code': postal_code,
+        "postal_code": postal_code,
         # % is added here because of the LIKE sql check
-        'suffix': suffix + '%',
-        'street_number': street_number,
+        "suffix": suffix + "%",
+        "street_number": street_number,
     }
 
     case_ids = do_query(query, args)
-    case_ids = [case_id['case_id'] for case_id in case_ids]
+    case_ids = [case_id["case_id"] for case_id in case_ids]
     cases = [get_case(case_id) for case_id in case_ids]
     cases = [case for case in cases if bool(case)]
 
@@ -60,7 +63,7 @@ def get_related_case_ids(case_id):
             AND zaak_id = %(case_id)s
               """
 
-    args = {'case_id': case_id}
+    args = {"case_id": case_id}
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
@@ -74,7 +77,7 @@ def get_related_cases(address_id):
             AND afs_code is Null
             """
 
-    args = {'address_id': address_id}
+    args = {"address_id": address_id}
     executed_query = do_query(query, args)
 
     return executed_query
@@ -86,11 +89,11 @@ def get_toezichthouder_name(code):
                 SELECT naam FROM bwv_medewerkers where code = %(code)s
                 """
 
-        args = {'code': code}
+        args = {"code": code}
         executed_query = do_query(query, args)
         item = return_first_or_empty(executed_query)
 
-        return item.get('naam', None)
+        return item.get("naam", None)
 
     return None
 
@@ -109,16 +112,16 @@ def get_bwv_hotline_bevinding(wng_id):
             ORDER BY volgnr_bevinding ASC
             """
 
-    args = {'wng_id': wng_id}
+    args = {"wng_id": wng_id}
     results = do_query(query, args)
 
     # Adds the user's names to the result data
     for result in results:
-        toez_hdr1_code = result.get('toez_hdr1_code', None)
-        toez_hdr2_code = result.get('toez_hdr2_code', None)
+        toez_hdr1_code = result.get("toez_hdr1_code", None)
+        toez_hdr2_code = result.get("toez_hdr2_code", None)
 
-        result['toez_hdr1_naam'] = get_toezichthouder_name(toez_hdr1_code)
-        result['toez_hdr2_naam'] = get_toezichthouder_name(toez_hdr2_code)
+        result["toez_hdr1_naam"] = get_toezichthouder_name(toez_hdr1_code)
+        result["toez_hdr2_naam"] = get_toezichthouder_name(toez_hdr2_code)
 
     return results
 
@@ -136,7 +139,7 @@ def get_bwv_hotline_melding(wng_id):
             ORDER BY melding_datum ASC
             """
 
-    args = {'wng_id': wng_id}
+    args = {"wng_id": wng_id}
     return do_query(query, args)
 
 
@@ -157,7 +160,7 @@ def get_bwv_personen(address_id):
             ORDER BY vestigingsdatum_adres DESC
             """
 
-    args = {'address_id': address_id}
+    args = {"address_id": address_id}
     return do_query(query, args)
 
 
@@ -175,7 +178,7 @@ def get_import_adres(wng_id):
             FROM import_adres WHERE wng_id = %(wng_id)s
             """
 
-    args = {'wng_id': wng_id}
+    args = {"wng_id": wng_id}
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
@@ -188,21 +191,21 @@ def get_import_stadia(case_id):
               begindatum,
               einddatum,
               peildatum,
-              sta_nr, 
+              sta_nr,
               stadia_id
             FROM
               import_stadia
             WHERE stadia_id LIKE %(case_id)s
             ORDER BY sta_nr DESC
-          """.format(case_id)
+          """
 
     # Adds the _% to support the LIKE query
-    args = {'case_id': case_id + '_%'}
+    args = {"case_id": case_id + "_%"}
     all_stadia = do_query(query, args)
 
     # Make sure all the open stadia are first in the list
-    open_stadia = [stadia for stadia in all_stadia if stadia['einddatum'] is None]
-    closed_stadia = [stadia for stadia in all_stadia if stadia['einddatum'] is not None]
+    open_stadia = [stadia for stadia in all_stadia if stadia["einddatum"] is None]
+    closed_stadia = [stadia for stadia in all_stadia if stadia["einddatum"] is not None]
     stadia = open_stadia + closed_stadia
 
     return stadia
@@ -237,10 +240,7 @@ def get_case(case_id):
             LIMIT 1
             """
 
-    args = {
-        'case_id_like': case_id + '_%',
-        'case_id': case_id
-    }
+    args = {"case_id_like": case_id + "_%", "case_id": case_id}
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
@@ -256,7 +256,7 @@ def get_open_cases(address_id):
             WHERE adres_id=%(address_id)s AND afs_code is NULL
             """
 
-    args = {'address_id': address_id}
+    args = {"address_id": address_id}
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
@@ -270,7 +270,7 @@ def get_case_count(address_id):
               WHERE adres_id=%(address_id)s
             """
 
-    args = {'address_id': address_id}
+    args = {"address_id": address_id}
     executed_query = do_query(query, args)
     return return_first_or_empty(executed_query)
 
@@ -282,9 +282,9 @@ def get_statements(case_id):
             FROM import_wvs WHERE zaak_id=%(case_id)s
             """
 
-    args = {'case_id': case_id}
+    args = {"case_id": case_id}
     executed_query = do_query(query, args)
-    raw_statements = return_first_or_empty(executed_query).get('statements')
+    raw_statements = return_first_or_empty(executed_query).get("statements")
 
     statements = parse_statement(raw_statements) if raw_statements else []
 
@@ -299,7 +299,7 @@ def get_case_basics(case_id):
             FROM import_wvs WHERE zaak_id=%(case_id)s
             """
 
-    args = {'case_id': case_id}
+    args = {"case_id": case_id}
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
@@ -315,8 +315,8 @@ def get_bwv_tmp(case_id, adres_id):
 def get_rented_days(notified_rentals):
     days = 0
     for notified_rental in notified_rentals:
-        check_in = notified_rental['check_in']
-        check_out = notified_rental['check_out']
+        check_in = notified_rental["check_in"]
+        check_out = notified_rental["check_out"]
         days += get_days_in_range(check_in, check_out)
     return days
 
@@ -340,7 +340,7 @@ def get_bwv_vakantieverhuur(wng_id):
             ORDER BY check_in
             """
 
-    args = {'wng_id': wng_id}
+    args = {"wng_id": wng_id}
     query_results = do_query(query, args)
     get_rented_days(query_results)
 
@@ -358,7 +358,7 @@ def get_shortstay_license(wng_id):
             WHERE id=%(wng_id)s
             """
 
-    args = {'wng_id': wng_id}
+    args = {"wng_id": wng_id}
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
@@ -375,7 +375,7 @@ def get_is_bnb_declared(wng_id):
             WHERE id=%(wng_id)s
             """
 
-    args = {'wng_id': wng_id}
+    args = {"wng_id": wng_id}
     executed_query = do_query(query, args)
 
     return return_first_or_empty(executed_query)
@@ -388,8 +388,8 @@ def get_rental_information(wng_id):
     is_bnb_declared = get_is_bnb_declared(wng_id)
 
     return {
-        'notified_rentals': notified_rentals,
-        'rented_days': rented_days,
+        "notified_rentals": notified_rentals,
+        "rented_days": rented_days,
         **shortstay_license,
-        **is_bnb_declared
+        **is_bnb_declared,
     }

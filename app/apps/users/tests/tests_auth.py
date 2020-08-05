@@ -6,24 +6,23 @@ with the OIDC provider
 """
 from unittest.mock import Mock
 
+from apps.users.auth_grip import OIDCAuthenticationBackend
 from constance.test import override_config
 from django.core.exceptions import SuspiciousOperation
 from django.http.response import Http404
 from django.test import TestCase
 
-from apps.users.auth_grip import OIDCAuthenticationBackend
 from app.utils.unittest_helpers import get_test_user
 
-MOCK_AUTH_CODE = 'FOO_CODE'
+MOCK_AUTH_CODE = "FOO_CODE"
 MOCK_AUTH_REQUEST = Mock()
 MOCK_AUTH_REQUEST.data = Mock()
 MOCK_AUTH_REQUEST.data.code = MOCK_AUTH_CODE
 MOCK_AUTH_REQUEST.META = {}
-MOCK_AUTH_REQUEST.META['HTTP_REFERER'] = 'FOO REDIRECT'
+MOCK_AUTH_REQUEST.META["HTTP_REFERER"] = "FOO REDIRECT"
 
 
 class AuthTest(TestCase):
-
     @override_config(ALLOW_DATA_ACCESS=False)
     def test_safety_locked_request(self):
         """
@@ -66,9 +65,7 @@ class AuthTest(TestCase):
 
         # Mock verify token and payload
         authentication_backend.verify_token = Mock()
-        authentication_backend.verify_token.return_value = {
-            'payload_foo': 'foo_data'
-        }
+        authentication_backend.verify_token.return_value = {"payload_foo": "foo_data"}
 
         # Mock user creation
         FOO_USER = get_test_user()
@@ -97,7 +94,9 @@ class AuthTest(TestCase):
 
         # Mock verify token and payload
         # This mock raises an 'SuspiciousOperation' exception
-        authentication_backend.verify_token = Mock(side_effect=SuspiciousOperation('Token not verified'))
+        authentication_backend.verify_token = Mock(
+            side_effect=SuspiciousOperation("Token not verified")
+        )
 
         # Call the authentication
         authenticated_result = authentication_backend.authenticate(MOCK_AUTH_REQUEST)

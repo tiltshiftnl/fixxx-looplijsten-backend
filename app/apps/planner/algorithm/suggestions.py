@@ -16,18 +16,20 @@ class ItineraryGenerateSuggestions(ItineraryGenerateAlgorithm):
         cases = self.__get_eligible_cases__()
 
         if not cases:
-            LOGGER.warning('No eligible cases, could not generate suggestions')
+            LOGGER.warning("No eligible cases, could not generate suggestions")
             return []
 
         # Calculate a list of distances for each case
-        center = (location['lat'], location['lng'])
+        center = (location["lat"], location["lng"])
         distances = calculate_geo_distances(center, cases)
 
         # Add the distances and fraud predictions to the cases
         for index, case in enumerate(cases):
-            case['distance'] = distances[index]
-            case['fraud_prediction'] = get_fraud_prediction(case['case_id'])
+            case["distance"] = distances[index]
+            case["fraud_prediction"] = get_fraud_prediction(case["case_id"])
 
         # Sort the cases based on distance
-        sorted_cases = sorted(cases, key=lambda item: item['distance'])[:MAX_SUGGESTIONS_COUNT]
+        sorted_cases = sorted(cases, key=lambda item: item["distance"])[
+            :MAX_SUGGESTIONS_COUNT
+        ]
         return sorted_cases

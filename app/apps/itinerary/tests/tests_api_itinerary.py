@@ -1,19 +1,24 @@
 from unittest.mock import patch
 
+from apps.itinerary.models import Itinerary, ItinerarySettings
 from constance.test import override_config
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.itinerary.models import Itinerary, ItinerarySettings
-from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client, get_test_user
+from app.utils.unittest_helpers import (
+    get_authenticated_client,
+    get_test_user,
+    get_unauthenticated_client,
+)
 
 
 class ItineraryViewsGetTest(APITestCase):
     """
     Tests for the API endpoint for retrieving itineraries
     """
+
     maxDiff = None
 
     def test_unauthenticated_request_get(self):
@@ -21,7 +26,7 @@ class ItineraryViewsGetTest(APITestCase):
         An unauthenticated request should not be possible
         """
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_unauthenticated_client()
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -31,7 +36,7 @@ class ItineraryViewsGetTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -40,13 +45,11 @@ class ItineraryViewsGetTest(APITestCase):
         """
         Should succeed and return no itineraries (none have been created)
         """
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         response = client.get(url)
 
-        expected_response_json = {
-            "itineraries": []
-        }
+        expected_response_json = {"itineraries": []}
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), expected_response_json)
@@ -56,13 +59,11 @@ class ItineraryViewsGetTest(APITestCase):
         Should return an empty response if no users are associated with itinerary
         """
         Itinerary.objects.create()
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         response = client.get(url)
 
-        expected_response_json = {
-            "itineraries": []
-        }
+        expected_response_json = {"itineraries": []}
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), expected_response_json)
@@ -75,26 +76,34 @@ class ItineraryViewsGetTest(APITestCase):
         user = get_test_user()
         itinerary.add_team_members([user.id])
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         response = client.get(url)
 
         expected_respsonse = {
-            'itineraries': [
+            "itineraries": [
                 {
-                    'id': itinerary.id,
-                    'created_at': str(itinerary.created_at),
-                    'team_members': [
-                        {'id': itinerary.team_members.all()[0].id, 'user': {
-                            'id': str(user.id),
-                            'email': user.email,
-                            'username': user.username,
-                            'first_name': user.first_name,
-                            'last_name': user.last_name,
-                            'full_name': user.full_name}}],
-                    'items': [],
-                    'postal_code_settings': [],
-                    'settings': None}]}
+                    "id": itinerary.id,
+                    "created_at": str(itinerary.created_at),
+                    "team_members": [
+                        {
+                            "id": itinerary.team_members.all()[0].id,
+                            "user": {
+                                "id": str(user.id),
+                                "email": user.email,
+                                "username": user.username,
+                                "first_name": user.first_name,
+                                "last_name": user.last_name,
+                                "full_name": user.full_name,
+                            },
+                        }
+                    ],
+                    "items": [],
+                    "postal_code_settings": [],
+                    "settings": None,
+                }
+            ]
+        }
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), expected_respsonse)
@@ -109,44 +118,52 @@ class ItineraryViewsGetTest(APITestCase):
         itinerary_a.add_team_members([user.id])
         itinerary_b.add_team_members([user.id])
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         response = client.get(url)
 
         expected_respsonse = {
-            'itineraries': [
+            "itineraries": [
                 {
-                    'id': itinerary_a.id,
-                    'created_at': str(itinerary_a.created_at),
-                    'team_members': [
-                        {'id': itinerary_a.team_members.all()[0].id,
-                         'user': {
-                             'id': str(user.id),
-                             'email': user.email,
-                             'username': user.username,
-                             'first_name': user.first_name,
-                             'last_name': user.last_name,
-                             'full_name': user.full_name}}],
-                    'items': [],
-                    'postal_code_settings': [],
-                    'settings': None
+                    "id": itinerary_a.id,
+                    "created_at": str(itinerary_a.created_at),
+                    "team_members": [
+                        {
+                            "id": itinerary_a.team_members.all()[0].id,
+                            "user": {
+                                "id": str(user.id),
+                                "email": user.email,
+                                "username": user.username,
+                                "first_name": user.first_name,
+                                "last_name": user.last_name,
+                                "full_name": user.full_name,
+                            },
+                        }
+                    ],
+                    "items": [],
+                    "postal_code_settings": [],
+                    "settings": None,
                 },
                 {
-                    'id': itinerary_b.id,
-                    'created_at': str(itinerary_b.created_at),
-                    'team_members': [
-                        {'id': itinerary_b.team_members.all()[0].id,
-                         'user': {
-                             'id': str(user.id),
-                             'email': user.email,
-                             'username': user.username,
-                             'first_name': user.first_name,
-                             'last_name': user.last_name,
-                             'full_name': user.full_name}}],
-                    'items': [],
-                    'postal_code_settings': [],
-                    'settings': None
-                }
+                    "id": itinerary_b.id,
+                    "created_at": str(itinerary_b.created_at),
+                    "team_members": [
+                        {
+                            "id": itinerary_b.team_members.all()[0].id,
+                            "user": {
+                                "id": str(user.id),
+                                "email": user.email,
+                                "username": user.username,
+                                "first_name": user.first_name,
+                                "last_name": user.last_name,
+                                "full_name": user.full_name,
+                            },
+                        }
+                    ],
+                    "items": [],
+                    "postal_code_settings": [],
+                    "settings": None,
+                },
             ]
         }
 
@@ -162,30 +179,34 @@ class ItineraryViewsGetTest(APITestCase):
         user = get_test_user()
         itinerary.add_team_members([user.id])
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
-        response = client.get(
-            url,
-            {'created_at': "2020-04-02"}
-        )
+        response = client.get(url, {"created_at": "2020-04-02"})
 
         expected_respsonse = {
-            'itineraries': [
+            "itineraries": [
                 {
-                    'id': itinerary.id,
-                    'created_at': "2020-04-02",
-                    'team_members': [
-                        {'id': itinerary.team_members.all()[0].id,
-                         'user': {
-                             'id': str(user.id),
-                             'email': user.email,
-                             'username': user.username,
-                             'first_name': user.first_name,
-                             'last_name': user.last_name,
-                             'full_name': user.full_name}}],
-                    'items': [],
-                    'postal_code_settings': [],
-                    'settings': None}]}
+                    "id": itinerary.id,
+                    "created_at": "2020-04-02",
+                    "team_members": [
+                        {
+                            "id": itinerary.team_members.all()[0].id,
+                            "user": {
+                                "id": str(user.id),
+                                "email": user.email,
+                                "username": user.username,
+                                "first_name": user.first_name,
+                                "last_name": user.last_name,
+                                "full_name": user.full_name,
+                            },
+                        }
+                    ],
+                    "items": [],
+                    "postal_code_settings": [],
+                    "settings": None,
+                }
+            ]
+        }
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), expected_respsonse)
@@ -199,13 +220,10 @@ class ItineraryViewsGetTest(APITestCase):
         user = get_test_user()
         itinerary.add_team_members([user.id])
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
-        response = client.get(
-            url,
-            {'created_at': "2022-04-02"}
-        )
-        expected_respsonse = {'itineraries': []}
+        response = client.get(url, {"created_at": "2022-04-02"})
+        expected_respsonse = {"itineraries": []}
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json(), expected_respsonse)
@@ -215,6 +233,7 @@ class ItineraryViewsCreateTest(APITestCase):
     """
     Tests for the API endpoint for creating itineraries
     """
+
     maxDiff = None
 
     def test_unauthenticated_request_post(self):
@@ -222,7 +241,7 @@ class ItineraryViewsCreateTest(APITestCase):
         An unauthenticated request should not be possible
         """
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_unauthenticated_client()
         response = client.post(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -232,12 +251,12 @@ class ItineraryViewsCreateTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         response = client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch('apps.itinerary.views.Itinerary.get_cases_from_settings')
+    @patch("apps.itinerary.views.Itinerary.get_cases_from_settings")
     def test_create_fail(self, mock_get_cases_from_settings):
         """
         Should fail and create no Itinerary if no cases are available
@@ -245,7 +264,7 @@ class ItineraryViewsCreateTest(APITestCase):
         self.assertEqual(Itinerary.objects.count(), 0)
         mock_get_cases_from_settings.return_value = []
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         user = get_test_user()
 
@@ -253,29 +272,26 @@ class ItineraryViewsCreateTest(APITestCase):
             url,
             {
                 "team_members": [{"user": {"id": user.id}}],
-                "settings": {
-                    "opening_date": "2020-04-24",
-                    "target_length": 8,
-                }
+                "settings": {"opening_date": "2020-04-24", "target_length": 8,},
             },
-            format='json'
+            format="json",
         )
 
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
         self.assertEqual(Itinerary.objects.count(), 0)
 
-    @patch('apps.itinerary.views.Itinerary.get_cases_from_settings')
+    @patch("apps.itinerary.views.Itinerary.get_cases_from_settings")
     def test_create(self, mock_get_cases_from_settings):
         """
         Should succeed and create an Itinerary if cases are available
         """
         self.assertEqual(Itinerary.objects.count(), 0)
         mock_get_cases_from_settings.return_value = [
-            {'case_id': 'FOO_CASE_ID_A'},
-            {'case_id': 'FOO_CASE_ID_B'},
+            {"case_id": "FOO_CASE_ID_A"},
+            {"case_id": "FOO_CASE_ID_B"},
         ]
 
-        url = reverse('itinerary-list')
+        url = reverse("itinerary-list")
         client = get_authenticated_client()
         user = get_test_user()
 
@@ -283,12 +299,9 @@ class ItineraryViewsCreateTest(APITestCase):
             url,
             {
                 "team_members": [{"user": {"id": user.id}}],
-                "settings": {
-                    "opening_date": "2020-04-24",
-                    "target_length": 8,
-                }
+                "settings": {"opening_date": "2020-04-24", "target_length": 8,},
             },
-            format='json'
+            format="json",
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -297,17 +310,15 @@ class ItineraryViewsCreateTest(APITestCase):
         itinerary = Itinerary.objects.all()[0]
 
         cases = itinerary.get_cases()
-        self.assertEqual(cases[0].case_id, 'FOO_CASE_ID_A')
-        self.assertEqual(cases[1].case_id, 'FOO_CASE_ID_B')
-
-
-
+        self.assertEqual(cases[0].case_id, "FOO_CASE_ID_A")
+        self.assertEqual(cases[1].case_id, "FOO_CASE_ID_B")
 
 
 class ItineraryViewsDeleteTest(APITestCase):
     """
     Tests for the API endpoint for deleting itineraries
     """
+
     maxDiff = None
 
     def test_unauthenticated_request_delete(self):
@@ -315,7 +326,7 @@ class ItineraryViewsDeleteTest(APITestCase):
         An unauthenticated request should not be possible
         """
         itinerary = Itinerary.objects.create()
-        url = reverse('itinerary-detail', kwargs={'pk': itinerary.id})
+        url = reverse("itinerary-detail", kwargs={"pk": itinerary.id})
 
         client = get_unauthenticated_client()
         response = client.delete(url)
@@ -328,7 +339,7 @@ class ItineraryViewsDeleteTest(APITestCase):
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
         itinerary = Itinerary.objects.create()
-        url = reverse('itinerary-detail', kwargs={'pk': itinerary.id})
+        url = reverse("itinerary-detail", kwargs={"pk": itinerary.id})
 
         client = get_authenticated_client()
         response = client.delete(url)
@@ -341,7 +352,7 @@ class ItineraryViewsDeleteTest(APITestCase):
         """
         itinerary = Itinerary.objects.create()
 
-        url = reverse('itinerary-detail', kwargs={'pk': itinerary.id})
+        url = reverse("itinerary-detail", kwargs={"pk": itinerary.id})
         client = get_authenticated_client()
         response = client.delete(url)
 
@@ -360,7 +371,7 @@ class ItineraryViewsSuggestionsTest(APITestCase):
         """
         itinerary = Itinerary.objects.create()
 
-        url = reverse('itinerary-suggestions', kwargs={'pk': itinerary.id})
+        url = reverse("itinerary-suggestions", kwargs={"pk": itinerary.id})
         client = get_unauthenticated_client()
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -372,26 +383,24 @@ class ItineraryViewsSuggestionsTest(APITestCase):
         """
         itinerary = Itinerary.objects.create()
 
-        url = reverse('itinerary-suggestions', kwargs={'pk': itinerary.id})
+        url = reverse("itinerary-suggestions", kwargs={"pk": itinerary.id})
         client = get_authenticated_client()
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch('apps.itinerary.views.Itinerary.get_suggestions')
+    @patch("apps.itinerary.views.Itinerary.get_suggestions")
     def test_get_suggestions(self, mock_get_suggestions):
         """
         A working authenticated request should return suggestions
         """
-        mock_get_suggestions.return_value = 'FOO_SUGGESTIONS'
+        mock_get_suggestions.return_value = "FOO_SUGGESTIONS"
 
         itinerary = Itinerary.objects.create()
-        ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+        ItinerarySettings.objects.create(opening_date="2020-04-04", itinerary=itinerary)
 
-        url = reverse('itinerary-suggestions', kwargs={'pk': itinerary.id})
+        url = reverse("itinerary-suggestions", kwargs={"pk": itinerary.id})
         client = get_authenticated_client()
         response = client.get(url)
 
-        expected_response = {
-            'cases': 'FOO_SUGGESTIONS'
-        }
+        expected_response = {"cases": "FOO_SUGGESTIONS"}
         self.assertEqual(expected_response, response.json())

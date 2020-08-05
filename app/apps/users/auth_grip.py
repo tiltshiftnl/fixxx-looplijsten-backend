@@ -5,42 +5,40 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import SuspiciousOperation
 from django.db import transaction
 from mozilla_django_oidc import auth
-
 from utils.safety_lock import safety_lock
 
-CLAIMS_FIRST_NAME = 'FirstName'
-CLAIMS_LAST_NAME = 'LastName'
-PAYLOAD_NONCE = 'nonce'
-CLAIMS_ROLES = 'roles'
-ACCESS_INFO_REALM = 'realm_access'
+CLAIMS_FIRST_NAME = "FirstName"
+CLAIMS_LAST_NAME = "LastName"
+PAYLOAD_NONCE = "nonce"
+CLAIMS_ROLES = "roles"
+ACCESS_INFO_REALM = "realm_access"
 
 LOGGER = logging.getLogger(__name__)
 
 
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
-
     @safety_lock
     def authenticate(self, request):
         """Authenticates a user based on the OIDC code flow."""
-        if request and hasattr(request, 'data') and request.data.get('code', False):
+        if request and hasattr(request, "data") and request.data.get("code", False):
             self.request = request
-            code = self.request.data.get('code')
+            code = self.request.data.get("code")
         else:
             return None
 
         """ Retrieve the redirect uri from the request """
         token_payload = {
-            'client_id': self.OIDC_RP_CLIENT_ID,
-            'client_secret': self.OIDC_RP_CLIENT_SECRET,
-            'grant_type': 'authorization_code',
-            'code': code,
-            'redirect_uri': settings.OIDC_REDIRECT_URL,
+            "client_id": self.OIDC_RP_CLIENT_ID,
+            "client_secret": self.OIDC_RP_CLIENT_SECRET,
+            "grant_type": "authorization_code",
+            "code": code,
+            "redirect_uri": settings.OIDC_REDIRECT_URL,
         }
 
         # Get the token
         token_info = self.get_token(token_payload)
-        id_token = token_info.get('id_token')
-        access_token = token_info.get('access_token')
+        id_token = token_info.get("id_token")
+        access_token = token_info.get("access_token")
 
         # Validate the token
         try:
@@ -51,23 +49,23 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
                 return self.get_or_create_user(access_token, id_token, payload)
 
         except SuspiciousOperation as exc:
-            LOGGER.warning('failed authenticate and to get or create user: %s', exc)
+            LOGGER.warning("failed authenticate and to get or create user: %s", exc)
 
         return None
 
     def create_user(self, claims):
         user = super(OIDCAuthenticationBackend, self).create_user(claims)
 
-        user.first_name = claims.get(CLAIMS_FIRST_NAME, '')
-        user.last_name = claims.get(CLAIMS_LAST_NAME, '')
+        user.first_name = claims.get(CLAIMS_FIRST_NAME, "")
+        user.last_name = claims.get(CLAIMS_LAST_NAME, "")
         user.save()
 
         self.update_groups(user, claims)
         return user
 
     def update_user(self, user, claims):
-        user.first_name = claims.get(CLAIMS_FIRST_NAME, '')
-        user.last_name = claims.get(CLAIMS_LAST_NAME, '')
+        user.first_name = claims.get(CLAIMS_FIRST_NAME, "")
+        user.last_name = claims.get(CLAIMS_LAST_NAME, "")
         user.save()
 
         self.update_groups(user, claims)
@@ -102,6 +100,6 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         instead of the lower capital email which is supposed to be retrieved using the
         (not yet supported) email scope.
         """
-        user_info['email'] = user_info.get('Email')
+        user_info["email"] = user_info.get("Email")
 
         return user_info

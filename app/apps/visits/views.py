@@ -1,8 +1,8 @@
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated
-
-from apps.visits.serializers import VisitSerializer
 from apps.visits.models import Visit
+from apps.visits.serializers import VisitSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet
+
 
 # Create your views here.
 class VisitViewSet(ModelViewSet):

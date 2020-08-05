@@ -1,7 +1,6 @@
-from django.test import TestCase
-
 from apps.itinerary.models import Itinerary, ItineraryTeamMember
 from apps.users.models import User
+from django.test import TestCase
 
 
 class TeamMemberModelTest(TestCase):
@@ -9,7 +8,7 @@ class TeamMemberModelTest(TestCase):
         """
         TeamMember can be created
         """
-        user = User.objects.create(email='foo@foo.com')
+        user = User.objects.create(email="foo@foo.com")
         itinerary = Itinerary.objects.create()
 
         self.assertEqual(ItineraryTeamMember.objects.count(), 0)
@@ -20,8 +19,8 @@ class TeamMemberModelTest(TestCase):
         """
         An Itinerary's team can be accessed using the reverse relationship
         """
-        user_a = User.objects.create(email='foo_a@foo.com')
-        user_b = User.objects.create(email='foo_b@foo.com')
+        user_a = User.objects.create(email="foo_a@foo.com")
+        user_b = User.objects.create(email="foo_b@foo.com")
         itinerary = Itinerary.objects.create()
 
         self.assertEqual(itinerary.team_members.count(), 0)
@@ -33,7 +32,7 @@ class TeamMemberModelTest(TestCase):
         """
         Teams can be accessed from users using the reverse relationship
         """
-        user = User.objects.create(email='foo@foo.com')
+        user = User.objects.create(email="foo@foo.com")
         itinerary_a = Itinerary.objects.create()
         itinerary_b = Itinerary.objects.create()
 
@@ -46,8 +45,10 @@ class TeamMemberModelTest(TestCase):
         """
         String representation of the team member should be its full name
         """
-        user = User.objects.create(email='f.foo@foo.com')
+        user = User.objects.create(email="f.foo@foo.com")
         itinerary = Itinerary.objects.create()
-        itinerary_team_member = ItineraryTeamMember.objects.create(user=user, itinerary=itinerary)
+        itinerary_team_member = ItineraryTeamMember.objects.create(
+            user=user, itinerary=itinerary
+        )
 
-        self.assertEqual('F. Foo', str(itinerary_team_member))
+        self.assertEqual("F. Foo", str(itinerary_team_member))

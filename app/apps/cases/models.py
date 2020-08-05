@@ -1,13 +1,12 @@
-from django.db import models
-
 from apps.cases.const import PROJECTS, STADIA
 from apps.fraudprediction.models import FraudPrediction
+from django.db import models
 from utils.queries import get_case
 
 
 class Case(models.Model):
     class Meta:
-        ordering = ['case_id']
+        ordering = ["case_id"]
 
     """
     A simple case model
@@ -22,7 +21,7 @@ class Case(models.Model):
 
     def get_location(self):
         case_data = self.__get_case__(self.case_id)
-        return {'lat': case_data.get('lat'), 'lng': case_data.get('lng')}
+        return {"lat": case_data.get("lat"), "lng": case_data.get("lng")}
 
     @property
     def bwv_data(self):
@@ -36,18 +35,15 @@ class Case(models.Model):
     def __str__(self):
         if self.case_id:
             return self.case_id
-        return ''
+        return ""
 
 
 class Project(models.Model):
     CHOICES = [(project, project) for project in PROJECTS]
 
     name = models.CharField(
-        max_length=255,
-        null=False,
-        blank=False,
-        unique=True,
-        choices=CHOICES)
+        max_length=255, null=False, blank=False, unique=True, choices=CHOICES
+    )
 
     def get(name):
         return Project.objects.get_or_create(name=name)[0]
@@ -60,11 +56,8 @@ class Stadium(models.Model):
     CHOICES = [(stadium, stadium) for stadium in STADIA]
 
     name = models.CharField(
-        max_length=255,
-        null=False,
-        blank=False,
-        unique=True,
-        choices=CHOICES)
+        max_length=255, null=False, blank=False, unique=True, choices=CHOICES
+    )
 
     def get(name):
         return Stadium.objects.get_or_create(name=name)[0]

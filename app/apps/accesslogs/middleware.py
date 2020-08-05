@@ -1,7 +1,6 @@
+from apps.accesslogs.models import LogEntry
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
-
-from apps.accesslogs.models import LogEntry
 
 
 class LoggingMiddleware:
@@ -18,7 +17,7 @@ class LoggingMiddleware:
             request_uri=request.path,
             request_meta=request.META,
             request_method=request.method,
-            response_status_code=response.status_code
+            response_status_code=response.status_code,
         )
 
         # Add the authenticated user, if it's available

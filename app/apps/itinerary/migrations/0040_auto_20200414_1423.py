@@ -5,13 +5,11 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0039_itineraryitem_checked'),
+        ("itinerary", "0039_itineraryitem_checked"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='note',
-            name='text',
-            field=models.TextField(max_length=1024),
+            model_name="note", name="text", field=models.TextField(max_length=1024),
         ),
     ]

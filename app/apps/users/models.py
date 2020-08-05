@@ -1,26 +1,23 @@
 import uuid
 
-from django.contrib.auth.models import AbstractUser
-from django.db import models
-
 from apps.users.user_manager import UserManager
 from apps.users.utils import generate_username
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 
 class User(AbstractUser):
     class Meta:
-        ordering = ['email']
+        ordering = ["email"]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         unique=True,
         blank=False,
-        error_messages={
-            'unique': "A user with that email already exists.",
-        },
+        error_messages={"unique": "A user with that email already exists.",},
     )
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = UserManager()
@@ -35,13 +32,13 @@ class User(AbstractUser):
             return string.capitalize()
 
         def add_punctuation(string):
-            return string + '.' if len(string) == 1 else ' ' + string
+            return string + "." if len(string) == 1 else " " + string
 
         if self.email:
-            full_name = self.email.split('@')[0].split('.')
+            full_name = self.email.split("@")[0].split(".")
             full_name = [capitalize(part) for part in full_name]
             full_name = [add_punctuation(part) for part in full_name]
-            full_name = ''.join(full_name)
+            full_name = "".join(full_name)
 
             return full_name
 

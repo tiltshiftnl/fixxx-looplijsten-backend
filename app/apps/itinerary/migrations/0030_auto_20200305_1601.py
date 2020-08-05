@@ -6,14 +6,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0029_auto_20200305_1525'),
+        ("itinerary", "0029_auto_20200305_1525"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='itineraryteammember',
-            name='itinerary',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='team_members',
-                                    to='itinerary.Itinerary'),
+            model_name="itineraryteammember",
+            name="itinerary",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="team_members",
+                to="itinerary.Itinerary",
+            ),
         ),
     ]

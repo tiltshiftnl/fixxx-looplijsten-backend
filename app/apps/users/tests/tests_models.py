@@ -1,16 +1,14 @@
 """
 Tests for cases models
 """
+from apps.users.models import User
 from django.db import transaction
 from django.test import TestCase
 
-from apps.users.models import User
-
-USER_EMAIL = 'foo@foo.com'
+USER_EMAIL = "foo@foo.com"
 
 
 class UserModelTest(TestCase):
-
     def test_create_user(self):
         """
         A User can be created
@@ -38,16 +36,16 @@ class UserModelTest(TestCase):
         """
         self.assertEqual(User.objects.count(), 0)
         User.objects.create(email=USER_EMAIL)
-        User.objects.create(email='foo-other-email@foo.com')
+        User.objects.create(email="foo-other-email@foo.com")
         self.assertEqual(User.objects.count(), 2)
 
     def test_username(self):
         """
         A User's username is equal to it's email
-        (with the exception of when the email is normalized to generate the username. 
+        (with the exception of when the email is normalized to generate the username.
         This is tested in tests_util.py)
         """
-        USER_EMAIL = 'foo@foo.com'
+        USER_EMAIL = "foo@foo.com"
         user = User.objects.create(email=USER_EMAIL)
 
         self.assertEqual(user.username, USER_EMAIL)
@@ -57,16 +55,16 @@ class UserModelTest(TestCase):
         """
         A User object is displayed as its parsed email
         """
-        USER_EMAIL = 'f.foo@foo.com'
+        USER_EMAIL = "f.foo@foo.com"
         user = User.objects.create(email=USER_EMAIL)
 
-        self.assertEqual(user.__str__(), 'F. Foo')
+        self.assertEqual(user.__str__(), "F. Foo")
 
     def test_credentials(self):
         """
         A User does not have staff or superuser credentials
         """
-        USER_EMAIL = 'foo@foo.com'
+        USER_EMAIL = "foo@foo.com"
         user = User.objects.create(email=USER_EMAIL)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
@@ -75,22 +73,22 @@ class UserModelTest(TestCase):
         """
         A User's full_name is derived from its email
         """
-        USER_EMAIL = 'f.foo@foo.com'
+        USER_EMAIL = "f.foo@foo.com"
         user = User.objects.create(email=USER_EMAIL)
-        self.assertEqual(user.full_name, 'F. Foo')
+        self.assertEqual(user.full_name, "F. Foo")
 
     def test_full_name_double_initials(self):
         """
         A User's full_name with initials is derived from its email correctly
         """
-        USER_EMAIL = 'f.o.foo@foo.com'
+        USER_EMAIL = "f.o.foo@foo.com"
         user = User.objects.create(email=USER_EMAIL)
-        self.assertEqual(user.full_name, 'F.O. Foo')
+        self.assertEqual(user.full_name, "F.O. Foo")
 
     def test_full_name_double_surname(self):
         """
         A User's full_name with initials and double surname is derived from its email correctly
         """
-        USER_EMAIL = 'f.o.de.foo@foo.com'
+        USER_EMAIL = "f.o.de.foo@foo.com"
         user = User.objects.create(email=USER_EMAIL)
-        self.assertEqual(user.full_name, 'F.O. De Foo')
+        self.assertEqual(user.full_name, "F.O. De Foo")

@@ -1,10 +1,9 @@
+from apps.itinerary.models import Itinerary, PostalCodeSettings
 from django.conf import settings
 from django.test import TestCase
 
-from apps.itinerary.models import Itinerary, PostalCodeSettings
 
 class ItinerarySettingsModelTest(TestCase):
-
     def test_with_postal_code_range(self):
         """
         Test creating with postal code range
@@ -14,9 +13,7 @@ class ItinerarySettingsModelTest(TestCase):
         FOO_MAX_RANGE = settings.CITY_MAX_POSTAL_CODE
 
         postal_code_range = PostalCodeSettings.objects.create(
-            itinerary=itinerary,
-            range_start=FOO_MIN_RANGE,
-            range_end=FOO_MAX_RANGE
+            itinerary=itinerary, range_start=FOO_MIN_RANGE, range_end=FOO_MAX_RANGE
         )
         postal_code_range.clean()
         self.assertEquals(PostalCodeSettings.objects.count(), 1)
@@ -32,7 +29,7 @@ class ItinerarySettingsModelTest(TestCase):
             postal_code_range = PostalCodeSettings.objects.create(
                 itinerary=itinerary,
                 range_start=FOO_MIN_RANGE,
-                range_end=FOO_MIN_RANGE-1
+                range_end=FOO_MIN_RANGE - 1,
             )
             postal_code_range.clean()
 
@@ -45,8 +42,7 @@ class ItinerarySettingsModelTest(TestCase):
 
         with self.assertRaises(Exception):
             postal_code_range = PostalCodeSettings.objects.create(
-                itinerary=itinerary,
-                range_start=FOO_MIN_RANGE,
+                itinerary=itinerary, range_start=FOO_MIN_RANGE,
             )
             postal_code_range.clean()
 
@@ -59,8 +55,7 @@ class ItinerarySettingsModelTest(TestCase):
 
         with self.assertRaises(Exception):
             postal_code_range = PostalCodeSettings.objects.create(
-                itinerary=itinerary,
-                range_end=FOO_MAX_RANGE,
+                itinerary=itinerary, range_end=FOO_MAX_RANGE,
             )
             postal_code_range.clean()
 
@@ -76,8 +71,8 @@ class ItinerarySettingsModelTest(TestCase):
         for i in range(N_RANGES):
             postal_code_range = PostalCodeSettings.objects.create(
                 itinerary=itinerary,
-                range_start=FOO_MIN_RANGE+i,
-                range_end=FOO_MAX_RANGE
+                range_start=FOO_MIN_RANGE + i,
+                range_end=FOO_MAX_RANGE,
             )
             postal_code_range.clean()
 

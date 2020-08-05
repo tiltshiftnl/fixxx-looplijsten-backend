@@ -5,16 +5,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('cases', '0002_remove_case_stadion'),
+        ("cases", "0002_remove_case_stadion"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='case',
-            name='stadium',
+            model_name="case",
+            name="stadium",
             field=models.CharField(
-                choices=[('IMD', 'Issuemelding'), ('ECE', 'Eerste controle'), ('TCE', 'Tweede controle'),
-                         ('DCE', 'Derde controle'), ('EHE', 'Eerste hercontrole'), ('THE', 'Tweede hercontrole'),
-                         ('DHE', 'Derde hercontrole')], max_length=255),
+                choices=[
+                    ("IMD", "Issuemelding"),
+                    ("ECE", "Eerste controle"),
+                    ("TCE", "Tweede controle"),
+                    ("DCE", "Derde controle"),
+                    ("EHE", "Eerste hercontrole"),
+                    ("THE", "Tweede hercontrole"),
+                    ("DHE", "Derde hercontrole"),
+                ],
+                max_length=255,
+            ),
         ),
     ]

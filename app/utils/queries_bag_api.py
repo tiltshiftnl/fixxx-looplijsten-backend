@@ -1,8 +1,8 @@
 import logging
+
 import requests
 from django.conf import settings
-from tenacity import retry, stop_after_attempt, after_log
-
+from tenacity import after_log, retry, stop_after_attempt
 from utils.queries import get_import_adres
 
 logger = logging.getLogger(__name__)
@@ -10,28 +10,33 @@ logger = logging.getLogger(__name__)
 
 @retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
 def get_bag_id(case):
-    street_name = case.get('street_name')
-    street_number = case.get('street_number')
+    street_name = case.get("street_name")
+    street_number = case.get("street_number")
 
-    suffix_letter = case.get('suffix_letter', '') or ''
-    suffix = case.get('suffix', '') or ''
+    suffix_letter = case.get("suffix_letter", "") or ""
+    suffix = case.get("suffix", "") or ""
 
-    query = '{} {} {}{}'.format(street_name, street_number, suffix_letter, suffix)
-    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': query}, timeout=0.5)
-    
-    return address_search.json().get('results', [])[0].get('adresseerbaar_object_id', None)    
+    query = "{} {} {}{}".format(street_name, street_number, suffix_letter, suffix)
+    address_search = requests.get(
+        settings.BAG_API_SEARCH_URL, params={"q": query}, timeout=0.5
+    )
+
+    return (
+        address_search.json().get("results", [])[0].get("adresseerbaar_object_id", None)
+    )
+
 
 def get_bag_search_query(address):
     """
     Constructs a BAG search query using the address data
     """
-    sttnaam = address.get('postcode')
-    hsnr = address.get('hsnr')
+    sttnaam = address.get("postcode")
+    hsnr = address.get("hsnr")
 
-    hsltr = address.get('hsltr', '') or ''
-    toev = address.get('toev', '') or ''
+    hsltr = address.get("hsltr", "") or ""
+    toev = address.get("toev", "") or ""
 
-    query = '{} {} {}{}'.format(sttnaam, hsnr, hsltr, toev)
+    query = "{} {} {}{}".format(sttnaam, hsnr, hsltr, toev)
 
     return query.strip()
 
@@ -42,8 +47,11 @@ def do_bag_search_address(address):
     Search BAG using a BWV address
     """
     query = get_bag_search_query(address)
-    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': query}, timeout=0.5)
+    address_search = requests.get(
+        settings.BAG_API_SEARCH_URL, params={"q": query}, timeout=0.5
+    )
     return address_search.json()
+
 
 @retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
 def do_bag_search_id(address):
@@ -51,8 +59,10 @@ def do_bag_search_id(address):
     Search BAG using a BWV 'landelijk BAG ID'
     """
 
-    id = address['landelijk_bag']
-    address_search = requests.get(settings.BAG_API_SEARCH_URL, params={'q': id}, timeout=0.5)
+    id = address["landelijk_bag"]
+    address_search = requests.get(
+        settings.BAG_API_SEARCH_URL, params={"q": id}, timeout=0.5
+    )
     return address_search.json()
 
 
@@ -60,6 +70,7 @@ def do_bag_search_id(address):
 def get_address_bag_data(address_uri):
     address_bag_data = requests.get(address_uri, timeout=0.5)
     return address_bag_data.json()
+
 
 def do_bag_search(address):
     """
@@ -71,7 +82,7 @@ def do_bag_search(address):
     address_search = do_bag_search_address(address)
 
     # If that search didn't give any results, try using the Landelijk BAG id
-    if (address_search['count'] == 0):
+    if address_search["count"] == 0:
         address_search = do_bag_search_id(address)
 
     return address_search
@@ -82,16 +93,16 @@ def get_bag_data(wng_id):
     try:
         address_search = do_bag_search(address)
         # Do a request using the the objects href
-        address_uri = address_search['results'][0]['_links']['self']['href']
+        address_uri = address_search["results"][0]["_links"]["self"]["href"]
         return get_address_bag_data(address_uri)
 
     except Exception as e:
-        logger.error('Requesting BAG data failed: {}'.format(str(e)))
+        logger.error("Requesting BAG data failed: {}".format(str(e)))
 
         error_objects = {
-            'error': str(e),
-            'wng_id': wng_id,
-            'api_url': settings.BAG_API_SEARCH_URL,
-            'address': address,
+            "error": str(e),
+            "wng_id": wng_id,
+            "api_url": settings.BAG_API_SEARCH_URL,
+            "address": address,
         }
         return error_objects

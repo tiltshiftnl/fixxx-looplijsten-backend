@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('itinerary', '0051_auto_20200706_1220'),
+        ("itinerary", "0051_auto_20200706_1220"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='postalcodesettings',
-            old_name='postal_code_range_end',
-            new_name='range_end',
+            model_name="postalcodesettings",
+            old_name="postal_code_range_end",
+            new_name="range_end",
         ),
         migrations.RenameField(
-            model_name='postalcodesettings',
-            old_name='postal_code_range_start',
-            new_name='range_start',
+            model_name="postalcodesettings",
+            old_name="postal_code_range_start",
+            new_name="range_start",
         ),
     ]

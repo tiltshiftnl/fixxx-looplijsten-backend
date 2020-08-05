@@ -5,13 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0025_auto_20200304_1634'),
+        ("itinerary", "0025_auto_20200304_1634"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='itinerary',
-            name='created_at',
+            model_name="itinerary",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True),
         ),
     ]

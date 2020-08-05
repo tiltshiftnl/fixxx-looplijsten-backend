@@ -1,9 +1,8 @@
+from apps.users.models import User
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from apps.users.models import User
-
-AUTHENTICATED_CLIENT_EMAIL = 'f.foo@foo.com'
+AUTHENTICATED_CLIENT_EMAIL = "f.foo@foo.com"
 
 
 def get_test_user():
@@ -21,7 +20,7 @@ def get_authenticated_client():
     access_token = RefreshToken.for_user(user).access_token
 
     client = APIClient()
-    client.credentials(HTTP_AUTHORIZATION='Bearer {}'.format(access_token))
+    client.credentials(HTTP_AUTHORIZATION="Bearer {}".format(access_token))
     return client
 
 

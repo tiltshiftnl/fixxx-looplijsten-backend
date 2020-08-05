@@ -7,19 +7,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='FraudPrediction',
+            name="FraudPrediction",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('case_id', models.CharField(max_length=255, null=True, unique=True)),
-                ('fraud_probability', models.FloatField()),
-                ('fraud_prediction', models.BooleanField()),
-                ('business_rules', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('shap_values', django.contrib.postgres.fields.jsonb.JSONField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("case_id", models.CharField(max_length=255, null=True, unique=True)),
+                ("fraud_probability", models.FloatField()),
+                ("fraud_prediction", models.BooleanField()),
+                ("business_rules", django.contrib.postgres.fields.jsonb.JSONField()),
+                ("shap_values", django.contrib.postgres.fields.jsonb.JSONField()),
             ],
         ),
     ]

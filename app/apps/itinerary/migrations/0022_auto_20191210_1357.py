@@ -5,12 +5,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0021_set_itineraryitem_position'),
+        ("itinerary", "0021_set_itineraryitem_position"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='itineraryitem',
-            options={'ordering': ['position']},
+            name="itineraryitem", options={"ordering": ["position"]},
         ),
     ]

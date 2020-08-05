@@ -5,13 +5,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('fraudprediction', '0002_fraudprediction_synch_date'),
+        ("fraudprediction", "0002_fraudprediction_synch_date"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='fraudprediction',
-            old_name='synch_date',
-            new_name='sync_date',
+            model_name="fraudprediction", old_name="synch_date", new_name="sync_date",
         ),
     ]

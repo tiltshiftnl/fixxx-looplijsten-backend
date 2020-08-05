@@ -1,14 +1,13 @@
-from rest_framework import serializers
-
-from apps.cases.const import STADIA, PROJECTS
+from apps.cases.const import PROJECTS, STADIA
 from apps.cases.models import Case, Project, Stadium
 from apps.fraudprediction.serializers import FraudPredictionSerializer
+from rest_framework import serializers
 
 
 class CaseSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Case
-        fields = ('case_id',)
+        fields = ("case_id",)
 
 
 class CaseSerializer(serializers.ModelSerializer):
@@ -16,7 +15,7 @@ class CaseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Case
-        fields = ('id', 'case_id', 'bwv_data', 'fraud_prediction')
+        fields = ("id", "case_id", "bwv_data", "fraud_prediction")
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -24,7 +23,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ('name',)
+        fields = ("name",)
 
 
 class StadiumSerializer(serializers.ModelSerializer):
@@ -32,12 +31,13 @@ class StadiumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stadium
-        fields = ('name',)
+        fields = ("name",)
 
 
 class UnplannedCasesSerializer(serializers.Serializer):
     """
     Serializer used to validate coming in from the unplanned-cases view
     """
+
     date = serializers.DateField(required=True)
     stadium = serializers.ChoiceField(required=True, choices=STADIA)

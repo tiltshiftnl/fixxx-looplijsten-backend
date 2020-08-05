@@ -13,7 +13,7 @@ services:
       POSTGRES_PASSWORD: insecure
   database:
     networks:
-      - looplijsten_backend    
+      - looplijsten_backend
     image: amsterdam/postgres11
     shm_size: '512m'
     ports:

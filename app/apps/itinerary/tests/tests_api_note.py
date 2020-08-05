@@ -1,10 +1,14 @@
+from apps.itinerary.models import Itinerary, ItineraryItem, Note
 from constance.test import override_config
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.itinerary.models import Itinerary, ItineraryItem, Note
-from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client, get_test_user
+from app.utils.unittest_helpers import (
+    get_authenticated_client,
+    get_test_user,
+    get_unauthenticated_client,
+)
 
 
 class NoteViewsCreateTest(APITestCase):
@@ -17,7 +21,7 @@ class NoteViewsCreateTest(APITestCase):
         An unauthenticated request should not be possible
         """
 
-        url = reverse('notes-list')
+        url = reverse("notes-list")
         client = get_unauthenticated_client()
         response = client.post(url, {})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -27,7 +31,7 @@ class NoteViewsCreateTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('notes-list')
+        url = reverse("notes-list")
         client = get_authenticated_client()
         response = client.post(url, {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -42,17 +46,15 @@ class NoteViewsCreateTest(APITestCase):
 
         self.assertEquals([], list(itinerary_item.notes.all()))
 
-        FOO_TEXT = 'FOO NOTE TEXT'
+        FOO_TEXT = "FOO NOTE TEXT"
 
         note_data = {
             "text": FOO_TEXT,
             "itinerary_item": itinerary_item.id,
-            "author": {
-                "id": user.id
-            }
+            "author": {"id": user.id},
         }
 
-        url = reverse('notes-list')
+        url = reverse("notes-list")
         client = get_authenticated_client()
         response = client.post(url, note_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -71,7 +73,7 @@ class NoteViewsUpdateTest(APITestCase):
         """
         An unauthenticated request should not be possible
         """
-        url = reverse('notes-detail', kwargs={'pk': 'foo'})
+        url = reverse("notes-detail", kwargs={"pk": "foo"})
         client = get_unauthenticated_client()
         response = client.put(url, {})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -81,7 +83,7 @@ class NoteViewsUpdateTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('notes-detail', kwargs={'pk': 'foo'})
+        url = reverse("notes-detail", kwargs={"pk": "foo"})
         client = get_authenticated_client()
         response = client.put(url, {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -90,18 +92,23 @@ class NoteViewsUpdateTest(APITestCase):
         """
         An authenticated post should update a note
         """
-        NOTE_TEXT = 'FOO NOTE TEXT'
-        NOTE_TEXT_UPDATED = 'FOO NOTE TEXT UPDATED'
+        NOTE_TEXT = "FOO NOTE TEXT"
+        NOTE_TEXT_UPDATED = "FOO NOTE TEXT UPDATED"
 
         user = get_test_user()
         itinerary = Itinerary.objects.create()
         itinerary_item = ItineraryItem.objects.create(itinerary=itinerary)
-        note = Note.objects.create(itinerary_item=itinerary_item, author=user, text=NOTE_TEXT)
+        note = Note.objects.create(
+            itinerary_item=itinerary_item, author=user, text=NOTE_TEXT
+        )
 
-        url = reverse('notes-detail', kwargs={'pk': note.id})
+        url = reverse("notes-detail", kwargs={"pk": note.id})
         client = get_authenticated_client()
-        response = client.put(url, {'text': NOTE_TEXT_UPDATED,
-                                    'itinerary_item': itinerary_item.id}, format='json')
+        response = client.put(
+            url,
+            {"text": NOTE_TEXT_UPDATED, "itinerary_item": itinerary_item.id},
+            format="json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(NOTE_TEXT_UPDATED, itinerary_item.notes.all()[0].text)
@@ -116,7 +123,7 @@ class NoteViewsDeleteTest(APITestCase):
         """
         An unauthenticated request should not be possible
         """
-        url = reverse('notes-detail', kwargs={'pk': 'foo'})
+        url = reverse("notes-detail", kwargs={"pk": "foo"})
         client = get_unauthenticated_client()
         response = client.delete(url, {})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -126,7 +133,7 @@ class NoteViewsDeleteTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('notes-detail', kwargs={'pk': 'foo'})
+        url = reverse("notes-detail", kwargs={"pk": "foo"})
         client = get_authenticated_client()
         response = client.delete(url, {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -138,11 +145,13 @@ class NoteViewsDeleteTest(APITestCase):
         user = get_test_user()
         itinerary = Itinerary.objects.create()
         itinerary_item = ItineraryItem.objects.create(itinerary=itinerary)
-        note = Note.objects.create(itinerary_item=itinerary_item, author=user, text='foo')
+        note = Note.objects.create(
+            itinerary_item=itinerary_item, author=user, text="foo"
+        )
 
         self.assertEqual(1, len(itinerary_item.notes.all()))
 
-        url = reverse('notes-detail', kwargs={'pk': note.id})
+        url = reverse("notes-detail", kwargs={"pk": note.id})
         client = get_authenticated_client()
         response = client.delete(url)
 
@@ -159,7 +168,7 @@ class NoteViewsGetTest(APITestCase):
         """
         An unauthenticated request should not be possible
         """
-        url = reverse('notes-detail', kwargs={'pk': 'foo'})
+        url = reverse("notes-detail", kwargs={"pk": "foo"})
         client = get_unauthenticated_client()
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -169,7 +178,7 @@ class NoteViewsGetTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('notes-detail', kwargs={'pk': 'foo'})
+        url = reverse("notes-detail", kwargs={"pk": "foo"})
         client = get_authenticated_client()
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -178,15 +187,17 @@ class NoteViewsGetTest(APITestCase):
         """
         An authenticated get should get notes
         """
-        NOTE_TEXT = 'FOO NOTE TEXT'
+        NOTE_TEXT = "FOO NOTE TEXT"
         user = get_test_user()
         itinerary = Itinerary.objects.create()
         itinerary_item = ItineraryItem.objects.create(itinerary=itinerary)
-        note = Note.objects.create(itinerary_item=itinerary_item, author=user, text=NOTE_TEXT)
+        note = Note.objects.create(
+            itinerary_item=itinerary_item, author=user, text=NOTE_TEXT
+        )
 
-        url = reverse('notes-detail', kwargs={'pk': note.id})
+        url = reverse("notes-detail", kwargs={"pk": note.id})
         client = get_authenticated_client()
-        response = client.get(url, format='json')
+        response = client.get(url, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['text'], NOTE_TEXT)
+        self.assertEqual(response.json()["text"], NOTE_TEXT)

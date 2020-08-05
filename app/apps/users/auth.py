@@ -1,4 +1,5 @@
 from django.conf import settings
+
 from .auth_dev import DevelopmentAuthenticationBackend
 from .auth_grip import OIDCAuthenticationBackend
 

@@ -5,13 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0017_auto_20191128_0111'),
+        ("itinerary", "0017_auto_20191128_0111"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itineraryitem',
-            name='position',
+            model_name="itineraryitem",
+            name="position",
             field=models.FloatField(null=True),
         ),
     ]

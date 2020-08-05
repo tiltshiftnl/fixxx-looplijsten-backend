@@ -7,14 +7,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0016_note_author'),
+        ("itinerary", "0016_note_author"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='note',
-            name='author',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE,
-                                    to=settings.AUTH_USER_MODEL),
+            model_name="note",
+            name="author",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

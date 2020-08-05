@@ -5,16 +5,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0012_auto_20191119_0859'),
-        ('users', '0006_team'),
+        ("itinerary", "0012_auto_20191119_0859"),
+        ("users", "0006_team"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='team',
-            name='members',
-        ),
-        migrations.DeleteModel(
-            name='Team',
-        ),
+        migrations.RemoveField(model_name="team", name="members",),
+        migrations.DeleteModel(name="Team",),
     ]

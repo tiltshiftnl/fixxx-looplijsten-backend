@@ -7,7 +7,7 @@ def get_days_in_range(start_date, end_date):
     Any days that fall outside of the current year are not counted
     """
     if end_date < start_date:
-        raise ValueError('The end date is earlier then start date')
+        raise ValueError("The end date is earlier then start date")
 
     current_year = datetime.now().year
     start_year = start_date.year

@@ -3,9 +3,12 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from app.apps.cases.const import PROJECTS, STADIA, ISSUEMELDING
+from app.apps.cases.const import ISSUEMELDING, PROJECTS, STADIA
 from app.apps.planner.const import EXAMPLE_PLANNER_SETTINGS
-from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
+from app.utils.unittest_helpers import (
+    get_authenticated_client,
+    get_unauthenticated_client,
+)
 
 
 class ConstantsProjectsViewSet(APITestCase):
@@ -14,7 +17,7 @@ class ConstantsProjectsViewSet(APITestCase):
     """
 
     def get_url(self):
-        return reverse('constants-projects-list')
+        return reverse("constants-projects-list")
 
     def test_unauthenticated_request(self):
         """
@@ -44,9 +47,7 @@ class ConstantsProjectsViewSet(APITestCase):
         client = get_authenticated_client()
         response = client.get(url)
 
-        expected_response = {
-            'constants': PROJECTS
-        }
+        expected_response = {"constants": PROJECTS}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEquals(response.json(), expected_response)
 
@@ -57,7 +58,7 @@ class ConstantsStadiaViewSet(APITestCase):
     """
 
     def get_url(self):
-        return reverse('constants-stadia-list')
+        return reverse("constants-stadia-list")
 
     def test_unauthenticated_request(self):
         """
@@ -89,10 +90,8 @@ class ConstantsStadiaViewSet(APITestCase):
 
         stadia = STADIA[:]
         stadia.remove(ISSUEMELDING)
-          
-        expected_response = {
-            'constants': stadia
-        }
+
+        expected_response = {"constants": stadia}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEquals(response.json(), expected_response)
 
@@ -103,7 +102,7 @@ class SettingsPlannerViewSet(APITestCase):
     """
 
     def get_url(self):
-        return reverse('settings-planner-list')
+        return reverse("settings-planner-list")
 
     def test_unauthenticated_request(self):
         """

@@ -5,33 +5,33 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('accesslogs', '0002_logentry_created_at'),
+        ("accesslogs", "0002_logentry_created_at"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='logentry',
-            name='request_meta',
+            model_name="logentry",
+            name="request_meta",
             field=models.TextField(editable=False),
         ),
         migrations.AlterField(
-            model_name='logentry',
-            name='request_uri',
+            model_name="logentry",
+            name="request_uri",
             field=models.CharField(editable=False, max_length=255),
         ),
         migrations.AlterField(
-            model_name='logentry',
-            name='request_user_email',
+            model_name="logentry",
+            name="request_user_email",
             field=models.CharField(editable=False, max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='logentry',
-            name='request_user_id',
+            model_name="logentry",
+            name="request_user_id",
             field=models.CharField(editable=False, max_length=255, null=True),
         ),
         migrations.AlterField(
-            model_name='logentry',
-            name='response_status_code',
+            model_name="logentry",
+            name="response_status_code",
             field=models.CharField(editable=False, max_length=3),
         ),
     ]

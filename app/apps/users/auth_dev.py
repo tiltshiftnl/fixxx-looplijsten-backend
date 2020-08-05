@@ -2,22 +2,27 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-
 from utils.safety_lock import safety_lock
+
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_EMAIL = 'local.user@dev.com'
-DEFAULT_USERNAME = 'Local User'
-DEFAULT_FIRST_NAME = 'local'
-DEFAULT_LAST_NAME = 'user'
+DEFAULT_EMAIL = "local.user@dev.com"
+DEFAULT_USERNAME = "Local User"
+DEFAULT_FIRST_NAME = "local"
+DEFAULT_LAST_NAME = "user"
+
 
 class DevelopmentAuthenticationBackend:
-
     @safety_lock
     def authenticate(self, request):
-        assert settings.ENVIRONMENT not in ['production', 'acceptance'], 'Development authenticate not allowed'
-        assert settings.DEBUG, 'Development authenticate only allowed in Debug mode'
-        assert settings.LOCAL_DEVELOPMENT_AUTHENTICATION, 'Local development authentication should be set to True'
+        assert settings.ENVIRONMENT not in [
+            "production",
+            "acceptance",
+        ], "Development authenticate not allowed"
+        assert settings.DEBUG, "Development authenticate only allowed in Debug mode"
+        assert (
+            settings.LOCAL_DEVELOPMENT_AUTHENTICATION
+        ), "Local development authentication should be set to True"
 
         user_model = get_user_model()
 

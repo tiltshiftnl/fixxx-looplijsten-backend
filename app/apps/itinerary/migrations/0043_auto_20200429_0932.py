@@ -6,22 +6,32 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0042_auto_20200416_1026'),
+        ("itinerary", "0042_auto_20200416_1026"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itinerarysettings',
-            name='postal_code_range_end',
-            field=models.IntegerField(default=1000, null=True,
-                                      validators=[django.core.validators.MinValueValidator(1000),
-                                                  django.core.validators.MaxValueValidator(1109)]),
+            model_name="itinerarysettings",
+            name="postal_code_range_end",
+            field=models.IntegerField(
+                default=1000,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(1000),
+                    django.core.validators.MaxValueValidator(1109),
+                ],
+            ),
         ),
         migrations.AddField(
-            model_name='itinerarysettings',
-            name='postal_code_range_start',
-            field=models.IntegerField(default=1000, null=True,
-                                      validators=[django.core.validators.MinValueValidator(1000),
-                                                  django.core.validators.MaxValueValidator(1109)]),
+            model_name="itinerarysettings",
+            name="postal_code_range_start",
+            field=models.IntegerField(
+                default=1000,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(1000),
+                    django.core.validators.MaxValueValidator(1109),
+                ],
+            ),
         ),
     ]

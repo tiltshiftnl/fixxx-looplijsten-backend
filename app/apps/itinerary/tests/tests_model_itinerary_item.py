@@ -1,12 +1,13 @@
-from django.test import TestCase
 from unittest.mock import patch
 
 from apps.cases.models import Case
 from apps.itinerary.models import Itinerary, ItineraryItem
+from django.test import TestCase
 
-FOO_CASE_ID_A = 'FOO_CASE_ID_A'
-FOO_CASE_ID_B = 'FOO_CASE_ID_B'
-FOO_CASE_C_ID = 'FOO_CASE_C_ID'
+FOO_CASE_ID_A = "FOO_CASE_ID_A"
+FOO_CASE_ID_B = "FOO_CASE_ID_B"
+FOO_CASE_C_ID = "FOO_CASE_C_ID"
+
 
 @patch("django.db.models.signals.ModelSignal.send")
 class ItineraryItemModelTest(TestCase):
@@ -26,10 +27,14 @@ class ItineraryItemModelTest(TestCase):
         """
         itinerary = Itinerary.objects.create()
         case_a = Case.get(FOO_CASE_ID_A)
-        itinerary_item_a = ItineraryItem.objects.create(itinerary=itinerary, case=case_a)
+        itinerary_item_a = ItineraryItem.objects.create(
+            itinerary=itinerary, case=case_a
+        )
 
         case_b = Case.get(FOO_CASE_ID_B)
-        itinerary_item_b = ItineraryItem.objects.create(itinerary=itinerary, case=case_b)
+        itinerary_item_b = ItineraryItem.objects.create(
+            itinerary=itinerary, case=case_b
+        )
 
         return [itinerary_item_a, itinerary_item_b]
 
@@ -92,7 +97,9 @@ class ItineraryItemModelTest(TestCase):
         same_position = items[0].position
 
         with self.assertRaises(Exception):
-            ItineraryItem.objects.create(itinerary=itinerary, case=case_c, position=same_position)
+            ItineraryItem.objects.create(
+                itinerary=itinerary, case=case_c, position=same_position
+            )
 
     def test_save_same_case_error(self, mock):
         """

@@ -8,15 +8,17 @@ from django.utils.timezone import utc
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('users', '0006_team'),
-        ('itinerary', '0006_itineraryitem_stadium'),
+        ("users", "0006_team"),
+        ("itinerary", "0006_itineraryitem_stadium"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itinerary',
-            name='date',
-            field=models.DateField(default=datetime.datetime(2019, 11, 11, 14, 50, 30, 557094, tzinfo=utc)),
+            model_name="itinerary",
+            name="date",
+            field=models.DateField(
+                default=datetime.datetime(2019, 11, 11, 14, 50, 30, 557094, tzinfo=utc)
+            ),
             preserve_default=False,
         ),
     ]

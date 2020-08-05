@@ -6,19 +6,25 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('users', '0005_auto_20191111_1111'),
+        ("users", "0005_auto_20191111_1111"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=300)),
-                ('members', models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=300)),
+                ("members", models.ManyToManyField(to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-                'ordering': ['name'],
-            },
+            options={"ordering": ["name"],},
         ),
     ]

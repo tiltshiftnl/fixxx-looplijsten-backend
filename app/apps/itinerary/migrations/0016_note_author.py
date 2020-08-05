@@ -8,14 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('itinerary', '0015_note'),
+        ("itinerary", "0015_note"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='note',
-            name='author',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL,
-                                    unique=True),
+            model_name="note",
+            name="author",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL,
+                unique=True,
+            ),
         ),
     ]

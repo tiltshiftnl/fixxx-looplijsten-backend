@@ -5,6 +5,7 @@ class LogEntry(models.Model):
     """
     A request log entry
     """
+
     # Request user information can be null for anonymous requests
     request_user_email = models.CharField(max_length=255, null=True, editable=False)
     request_user_id = models.CharField(max_length=255, null=True, editable=False)

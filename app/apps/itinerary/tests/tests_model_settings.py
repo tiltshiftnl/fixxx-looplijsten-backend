@@ -1,18 +1,18 @@
+from apps.cases.models import Case, Project, Stadium
+from apps.itinerary.models import Itinerary, ItinerarySettings
 from django.conf import settings
 from django.test import TestCase
 
-from apps.cases.models import Stadium, Project, Case
-from apps.itinerary.models import ItinerarySettings, Itinerary
-
 
 class ItinerarySettingsModelTest(TestCase):
-
     def get_new_itinerary_settings(self):
         """
         Helper function to create basic new ItinerarySettings object
         """
         itinerary = Itinerary.objects.create()
-        return ItinerarySettings.objects.create(opening_date='2020-04-04', itinerary=itinerary)
+        return ItinerarySettings.objects.create(
+            opening_date="2020-04-04", itinerary=itinerary
+        )
 
     def test_create_itinerary_settings(self):
         """
@@ -36,10 +36,7 @@ class ItinerarySettingsModelTest(TestCase):
         self.assertEquals(ItinerarySettings.objects.count(), 0)
         itinerary_settings = self.get_new_itinerary_settings()
 
-        projects = [
-            Project.get('FOO_PROJECT_A'),
-            Project.get('FOO_PROJECT_B')
-        ]
+        projects = [Project.get("FOO_PROJECT_A"), Project.get("FOO_PROJECT_B")]
         itinerary_settings.projects.set(projects)
         itinerary_settings.save()
         self.assertEquals(itinerary_settings.projects.count(), 2)
@@ -50,11 +47,11 @@ class ItinerarySettingsModelTest(TestCase):
         """
         self.assertEquals(ItinerarySettings.objects.count(), 0)
         itinerary = Itinerary.objects.create()
-        primary_stadium = Stadium.get('FOO_PRIMARY_STADIM')
+        primary_stadium = Stadium.get("FOO_PRIMARY_STADIM")
         ItinerarySettings.objects.create(
-            opening_date='2020-04-04',
+            opening_date="2020-04-04",
             itinerary=itinerary,
-            primary_stadium=primary_stadium
+            primary_stadium=primary_stadium,
         )
         self.assertEquals(ItinerarySettings.objects.count(), 1)
 
@@ -64,10 +61,7 @@ class ItinerarySettingsModelTest(TestCase):
         """
         itinerary_settings = self.get_new_itinerary_settings()
 
-        stadia = [
-            Stadium.get('FOO_STADIUM_A'),
-            Stadium.get('FOO_STADIUM_B')
-        ]
+        stadia = [Stadium.get("FOO_STADIUM_A"), Stadium.get("FOO_STADIUM_B")]
         itinerary_settings.secondary_stadia.set(stadia)
         itinerary_settings.save()
         self.assertEquals(itinerary_settings.secondary_stadia.count(), 2)
@@ -78,10 +72,7 @@ class ItinerarySettingsModelTest(TestCase):
         """
         itinerary_settings = self.get_new_itinerary_settings()
 
-        stadia = [
-            Stadium.get('FOO_STADIUM_A'),
-            Stadium.get('FOO_STADIUM_B')
-        ]
+        stadia = [Stadium.get("FOO_STADIUM_A"), Stadium.get("FOO_STADIUM_B")]
 
         itinerary_settings.exclude_stadia.set(stadia)
         itinerary_settings.save()
@@ -93,11 +84,9 @@ class ItinerarySettingsModelTest(TestCase):
         """
         self.assertEquals(ItinerarySettings.objects.count(), 0)
         itinerary = Itinerary.objects.create()
-        case = Case.get('FOO_CASE_ID')
+        case = Case.get("FOO_CASE_ID")
 
         ItinerarySettings.objects.create(
-            opening_date='2020-04-04',
-            itinerary=itinerary,
-            start_case=case
+            opening_date="2020-04-04", itinerary=itinerary, start_case=case
         )
         self.assertEquals(ItinerarySettings.objects.count(), 1)

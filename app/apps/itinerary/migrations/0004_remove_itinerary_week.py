@@ -5,12 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0003_auto_20191104_1447'),
+        ("itinerary", "0003_auto_20191104_1447"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='itinerary',
-            name='week',
-        ),
+        migrations.RemoveField(model_name="itinerary", name="week",),
     ]

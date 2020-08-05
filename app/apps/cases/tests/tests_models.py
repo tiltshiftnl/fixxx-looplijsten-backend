@@ -3,28 +3,26 @@ Tests for cases models
 """
 from unittest.mock import Mock
 
+from apps.cases.models import Case, Project, Stadium
+from apps.fraudprediction.models import FraudPrediction
 from django.db.utils import IntegrityError
 from django.test import TestCase
 
-from apps.cases.models import Case, Project, Stadium
-from apps.fraudprediction.models import FraudPrediction
-
 
 class CaseModelTest(TestCase):
-
     def test_create_case_object(self):
         """
         A Case object can be created
         """
         self.assertEqual(Case.objects.count(), 0)
-        Case.objects.create(case_id='FOO')
+        Case.objects.create(case_id="FOO")
         self.assertEqual(Case.objects.count(), 1)
 
     def test_case_object_string(self):
         """
         A Case oject's string representation is the same as it's case_id
         """
-        CASE_ID = 'CASE ID FOO'
+        CASE_ID = "CASE ID FOO"
         case = Case.objects.create(case_id=CASE_ID)
         self.assertEquals(case.__str__(), CASE_ID)
 
@@ -32,11 +30,11 @@ class CaseModelTest(TestCase):
         """
         The bwv_data property calls get_case util function using the Case object's ID
         """
-        CASE_ID = 'CASE ID FOO'
+        CASE_ID = "CASE ID FOO"
         case = Case.objects.create(case_id=CASE_ID)
 
         # This patches the objects __get_case__ function
-        MOCK_BWV_DATA = 'FOO BWV'
+        MOCK_BWV_DATA = "FOO BWV"
         case.__get_case__ = Mock()
         case.__get_case__.return_value = MOCK_BWV_DATA
 
@@ -49,7 +47,7 @@ class CaseModelTest(TestCase):
         """
         The Case get function is a wrapper for get_or_create, and simplifies Case creation
         """
-        FOO_ID = 'FOO_ID'
+        FOO_ID = "FOO_ID"
 
         self.assertEqual(Case.objects.count(), 0)
         Case.get(FOO_ID)
@@ -63,29 +61,29 @@ class CaseModelTest(TestCase):
         """
         Should return the case geolocation data
         """
-        case = Case.get('FOO')
+        case = Case.get("FOO")
 
         # This patches the objects __get_case__ function
-        MOCK_BWV_DATA = {'lat': 0, 'lng': 1, 'foo': 'OTHER DATA'}
+        MOCK_BWV_DATA = {"lat": 0, "lng": 1, "foo": "OTHER DATA"}
         case.__get_case__ = Mock()
         case.__get_case__.return_value = MOCK_BWV_DATA
 
         location = case.get_location()
 
-        self.assertEqual(location, {'lat': 0, 'lng': 1})
+        self.assertEqual(location, {"lat": 0, "lng": 1})
 
     def test_fraud_prediction_property(self):
         """
         Fraud prediction can be accessed through a case property
         """
-        CASE_ID = 'FOO'
+        CASE_ID = "FOO"
         case = Case.get(CASE_ID)
         fraud_prediction = FraudPrediction.objects.create(
             case_id=CASE_ID,
             fraud_probability=0.6,
             fraud_prediction=True,
             business_rules={},
-            shap_values={}
+            shap_values={},
         )
 
         self.assertEqual(case.fraud_prediction, fraud_prediction)
@@ -96,7 +94,7 @@ class ProjectModelTest(TestCase):
         """
         The get function is a wrapper for get_or_create, and simplifies object creation
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         self.assertEqual(Project.objects.count(), 0)
         Project.objects.create(name=NAME)
         self.assertEqual(Project.objects.count(), 1)
@@ -105,7 +103,7 @@ class ProjectModelTest(TestCase):
         """
         Test if get creates an object
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         self.assertEqual(Project.objects.count(), 0)
         Project.get(NAME)
         self.assertEqual(Project.objects.count(), 1)
@@ -116,7 +114,7 @@ class ProjectModelTest(TestCase):
         """
         Tests uniqueness of names
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         self.assertEqual(Project.objects.count(), 0)
         Project.objects.create(name=NAME)
 
@@ -127,7 +125,7 @@ class ProjectModelTest(TestCase):
         """
         Tests string representation
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         project = Project.objects.create(name=NAME)
         self.assertEqual(NAME, project.__str__())
 
@@ -137,7 +135,7 @@ class StadiumModelTest(TestCase):
         """
         The get function is a wrapper for get_or_create, and simplifies object creation
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         self.assertEqual(Stadium.objects.count(), 0)
         Stadium.objects.create(name=NAME)
         self.assertEqual(Stadium.objects.count(), 1)
@@ -146,7 +144,7 @@ class StadiumModelTest(TestCase):
         """
         Test if get creates an object
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         self.assertEqual(Stadium.objects.count(), 0)
         Stadium.get(NAME)
         self.assertEqual(Stadium.objects.count(), 1)
@@ -157,7 +155,7 @@ class StadiumModelTest(TestCase):
         """
         Tests uniqueness of names
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         self.assertEqual(Stadium.objects.count(), 0)
         Stadium.objects.create(name=NAME)
 
@@ -168,6 +166,6 @@ class StadiumModelTest(TestCase):
         """
         Tests string representation
         """
-        NAME = 'FOO'
+        NAME = "FOO"
         stadium = Stadium.objects.create(name=NAME)
         self.assertEqual(NAME, stadium.__str__())

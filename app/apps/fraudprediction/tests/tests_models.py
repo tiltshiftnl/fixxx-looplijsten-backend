@@ -1,14 +1,13 @@
 from datetime import datetime
 
+from apps.fraudprediction.models import FraudPrediction
 from django.test import TestCase
 from freezegun import freeze_time
 from pytz import UTC
 
-from apps.fraudprediction.models import FraudPrediction
-
 
 class FraudPredictionModelTest(TestCase):
-    CASE_ID = 'FOO_CASE_ID'
+    CASE_ID = "FOO_CASE_ID"
 
     def get_and_create(self):
         return FraudPrediction.objects.create(
@@ -16,7 +15,8 @@ class FraudPredictionModelTest(TestCase):
             fraud_probability=0.8,
             fraud_prediction=True,
             business_rules={},
-            shap_values={})
+            shap_values={},
+        )
 
     def test_create_fraud_prediction(self):
         """
@@ -36,4 +36,6 @@ class FraudPredictionModelTest(TestCase):
         The sync date should be the current date
         """
         fraud_prediction = self.get_and_create()
-        self.assertEquals(fraud_prediction.sync_date, datetime(2019, 12, 25, tzinfo=UTC))
+        self.assertEquals(
+            fraud_prediction.sync_date, datetime(2019, 12, 25, tzinfo=UTC)
+        )

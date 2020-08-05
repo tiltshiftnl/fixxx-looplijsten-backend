@@ -1,115 +1,109 @@
 """
 Tests for BAG queries
 """
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.test import TestCase
-
-from utils.queries_bag_api import do_bag_search
-from utils.queries_bag_api import get_bag_search_query, do_bag_search_address, do_bag_search_id, get_bag_data
+from utils.queries_bag_api import (
+    do_bag_search,
+    do_bag_search_address,
+    do_bag_search_id,
+    get_bag_data,
+    get_bag_search_query,
+)
 
 
 class GetBagSearchQueryTest(TestCase):
-
     def test_get_search_query_basic(self):
         """
         Returns a search query given a postal code and a house number
         """
         address = {
-            'postcode': 'postcode_foo',
-            'hsnr': 'hsnr_foo',
+            "postcode": "postcode_foo",
+            "hsnr": "hsnr_foo",
         }
 
         result = get_bag_search_query(address)
 
-        self.assertEquals(result, 'postcode_foo hsnr_foo')
+        self.assertEquals(result, "postcode_foo hsnr_foo")
 
     def test_get_search_query_letter(self):
         """
         Returns a search query given a postal code, a house number, and a letter
         """
-        address = {
-            'postcode': 'postcode_foo',
-            'hsnr': 'hsnr_foo',
-            'hsltr': 'hsltr_foo'
-        }
+        address = {"postcode": "postcode_foo", "hsnr": "hsnr_foo", "hsltr": "hsltr_foo"}
 
         result = get_bag_search_query(address)
 
-        self.assertEquals(result, 'postcode_foo hsnr_foo hsltr_foo')
+        self.assertEquals(result, "postcode_foo hsnr_foo hsltr_foo")
 
     def test_get_search_query_addition(self):
         """
         Returns a search query given a postal code, a house number, and an addition
         """
-        address = {
-            'postcode': 'postcode_foo',
-            'hsnr': 'hsnr_foo',
-            'toev': 'toev_foo'
-        }
+        address = {"postcode": "postcode_foo", "hsnr": "hsnr_foo", "toev": "toev_foo"}
 
         result = get_bag_search_query(address)
 
-        self.assertEquals(result, 'postcode_foo hsnr_foo toev_foo')
+        self.assertEquals(result, "postcode_foo hsnr_foo toev_foo")
 
     def test_get_search_query_all(self):
         """
         Returns a search query given all optional parameters
         """
         address = {
-            'postcode': 'postcode_foo',
-            'hsnr': 'hsnr_foo',
-            'hsltr': 'hsltr_foo',
-            'toev': 'toev_foo'
+            "postcode": "postcode_foo",
+            "hsnr": "hsnr_foo",
+            "hsltr": "hsltr_foo",
+            "toev": "toev_foo",
         }
 
         result = get_bag_search_query(address)
 
-        self.assertEquals(result, 'postcode_foo hsnr_foo hsltr_footoev_foo')
+        self.assertEquals(result, "postcode_foo hsnr_foo hsltr_footoev_foo")
 
     def test_get_search_query_none_hsltr(self):
         """
         Returns a clean search query with house number set to None
         """
         address = {
-            'postcode': 'postcode_foo',
-            'hsnr': 'hsnr_foo',
-            'hsltr': None,
-            'toev': 'toev_foo',
+            "postcode": "postcode_foo",
+            "hsnr": "hsnr_foo",
+            "hsltr": None,
+            "toev": "toev_foo",
         }
 
         result = get_bag_search_query(address)
 
-        self.assertEquals(result, 'postcode_foo hsnr_foo toev_foo')
+        self.assertEquals(result, "postcode_foo hsnr_foo toev_foo")
 
     def test_get_search_query_none_toev(self):
         """
         Returns a clean search query with house number set to None
         """
         address = {
-            'postcode': 'postcode_foo',
-            'hsnr': 'hsnr_foo',
-            'hsltr': 'hsltr_foo',
-            'toev': None,
+            "postcode": "postcode_foo",
+            "hsnr": "hsnr_foo",
+            "hsltr": "hsltr_foo",
+            "toev": None,
         }
 
         result = get_bag_search_query(address)
 
-        self.assertEquals(result, 'postcode_foo hsnr_foo hsltr_foo')
+        self.assertEquals(result, "postcode_foo hsnr_foo hsltr_foo")
 
 
 class DoBagSearchAddressTest(TestCase):
-
-    @patch('utils.queries_bag_api.get_bag_search_query')
-    @patch('requests.get')
+    @patch("utils.queries_bag_api.get_bag_search_query")
+    @patch("requests.get")
     def test_do_bag_search_address(self, mock_requests_get, mock_get_bag_search_query):
         """
         Does a get request to the BAG API using an address search query
         """
 
-        address = 'Foo'
-        mock_get_bag_search_query.return_value = 'Foo Query'
+        address = "Foo"
+        mock_get_bag_search_query.return_value = "Foo Query"
 
         do_bag_search_address(address)
 
@@ -118,73 +112,57 @@ class DoBagSearchAddressTest(TestCase):
 
         # The GET request is performed
         mock_requests_get.assert_called_with(
-            settings.BAG_API_SEARCH_URL,
-            params={'q': 'Foo Query'},
-            timeout=0.5
+            settings.BAG_API_SEARCH_URL, params={"q": "Foo Query"}, timeout=0.5
         )
 
 
 class DoBagSearchIdTest(TestCase):
-
-    @patch('requests.get')
+    @patch("requests.get")
     def test_do_bag_search_id(self, mock_requests_get):
         """
         Does a get request to the BAG API using a BAG ID
         """
 
-        address = {
-            'landelijk_bag': 'Foo ID'
-        }
+        address = {"landelijk_bag": "Foo ID"}
 
         do_bag_search_id(address)
 
         # The GET request is performed
         mock_requests_get.assert_called_with(
-            settings.BAG_API_SEARCH_URL,
-            params={'q': 'Foo ID'},
-            timeout=0.5
+            settings.BAG_API_SEARCH_URL, params={"q": "Foo ID"}, timeout=0.5
         )
 
 
 class GetBagDataTest(TestCase):
-    @patch('utils.queries_bag_api.do_bag_search')
-    @patch('utils.queries_bag_api.get_import_adres')
-    @patch('requests.get')
-    def test_get_bag_data(self, mock_requests_get, mock_get_import_adres, mock_do_bag_search):
+    @patch("utils.queries_bag_api.do_bag_search")
+    @patch("utils.queries_bag_api.get_import_adres")
+    @patch("requests.get")
+    def test_get_bag_data(
+        self, mock_requests_get, mock_get_import_adres, mock_do_bag_search
+    ):
         """
         Does a GET requests using the URI retrieved from a BAG search
         """
 
-        FOO_BAG_URI = 'http://FOO_BAG_URI.com/'
+        FOO_BAG_URI = "http://FOO_BAG_URI.com/"
 
         mock_do_bag_search.return_value = {
-            'results': [
-                {
-                    '_links': {
-                        'self': {
-                            'href': FOO_BAG_URI
-                        }
-                    }
-                }
-            ]
+            "results": [{"_links": {"self": {"href": FOO_BAG_URI}}}]
         }
 
-        get_bag_data('FOO ID')
+        get_bag_data("FOO ID")
 
         mock_requests_get.assert_called_with(FOO_BAG_URI, timeout=0.5)
 
 
 class DoBagSearchTest(TestCase):
-    @patch('utils.queries_bag_api.do_bag_search_address')
+    @patch("utils.queries_bag_api.do_bag_search_address")
     def test_do_bag_search(self, mock_do_bag_search):
         """
         Does a regular bag search using the address and returns the address search results
         """
 
-        REGULAR_BAG_SEARCH_RESULT = {
-            'count': 1,
-            'results': ['Foo Result']
-        }
+        REGULAR_BAG_SEARCH_RESULT = {"count": 1, "results": ["Foo Result"]}
         MOCK_ADDRRESS = Mock()
 
         mock_do_bag_search.return_value = REGULAR_BAG_SEARCH_RESULT
@@ -193,21 +171,18 @@ class DoBagSearchTest(TestCase):
 
         self.assertEquals(REGULAR_BAG_SEARCH_RESULT, result)
 
-    @patch('utils.queries_bag_api.do_bag_search_id')
-    @patch('utils.queries_bag_api.do_bag_search_address')
+    @patch("utils.queries_bag_api.do_bag_search_id")
+    @patch("utils.queries_bag_api.do_bag_search_address")
     def test_do_bag_search_fallback(self, mock_do_bag_search, mock_do_bag_search_id):
         """
         Does a BAG search using an ID as fallback when the regular search fails
         """
         # Regular search returns 0 results
-        REGULAR_BAG_SEARCH_RESULT = {
-            'count': 0,
-            'results': []
-        }
+        REGULAR_BAG_SEARCH_RESULT = {"count": 0, "results": []}
 
         mock_do_bag_search.return_value = REGULAR_BAG_SEARCH_RESULT
 
-        ID_BAG_SEARCH_RESULT = 'MOCK_BACK_SEARCH_ID Result'
+        ID_BAG_SEARCH_RESULT = "MOCK_BACK_SEARCH_ID Result"
         mock_do_bag_search_id.return_value = ID_BAG_SEARCH_RESULT
 
         MOCK_ADDRRESS = Mock()

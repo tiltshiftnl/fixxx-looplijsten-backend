@@ -5,18 +5,12 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('cases', '0007_project_state'),
+        ("cases", "0007_project_state"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='project',
-            old_name='project',
-            new_name='name',
+            model_name="project", old_name="project", new_name="name",
         ),
-        migrations.RenameField(
-            model_name='state',
-            old_name='state',
-            new_name='name',
-        ),
+        migrations.RenameField(model_name="state", old_name="state", new_name="name",),
     ]

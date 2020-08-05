@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('accesslogs', '0003_auto_20200110_1537'),
+        ("accesslogs", "0003_auto_20200110_1537"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='logentry',
-            name='request_method',
-            field=models.CharField(default='GET', editable=False, max_length=7),
+            model_name="logentry",
+            name="request_method",
+            field=models.CharField(default="GET", editable=False, max_length=7),
             preserve_default=False,
         ),
     ]

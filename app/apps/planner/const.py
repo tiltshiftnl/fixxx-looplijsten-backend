@@ -17,23 +17,22 @@ EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
     "projects": const.PROJECTS_WITHOUT_SAHARA,
     # Optional postal code settings
-    "postal_codes": [
-        {
-            "range_start": 1000,
-            "range_end": 1109
-        }
-    ],
+    "postal_codes": [{"range_start": 1000, "range_end": 1109}],
     "days": {
         "monday": {
             "day": {
                 "length_of_list": 6,
                 "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
+                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE],
             },
             "evening": {
                 "length_of_list": 6,
                 "primary_stadium": const.AVONDRONDE,
-                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+                "secondary_stadia": [
+                    const.HERCONTROLE,
+                    const.TWEEDE_HERCONTROLE,
+                    const.DERDE_HERCONTROLE,
+                ],
             },
         },
         "tuesday": {
@@ -41,54 +40,78 @@ EXAMPLE_PLANNER_SETTINGS = {
             "evening": {
                 "length_of_list": 6,
                 "primary_stadium": const.AVONDRONDE,
-                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-            }
+                "secondary_stadia": [
+                    const.HERCONTROLE,
+                    const.TWEEDE_HERCONTROLE,
+                    const.DERDE_HERCONTROLE,
+                ],
+            },
         },
         "wednesday": {
             "day": {},
             "evening": {
                 "length_of_list": 6,
                 "primary_stadium": const.AVONDRONDE,
-                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-            }
+                "secondary_stadia": [
+                    const.HERCONTROLE,
+                    const.TWEEDE_HERCONTROLE,
+                    const.DERDE_HERCONTROLE,
+                ],
+            },
         },
         "thursday": {
             "day": {
                 "length_of_list": 6,
                 "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
+                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE],
             },
             "evening": {
                 "length_of_list": 6,
                 "primary_stadium": const.AVONDRONDE,
-                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-            }
+                "secondary_stadia": [
+                    const.HERCONTROLE,
+                    const.TWEEDE_HERCONTROLE,
+                    const.DERDE_HERCONTROLE,
+                ],
+            },
         },
         "friday": {
             "day": {
                 "length_of_list": 6,
                 "primary_stadium": const.ONDERZOEK_BUITENDIENST,
-                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE]
+                "secondary_stadia": [const.TWEEDE_CONTROLE, const.DERDE_CONTROLE],
             },
             "evening": {
                 "length_of_list": 6,
                 "primary_stadium": const.AVONDRONDE,
-                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
-            }
+                "secondary_stadia": [
+                    const.HERCONTROLE,
+                    const.TWEEDE_HERCONTROLE,
+                    const.DERDE_HERCONTROLE,
+                ],
+            },
         },
         "saturday": {
             "day": {
                 "length_of_list": 6,
                 "primary_stadium": const.WEEKEND_BUITENDIENST_ONDERZOEK,
-                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+                "secondary_stadia": [
+                    const.HERCONTROLE,
+                    const.TWEEDE_HERCONTROLE,
+                    const.DERDE_HERCONTROLE,
+                ],
             }
         },
         "sunday": {
             "day": {
                 "length_of_list": 6,
                 "primary_stadium": const.WEEKEND_BUITENDIENST_ONDERZOEK,
-                "secondary_stadia": [const.HERCONTROLE, const.TWEEDE_HERCONTROLE, const.DERDE_HERCONTROLE]
+                "secondary_stadia": [
+                    const.HERCONTROLE,
+                    const.TWEEDE_HERCONTROLE,
+                    const.DERDE_HERCONTROLE,
+                ],
             }
-        }
-    }
+        },
+    },
 }

@@ -5,13 +5,11 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0009_remove_itinerary_title'),
+        ("itinerary", "0009_remove_itinerary_title"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='itinerary',
-            name='date',
-            field=models.DateField(blank=True),
+            model_name="itinerary", name="date", field=models.DateField(blank=True),
         ),
     ]

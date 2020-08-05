@@ -1,11 +1,14 @@
+from apps.cases.models import Case
+from apps.itinerary.models import Itinerary, ItineraryItem
 from constance.test import override_config
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.cases.models import Case
-from apps.itinerary.models import Itinerary, ItineraryItem
-from app.utils.unittest_helpers import get_authenticated_client, get_unauthenticated_client
+from app.utils.unittest_helpers import (
+    get_authenticated_client,
+    get_unauthenticated_client,
+)
 
 
 class ItineraryItemViewsCreateTest(APITestCase):
@@ -18,7 +21,7 @@ class ItineraryItemViewsCreateTest(APITestCase):
         An unauthenticated request should not be possible
         """
 
-        url = reverse('itinerary-item-list')
+        url = reverse("itinerary-item-list")
         client = get_unauthenticated_client()
         response = client.post(url, {})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -28,7 +31,7 @@ class ItineraryItemViewsCreateTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('itinerary-item-list')
+        url = reverse("itinerary-item-list")
         client = get_authenticated_client()
         response = client.post(url, {})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -40,14 +43,11 @@ class ItineraryItemViewsCreateTest(APITestCase):
         itinerary = Itinerary.objects.create()
         self.assertEquals([], list(itinerary.items.all()))
 
-        CASE_ID = 'FOO CASE ID'
+        CASE_ID = "FOO CASE ID"
 
-        data = {
-            "itinerary": itinerary.id,
-            "case_id": CASE_ID
-        }
+        data = {"itinerary": itinerary.id, "case_id": CASE_ID}
 
-        url = reverse('itinerary-item-list')
+        url = reverse("itinerary-item-list")
         client = get_authenticated_client()
         response = client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,16 +63,12 @@ class ItineraryItemViewsCreateTest(APITestCase):
         itinerary = Itinerary.objects.create()
         self.assertEquals([], list(itinerary.items.all()))
 
-        CASE_ID = 'FOO CASE ID'
+        CASE_ID = "FOO CASE ID"
         POSITION = 1.234567
 
-        data = {
-            "itinerary": itinerary.id,
-            "case_id": CASE_ID,
-            "position": POSITION
-        }
+        data = {"itinerary": itinerary.id, "case_id": CASE_ID, "position": POSITION}
 
-        url = reverse('itinerary-item-list')
+        url = reverse("itinerary-item-list")
         client = get_authenticated_client()
         response = client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -91,7 +87,7 @@ class ItineraryItemViewsDeleteTest(APITestCase):
         An unauthenticated request should not be possible
         """
 
-        url = reverse('itinerary-item-detail', kwargs={'pk': 'foo'})
+        url = reverse("itinerary-item-detail", kwargs={"pk": "foo"})
         client = get_unauthenticated_client()
         response = client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -101,7 +97,7 @@ class ItineraryItemViewsDeleteTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('itinerary-item-detail', kwargs={'pk': 'foo'})
+        url = reverse("itinerary-item-detail", kwargs={"pk": "foo"})
         client = get_authenticated_client()
         response = client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -111,12 +107,12 @@ class ItineraryItemViewsDeleteTest(APITestCase):
         An authenticated post should delete an Itinerary Item
         """
         itinerary = Itinerary.objects.create()
-        case = Case.get('FOO Case ID')
+        case = Case.get("FOO Case ID")
         itinerary_item = ItineraryItem.objects.create(itinerary=itinerary, case=case)
 
         self.assertEqual(1, len(itinerary.items.all()))
 
-        url = reverse('itinerary-item-detail', kwargs={'pk': itinerary_item.id})
+        url = reverse("itinerary-item-detail", kwargs={"pk": itinerary_item.id})
         client = get_authenticated_client()
         response = client.delete(url)
 
@@ -134,7 +130,7 @@ class ItineraryItemViewsUpdateTest(APITestCase):
         An unauthenticated request should not be possible
         """
 
-        url = reverse('itinerary-item-detail', kwargs={'pk': 'foo'})
+        url = reverse("itinerary-item-detail", kwargs={"pk": "foo"})
         client = get_unauthenticated_client()
         response = client.put(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -144,7 +140,7 @@ class ItineraryItemViewsUpdateTest(APITestCase):
         """
         An authenticated request should not be possible if the safety_lock (ALLOW_DATA_ACCESS) is on
         """
-        url = reverse('itinerary-item-detail', kwargs={'pk': 'foo'})
+        url = reverse("itinerary-item-detail", kwargs={"pk": "foo"})
         client = get_authenticated_client()
         response = client.put(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -154,15 +150,17 @@ class ItineraryItemViewsUpdateTest(APITestCase):
         Update the item's position
         """
         itinerary = Itinerary.objects.create()
-        case = Case.get('FOO Case ID')
-        itinerary_item = ItineraryItem.objects.create(itinerary=itinerary, case=case, position=0)
+        case = Case.get("FOO Case ID")
+        itinerary_item = ItineraryItem.objects.create(
+            itinerary=itinerary, case=case, position=0
+        )
 
-        url = reverse('itinerary-item-detail', kwargs={'pk': itinerary_item.id})
+        url = reverse("itinerary-item-detail", kwargs={"pk": itinerary_item.id})
         client = get_authenticated_client()
 
         NEW_POSITION = 1
-        data = {'position': NEW_POSITION}
-        response = client.put(url, data, format='json')
+        data = {"position": NEW_POSITION}
+        response = client.put(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -174,14 +172,16 @@ class ItineraryItemViewsUpdateTest(APITestCase):
         Update the item's checked status
         """
         itinerary = Itinerary.objects.create()
-        case = Case.get('FOO Case ID')
-        itinerary_item = ItineraryItem.objects.create(itinerary=itinerary, case=case, checked=False)
+        case = Case.get("FOO Case ID")
+        itinerary_item = ItineraryItem.objects.create(
+            itinerary=itinerary, case=case, checked=False
+        )
 
-        url = reverse('itinerary-item-detail', kwargs={'pk': itinerary_item.id})
+        url = reverse("itinerary-item-detail", kwargs={"pk": itinerary_item.id})
         client = get_authenticated_client()
 
-        data = {'checked': True}
-        response = client.put(url, data, format='json')
+        data = {"checked": True}
+        response = client.put(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

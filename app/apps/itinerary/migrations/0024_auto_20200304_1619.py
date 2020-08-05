@@ -6,22 +6,23 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0023_auto_20200304_1410'),
+        ("itinerary", "0023_auto_20200304_1410"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='itinerary',
-            name='plain_text_itinerary',
+        migrations.RemoveField(model_name="itinerary", name="plain_text_itinerary",),
+        migrations.AlterField(
+            model_name="itinerary",
+            name="enforcers",
+            field=models.ManyToManyField(
+                related_name="enforcer_itineraries", to=settings.AUTH_USER_MODEL
+            ),
         ),
         migrations.AlterField(
-            model_name='itinerary',
-            name='enforcers',
-            field=models.ManyToManyField(related_name='enforcer_itineraries', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AlterField(
-            model_name='itinerary',
-            name='supervisors',
-            field=models.ManyToManyField(related_name='supervisor_itineraries', to=settings.AUTH_USER_MODEL),
+            model_name="itinerary",
+            name="supervisors",
+            field=models.ManyToManyField(
+                related_name="supervisor_itineraries", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

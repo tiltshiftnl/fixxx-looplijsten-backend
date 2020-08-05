@@ -1,45 +1,45 @@
-from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter
 
 """
 Manual parameters for the unplanned view in Swagger API documentation
 """
 date = OpenApiParameter(
-    name='date',
+    name="date",
     type=OpenApiTypes.DATE,
     location=OpenApiParameter.QUERY,
-    description='Date'
+    description="Date",
 )
 
 stadium = OpenApiParameter(
-    name='stadium',
+    name="stadium",
     type=OpenApiTypes.STR,
     location=OpenApiParameter.QUERY,
-    description='Stadium'
+    description="Stadium",
 )
 
 unplanned_parameters = [date, stadium]
 
 postal_code = OpenApiParameter(
-    name='postalCode',
+    name="postalCode",
     type=OpenApiTypes.STR,
     location=OpenApiParameter.QUERY,
-    description='Postal Code'
+    description="Postal Code",
 )
 
 street_number = OpenApiParameter(
-    name='streetNumber',
+    name="streetNumber",
     type=OpenApiTypes.STR,
     location=OpenApiParameter.QUERY,
-    description='Street Number'
+    description="Street Number",
 )
 
 suffix = OpenApiParameter(
-    name='suffix',
+    name="suffix",
     type=OpenApiTypes.STR,
     location=OpenApiParameter.QUERY,
     required=False,
-    description='Suffix'
+    description="Suffix",
 )
 
 case_search_parameters = [postal_code, street_number, suffix]

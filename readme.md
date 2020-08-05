@@ -43,13 +43,13 @@ docker-compose run --rm api python manage.py createsuperuser
 A superuser can be used to access the Django backend
 
 ## Accessing the Django admin and adding users:
-In order to generate lists you need at least 2 other users. 
+In order to generate lists you need at least 2 other users.
 You can add other users easily through the Django admin.
 Navigate to http://localhost:8000/admin and sign in using the superuser you just created.
 Once you're in the admin, you can click on "add" in the User section to create new users.
 
 ## Bypassing Grip and using local development authentication:
-It's possible to bypass Grip authentication when running the project locally. 
+It's possible to bypass Grip authentication when running the project locally.
 To do so, make sure the LOCAL_DEVELOPMENT_AUTHENTICATION flag is set to True in docker-compose.yml.
 
 # Running commands
@@ -63,6 +63,3 @@ Running migrations:
 ```bash
 docker-compose run --rm api python manage.py migrate
 ```
-
-
-

@@ -5,13 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('itinerary', '0038_itinerarysettings_start_case'),
+        ("itinerary", "0038_itinerarysettings_start_case"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='itineraryitem',
-            name='checked',
+            model_name="itineraryitem",
+            name="checked",
             field=models.BooleanField(default=False),
         ),
     ]

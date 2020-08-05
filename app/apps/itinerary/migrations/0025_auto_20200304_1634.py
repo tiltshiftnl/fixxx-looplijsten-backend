@@ -7,21 +7,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('itinerary', '0024_auto_20200304_1619'),
+        ("itinerary", "0024_auto_20200304_1619"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='itinerary',
-            name='enforcers',
-        ),
-        migrations.RemoveField(
-            model_name='itinerary',
-            name='supervisors',
-        ),
+        migrations.RemoveField(model_name="itinerary", name="enforcers",),
+        migrations.RemoveField(model_name="itinerary", name="supervisors",),
         migrations.AddField(
-            model_name='itinerary',
-            name='team',
-            field=models.ManyToManyField(related_name='itineraries', to=settings.AUTH_USER_MODEL),
+            model_name="itinerary",
+            name="team",
+            field=models.ManyToManyField(
+                related_name="itineraries", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

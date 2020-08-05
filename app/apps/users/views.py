@@ -1,5 +1,8 @@
 import logging
 
+from apps.users.auth import AuthenticationBackend
+from apps.users.models import User
+from apps.users.serializers import UserSerializer
 from django.http import HttpResponseBadRequest
 from django.utils.decorators import method_decorator
 from rest_framework import generics
@@ -8,62 +11,58 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from apps.users.auth import AuthenticationBackend
-from apps.users.models import User
-from apps.users.serializers import UserSerializer
 from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
 
 
-@method_decorator(safety_lock, 'get')
+@method_decorator(safety_lock, "get")
 class UserListView(ViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-@method_decorator(safety_lock, 'get')
+@method_decorator(safety_lock, "get")
 class IsAuthenticatedView(APIView):
     permission_classes = ()
 
     def get(self, request):
         permission_class = IsAuthenticated()
         is_authenticated = permission_class.has_permission(request, self)
-        return Response({'is_authenticated': is_authenticated})
+        return Response({"is_authenticated": is_authenticated})
 
 
-@method_decorator(safety_lock, 'post')
+@method_decorator(safety_lock, "post")
 class ObtainAuthTokenOIDC(APIView):
     permission_classes = ()
 
     def post(self, request, *args, **kwargs):
-        code = request.data.get('code', None)
+        code = request.data.get("code", None)
 
         if not code:
-            LOGGER.error('Could not authenticate: No authentication code found')
-            return HttpResponseBadRequest('No authentication code found')
+            LOGGER.error("Could not authenticate: No authentication code found")
+            return HttpResponseBadRequest("No authentication code found")
 
         authentication_backend = AuthenticationBackend()
 
         try:
             user = authentication_backend.authenticate(request)
         except Exception as e:
-            LOGGER.error('Could not authenticate: {}'.format(str(e)))
-            return HttpResponseBadRequest('Could not authenticate')
+            LOGGER.error("Could not authenticate: {}".format(str(e)))
+            return HttpResponseBadRequest("Could not authenticate")
 
         try:
             refresh = RefreshToken.for_user(user)
         except Exception as e:
-            LOGGER.error('Could not refresh token: {}'.format(str(e)))
-            return HttpResponseBadRequest('Could not refresh token')
+            LOGGER.error("Could not refresh token: {}".format(str(e)))
+            return HttpResponseBadRequest("Could not refresh token")
 
         serialized_user = UserSerializer(user)
         return Response(
             {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-                'user': serialized_user.data
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+                "user": serialized_user.data,
             }
         )
 

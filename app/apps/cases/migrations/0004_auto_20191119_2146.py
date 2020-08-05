@@ -5,13 +5,11 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('cases', '0003_auto_20191119_2139'),
+        ("cases", "0003_auto_20191119_2139"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='case',
-            name='postal_code',
-            field=models.CharField(max_length=8),
+            model_name="case", name="postal_code", field=models.CharField(max_length=8),
         ),
     ]
