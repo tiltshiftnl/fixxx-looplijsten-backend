@@ -78,7 +78,7 @@ def get_brk_request_headers():
         raise Exception("No authorization bearer token for BRK request")
 
     headers = {
-        "Authorization": "Bearer {}".format(token),
+        "Authorization": f"Bearer {token}",
         "content-type": "application/json",
     }
 
