@@ -4,7 +4,8 @@ from datetime import datetime
 
 import requests
 from django.conf import settings
-from tenacity import after_log, retry, stop_after_attempt
+from tenacity import after_log, retry, stop_after_attempt, wait_random
+from utils.queries import get_import_stadia
 from utils.queries_bag_api import get_bag_id
 
 logger = logging.getLogger(__name__)
@@ -42,7 +43,23 @@ def get_headers():
     return headers
 
 
-@retry(stop=stop_after_attempt(3), after=after_log(logger, logging.ERROR))
+def stadium_bwv_to_push_state(stadium):
+    """ Transforms a stadium to be compatible with zaken-backend """
+    return {
+        "name": stadium.get("sta_oms"),
+        "start_date": datetime_to_date(stadium.get("begindatum")),
+        "end_date": datetime_to_date(stadium.get("einddatum")),
+        "gauge_date": datetime_to_date(stadium.get("peildatum")),
+        "invoice_identification": stadium.get("invordering_identificatie"),
+    }
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_random(min=1, max=2),
+    reraise=False,
+    after=after_log(logger, logging.ERROR),
+)
 def push_case(case):
     if not settings.ZAKEN_API_URL:
         logger.info("ZAKEN_API_URL is not configured in settings")
@@ -54,12 +71,17 @@ def push_case(case):
     start_date = datetime_to_date(start_date)
 
     end_date = case.get("end_date", None)
+    case_id = case.get("case_id")
+
+    stadia = get_import_stadia(case_id)
+    states = [stadium_bwv_to_push_state(stadium) for stadium in stadia]
 
     data = {
-        "identification": case["case_id"],
+        "identification": case_id,
         "case_type": case["case_reason"],
         "bag_id": get_bag_id(case),
         "start_date": start_date,
+        "states": states,
     }
 
     if end_date:
