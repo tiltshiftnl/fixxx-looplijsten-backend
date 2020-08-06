@@ -188,19 +188,21 @@ def get_import_stadia(case_id):
     query = """
             SELECT
               sta_oms,
-              begindatum,
-              einddatum,
+              import_stadia.begindatum,
+              import_stadia.einddatum,
               peildatum,
               sta_nr,
-              stadia_id
-            FROM
-              import_stadia
-            WHERE stadia_id LIKE %(case_id)s
+              CONCAT (import_adres.wng_id, '_', import_wvs.wvs_nr, '_', sta_nr) AS invordering_identificatie
+            FROM import_adres INNER JOIN import_stadia ON import_adres.adres_id = import_stadia.adres_id
+            INNER JOIN import_wvs ON import_stadia.adres_id = import_wvs.adres_id
+            AND stadia_id LIKE %(stadia_id)s
+            AND zaak_id = %(case_id)s
             ORDER BY sta_nr DESC
-          """
+            """
 
     # Adds the _% to support the LIKE query
-    args = {"case_id": case_id + "_%"}
+    args = {"case_id": case_id, "stadia_id": case_id + "_%"}
+
     all_stadia = do_query(query, args)
 
     # Make sure all the open stadia are first in the list
