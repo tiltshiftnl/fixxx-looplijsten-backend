@@ -50,12 +50,13 @@ services:
       - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
       - LOCAL_DEVELOPMENT_AUTHENTICATION=True
       - ZAKEN_API_URL=http://zaak-gateway:8000/api/v1
+      - PUSH_ZAKEN=False # Disabled for local development, enable to test Zaken connection
       - UWSGI_HTTP=0.0.0.0:8000
       - SECRET_KEY_TOP_ZAKEN=SECRET_KEY_TOP_ZAKEN
     volumes:
       - ./app:/app
       - ./api/deploy:/deploy
-    command: bash -c "/app/deploy/entrypoint.sh"
+    command: bash -c "/app/deploy/entrypoint.development.sh"
 
 networks:
   looplijsten_backend:
