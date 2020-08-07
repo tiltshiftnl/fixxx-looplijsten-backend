@@ -60,7 +60,9 @@ def stadium_bwv_to_push_state(stadium):
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_case(case):
+def push_case(case_model_object):
+    case = case_model_object.bwv_data
+
     if not settings.ZAKEN_API_URL:
         logger.info("ZAKEN_API_URL is not configured in settings")
         return {}

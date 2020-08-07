@@ -370,7 +370,7 @@ class Note(models.Model):
 @receiver(signals.post_save, sender=ItineraryItem)
 def create_itinerary_item_signal(instance, created, **kwargs):
     if created:
-        p = Process(target=push_case, args=(instance.case.bwv_data,))
+        p = Process(target=push_case, args=(instance.case,))
         p.start()
 
 
