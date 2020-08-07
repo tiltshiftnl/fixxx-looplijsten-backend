@@ -75,7 +75,7 @@ def push_case(case_model_object):
     end_date = case.get("end_date", None)
     case_id = case.get("case_id")
 
-    stadia = get_import_stadia(case_id)
+    stadia = get_import_stadia(case.case_id)
     states = [stadium_bwv_to_push_state(stadium) for stadium in stadia]
 
     data = {
