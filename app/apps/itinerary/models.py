@@ -374,8 +374,9 @@ class Note(models.Model):
 def create_itinerary_item_signal(instance, created, **kwargs):
     if created:
         try:
-            logger.info(f"Pushing case {instance.case.case_id}")
-            push_case(instance.case)
+            case_id = instance.case.case_id
+            logger.info(f"Signal for pushing case {case_id}")
+            push_case(case_id)
         except RetryError as e:
             logger.error(f"Pushing case failed: {str(e)}")
 

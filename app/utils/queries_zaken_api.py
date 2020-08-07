@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 from django.conf import settings
 from tenacity import after_log, retry, stop_after_attempt, wait_random
-from utils.queries import get_import_stadia
+from utils.queries import get_case, get_import_stadia
 from utils.queries_bag_api import get_bag_id
 
 logger = logging.getLogger(__name__)
@@ -26,14 +26,6 @@ def get_cases():
         logger.error(f"Could not get cases: {e}")
 
 
-def datetime_to_date(date_time=None):
-    if not date_time:
-        return
-    # return str(date_time.date())
-    # TODO: Temporary fix for debugging
-    return str(datetime.now().date())
-
-
 def get_headers():
     token = settings.SECRET_KEY_TOP_ZAKEN
     headers = {
@@ -43,39 +35,48 @@ def get_headers():
     return headers
 
 
+def date_to_string(date):
+    if date:
+        return str(date)
+
+    return None
+
+
 def stadium_bwv_to_push_state(stadium):
     """ Transforms a stadium to be compatible with zaken-backend """
     return {
         "name": stadium.get("sta_oms"),
-        "start_date": datetime_to_date(stadium.get("begindatum")),
-        "end_date": datetime_to_date(stadium.get("einddatum")),
-        "gauge_date": datetime_to_date(stadium.get("peildatum")),
+        "start_date": date_to_string(stadium.get("begindatum")),
+        "end_date": date_to_string(stadium.get("einddatum", None)),
+        "gauge_date": date_to_string(stadium.get("peildatum", None)),
         "invoice_identification": stadium.get("invordering_identificatie"),
     }
 
 
 @retry(
     stop=stop_after_attempt(3),
-    wait=wait_random(min=1, max=2),
+    wait=wait_random(min=0, max=0.03),
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_case(case_model_object):
-    case = case_model_object.bwv_data
+def push_case(case_id):
+    logger.info(f"Pushing case {case_id}")
 
     if not settings.ZAKEN_API_URL:
-        logger.info("ZAKEN_API_URL is not configured in settings")
+        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
+        return {}
+    elif not settings.PUSH_ZAKEN:
+        logger.info("Pushes disabled. Exit push.")
         return {}
 
+    case = get_case(case_id)
     url = f"{settings.ZAKEN_API_URL}/push/"
 
-    start_date = case.get("start_date")
-    start_date = datetime_to_date(start_date)
-
-    end_date = case.get("end_date", None)
+    start_date = date_to_string(case.get("start_date"))
+    end_date = date_to_string(case.get("end_date", None))
     case_id = case.get("case_id")
 
-    stadia = get_import_stadia(case_model_object.case_id)
+    stadia = get_import_stadia(case_id)
     states = [stadium_bwv_to_push_state(stadium) for stadium in stadia]
 
     data = {
@@ -87,10 +88,10 @@ def push_case(case_model_object):
     }
 
     if end_date:
-        end_date = datetime_to_date(end_date)
         data["end_date"] = end_date
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    logger.info(f"Finished pushing case {case_id}")
     return response
 
 
@@ -98,6 +99,9 @@ def push_case(case_model_object):
 def push_checked_action(case_id, check):
     if not settings.ZAKEN_API_URL:
         logger.info("ZAKEN_API_URL is not configured in settings")
+        return {}
+    elif not settings.PUSH_ZAKEN:
+        logger.info("Pushes disabled")
         return {}
 
     url = f"{settings.ZAKEN_API_URL}/push-check-action/"
