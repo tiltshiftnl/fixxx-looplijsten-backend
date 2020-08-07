@@ -1,4 +1,4 @@
-from multiprocessing import Process
+import logging
 
 from apps.cases.const import PROJECTS, STARTING_FROM_DATE
 from apps.cases.models import Case, Project, Stadium
@@ -16,8 +16,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
+from tenacity import RetryError
 from utils.queries_planner import get_cases_from_bwv
 from utils.queries_zaken_api import push_case, push_checked_action
+
+logger = logging.getLogger(__name__)
 
 
 class Itinerary(models.Model):
@@ -370,8 +373,11 @@ class Note(models.Model):
 @receiver(signals.post_save, sender=ItineraryItem)
 def create_itinerary_item_signal(instance, created, **kwargs):
     if created:
-        p = Process(target=push_case, args=(instance.case,))
-        p.start()
+        try:
+            logger.info(f"Pushing case {instance.case.case_id}")
+            push_case(instance.case)
+        except RetryError as e:
+            logger.error(f"Pushing case failed: {str(e)}")
 
 
 @receiver(signals.pre_save, sender=ItineraryItem)
