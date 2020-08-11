@@ -14,7 +14,7 @@ DEFAULT_LAST_NAME = "user"
 
 class DevelopmentAuthenticationBackend:
     @safety_lock
-    def authenticate(self, request):
+    def authenticate(self, request, **kwargs):
         assert settings.ENVIRONMENT not in [
             "production",
             "acceptance",

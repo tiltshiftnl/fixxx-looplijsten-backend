@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     @safety_lock
-    def authenticate(self, request):
+    def authenticate(self, request, **kwargs):
         """Authenticates a user based on the OIDC code flow."""
         if request and hasattr(request, "data") and request.data.get("code", False):
             self.request = request
