@@ -14,7 +14,7 @@ chmod -R 777 /static
 chmod -R 700 /fraud_prediction_cache
 
 # echo Create root user
-python manage.py shell -c "from apps.users.models import User; User.objects.create_superuser('admin@admin.com', 'admin')"
+# python manage.py shell -c "from apps.users.models import User; User.objects.create_superuser('admin@admin.com', 'admin')"
 
 # run uwsgi
 exec uwsgi --ini /app/deploy/config.ini # --py-auto-reload=1
