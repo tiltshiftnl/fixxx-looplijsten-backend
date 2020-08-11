@@ -171,6 +171,7 @@ class ItineraryItemViewsUpdateTest(APITestCase):
         """
         Update the item's checked status
         """
+
         itinerary = Itinerary.objects.create()
         case = Case.get("FOO Case ID")
         itinerary_item = ItineraryItem.objects.create(
