@@ -82,13 +82,13 @@ class CaseViewSet(ViewSet):
         return JsonResponse({"cases": cases})
 
     @extend_schema(
-        description="Get all visits connected to this case",
+        description="Lists all visits for this case",
         responses={200: VisitSerializer(many=True)},
     )
-    @action(detail=True, methods=["get"], name="get-all-visits-timeline")
-    def get_all_visits_timeline(self, request, pk):
+    @action(detail=True, methods=["get"], name="visits")
+    def visits(self, request, pk):
         """
-        Get list of all visits to this case
+        Lists all visits for this case
         """
         visits = Visit.objects.filter(itinerary_item__case__case_id=pk)
         serializer = VisitSerializer(visits, many=True)
