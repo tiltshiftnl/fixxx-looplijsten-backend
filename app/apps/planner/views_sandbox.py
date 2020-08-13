@@ -19,7 +19,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.views import View
 from utils.queries_zaken_api import get_cases
-from utils.safety_lock import safety_lock
 
 
 class AlgorithmView(LoginRequiredMixin, View):
@@ -51,7 +50,6 @@ class AlgorithmView(LoginRequiredMixin, View):
             "zaken_data": zaken_data,
         }
 
-    @safety_lock
     def get(self, request, *args, **kwargs):
         context_data = self.get_context_data()
 
@@ -66,7 +64,6 @@ class AlgorithmView(LoginRequiredMixin, View):
 
         return render(request, self.template_name, context_data)
 
-    @safety_lock
     def post(self, request, *args, **kwargs):
         opening_date = request.POST.get("opening_date")
         projects = request.POST.getlist("projects")

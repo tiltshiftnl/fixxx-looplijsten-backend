@@ -4,25 +4,21 @@ from apps.users.auth import AuthenticationBackend
 from apps.users.models import User
 from apps.users.serializers import UserSerializer
 from django.http import HttpResponseBadRequest
-from django.utils.decorators import method_decorator
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
-from utils.safety_lock import safety_lock
 
 LOGGER = logging.getLogger(__name__)
 
 
-@method_decorator(safety_lock, "get")
 class UserListView(ViewSet, generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-@method_decorator(safety_lock, "get")
 class IsAuthenticatedView(APIView):
     permission_classes = ()
 
@@ -32,7 +28,6 @@ class IsAuthenticatedView(APIView):
         return Response({"is_authenticated": is_authenticated})
 
 
-@method_decorator(safety_lock, "post")
 class ObtainAuthTokenOIDC(APIView):
     permission_classes = ()
 

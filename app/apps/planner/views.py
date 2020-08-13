@@ -10,10 +10,8 @@ from django.utils.decorators import method_decorator
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ViewSet
-from utils.safety_lock import safety_lock
 
 
-@method_decorator(safety_lock, "list")
 class ConstantsProjectsViewSet(ViewSet):
     """
     Retrieve the projects constants which are used for cases
@@ -25,7 +23,6 @@ class ConstantsProjectsViewSet(ViewSet):
         return JsonResponse({"constants": PROJECTS})
 
 
-@method_decorator(safety_lock, "list")
 class ConstantsStadiaViewSet(ViewSet):
     """
     Retrieve the stadia constants which are used for cases
@@ -39,8 +36,6 @@ class ConstantsStadiaViewSet(ViewSet):
         return JsonResponse({"constants": constants_stadia})
 
 
-@method_decorator(safety_lock, "list")
-@method_decorator(safety_lock, "create")
 class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     """
     Retrieves the planner settings which are used for generating lists
