@@ -1,4 +1,3 @@
-import datetime
 import logging
 
 from apps.cases.const import PROJECTS, STARTING_FROM_DATE
@@ -15,14 +14,7 @@ from django.contrib.admin.utils import flatten
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import signals
-from django.dispatch import receiver
-from django.utils import timezone
-from tenacity import RetryError
 from utils.queries_planner import get_cases_from_bwv
-from utils.queries_zaken_api import push_case, push_checked_action
-
-logger = logging.getLogger(__name__)
 
 
 class Itinerary(models.Model):
@@ -367,28 +359,3 @@ class Note(models.Model):
         if len(self.text) > max_length:
             return "{}...".format(self.text[:max_length])
         return self.text
-
-
-# TODO: Tests for this
-# TODO: this should be moved to a dedicated signals file later on
-# TODO: Should log if a push fails
-@receiver(signals.post_save, sender=ItineraryItem)
-def create_itinerary_item_signal(instance, created, **kwargs):
-    if created and instance.case:
-        try:
-            case_id = instance.case.case_id
-            logger.info(f"Signal for pushing case {case_id}")
-            push_case(case_id)
-        except RetryError as e:
-            logger.error(f"Pushing case failed: {str(e)}")
-
-
-# TODO: With the new visit module this is deprectated. Update to push visit data.
-@receiver(signals.pre_save, sender=ItineraryItem)
-def checked_itinerary_item_signal(sender, instance, **kwargs):
-    try:
-        obj = sender.objects.get(pk=instance.pk)
-        if obj and not obj.checked == instance.checked:  # Field has changed
-            push_checked_action(instance.case.case_id, instance.checked)
-    except (sender.DoesNotExist, RetryError) as e:
-        logger.error(f"Pushing case visit failed: {str(e)}")

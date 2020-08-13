@@ -16,4 +16,4 @@ chmod -R 777 /static
 chmod -R 700 /fraud_prediction_cache
 
 # run uwsgi
-exec uwsgi --ini /app/deploy/config.ini --py-auto-reload=1 --cheaper-initial=1 --cheaper=1 --processes=2
+exec uwsgi --ini /app/deploy/config.ini --py-auto-reload=1 --cheaper-initial=1 --cheaper=1 --processes=10
