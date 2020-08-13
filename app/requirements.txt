@@ -27,7 +27,7 @@ mozilla-django-oidc==1.2.3
 djangorestframework-simplejwt==4.4.0
 
 # Algorithm toolbox
-geopy==1.22.0
+geopy==2.0.0
 joblib==0.14.1
 scikit-learn==0.22.1
 numpy
