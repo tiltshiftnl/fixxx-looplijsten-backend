@@ -18,14 +18,14 @@ class Visit(models.Model):
     )
 
     OBSERVATION_MALFUNCTIONING_DOORBEL = "malfunctioning_doorbell"
-    OBSERVATION_VIDEO_CALL = "video_call"
+    OBSERVATION_INTERCOM = "intercom"
     OBSERVATION_HOTEL_FURNISHED = "hotel_furnished"
     OBSERVATION_VACANT = "vacant"
     OBSERVATION_LIKELY_INHABITED = "likely_inhabited"
 
     OBSERVATIONS = (
         (OBSERVATION_MALFUNCTIONING_DOORBEL, "Bel functioneert niet"),
-        (OBSERVATION_VIDEO_CALL, "Contact via videobel"),
+        (OBSERVATION_INTERCOM, "Contact via intercom"),
         (OBSERVATION_HOTEL_FURNISHED, "Hotelmatig ingericht"),
         (OBSERVATION_VACANT, "Leegstaand"),
         (OBSERVATION_LIKELY_INHABITED, "Vermoedelijk bewoond"),
