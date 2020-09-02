@@ -3,6 +3,7 @@ import logging
 from datetime import datetime
 
 import requests
+from apps.visits.models import Visit
 from django.conf import settings
 from tenacity import after_log, retry, stop_after_attempt, wait_random
 from utils.queries import get_case, get_import_stadia
@@ -107,4 +108,75 @@ def push_checked_action(case_id, check):
     url = f"{settings.ZAKEN_API_URL}/push-check-action/"
     data = {"identification": case_id, "check_action": check}
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    return response
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_random(min=0, max=0.03),
+    reraise=False,
+    after=after_log(logger, logging.ERROR),
+)
+def push_new_visit_to_zaken_action(visit_id, subject, parameters, notes):
+    logger.info(f"Pushing visit {visit_id} to zaken")
+
+    if not settings.ZAKEN_API_URL:
+        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
+        return {}
+    elif not settings.PUSH_ZAKEN:
+        logger.info("Pushes disabled. Exit push.")
+        return {}
+
+    try:
+        visit = Visit.objects.get(id=visit_id)
+        case = visit.itinerary_item.case
+    except Visit.DoesNotExist:
+        return {}
+
+    url = f"{settings.ZAKEN_API_URL}/push/"
+
+    data = {
+        "case_identification": case.identification,
+        "subject": subject,
+        "parameters": parameters,
+        "notes": notes,
+    }
+
+    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    logger.info(f"Finished pushing case {case.identification}")
+
+    visit.thread_id = response.data["thread_id"]
+    visit.save()
+    return response
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_random(min=0, max=0.03),
+    reraise=False,
+    after=after_log(logger, logging.ERROR),
+)
+def push_updated_visit_to_zaken_action(visit_id, subject, parameters, notes):
+    logger.info(f"Pushing visit {visit_id} to zaken")
+
+    if not settings.ZAKEN_API_URL:
+        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
+        return {}
+    elif not settings.PUSH_ZAKEN:
+        logger.info("Pushes disabled. Exit push.")
+        return {}
+
+    try:
+        visit = Visit.objects.get(id=visit_id)
+        case = visit.itinerary_item.case
+    except Visit.DoesNotExist:
+        return {}
+
+    url = f"{settings.ZAKEN_API_URL}/push/"
+
+    data = {"parameters": parameters, "notes": notes, "thread_id": visit.thread_id}
+
+    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    logger.info(f"Finished pushing updated case {case.identification}")
+
     return response
