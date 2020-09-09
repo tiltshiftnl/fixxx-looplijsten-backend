@@ -1,4 +1,5 @@
 from apps.cases.const import PROJECTS, STADIA
+from apps.planner.models import TeamSettings
 from django.conf import settings
 from rest_framework import serializers
 
@@ -85,3 +86,16 @@ class PlannerSettingsSerializer(serializers.Serializer):
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
     postal_codes = PlannerPostalCodeSettingsSerializer(required=False, many=True)
     days = PlannerWeekSettingsSerializer(required=True)
+
+
+class TeamSettingsModelSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True)
+    settings = PlannerSettingsSerializer(required=True)
+
+    class Meta:
+        model = TeamSettings
+        fields = (
+            "id",
+            "name",
+            "settings",
+        )
