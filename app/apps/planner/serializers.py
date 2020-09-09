@@ -90,7 +90,7 @@ class PlannerSettingsSerializer(serializers.Serializer):
 
 class TeamSettingsModelSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
-    settings = PlannerSettingsSerializer(required=True)
+    settings = serializers.JSONField(required=True)
 
     class Meta:
         model = TeamSettings
@@ -99,3 +99,11 @@ class TeamSettingsModelSerializer(serializers.ModelSerializer):
             "name",
             "settings",
         )
+
+    def validate(self, data):
+        settings = PlannerSettingsSerializer(data=data.get('settings'), required=True)
+        if not settings.is_valid():
+            raise serializers.ValidationError(
+                "Wrong settings format"
+            )
+        return data
