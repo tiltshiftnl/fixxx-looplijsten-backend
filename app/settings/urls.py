@@ -1,4 +1,4 @@
-from apps.cases.views import CaseSearchViewSet, CaseViewSet
+from apps.cases.views import CaseSearchViewSet, CaseViewSet, PermitViewSet
 from apps.fraudprediction.views import FraudPredictionScoringViewSet
 from apps.health.views import health_bwv, health_default
 from apps.itinerary.views import ItineraryItemViewSet, ItineraryViewSet, NoteViewSet
@@ -28,6 +28,7 @@ api_router.register(r"itinerary-items", ItineraryItemViewSet, basename="itinerar
 api_router.register(r"cases", CaseViewSet, basename="case")
 api_router.register(r"search", CaseSearchViewSet, basename="search")
 api_router.register(r"notes", NoteViewSet, basename="notes")
+api_router.register(r"permits", PermitViewSet, basename="permits")
 api_router.register(r"users", UserListView, basename="users")
 api_router.register(r"visits", VisitViewSet, basename="visits")
 api_router.register(
