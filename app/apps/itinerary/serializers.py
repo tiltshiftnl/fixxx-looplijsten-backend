@@ -14,7 +14,7 @@ from apps.itinerary.models import (
     PostalCodeSettings,
 )
 from apps.users.serializers import UserIdSerializer, UserSerializer
-from apps.visits.serializers import VisitRelatedSerializer
+from apps.visits.serializers import VisitSerializer
 from rest_framework import serializers
 
 
@@ -63,7 +63,7 @@ class ItinerarySettingsSerializer(serializers.ModelSerializer):
 class ItineraryItemSerializer(serializers.ModelSerializer):
     case = CaseSerializer(read_only=True)
     notes = NoteSerializer(read_only=True, many=True)
-    visits = VisitRelatedSerializer(read_only=True, many=True)
+    visits = VisitSerializer(read_only=True, many=True)
 
     class Meta:
         model = ItineraryItem
