@@ -41,3 +41,8 @@ class UnplannedCasesSerializer(serializers.Serializer):
 
     date = serializers.DateField(required=True)
     stadium = serializers.ChoiceField(required=True, choices=STADIA)
+
+
+class PermitCheckmarkSerializer(serializers.Serializer):
+    has_b_and_b_permit = serializers.BooleanField()
+    has_vacation_rental_permit = serializers.BooleanField()

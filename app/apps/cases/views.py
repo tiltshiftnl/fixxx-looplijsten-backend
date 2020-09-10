@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from apps.cases.serializers import UnplannedCasesSerializer
+from apps.cases.serializers import PermitCheckmarkSerializer, UnplannedCasesSerializer
 from apps.cases.swagger_parameters import case_search_parameters, unplanned_parameters
 from apps.fraudprediction.utils import add_fraud_predictions, get_fraud_prediction
 from apps.itinerary.models import Itinerary
@@ -9,7 +9,8 @@ from apps.visits.models import Visit
 from apps.visits.serializers import VisitSerializer
 from django.http import HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 from django.utils.decorators import method_decorator
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -18,6 +19,7 @@ from rest_framework.viewsets import ViewSet
 from utils import queries as q
 from utils import queries_bag_api as bag_api
 from utils import queries_brk_api as brk_api
+from utils.queries_decos_api import DecosJoinRequest
 from utils.safety_lock import safety_lock
 
 
@@ -171,3 +173,28 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
             cases = self.__add_teams__(cases, datetime.now())
 
             return JsonResponse({"cases": cases})
+
+
+bag_id = OpenApiParameter(
+    name="bag_id",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    required=True,
+    description="Verblijfsobjectidentificatie",
+)
+
+
+class PermitViewSet(ViewSet):
+    @extend_schema(
+        parameters=[bag_id], description="Get permit checkmarks based on bag id"
+    )
+    @action(detail=False, methods=["get"])
+    def get_permit_checkmarks(self, request):
+        bag_id = request.GET.get("bag_id")
+        response = DecosJoinRequest().get_checkmarks_with_bag_id(bag_id)
+
+        serializer = PermitCheckmarkSerializer(data=response)
+
+        if serializer.is_valid():
+            return Response(serializer.data)
+        return Response(serializer.initial_data)
