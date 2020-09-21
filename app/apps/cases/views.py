@@ -1,6 +1,14 @@
 from datetime import datetime
 
-from apps.cases.serializers import PermitCheckmarkSerializer, UnplannedCasesSerializer
+from apps.cases.serializers import (
+    DecosJoinFolderFieldsResponseSerializer,
+    DecosJoinObjectFieldsResponseSerializer,
+    DecosPermitSerializer,
+    PermitCheckmarkSerializer,
+    UnplannedCasesSerializer,
+    get_decos_join_mock_folder_fields,
+    get_decos_join_mock_object_fields,
+)
 from apps.cases.swagger_parameters import case_search_parameters, unplanned_parameters
 from apps.fraudprediction.utils import add_fraud_predictions, get_fraud_prediction
 from apps.itinerary.models import Itinerary
@@ -188,12 +196,26 @@ class PermitViewSet(ViewSet):
     @extend_schema(
         parameters=[bag_id], description="Get permit checkmarks based on bag id"
     )
-    @action(detail=False, methods=["get"])
+    @action(detail=False)
     def get_permit_checkmarks(self, request):
         bag_id = request.GET.get("bag_id")
-        response = DecosJoinRequest().get_checkmarks_with_bag_id(bag_id)
+        response = DecosJoinRequest().get_checkmarks_by_bag_id(bag_id)
 
         serializer = PermitCheckmarkSerializer(data=response)
+
+        if serializer.is_valid():
+            return Response(serializer.data)
+        return Response(serializer.initial_data)
+
+    @extend_schema(
+        parameters=[bag_id], description="Get permit details based on bag id"
+    )
+    @action(detail=False)
+    def get_permit_details(self, request):
+        bag_id = request.GET.get("bag_id")
+        response = DecosJoinRequest().get_permits_by_bag_id(bag_id)
+
+        serializer = DecosPermitSerializer(data=response, many=True)
 
         if serializer.is_valid():
             return Response(serializer.data)
