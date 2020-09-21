@@ -45,6 +45,8 @@ def get_search_results(postal_code, street_number, suffix, street_name):
         + suffix_query
     )
 
+    print(query)
+
     args = {
         "postal_code": postal_code,
         "street_name": "%"+street_name + "%",
