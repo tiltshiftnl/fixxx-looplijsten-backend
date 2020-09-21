@@ -15,6 +15,8 @@ from apps.itinerary.models import (
 )
 from apps.users.serializers import UserIdSerializer, UserSerializer
 from apps.visits.serializers import VisitSerializer
+from apps.planner.serializers import TeamSettingsModelSerializer
+from apps.planner.models import TeamSettings
 from rest_framework import serializers
 
 
@@ -42,6 +44,7 @@ class PostalCodeSettingsSerializer(serializers.ModelSerializer):
 
 class ItinerarySettingsSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(many=True)
+    team_settings = TeamSettingsModelSerializer()
     primary_stadium = StadiumSerializer()
     secondary_stadia = StadiumSerializer(many=True)
     exclude_stadia = StadiumSerializer(many=True)
@@ -51,6 +54,7 @@ class ItinerarySettingsSerializer(serializers.ModelSerializer):
         model = ItinerarySettings
         fields = (
             "opening_date",
+            "team_settings",
             "target_length",
             "projects",
             "primary_stadium",
@@ -160,7 +164,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
             team_member.get("user").get("id") for team_member in team_members
         ]
         itinerary.add_team_members(team_members)
-
+        print(validated_data)
         settings = validated_data.get("settings")
         opening_date = settings.get("opening_date")
         target_length = settings.get("target_length")
@@ -183,6 +187,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
             primary_stadium=primary_stadium,
             target_length=target_length,
             start_case=start_case,
+            team_settings=TeamSettings.objects.get(id=settings.get('team_settings').get('id')),
         )
 
         # Next, add the many-to-many relations of the itinerary_Settings

@@ -115,3 +115,19 @@ EXAMPLE_PLANNER_SETTINGS = {
         },
     },
 }
+
+TEAM_TYPE_VAKANTIEVERHUUR = 'Vakantieverhuur'
+TEAM_TYPE_ONDERVERHUUR = 'Onderverhuur'
+
+TEAM_TYPE_SETTINGS = {
+    TEAM_TYPE_VAKANTIEVERHUUR: {
+        'project_choices': const.PROJECTS_VAKANTIEVERHUUR,
+        'stadia_choices': const.STADIA_VAKANTIEVERHUUR,
+    },
+    TEAM_TYPE_ONDERVERHUUR: {
+        'project_choices': const.PROJECTS_ONDERVERHUUR,
+        'stadia_choices': const.STADIA_ONDERVERHUUR,
+    }
+}
+
+TEAM_TYPE_CHOICES = [[k, k] for k, v in TEAM_TYPE_SETTINGS.items()]

@@ -16,6 +16,11 @@ class User(AbstractUser):
         blank=False,
         error_messages={"unique": "A user with that email already exists.",},
     )
+    team_settings = models.ManyToManyField(
+        to='planner.TeamSettings',
+        blank=True, 
+        related_name="team_settings",
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

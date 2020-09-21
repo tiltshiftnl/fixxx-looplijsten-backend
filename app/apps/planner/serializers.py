@@ -1,4 +1,5 @@
 from apps.cases.const import PROJECTS, STADIA
+from .const import TEAM_TYPE_SETTINGS
 from apps.planner.models import TeamSettings
 from django.conf import settings
 from rest_framework import serializers
@@ -90,6 +91,7 @@ class PlannerSettingsSerializer(serializers.Serializer):
 
 class TeamSettingsModelSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
+    team_type = serializers.CharField(required=False)
     settings = serializers.JSONField(required=True)
 
     class Meta:
@@ -97,10 +99,18 @@ class TeamSettingsModelSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
+            "team_type",
             "settings",
         )
+    @property
+    def data(self):
+        data = super().data
+        data['projects'] = TEAM_TYPE_SETTINGS.get(data.get('team_type')).get('project_choices')
+        data['stadia'] = TEAM_TYPE_SETTINGS.get(data.get('team_type')).get('stadia_choices')
+        return data
 
     def validate(self, data):
+        data = super().validate(data)
         settings = PlannerSettingsSerializer(data=data.get('settings'), required=True)
         if not settings.is_valid():
             raise serializers.ValidationError(

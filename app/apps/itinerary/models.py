@@ -167,6 +167,13 @@ class ItinerarySettings(models.Model):
     """
     Settings for an itinerary
     """
+    team_settings = models.ForeignKey(
+        to='planner.TeamSettings',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="itinerary_team_settings",
+    )
 
     opening_date = models.DateField(blank=False, null=False)
 

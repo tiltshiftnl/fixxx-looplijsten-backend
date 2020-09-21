@@ -9,6 +9,9 @@ from apps.itinerary.serializers import (
     ItineraryTeamMemberSerializer,
     NoteCrudSerializer,
 )
+from apps.planner.serializers import (
+    TeamSettingsModelSerializer
+)
 from apps.users.models import User
 from django.db import transaction
 from django.http import Http404, JsonResponse
@@ -40,6 +43,7 @@ class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMi
     queryset = Itinerary.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["created_at"]
+    lookup_field = 'id'
 
     def get_object(self):
         MESSAGE = (
@@ -146,7 +150,16 @@ class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMi
         user = get_object_or_404(User, id=request.user.id)
         itineraries = self.__get_all_itineraries__(user, date)
 
-        return Response({"itineraries": itineraries})
+        print(len(itineraries))
+        # print(list(itineraries)[0])
+        team_settings = None
+        for item in itineraries:
+            team_settings = item.get('settings').get('team_settings')
+
+        return Response({
+            "itineraries": itineraries,
+            "team_settings": team_settings,
+        })
 
 
 @method_decorator(safety_lock, name="update")
