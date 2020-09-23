@@ -332,6 +332,16 @@ class ItineraryItem(models.Model):
         if items_with_same_case.exists():
             raise ValueError("The itinerary already contains this case")
 
+    def get_visits_for_day(self):
+        """
+        Get all Visit's from the date the
+        """
+        return self.visits.filter(
+            start_time__year=self.itinerary.created_at.year,
+            start_time__month=self.itinerary.created_at.month,
+            start_time__day=self.itinerary.created_at.day,
+        )
+
     def save(self, *args, **kwargs):
         if self.position is None:
             # If no position is given, set the item to the last in list
