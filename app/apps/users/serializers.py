@@ -2,6 +2,7 @@ from rest_framework import serializers
 from apps.planner.serializers import TeamSettingsModelSerializer as TeamSettingsModelSerializer
 from apps.planner.models import TeamSettings
 
+
 class UserIdSerializer(serializers.Serializer):
     id = serializers.UUIDField(required=True)
     email = serializers.EmailField(read_only=True)
@@ -26,3 +27,4 @@ class UserSerializer(serializers.Serializer):
     last_name = serializers.CharField()
     full_name = serializers.CharField()
     team_settings = TeamSettingsIdSerializer(many=True)
+    current_team_settings_id = serializers.IntegerField()

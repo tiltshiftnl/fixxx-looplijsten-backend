@@ -43,7 +43,6 @@ class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMi
     queryset = Itinerary.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ["created_at"]
-    lookup_field = 'id'
 
     def get_object(self):
         MESSAGE = (

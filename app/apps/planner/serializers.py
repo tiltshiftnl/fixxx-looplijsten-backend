@@ -107,6 +107,7 @@ class TeamSettingsModelSerializer(serializers.ModelSerializer):
         data = super().data
         data['projects'] = TEAM_TYPE_SETTINGS.get(data.get('team_type')).get('project_choices')
         data['stadia'] = TEAM_TYPE_SETTINGS.get(data.get('team_type')).get('stadia_choices')
+        data['team_type'] = TEAM_TYPE_SETTINGS.get(data.get('team_type'))
         return data
 
     def validate(self, data):
