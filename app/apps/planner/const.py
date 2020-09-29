@@ -122,6 +122,7 @@ TEAM_TYPE_ONDERVERHUUR = 'Onderverhuur'
 
 TEAM_TYPE_SETTINGS = {
     TEAM_TYPE_VAKANTIEVERHUUR: {
+        'name': TEAM_TYPE_VAKANTIEVERHUUR,
         'project_choices': const.PROJECTS_VAKANTIEVERHUUR,
         'stadia_choices': const.STADIA_VAKANTIEVERHUUR,
         'observation_choices': visits_const.OBSERVATIONS,
@@ -130,8 +131,10 @@ TEAM_TYPE_SETTINGS = {
         'week_day_choices': [0, 1, 2, 3, 4, 5, 6],
         'show_list_fraudprediction': True,
         'show_fraudprediction': True,
+        'show_issuemelding': True,
     },
     TEAM_TYPE_ONDERVERHUUR: {
+        'name': TEAM_TYPE_ONDERVERHUUR,
         'project_choices': const.PROJECTS_ONDERVERHUUR,
         'stadia_choices': const.STADIA_ONDERVERHUUR,
         'observation_choices': visits_const.OBSERVATIONS,
@@ -140,6 +143,7 @@ TEAM_TYPE_SETTINGS = {
         'week_day_choices': [0, 1, 2, 3, 4],
         'show_list_fraudprediction': False,
         'show_fraudprediction': False,
+        'show_issuemelding': False,
     }
 }
 

@@ -89,9 +89,14 @@ class PlannerSettingsSerializer(serializers.Serializer):
     days = PlannerWeekSettingsSerializer(required=True)
 
 
+class TeamTypeSerializer(serializers.BaseSerializer):
+    def to_representation(self, instance):
+        return TEAM_TYPE_SETTINGS.get(instance)
+
+
 class TeamSettingsModelSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
-    team_type = serializers.CharField(required=False)
+    team_type = TeamTypeSerializer(read_only=True, required=False)
     settings = serializers.JSONField(required=True)
 
     class Meta:
@@ -105,9 +110,8 @@ class TeamSettingsModelSerializer(serializers.ModelSerializer):
     @property
     def data(self):
         data = super().data
-        data['projects'] = TEAM_TYPE_SETTINGS.get(data.get('team_type')).get('project_choices')
-        data['stadia'] = TEAM_TYPE_SETTINGS.get(data.get('team_type')).get('stadia_choices')
-        data['team_type'] = TEAM_TYPE_SETTINGS.get(data.get('team_type'))
+        data['projects'] = data.get('team_type').get('project_choices')
+        data['stadia'] = data.get('team_type').get('stadia_choices')
         return data
 
     def validate(self, data):

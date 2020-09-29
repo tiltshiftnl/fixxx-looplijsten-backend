@@ -149,15 +149,8 @@ class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMi
         user = get_object_or_404(User, id=request.user.id)
         itineraries = self.__get_all_itineraries__(user, date)
 
-        print(len(itineraries))
-        # print(list(itineraries)[0])
-        team_settings = None
-        for item in itineraries:
-            team_settings = item.get('settings').get('team_settings')
-
         return Response({
             "itineraries": itineraries,
-            "team_settings": team_settings,
         })
 
 
