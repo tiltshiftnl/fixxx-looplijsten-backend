@@ -89,7 +89,7 @@ class PlannerSettingsSerializer(serializers.Serializer):
     days = PlannerWeekSettingsSerializer(required=True)
 
 
-class TeamTypeSerializer(serializers.BaseSerializer):
+class TeamTypeSerializer(serializers.DictField):
     def to_representation(self, instance):
         return TEAM_TYPE_SETTINGS.get(instance)
 
