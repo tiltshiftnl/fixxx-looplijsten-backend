@@ -3,9 +3,17 @@ from utils.query_helpers import do_query, return_first_or_empty
 from utils.statement_helpers import parse_statement
 
 
-def get_search_results(postal_code, street_number, suffix):
+def get_search_results(postal_code, street_number, suffix, street_name):
     suffix = suffix.replace(" ", "")
     suffix_query = ""
+    postal_code_query = ""
+    street_name_query = ""
+
+    if postal_code:
+      postal_code_query = "AND LOWER(postcode) = LOWER(%(postal_code)s)"
+
+    if street_name:
+      postal_code_query = "WHERE LOWER(sttnaam) LIKE LOWER(%(street_name)s)"
 
     if suffix:
         suffix_query = "WHERE LOWER(suffix) LIKE LOWER(%(suffix)s)"
@@ -27,8 +35,7 @@ def get_search_results(postal_code, street_number, suffix):
                   import_wvs.adres_id = import_adres.adres_id
                 AND
                   import_wvs.afs_code is NULL
-                AND
-                  LOWER(postcode) = LOWER(%(postal_code)s)
+                """ + postal_code_query + """
                 AND
                   hsnr = %(street_number)s
               )
@@ -40,6 +47,7 @@ def get_search_results(postal_code, street_number, suffix):
 
     args = {
         "postal_code": postal_code,
+        "street_name": "%"+street_name + "%",
         # % is added here because of the LIKE sql check
         "suffix": suffix + "%",
         "street_number": street_number,
