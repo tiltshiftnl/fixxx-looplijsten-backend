@@ -80,3 +80,37 @@ class Stadium(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ChoicesSet(models.Model):
+    name = models.CharField(
+        max_length=50,
+        blank=False, 
+        null=False,
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        abstract = True
+
+
+class ProjectChoices(ChoicesSet):
+    projects = models.ManyToManyField(
+        to=Project,
+        blank=False,
+        related_name="project_choices",
+    )
+    class Meta:
+        abstract = False
+
+
+class StadiaChoices(ChoicesSet):
+    stadia = models.ManyToManyField(
+        to=Stadium,
+        blank=False,
+        related_name="stadia_choices",
+    )
+    class Meta:
+        abstract = False

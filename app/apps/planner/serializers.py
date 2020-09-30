@@ -1,4 +1,5 @@
 from apps.planner.models import TeamSettings
+from apps.visits.serializers import ObservationSerializer, ObservationChoicesSerializer
 from django.conf import settings
 from rest_framework import serializers
 from settings.const import PROJECTS, STADIA
@@ -99,6 +100,7 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
     team_type = TeamTypeSerializer(read_only=True, required=False)
     settings = serializers.JSONField(required=True)
+    observation_choices = ObservationChoicesSerializer(read_only=True)
 
     class Meta:
         model = TeamSettings
@@ -106,6 +108,7 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "team_type",
+            "observation_choices",
             "settings",
         )
 
