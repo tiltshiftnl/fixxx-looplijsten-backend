@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('planner', '0002_teamsettings_team_type'),
-        ('users', '0009_auto_20200915_0735'),
+        ('users', '0009_auto_20200908_0939'),
     ]
 
     operations = [

@@ -10,7 +10,7 @@ from apps.itinerary.serializers import (
     NoteCrudSerializer,
 )
 from apps.planner.serializers import (
-    TeamSettingsModelSerializer
+    TeamSettingsSerializer
 )
 from apps.users.models import User
 from django.db import transaction

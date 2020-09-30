@@ -94,7 +94,7 @@ class TeamTypeSerializer(serializers.BaseSerializer):
         return TEAM_TYPE_SETTINGS.get(instance)
 
 
-class TeamSettingsModelSerializer(serializers.ModelSerializer):
+class TeamSettingsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
     team_type = TeamTypeSerializer(read_only=True, required=False)
     settings = serializers.JSONField(required=True)

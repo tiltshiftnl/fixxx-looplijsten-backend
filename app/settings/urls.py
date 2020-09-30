@@ -6,7 +6,7 @@ from apps.planner.views import (
     ConstantsProjectsViewSet,
     ConstantsStadiaViewSet,
     SettingsPlannerViewSet,
-    TeamSettingsModelViewSet,
+    TeamSettingsViewSet,
 )
 from apps.planner.views_sandbox import AlgorithmView
 from apps.users.views import IsAuthenticatedView, ObtainAuthTokenOIDC, UserListView
@@ -42,7 +42,7 @@ api_router.register(
     r"settings/planner", SettingsPlannerViewSet, basename="settings-planner"
 )
 api_router.register(
-    r"settings/team", TeamSettingsModelViewSet, basename="settings-team"
+    r"team-settings", TeamSettingsViewSet, basename="team-settings"
 )
 api_router.register(
     r"fraud-prediction/scoring",

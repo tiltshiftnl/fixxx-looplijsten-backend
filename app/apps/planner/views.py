@@ -2,7 +2,7 @@ import json
 
 from apps.cases.const import ISSUEMELDING, PROJECTS, STADIA
 from apps.planner.const import EXAMPLE_PLANNER_SETTINGS
-from apps.planner.serializers import PlannerSettingsSerializer, TeamSettingsModelSerializer
+from apps.planner.serializers import PlannerSettingsSerializer, TeamSettingsSerializer
 from apps.planner.models import TeamSettings
 from constance.backends.database.models import Constance
 from django.conf import settings
@@ -98,7 +98,7 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
 @method_decorator(safety_lock, name="destroy")
 @method_decorator(safety_lock, name="create")
 @method_decorator(safety_lock, name="list")
-class TeamSettingsModelViewSet(
+class TeamSettingsViewSet(
     ViewSet, GenericAPIView, CreateModelMixin, UpdateModelMixin, DestroyModelMixin
 ):
     """
@@ -106,7 +106,7 @@ class TeamSettingsModelViewSet(
     """
 
     permission_classes = [IsAuthenticated]
-    serializer_class = TeamSettingsModelSerializer
+    serializer_class = TeamSettingsSerializer
     queryset = TeamSettings.objects.all()
 
     def list(self, request):
@@ -115,7 +115,7 @@ class TeamSettingsModelViewSet(
 
     def retrieve(self, request, pk=None):
         team_settings = get_object_or_404(self.queryset, pk=pk)
-        serializer = TeamSettingsModelSerializer(team_settings)
+        serializer = TeamSettingsSerializer(team_settings)
         return Response(serializer.data)
 
     def create(self, request):
@@ -126,6 +126,6 @@ class TeamSettingsModelViewSet(
         team_settings.save()
 
         # Serialize and return data
-        serializer = TeamSettingsModelSerializer(team_settings, many=False)
+        serializer = TeamSettingsSerializer(team_settings, many=False)
         return Response(serializer.data)
 

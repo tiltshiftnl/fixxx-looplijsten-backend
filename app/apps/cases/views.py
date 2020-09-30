@@ -16,7 +16,7 @@ from apps.itinerary.models import Itinerary
 from apps.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
 from apps.visits.models import Visit
 from apps.visits.serializers import VisitSerializer
-from apps.planner.serializers import TeamSettingsModelSerializer
+from apps.planner.serializers import TeamSettingsSerializer
 from django.http import HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 from django.utils.decorators import method_decorator
 from drf_spectacular.types import OpenApiTypes
@@ -56,7 +56,7 @@ class CaseViewSet(ViewSet):
         bag_data = bag_api.get_bag_data(wng_id)
         bag_id = bag_data.get("verblijfsobjectidentificatie")
         case_instance = Case.get(case_id)
-        team_settings_serializer = TeamSettingsModelSerializer(case_instance.team_settings)
+        team_settings_serializer = TeamSettingsSerializer(case_instance.team_settings)
 
         data = {
             "bwv_hotline_bevinding": q.get_bwv_hotline_bevinding(wng_id),

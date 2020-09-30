@@ -15,7 +15,7 @@ from apps.itinerary.models import (
 )
 from apps.users.serializers import UserIdSerializer, UserSerializer
 from apps.visits.serializers import VisitSerializer
-from apps.planner.serializers import TeamSettingsModelSerializer
+from apps.planner.serializers import TeamSettingsSerializer
 from apps.planner.models import TeamSettings
 from apps.planner.const import TEAM_TYPE_SETTINGS
 from rest_framework import serializers
@@ -45,7 +45,7 @@ class PostalCodeSettingsSerializer(serializers.ModelSerializer):
 
 class ItinerarySettingsSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(many=True)
-    team_settings = TeamSettingsModelSerializer()
+    team_settings = TeamSettingsSerializer()
     primary_stadium = StadiumSerializer()
     secondary_stadia = StadiumSerializer(many=True)
     exclude_stadia = StadiumSerializer(many=True)

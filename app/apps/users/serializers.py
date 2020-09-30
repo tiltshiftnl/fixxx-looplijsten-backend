@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.planner.serializers import TeamSettingsModelSerializer as TeamSettingsModelSerializer
+from apps.planner.serializers import TeamSettingsSerializer as TeamSettingsSerializer
 from apps.planner.models import TeamSettings
 
 
@@ -11,7 +11,7 @@ class UserIdSerializer(serializers.Serializer):
     last_name = serializers.CharField(read_only=True)
     full_name = serializers.CharField()
 
-class TeamSettingsIdSerializer(TeamSettingsModelSerializer):
+class TeamSettingsIdSerializer(TeamSettingsSerializer):
     class Meta:
         model = TeamSettings
         fields = (
