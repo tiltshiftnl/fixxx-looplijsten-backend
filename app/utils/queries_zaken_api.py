@@ -108,3 +108,67 @@ def push_checked_action(case_id, check):
     data = {"identification": case_id, "check_action": check}
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
     return response
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_random(min=0, max=0.03),
+    reraise=False,
+    after=after_log(logger, logging.ERROR),
+)
+def push_new_visit_to_zaken_action(visit, subject, parameters, notes):
+    logger.info(f"Pushing visit {visit.id} to zaken")
+
+    if not settings.ZAKEN_API_URL:
+        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
+        return {}
+    elif not settings.PUSH_ZAKEN:
+        logger.info("Pushes disabled. Exit push.")
+        return {}
+
+    url = f"{settings.ZAKEN_API_URL}/push/"
+
+    data = {
+        "case_identification": visit.case.identification,
+        "subject": subject,
+        "parameters": parameters,
+        "notes": notes,
+    }
+
+    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    logger.info(f"Finished pushing case {visit.case.identification}")
+
+    visit.thread_id = response.data["thread_id"]
+    visit.save()
+    return response
+
+
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_random(min=0, max=0.03),
+    reraise=False,
+    after=after_log(logger, logging.ERROR),
+)
+def push_updated_visit_to_zaken_action(visit, subject, parameters, notes):
+    logger.info(f"Pushing visit {visit.id} to zaken")
+
+    if not settings.ZAKEN_API_URL:
+        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
+        return {}
+    elif not settings.PUSH_ZAKEN:
+        logger.info("Pushes disabled. Exit push.")
+        return {}
+
+    url = f"{settings.ZAKEN_API_URL}/push/"
+
+    data = {
+        "subject": subject,
+        "parameters": parameters,
+        "notes": notes,
+        "thread_id": visit.thread_id,
+    }
+
+    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    logger.info(f"Finished pushing updated case {visit.case.identification}")
+
+    return response
