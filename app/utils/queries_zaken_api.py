@@ -116,7 +116,7 @@ def push_checked_action(case_id, check):
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_new_visit_to_zaken_action(visit, subject, parameters, notes):
+def push_new_visit_to_zaken_action(visit, subject, authors, parameters, notes):
     logger.info(f"Pushing visit {visit.id} to zaken")
 
     if not settings.ZAKEN_API_URL:
@@ -126,19 +126,20 @@ def push_new_visit_to_zaken_action(visit, subject, parameters, notes):
         logger.info("Pushes disabled. Exit push.")
         return {}
 
-    url = f"{settings.ZAKEN_API_URL}/push/"
+    url = f"{settings.ZAKEN_API_URL}/case-timeline-threads/add-timeline-item/"
 
     data = {
-        "case_identification": visit.case.identification,
+        "case_identification": visit.case_id.case_id,
         "subject": subject,
         "parameters": parameters,
         "notes": notes,
+        "authors": authors,
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
-    logger.info(f"Finished pushing case {visit.case.identification}")
+    logger.info(f"Finished pushing case {visit.case_id.case_id}")
 
-    visit.thread_id = response.data["thread_id"]
+    visit.thread_id = response.json().get("id")
     visit.save()
     return response
 
@@ -149,7 +150,7 @@ def push_new_visit_to_zaken_action(visit, subject, parameters, notes):
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_updated_visit_to_zaken_action(visit, subject, parameters, notes):
+def push_updated_visit_to_zaken_action(visit, subject, authors, parameters, notes):
     logger.info(f"Pushing visit {visit.id} to zaken")
 
     if not settings.ZAKEN_API_URL:
@@ -159,16 +160,17 @@ def push_updated_visit_to_zaken_action(visit, subject, parameters, notes):
         logger.info("Pushes disabled. Exit push.")
         return {}
 
-    url = f"{settings.ZAKEN_API_URL}/push/"
+    url = f"{settings.ZAKEN_API_URL}/case-timeline-threads/update-timeline-item/"
 
     data = {
         "subject": subject,
         "parameters": parameters,
         "notes": notes,
         "thread_id": visit.thread_id,
+        "authors": authors,
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
-    logger.info(f"Finished pushing updated case {visit.case.identification}")
+    logger.info(f"Finished pushing updated case {visit.case_id.case_id}")
 
     return response

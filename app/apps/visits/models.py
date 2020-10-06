@@ -57,7 +57,9 @@ class Visit(models.Model):
     observations = ArrayField(
         models.CharField(max_length=50, choices=OBSERVATIONS), blank=True, null=True
     )
-    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="case_visits")
+    case_id = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name="case_visits"
+    )
     itinerary_item = models.ForeignKey(
         ItineraryItem,
         null=True,
@@ -99,16 +101,18 @@ class Visit(models.Model):
 
     def get_parameters(self):
         parameters = []
-        if self.OBSERVATION_MALFUNCTIONING_DOORBEL in self.observations:
-            parameters.append("Bel functioneert niet")
-        if self.OBSERVATION_INTERCOM in self.observations:
-            parameters.append("Contact via intercom")
-        if self.OBSERVATION_HOTEL_FURNISHED in self.observations:
-            parameters.append("Hotelmatig ingericht")
-        if self.OBSERVATION_VACANT in self.observations:
-            parameters.append("Leegstaand")
-        if self.OBSERVATION_LIKELY_INHABITED in self.observations:
-            parameters.append("Vermoedelijk bewoond")
+
+        if self.observations:
+            if self.OBSERVATION_MALFUNCTIONING_DOORBEL in self.observations:
+                parameters.append("Bel functioneert niet")
+            if self.OBSERVATION_INTERCOM in self.observations:
+                parameters.append("Contact via intercom")
+            if self.OBSERVATION_HOTEL_FURNISHED in self.observations:
+                parameters.append("Hotelmatig ingericht")
+            if self.OBSERVATION_VACANT in self.observations:
+                parameters.append("Leegstaand")
+            if self.OBSERVATION_LIKELY_INHABITED in self.observations:
+                parameters.append("Vermoedelijk bewoond")
 
         return ", ".join(parameters)
 
@@ -122,8 +126,10 @@ def update_openzaken_system(sender, instance, created, **kwargs):
     authors = []
 
     if instance.itinerary_item:
-        for user in instance.itinerary_item.itinerary.team_members.all():
-            authors.append(user.email)
+        for member in instance.itinerary_item.itinerary.team_members.all():
+            authors.append(member.user.email)
+
+    authors = ", ".join(authors)
 
     if created and settings.PUSH_ZAKEN:
         push_new_visit_to_zaken_action(
