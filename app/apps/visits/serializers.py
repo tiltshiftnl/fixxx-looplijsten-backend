@@ -1,7 +1,23 @@
-from apps.visits.models import Visit, ObservationChoices, Observation
+from apps.visits.models import Visit, Observation, Situation, SuggestNextVisit, ChoiceItem
 from apps.itinerary.models import ItineraryItem
 from rest_framework import serializers
 
+
+class SituationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Situation
+        fields = [
+            'value',
+            'verbose',
+        ]
+
+class SuggestNextVisitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SuggestNextVisit
+        fields = [
+            'value',
+            'verbose',
+        ]
 
 class ObservationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,24 +26,9 @@ class ObservationSerializer(serializers.ModelSerializer):
             'value',
             'verbose',
         ]
-    def to_representation(self, instance):
-        out = {}
-        out[instance.value] = instance.verbose
-        return out
-
-
-class ObservationChoicesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ObservationChoices
-        fields = [
-            'observations',
-        ]
-    def to_representation(self, instance):
-        return dict((i.value, i.verbose) for i in instance.observations.all())
 
 
 class VisitSerializer(serializers.ModelSerializer):
-    observation_choices = ObservationChoicesSerializer(read_only=True)
     class Meta:
         model = Visit
         fields = [
@@ -43,5 +44,4 @@ class VisitSerializer(serializers.ModelSerializer):
             'suggest_next_visit',
             'suggest_next_visit_description',
             'personal_notes',
-            'observation_choices',
         ]
