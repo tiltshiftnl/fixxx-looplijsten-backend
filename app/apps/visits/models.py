@@ -74,7 +74,12 @@ class Visit(models.Model):
 
 
 class VisitMetaData(models.Model):
-    """ Stores meta data of a visit, which can be used as documentation for legal purposes """
+    """
+    Some data surrounding a visit is transient, and can change over time.
+    One example are the fraud predictions, which change over the lifetime of a case.
+    This model serves to capture and persist (meta) data at the time of a visit.
+    The data should be relevant as (legal) documentation.
+    """
 
     visit = models.ForeignKey(
         to=Visit, on_delete=models.CASCADE, related_name="meta_data", unique=True
@@ -85,4 +90,4 @@ class VisitMetaData(models.Model):
     fraud_prediction_business_rules = models.JSONField(null=True)
     fraud_prediction_shap_values = models.JSONField(null=True)
 
-    # Expand with more meta data later
+    # Expand with more meta data later (for example, planner settings)

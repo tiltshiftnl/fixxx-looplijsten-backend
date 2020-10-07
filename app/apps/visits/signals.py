@@ -16,7 +16,7 @@ def post_save_visit(sender, instance, **kwargs):
 
 def capture_visit_meta_data(visit):
     """ Captures visit data """
-    visit_meta_data = VisitMetaData.objects.get_or_create(visit=visit)
+    visit_meta_data = VisitMetaData.objects.get_or_create(visit=visit)[0]
 
     try:
         fraud_prediction = visit.itinerary_item.case.fraud_prediction
@@ -27,3 +27,4 @@ def capture_visit_meta_data(visit):
     visit_meta_data.fraud_probability = fraud_prediction.fraud_probability
     visit_meta_data.fraud_prediction_business_rules = fraud_prediction.business_rules
     visit_meta_data.fraud_prediction_shap_values = fraud_prediction.shap_values
+    visit_meta_data.save()
