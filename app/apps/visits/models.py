@@ -74,13 +74,16 @@ class Visit(models.Model):
 
 
 class VisitMetaData(models.Model):
-    """ Stores meta data of a visit, which can be used for legal purposes """
+    """ Stores meta data of a visit, which can be used as documentation for legal purposes """
 
-    # Currently only logs the fraud prediction data, but can be expanded with more data over time.
     visit = models.ForeignKey(
-        to=Visit, on_delete=models.CASCADE, related_name="meta_data"
+        to=Visit, on_delete=models.CASCADE, related_name="meta_data", unique=True
     )
+
+    # Persist the fraud prediction data her
     fraud_probability = models.FloatField(null=True)
     fraud_prediction = models.BooleanField(null=True)
     business_rules = models.JSONField(null=True)
     shap_values = models.JSONField(null=True)
+
+    # Expand with more meta data later

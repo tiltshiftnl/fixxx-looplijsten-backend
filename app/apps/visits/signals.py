@@ -1,6 +1,7 @@
 import logging
 
-from apps.visits.models import Visit
+from apps.fraudprediction.models import FraudPrediction
+from apps.visits.models import Visit, VisitMetaData
 from django.db.models import signals
 from django.dispatch import receiver
 
@@ -8,8 +9,22 @@ logger = logging.getLogger(__name__)
 
 
 @receiver(signals.post_save, sender=Visit)
-def capture_visit_meta_data(sender, instance, **kwargs):
-    visit = instance
-    fraud_prediction = instance.itinerary_item.case.fraud_prediction
-    print(visit)
-    print(fraud_prediction)
+def post_save_visit(sender, instance, **kwargs):
+    """ Capture meta data after a visit is create or updated """
+    capture_visit_meta_data(instance)
+
+
+def capture_visit_meta_data(visit):
+    """ Captures visit data """
+    visit_meta_data = VisitMetaData.objects.get_or_create(visit=visit)
+
+    try:
+        fraud_prediction = visit.itinerary_item.case.fraud_prediction
+    except FraudPrediction.DoesNotExist:
+        return
+
+    # Add visit data to persist it as judicial documentation
+    visit_meta_data.fraud_probability = fraud_prediction.fraud_probability
+    visit_meta_data.fraud_prediction = fraud_prediction.fraud_prediction
+    visit_meta_data.business_rules = fraud_prediction.business_rules
+    visit_meta_data.fraud_probability = fraud_prediction.shap_values
