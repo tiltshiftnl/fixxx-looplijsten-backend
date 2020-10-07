@@ -4,8 +4,8 @@ from datetime import timedelta
 from os.path import join
 
 import sentry_sdk
-from apps.planner.const import EXAMPLE_PLANNER_SETTINGS
 from sentry_sdk.integrations.django import DjangoIntegration
+from settings import const as settings_const
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -202,7 +202,7 @@ CONSTANCE_CONFIG = {
     ),
     CONSTANCE_MAPS_KEY: ("", "Maps API Key"),
     CONSTANCE_PLANNER_SETTINGS_KEY: (
-        json.dumps(EXAMPLE_PLANNER_SETTINGS),
+        json.dumps(settings_const.EXAMPLE_PLANNER_SETTINGS),
         "Settings for planning and generating lists",
     ),
 }

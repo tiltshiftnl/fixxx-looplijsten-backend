@@ -1,5 +1,4 @@
 from apps.cases.models import Case
-from apps.itinerary.models import ItineraryItem
 from apps.users.models import User
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
@@ -61,7 +60,7 @@ class Visit(models.Model):
         Case, on_delete=models.CASCADE, related_name="case_visits"
     )
     itinerary_item = models.ForeignKey(
-        ItineraryItem,
+        "itinerary.ItineraryItem",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
