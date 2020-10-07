@@ -1,5 +1,4 @@
 from apps.planner.models import TeamSettings
-from apps.visits.serializers import ObservationSerializer, SituationSerializer, SuggestNextVisitSerializer
 from django.conf import settings
 from rest_framework import serializers
 from settings.const import PROJECTS, STADIA
@@ -99,9 +98,6 @@ class TeamTypeSerializer(serializers.DictField):
 class TeamSettingsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
     team_type = TeamTypeSerializer(read_only=True, required=False)
-    situation_choices = SituationSerializer(read_only=True, many=True)
-    observation_choices = ObservationSerializer(read_only=True, many=True)
-    suggest_next_visit_choices = SuggestNextVisitSerializer(read_only=True, many=True)
     project_choices = serializers.StringRelatedField(read_only=True, many=True)
     stadia_choices = serializers.StringRelatedField(read_only=True, many=True)
     settings = serializers.JSONField(required=True)
@@ -112,9 +108,6 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "team_type",
-            "observation_choices",
-            "situation_choices",
-            "suggest_next_visit_choices",
             "project_choices",
             "stadia_choices",
             "settings",

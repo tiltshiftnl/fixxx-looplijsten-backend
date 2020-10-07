@@ -1,4 +1,4 @@
-from apps.visits.models import *
+from apps.visits.models import Visit
 from django.contrib import admin
 
 

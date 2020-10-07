@@ -45,6 +45,7 @@ class Visit(models.Model):
     )
 
     situation = models.CharField(
+<<<<<<< HEAD
         max_length=50, choices=SITUATIONS, null=True, blank=True
     )
     observations = ArrayField(
@@ -52,6 +53,12 @@ class Visit(models.Model):
     )
     case_id = models.ForeignKey(
         Case, on_delete=models.CASCADE, related_name="case_visits"
+=======
+        max_length=50, choices=visits_const.SITUATIONS, null=True, blank=True
+    )
+    observations = ArrayField(
+        models.CharField(max_length=50, choices=visits_const.OBSERVATIONS), blank=True, null=True
+>>>>>>> TOP-70: db dependent visits reversed
     )
     itinerary_item = models.ForeignKey(
         "itinerary.ItineraryItem",
