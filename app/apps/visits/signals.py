@@ -25,6 +25,5 @@ def capture_visit_meta_data(visit):
 
     # Add visit data to persist it as judicial documentation
     visit_meta_data.fraud_probability = fraud_prediction.fraud_probability
-    visit_meta_data.fraud_prediction = fraud_prediction.fraud_prediction
-    visit_meta_data.business_rules = fraud_prediction.business_rules
-    visit_meta_data.fraud_probability = fraud_prediction.shap_values
+    visit_meta_data.fraud_prediction_business_rules = fraud_prediction.business_rules
+    visit_meta_data.fraud_prediction_shap_values = fraud_prediction.shap_values

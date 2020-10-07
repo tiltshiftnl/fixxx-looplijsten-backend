@@ -80,10 +80,9 @@ class VisitMetaData(models.Model):
         to=Visit, on_delete=models.CASCADE, related_name="meta_data", unique=True
     )
 
-    # Persist the fraud prediction data her
+    # Persist the fraud prediction data here
     fraud_probability = models.FloatField(null=True)
-    fraud_prediction = models.BooleanField(null=True)
-    business_rules = models.JSONField(null=True)
-    shap_values = models.JSONField(null=True)
+    fraud_prediction_business_rules = models.JSONField(null=True)
+    fraud_prediction_shap_values = models.JSONField(null=True)
 
     # Expand with more meta data later
