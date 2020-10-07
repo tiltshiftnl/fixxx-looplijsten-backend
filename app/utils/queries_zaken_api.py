@@ -139,8 +139,8 @@ def push_new_visit_to_zaken_action(visit, subject, authors, parameters, notes):
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
     logger.info(f"Finished pushing case {visit.case_id.case_id}")
 
-    # visit.thread_id = response.json().get("id")
-    # visit.save()
+    visit.thread_id = response.json().get("id")
+    visit.save()
     return response
 
 
