@@ -9,14 +9,13 @@ from apps.cases.serializers import (
     get_decos_join_mock_folder_fields,
     get_decos_join_mock_object_fields,
 )
-from .models import Case
 from apps.cases.swagger_parameters import case_search_parameters, unplanned_parameters
 from apps.fraudprediction.utils import add_fraud_predictions, get_fraud_prediction
 from apps.itinerary.models import Itinerary
 from apps.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
+from apps.planner.serializers import TeamSettingsSerializer
 from apps.visits.models import Visit
 from apps.visits.serializers import VisitSerializer
-from apps.planner.serializers import TeamSettingsSerializer
 from django.http import HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
 from django.utils.decorators import method_decorator
 from drf_spectacular.types import OpenApiTypes
@@ -31,6 +30,8 @@ from utils import queries_bag_api as bag_api
 from utils import queries_brk_api as brk_api
 from utils.queries_decos_api import DecosJoinRequest
 from utils.safety_lock import safety_lock
+
+from .models import Case
 
 
 @method_decorator(safety_lock, "retrieve")
@@ -105,7 +106,7 @@ class CaseViewSet(ViewSet):
         """
         Lists all visits for this case
         """
-        visits = Visit.objects.filter(itinerary_item__case__case_id=pk)
+        visits = Visit.objects.filter(case_id__case_id=pk)
         serializer = VisitSerializer(visits, many=True)
 
         return Response(serializer.data)
@@ -177,12 +178,16 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         street_number = request.GET.get("streetNumber", None)
         suffix = request.GET.get("suffix", "")
 
-        if postal_code is None and street_name is "":
-            return HttpResponseBadRequest("Missing postal code or street name is required")
+        if not postal_code and street_name == "":
+            return HttpResponseBadRequest(
+                "Missing postal code or street name is required"
+            )
         elif not street_number:
             return HttpResponseBadRequest("Missing steet number is required")
         else:
-            cases = q.get_search_results(postal_code, street_number, suffix, street_name)
+            cases = q.get_search_results(
+                postal_code, street_number, suffix, street_name
+            )
             cases = self.__add_fraud_prediction__(cases)
             cases = self.__add_teams__(cases, datetime.now())
 
