@@ -289,8 +289,8 @@ if ENVIRONMENT == "acceptance":
 else:
     ZAKEN_API_URL = os.getenv("ZAKEN_API_URL", None)
 
-# Allows pushes
-PUSH_ZAKEN = os.getenv("PUSH_ZAKEN", None) == "True"
+# Allows pushes from Top to Zaken, defaults to True
+PUSH_ZAKEN = os.getenv("PUSH_ZAKEN", "True") == "True"
 
 # Settings to improve security
 is_secure_environment = True if ENVIRONMENT in ["production", "acceptance"] else False
