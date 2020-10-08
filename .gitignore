@@ -2,4 +2,5 @@ app/datasets/*.csv
 *.pyc
 *.backup
 .idea
+.vscode/*
 dumps

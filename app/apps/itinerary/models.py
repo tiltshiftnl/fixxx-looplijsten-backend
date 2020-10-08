@@ -1,6 +1,5 @@
 import logging
 
-from apps.cases.const import PROJECTS, STARTING_FROM_DATE
 from apps.cases.models import Case, Project, Stadium
 from apps.planner.algorithm.clustering import ItineraryGenerateCluster
 from apps.planner.algorithm.knapsack import (
@@ -14,6 +13,7 @@ from django.contrib.admin.utils import flatten
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from settings.const import PROJECTS, STARTING_FROM_DATE
 from utils.queries_planner import get_cases_from_bwv
 
 
@@ -167,6 +167,14 @@ class ItinerarySettings(models.Model):
     """
     Settings for an itinerary
     """
+
+    team_settings = models.ForeignKey(
+        to="planner.TeamSettings",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="itinerary_team_settings",
+    )
 
     opening_date = models.DateField(blank=False, null=False)
 
@@ -331,6 +339,16 @@ class ItineraryItem(models.Model):
 
         if items_with_same_case.exists():
             raise ValueError("The itinerary already contains this case")
+
+    def get_visits_for_day(self):
+        """
+        Get all Visit's from the date the
+        """
+        return self.visits.filter(
+            start_time__year=self.itinerary.created_at.year,
+            start_time__month=self.itinerary.created_at.month,
+            start_time__day=self.itinerary.created_at.day,
+        )
 
     def save(self, *args, **kwargs):
         if self.position is None:

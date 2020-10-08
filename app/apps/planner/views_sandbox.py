@@ -1,6 +1,14 @@
 from types import SimpleNamespace
 
-from apps.cases.const import (
+from apps.planner.algorithm.knapsack import ItineraryKnapsackList
+from apps.planner.const import SCORING_WEIGHTS
+from apps.planner.utils import remove_cases_from_list
+from constance.backends.database.models import Constance
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
+from django.views import View
+from settings.const import (
     AVONDRONDE,
     DERDE_CONTROLE,
     ONDERZOEK_BUITENDIENST,
@@ -10,14 +18,6 @@ from apps.cases.const import (
     TWEEDE_CONTROLE,
     WEEKEND_BUITENDIENST_ONDERZOEK,
 )
-from apps.planner.algorithm.knapsack import ItineraryKnapsackList
-from apps.planner.const import SCORING_WEIGHTS
-from apps.planner.utils import remove_cases_from_list
-from constance.backends.database.models import Constance
-from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
-from django.views import View
 from utils.queries_zaken_api import get_cases
 
 

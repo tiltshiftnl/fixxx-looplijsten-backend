@@ -4,8 +4,8 @@ from datetime import timedelta
 from os.path import join
 
 import sentry_sdk
-from apps.planner.const import EXAMPLE_PLANNER_SETTINGS
 from sentry_sdk.integrations.django import DjangoIntegration
+from settings import const as settings_const
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -197,7 +197,7 @@ CONSTANCE_CONFIG = {
     ),
     CONSTANCE_MAPS_KEY: ("", "Maps API Key"),
     CONSTANCE_PLANNER_SETTINGS_KEY: (
-        json.dumps(EXAMPLE_PLANNER_SETTINGS),
+        json.dumps(settings_const.EXAMPLE_PLANNER_SETTINGS),
         "Settings for planning and generating lists",
     ),
 }
@@ -315,3 +315,16 @@ CITY_MAX_POSTAL_CODE = 1109
 
 # Secret key for accessing ZAKEN
 SECRET_KEY_TOP_ZAKEN = os.environ.get("SECRET_KEY_TOP_ZAKEN", None)
+# Connect to Decos Join
+DECOS_JOIN_API = "https://decosdvl.acc.amsterdam.nl:443/decosweb/aspx/api/v1/items/"
+DECOS_JOIN_USERNAME = os.getenv("DECOS_JOIN_USERNAME", None)
+DECOS_JOIN_PASSWORD = os.getenv("DECOS_JOIN_PASSWORD", None)
+DECOS_JOIN_BANDB_ID = "D8D961993D7E478D9B644587822817B1"
+DECOS_JOIN_VAKANTIEVERHUUR_ID = "TBD"
+DECOS_JOIN_BOOK_KNOWN_BAG_OBJECTS = "90642DCCC2DB46469657C3D0DF0B1ED7"
+DECOS_JOIN_BOOK_UNKNOWN_BOOK = "B1FF791EA9FA44698D5ABBB1963B94EC"
+USE_DECOS_MOCK_DATA = True
+
+
+# SUBJECTS FOR ZAKEN SYSTEEM TIMELINE
+TIMELINE_SUBJECT_VISIT = "Bezoek"

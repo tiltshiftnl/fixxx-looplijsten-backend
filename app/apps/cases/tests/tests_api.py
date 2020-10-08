@@ -1,7 +1,6 @@
 import datetime
 from unittest.mock import Mock, patch
 
-from apps.cases.const import ISSUEMELDING
 from apps.cases.models import Case
 from apps.fraudprediction.models import FraudPrediction
 from apps.fraudprediction.serializers import FraudPredictionSerializer
@@ -11,6 +10,7 @@ from django.urls import reverse
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APITestCase
+from settings.const import ISSUEMELDING
 
 from app.utils.unittest_helpers import (
     get_authenticated_client,

@@ -1,21 +1,21 @@
 # Core
-Django==3.0.7
+Django==3.1.2
 psycopg2
 
 # Rest apis
-djangorestframework==3.11.0
+djangorestframework==3.11.1
 django-cors-headers==3.4.0
-drf-spectacular==0.9.9
+drf-spectacular==0.9.13
 
 # Logging
-sentry-sdk==0.15.1
+sentry-sdk==0.18.0
 
 # Testing
 freezegun==0.3.15
 model_bakery
 
 # Settings
-django-constance[database]==2.6.0
+django-constance[database]==2.7.0
 
 # Other
 requests==2.24.0
@@ -27,7 +27,7 @@ mozilla-django-oidc==1.2.3
 djangorestframework-simplejwt==4.4.0
 
 # Algorithm toolbox
-geopy==1.22.0
-joblib==0.14.1
-scikit-learn==0.22.1
+geopy==2.0.0
+joblib==0.16.0
+scikit-learn==0.23.2
 numpy

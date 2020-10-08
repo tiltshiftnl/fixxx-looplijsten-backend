@@ -4,7 +4,8 @@ from apps.users.auth import AuthenticationBackend
 from apps.users.models import User
 from apps.users.serializers import UserSerializer
 from django.http import HttpResponseBadRequest
-from rest_framework import generics
+from django.utils.decorators import method_decorator
+from rest_framework import generics, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,7 +29,12 @@ class IsAuthenticatedView(APIView):
         return Response({"is_authenticated": is_authenticated})
 
 
+class OIDCAuthenticateSerializer(serializers.Serializer):
+    code = serializers.CharField(required=True)
+
+
 class ObtainAuthTokenOIDC(APIView):
+    serializer_class = OIDCAuthenticateSerializer
     permission_classes = ()
 
     def post(self, request, *args, **kwargs):

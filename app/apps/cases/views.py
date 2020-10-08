@@ -1,14 +1,26 @@
 from datetime import datetime
 
-from apps.cases.serializers import UnplannedCasesSerializer
+from apps.cases.serializers import (
+    DecosJoinFolderFieldsResponseSerializer,
+    DecosJoinObjectFieldsResponseSerializer,
+    DecosPermitSerializer,
+    PermitCheckmarkSerializer,
+    UnplannedCasesSerializer,
+    get_decos_join_mock_folder_fields,
+    get_decos_join_mock_object_fields,
+)
+from .models import Case
 from apps.cases.swagger_parameters import case_search_parameters, unplanned_parameters
 from apps.fraudprediction.utils import add_fraud_predictions, get_fraud_prediction
 from apps.itinerary.models import Itinerary
 from apps.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
 from apps.visits.models import Visit
 from apps.visits.serializers import VisitSerializer
+from apps.planner.serializers import TeamSettingsSerializer
 from django.http import HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
-from drf_spectacular.utils import extend_schema
+from django.utils.decorators import method_decorator
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -17,6 +29,7 @@ from rest_framework.viewsets import ViewSet
 from utils import queries as q
 from utils import queries_bag_api as bag_api
 from utils import queries_brk_api as brk_api
+from utils.queries_decos_api import DecosJoinRequest
 
 
 class CaseViewSet(ViewSet):
@@ -39,6 +52,8 @@ class CaseViewSet(ViewSet):
         # Get the bag_data first in order to retrieve the 'verblijfsobjectidentificatie' id
         bag_data = bag_api.get_bag_data(wng_id)
         bag_id = bag_data.get("verblijfsobjectidentificatie")
+        case_instance = Case.get(case_id)
+        team_settings_serializer = TeamSettingsSerializer(case_instance.team_settings)
 
         data = {
             "bwv_hotline_bevinding": q.get_bwv_hotline_bevinding(wng_id),
@@ -53,6 +68,7 @@ class CaseViewSet(ViewSet):
             "brk_data": brk_api.get_brk_data(bag_id),
             "related_cases": q.get_related_cases(adres_id),
             "fraud_prediction": get_fraud_prediction(case_id),
+            "team_settings": team_settings_serializer.data,
         }
 
         return JsonResponse(data)
@@ -152,16 +168,60 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         Returns a list of cases found with the given parameters
         """
         postal_code = request.GET.get("postalCode", None)
+        street_name = request.GET.get("streetName", "")
         street_number = request.GET.get("streetNumber", None)
         suffix = request.GET.get("suffix", "")
 
-        if postal_code is None:
-            return HttpResponseBadRequest("Missing postal code is required")
+        if postal_code is None and street_name is "":
+            return HttpResponseBadRequest("Missing postal code or street name is required")
         elif not street_number:
             return HttpResponseBadRequest("Missing steet number is required")
         else:
-            cases = q.get_search_results(postal_code, street_number, suffix)
+            cases = q.get_search_results(postal_code, street_number, suffix, street_name)
             cases = self.__add_fraud_prediction__(cases)
             cases = self.__add_teams__(cases, datetime.now())
 
             return JsonResponse({"cases": cases})
+
+
+bag_id = OpenApiParameter(
+    name="bag_id",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    required=True,
+    description="Verblijfsobjectidentificatie",
+)
+
+
+class PermitViewSet(ViewSet):
+    @extend_schema(
+        parameters=[bag_id],
+        description="Get permit checkmarks based on bag id",
+        responses={200: PermitCheckmarkSerializer()},
+    )
+    @action(detail=False, url_name="permit checkmarks", url_path="checkmarks")
+    def get_permit_checkmarks(self, request):
+        bag_id = request.GET.get("bag_id")
+        response = DecosJoinRequest().get_checkmarks_by_bag_id(bag_id)
+
+        serializer = PermitCheckmarkSerializer(data=response)
+
+        if serializer.is_valid():
+            return Response(serializer.data)
+        return Response(serializer.initial_data)
+
+    @extend_schema(
+        parameters=[bag_id],
+        description="Get permit details based on bag id",
+        responses={200: DecosPermitSerializer(many=True)},
+    )
+    @action(detail=False, url_name="permit details", url_path="details")
+    def get_permit_details(self, request):
+        bag_id = request.GET.get("bag_id")
+        response = DecosJoinRequest().get_permits_by_bag_id(bag_id)
+
+        serializer = DecosPermitSerializer(data=response, many=True)
+
+        if serializer.is_valid():
+            return Response(serializer.data)
+        return Response(serializer.initial_data)
