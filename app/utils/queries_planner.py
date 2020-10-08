@@ -6,6 +6,10 @@ def get_eligible_stadia(starting_date, stages):
     Gets stadia which are eligible for planning
     """
 
+    # Due to a recent change in the workprocess, a new stage was introduced which can be open during
+    # other stages. This overrules open stages that are relevant voor generating itineraries
+    # exception_stages is now added to filter out this process.
+
     query = """
             SELECT
             sta_oms AS stadium,
@@ -19,9 +23,15 @@ def get_eligible_stadia(starting_date, stages):
             AND begindatum > %(starting_date)s
             AND peildatum < NOW()
             AND sta_oms IN %(stages)s
+            AND sta_oms NOT IN %(exception_stages)s
             """
 
-    args = {"starting_date": starting_date, "stages": tuple(stages)}
+    exception_stages = ("Terugkoppeling SIA",)
+    args = {
+        "starting_date": starting_date,
+        "stages": tuple(stages),
+        "exception_stages": exception_stages,
+    }
     stadia = do_query(query, args)
 
     # Parses the case_id from the stadia_id and maps it in dictionary to easily access the stadia
