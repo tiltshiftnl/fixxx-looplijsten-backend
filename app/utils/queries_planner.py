@@ -6,8 +6,8 @@ def get_eligible_stadia(starting_date, stages):
     Gets stadia which are eligible for planning
     """
 
-    # Due to a recent change in the workprocess, a new stage was introduced which can be open during
-    # other stages. This overrules open stages that are relevant voor generating itineraries
+    # Due to a recent change in the process, a new stage was introduced which can be open during
+    # other stages. This overrules open stages that are relevant for generating itineraries
     # exception_stages is now added to filter out this process.
 
     query = """
