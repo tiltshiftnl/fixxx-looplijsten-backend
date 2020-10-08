@@ -172,7 +172,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         street_number = request.GET.get("streetNumber", None)
         suffix = request.GET.get("suffix", "")
 
-        if postal_code and street_name == "":
+        if not postal_code and street_name == "":
             return HttpResponseBadRequest(
                 "Missing postal code or street name is required"
             )
