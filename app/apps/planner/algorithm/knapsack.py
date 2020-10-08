@@ -203,7 +203,11 @@ class ItineraryKnapsackList(ItineraryKnapsackSuggestions):
 
         # Run in parallel processes to improve speed
         jobs = multiprocessing.cpu_count()
-        candidates = Parallel(n_jobs=jobs, backend="multiprocessing")(
+
+        # multiprocessing freezes during local sometimes, trying threads instead
+        # candidates = Parallel(n_jobs=jobs, backend="multiprocessing")(
+
+        candidates = Parallel(n_jobs=jobs, prefer="threads")(
             delayed(self.parallelized_function)(case, cases, fraud_predictions, index)
             for index, case in enumerate(cases)
         )
