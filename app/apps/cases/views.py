@@ -100,7 +100,7 @@ class CaseViewSet(ViewSet):
         """
         Lists all visits for this case
         """
-        visits = Visit.objects.filter(itinerary_item__case__case_id=pk)
+        visits = Visit.objects.filter(case_id__case_id=pk)
         serializer = VisitSerializer(visits, many=True)
 
         return Response(serializer.data)
@@ -172,12 +172,16 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         street_number = request.GET.get("streetNumber", None)
         suffix = request.GET.get("suffix", "")
 
-        if postal_code is None and street_name is "":
-            return HttpResponseBadRequest("Missing postal code or street name is required")
+        if postal_code and street_name == "":
+            return HttpResponseBadRequest(
+                "Missing postal code or street name is required"
+            )
         elif not street_number:
             return HttpResponseBadRequest("Missing steet number is required")
         else:
-            cases = q.get_search_results(postal_code, street_number, suffix, street_name)
+            cases = q.get_search_results(
+                postal_code, street_number, suffix, street_name
+            )
             cases = self.__add_fraud_prediction__(cases)
             cases = self.__add_teams__(cases, datetime.now())
 
