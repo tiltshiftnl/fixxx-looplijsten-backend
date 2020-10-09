@@ -1,6 +1,9 @@
-from apps.cases.const import PROJECTS, STADIA
+from apps.planner.models import TeamSettings
 from django.conf import settings
 from rest_framework import serializers
+from settings.const import PROJECTS, STADIA
+
+from .const import TEAM_TYPE_SETTINGS
 
 
 class PlannerListSettingsSerializer(serializers.Serializer):
@@ -85,3 +88,37 @@ class PlannerSettingsSerializer(serializers.Serializer):
     projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
     postal_codes = PlannerPostalCodeSettingsSerializer(required=False, many=True)
     days = PlannerWeekSettingsSerializer(required=True)
+
+
+class TeamTypeSerializer(serializers.DictField):
+    def to_representation(self, instance):
+        return TEAM_TYPE_SETTINGS.get(instance)
+
+
+class TeamSettingsSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True)
+    team_type = TeamTypeSerializer(read_only=True, required=False)
+    settings = serializers.JSONField(required=True)
+
+    class Meta:
+        model = TeamSettings
+        fields = (
+            "id",
+            "name",
+            "team_type",
+            "settings",
+        )
+
+    @property
+    def data(self):
+        data = super().data
+        data["projects"] = data.get("team_type").get("project_choices")
+        data["stadia"] = data.get("team_type").get("stadia_choices")
+        return data
+
+    def validate(self, data):
+        data = super().validate(data)
+        settings = PlannerSettingsSerializer(data=data.get("settings"), required=True)
+        if not settings.is_valid():
+            raise serializers.ValidationError("Wrong settings format")
+        return data

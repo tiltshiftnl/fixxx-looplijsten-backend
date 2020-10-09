@@ -13,6 +13,7 @@ from apps.cases.swagger_parameters import case_search_parameters, unplanned_para
 from apps.fraudprediction.utils import add_fraud_predictions, get_fraud_prediction
 from apps.itinerary.models import Itinerary
 from apps.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
+from apps.planner.serializers import TeamSettingsSerializer
 from apps.visits.models import Visit
 from apps.visits.serializers import VisitSerializer
 from django.http import HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
@@ -28,11 +29,10 @@ from utils import queries as q
 from utils import queries_bag_api as bag_api
 from utils import queries_brk_api as brk_api
 from utils.queries_decos_api import DecosJoinRequest
-from utils.safety_lock import safety_lock
+
+from .models import Case
 
 
-@method_decorator(safety_lock, "retrieve")
-@method_decorator(safety_lock, "unplanned")
 class CaseViewSet(ViewSet):
     """
     A Viewset for showing a single Case in detail
@@ -53,6 +53,8 @@ class CaseViewSet(ViewSet):
         # Get the bag_data first in order to retrieve the 'verblijfsobjectidentificatie' id
         bag_data = bag_api.get_bag_data(wng_id)
         bag_id = bag_data.get("verblijfsobjectidentificatie")
+        case_instance = Case.get(case_id)
+        team_settings_serializer = TeamSettingsSerializer(case_instance.team_settings)
 
         data = {
             "bwv_hotline_bevinding": q.get_bwv_hotline_bevinding(wng_id),
@@ -67,6 +69,7 @@ class CaseViewSet(ViewSet):
             "brk_data": brk_api.get_brk_data(bag_id),
             "related_cases": q.get_related_cases(adres_id),
             "fraud_prediction": get_fraud_prediction(case_id),
+            "team_settings": team_settings_serializer.data,
         }
 
         return JsonResponse(data)
@@ -161,8 +164,6 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
     @extend_schema(
         parameters=case_search_parameters, description="Search query parameters"
     )
-    @action(detail=False, methods=["get"])
-    @safety_lock
     def list(self, request):
         """
         Returns a list of cases found with the given parameters

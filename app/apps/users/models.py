@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from apps.users.user_manager import UserManager
@@ -16,11 +17,34 @@ class User(AbstractUser):
         blank=False,
         error_messages={"unique": "A user with that email already exists.",},
     )
+    team_settings = models.ManyToManyField(
+        to="planner.TeamSettings", blank=True, related_name="team_settings",
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    @property
+    def get_current_itinerary(self):
+        now = datetime.datetime.now()
+        teams = self.teams.filter(
+            itinerary__created_at__gte=datetime.datetime(now.year, now.month, now.day)
+        )
+        if teams:
+            return teams[0].itinerary
+        return None
+
+    @property
+    def current_itinerary_id(self):
+        itinerary = self.get_current_itinerary
+        return itinerary.id if itinerary else itinerary
+
+    @property
+    def current_team_settings_id(self):
+        itinerary = self.get_current_itinerary
+        return itinerary.settings.team_settings.id if itinerary else itinerary
 
     @property
     def full_name(self):
