@@ -11,12 +11,10 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from settings.const import ISSUEMELDING, PROJECTS, STADIA
-from utils.safety_lock import safety_lock
 
 
-@method_decorator(safety_lock, "list")
 class ConstantsProjectsViewSet(ViewSet):
     """
     Retrieve the projects constants which are used for cases
@@ -28,7 +26,6 @@ class ConstantsProjectsViewSet(ViewSet):
         return JsonResponse({"constants": PROJECTS})
 
 
-@method_decorator(safety_lock, "list")
 class ConstantsStadiaViewSet(ViewSet):
     """
     Retrieve the stadia constants which are used for cases
@@ -42,8 +39,6 @@ class ConstantsStadiaViewSet(ViewSet):
         return JsonResponse({"constants": constants_stadia})
 
 
-@method_decorator(safety_lock, "list")
-@method_decorator(safety_lock, "create")
 class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     """
     Retrieves the planner settings which are used for generating lists
@@ -92,14 +87,7 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         return JsonResponse(data)
 
 
-@method_decorator(safety_lock, name="retrieve")
-@method_decorator(safety_lock, name="update")
-@method_decorator(safety_lock, name="destroy")
-@method_decorator(safety_lock, name="create")
-@method_decorator(safety_lock, name="list")
-class TeamSettingsViewSet(
-    ViewSet, GenericAPIView, CreateModelMixin, UpdateModelMixin, DestroyModelMixin
-):
+class TeamSettingsViewSet(ModelViewSet):
     """
     A view for listing/adding/updating/removing a TeamSettings
     """
@@ -108,14 +96,10 @@ class TeamSettingsViewSet(
     serializer_class = TeamSettingsSerializer
     queryset = TeamSettings.objects.all()
 
-    def list(self, request):
-        serializer = self.serializer_class(self.queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        team_settings = get_object_or_404(self.queryset, pk=pk)
-        serializer = TeamSettingsSerializer(team_settings)
-        return Response(serializer.data)
+    # def retrieve(self, request, pk=None):
+    #     team_settings = get_object_or_404(self.queryset, pk=pk)
+    #     serializer = TeamSettingsSerializer(team_settings)
+    #     return Response(serializer.data)
 
     # TODO PlannerSettings is not defined!
     # def create(self, request):

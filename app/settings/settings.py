@@ -181,17 +181,12 @@ SPECTACULAR_SETTINGS = {
 
 CONSTANCE_BACKEND = "constance.backends.database.DatabaseBackend"
 
-CONSTANCE_ALLOW_DATA_ACCESS_KEY = "ALLOW_DATA_ACCESS"
 CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY = "BRK_AUTHENTICATION_TOKEN"
 CONSTANCE_BRK_AUTHENTICATION_TOKEN_EXPIRY_KEY = "BRK_AUTHENTICATION_TOKEN_EXPIRY"
 CONSTANCE_MAPS_KEY = "MAPS_KEY"
 CONSTANCE_PLANNER_SETTINGS_KEY = "PLANNER_SETTINGS"
 
 CONSTANCE_CONFIG = {
-    CONSTANCE_ALLOW_DATA_ACCESS_KEY: (
-        True,
-        "Allow data to be accesible through the API",
-    ),
     CONSTANCE_BRK_AUTHENTICATION_TOKEN_KEY: (
         "",
         "Authentication token for accessing BRK API",
@@ -289,8 +284,8 @@ if ENVIRONMENT == "acceptance":
 else:
     ZAKEN_API_URL = os.getenv("ZAKEN_API_URL", None)
 
-# Allows pushes
-PUSH_ZAKEN = os.getenv("PUSH_ZAKEN", True)
+# Allows pushes from Top to Zaken, defaults to True
+PUSH_ZAKEN = os.getenv("PUSH_ZAKEN", "True") == "True"
 
 # Settings to improve security
 is_secure_environment = True if ENVIRONMENT in ["production", "acceptance"] else False

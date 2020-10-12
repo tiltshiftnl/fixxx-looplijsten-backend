@@ -41,9 +41,7 @@ api_router.register(
 api_router.register(
     r"settings/planner", SettingsPlannerViewSet, basename="settings-planner"
 )
-api_router.register(
-    r"team-settings", TeamSettingsViewSet, basename="team-settings"
-)
+api_router.register(r"team-settings", TeamSettingsViewSet, basename="team-settings")
 api_router.register(
     r"fraud-prediction/scoring",
     FraudPredictionScoringViewSet,
@@ -79,8 +77,6 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
-    # Temporary redirect for meetup
-    path("meetup", RedirectView.as_view(url="https://meet.google.com/ags-apae-wqs")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # JSON handlers for errors
