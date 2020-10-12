@@ -87,6 +87,7 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         return JsonResponse(data)
 
 
+
 class TeamSettingsViewSet(ModelViewSet):
     """
     A view for listing/adding/updating/removing a TeamSettings
