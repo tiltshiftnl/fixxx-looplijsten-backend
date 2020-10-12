@@ -47,7 +47,7 @@ def update_openzaken_system(sender, instance, created, **kwargs):
 
 @receiver(signals.post_save, sender=Visit)
 def post_save_visit(sender, instance, **kwargs):
-    """ Capture meta data after a visit is create or updated """
+    """ Capture meta data after a visit is created or updated """
     capture_visit_meta_data(instance)
 
 
