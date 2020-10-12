@@ -1,3 +1,4 @@
+from settings.const import TERUGKOPPELING_SIA
 from utils.query_helpers import do_query
 
 
@@ -8,7 +9,7 @@ def get_eligible_stadia(starting_date, stages):
 
     # Due to a recent change in the process, a new stage was introduced which can be open during
     # other stages. This overrules open stages that are relevant for generating itineraries
-    # exception_stages is now added to filter out this process.
+    # exclude_stadia is now added to filter out this process.
 
     query = """
             SELECT
@@ -23,14 +24,14 @@ def get_eligible_stadia(starting_date, stages):
             AND begindatum > %(starting_date)s
             AND peildatum < NOW()
             AND sta_oms IN %(stages)s
-            AND sta_oms NOT IN %(exception_stages)s
+            AND sta_oms NOT IN %(exclude_stadia)s
             """
 
-    exception_stages = ("Terugkoppeling SIA",)
+    exclude_stadia = (TERUGKOPPELING_SIA,)
     args = {
         "starting_date": starting_date,
         "stages": tuple(stages),
-        "exception_stages": exception_stages,
+        "exclude_stadia": exclude_stadia,
     }
     stadia = do_query(query, args)
 

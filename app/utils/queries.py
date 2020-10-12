@@ -1,3 +1,4 @@
+from settings.const import ISSUEMELDING, TERUGKOPPELING_SIA
 from utils.date_helpers import get_days_in_range
 from utils.query_helpers import do_query, return_first_or_empty
 from utils.statement_helpers import parse_statement
@@ -7,13 +8,12 @@ def get_search_results(postal_code, street_number, suffix, street_name):
     suffix = suffix.replace(" ", "")
     suffix_query = ""
     postal_code_query = ""
-    street_name_query = ""
 
     if postal_code:
-      postal_code_query = "AND LOWER(postcode) = LOWER(%(postal_code)s)"
+        postal_code_query = "AND LOWER(postcode) = LOWER(%(postal_code)s)"
 
     if street_name:
-      postal_code_query = "WHERE LOWER(sttnaam) LIKE LOWER(%(street_name)s)"
+        postal_code_query = "WHERE LOWER(sttnaam) LIKE LOWER(%(street_name)s)"
 
     if suffix:
         suffix_query = "WHERE LOWER(suffix) LIKE LOWER(%(suffix)s)"
@@ -35,7 +35,9 @@ def get_search_results(postal_code, street_number, suffix, street_name):
                   import_wvs.adres_id = import_adres.adres_id
                 AND
                   import_wvs.afs_code is NULL
-                """ + postal_code_query + """
+                """
+        + postal_code_query
+        + """
                 AND
                   hsnr = %(street_number)s
               )
@@ -47,7 +49,7 @@ def get_search_results(postal_code, street_number, suffix, street_name):
 
     args = {
         "postal_code": postal_code,
-        "street_name": "%"+street_name + "%",
+        "street_name": "%" + street_name + "%",
         # % is added here because of the LIKE sql check
         "suffix": suffix + "%",
         "street_number": street_number,
@@ -205,11 +207,17 @@ def get_import_stadia(case_id):
             INNER JOIN import_wvs ON import_stadia.adres_id = import_wvs.adres_id
             AND stadia_id LIKE %(stadia_id)s
             AND zaak_id = %(case_id)s
+            AND sta_oms NOT IN %(exclude_stadia)s
             ORDER BY sta_nr DESC
             """
 
-    # Adds the _% to support the LIKE query
-    args = {"case_id": case_id, "stadia_id": case_id + "_%"}
+    # Adds the _% to support the LIKE query and the exception stages to exclude
+    exclude_stadia = (TERUGKOPPELING_SIA,)
+    args = {
+        "case_id": case_id,
+        "stadia_id": case_id + "_%",
+        "exclude_stadia": exclude_stadia,
+    }
 
     all_stadia = do_query(query, args)
 
@@ -245,15 +253,23 @@ def get_case(case_id):
             AND
               stadia_id LIKE %(case_id_like)s
             AND import_wvs.zaak_id = %(case_id)s
+            AND sta_oms NOT IN %(exclude_stadia)s
             ORDER BY
               import_stadia.einddatum DESC, sta_nr DESC
             LIMIT 1
             """
 
-    args = {"case_id_like": case_id + "_%", "case_id": case_id}
+    exclude_stadia = (TERUGKOPPELING_SIA,)
+    args = {
+        "case_id_like": case_id + "_%",
+        "case_id": case_id,
+        "exclude_stadia": exclude_stadia,
+    }
     executed_query = do_query(query, args)
 
-    return return_first_or_empty(executed_query)
+    case = return_first_or_empty(executed_query)
+
+    return case
 
 
 def get_open_cases(address_id):
