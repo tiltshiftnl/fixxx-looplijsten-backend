@@ -11,7 +11,7 @@ from rest_framework.generics import CreateAPIView, GenericAPIView
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from settings.const import ISSUEMELDING, PROJECTS, STADIA
 
 
@@ -85,7 +85,6 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         planner_settings.save()
 
         return JsonResponse(data)
-
 
 
 class TeamSettingsViewSet(ModelViewSet):
