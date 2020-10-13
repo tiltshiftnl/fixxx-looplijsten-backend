@@ -1,3 +1,4 @@
+from settings.const import ISSUEMELDING, TERUGKOPPELING_SIA
 from utils.date_helpers import get_days_in_range
 from utils.query_helpers import do_query, return_first_or_empty
 from utils.statement_helpers import parse_statement
@@ -206,11 +207,17 @@ def get_import_stadia(case_id):
             INNER JOIN import_wvs ON import_stadia.adres_id = import_wvs.adres_id
             AND stadia_id LIKE %(stadia_id)s
             AND zaak_id = %(case_id)s
+            AND sta_oms NOT IN %(exclude_stadia)s
             ORDER BY sta_nr DESC
             """
 
-    # Adds the _% to support the LIKE query
-    args = {"case_id": case_id, "stadia_id": case_id + "_%"}
+    # Adds the _% to support the LIKE query and the exception stages to exclude
+    exclude_stadia = (TERUGKOPPELING_SIA,)
+    args = {
+        "case_id": case_id,
+        "stadia_id": case_id + "_%",
+        "exclude_stadia": exclude_stadia,
+    }
 
     all_stadia = do_query(query, args)
 
@@ -246,15 +253,23 @@ def get_case(case_id):
             AND
               stadia_id LIKE %(case_id_like)s
             AND import_wvs.zaak_id = %(case_id)s
+            AND sta_oms NOT IN %(exclude_stadia)s
             ORDER BY
               import_stadia.einddatum DESC, sta_nr DESC
             LIMIT 1
             """
 
-    args = {"case_id_like": case_id + "_%", "case_id": case_id}
+    exclude_stadia = (TERUGKOPPELING_SIA,)
+    args = {
+        "case_id_like": case_id + "_%",
+        "case_id": case_id,
+        "exclude_stadia": exclude_stadia,
+    }
     executed_query = do_query(query, args)
 
-    return return_first_or_empty(executed_query)
+    case = return_first_or_empty(executed_query)
+
+    return case
 
 
 def get_open_cases(address_id):

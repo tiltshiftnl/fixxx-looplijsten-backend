@@ -1,3 +1,4 @@
+from settings.const import TERUGKOPPELING_SIA
 from utils.query_helpers import do_query
 
 
@@ -5,6 +6,10 @@ def get_eligible_stadia(starting_date, stages):
     """
     Gets stadia which are eligible for planning
     """
+
+    # Due to a recent change in the process, a new stage was introduced which can be open during
+    # other stages. This overrules open stages that are relevant for generating itineraries
+    # exclude_stadia is now added to filter out this process.
 
     query = """
             SELECT
@@ -19,9 +24,15 @@ def get_eligible_stadia(starting_date, stages):
             AND begindatum > %(starting_date)s
             AND peildatum < NOW()
             AND sta_oms IN %(stages)s
+            AND sta_oms NOT IN %(exclude_stadia)s
             """
 
-    args = {"starting_date": starting_date, "stages": tuple(stages)}
+    exclude_stadia = (TERUGKOPPELING_SIA,)
+    args = {
+        "starting_date": starting_date,
+        "stages": tuple(stages),
+        "exclude_stadia": exclude_stadia,
+    }
     stadia = do_query(query, args)
 
     # Parses the case_id from the stadia_id and maps it in dictionary to easily access the stadia

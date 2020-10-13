@@ -112,6 +112,7 @@ AVONDRONDE = "Avondronde"
 ONDERZOEK_ADVERTENTIE = "Onderzoek advertentie"
 WEEKEND_BUITENDIENST_ONDERZOEK = "Weekend buitendienstonderzoek"
 ISSUEMELDING = "Issuemelding"
+TERUGKOPPELING_SIA = "Terugkoppeling SIA"
 
 STADIA_ZL_CORPORATIE = "ZL Corporatie"
 STADIA_CRIMINEEL_GEBRUIK_WONINGEN = "Crimineel gebruik woning"
