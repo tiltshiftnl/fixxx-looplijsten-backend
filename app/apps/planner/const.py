@@ -4,6 +4,8 @@ from apps.visits.models import Visit
 from settings import const
 
 
+# Note: currently the weights are defined as an Enum class.
+# Eventually we might want to make this configurable through the settings page or admin
 class SCORING_WEIGHTS(Enum):
     DISTANCE = 0.25
     FRAUD_PROBABILITY = 1
