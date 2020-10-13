@@ -15,7 +15,7 @@ class VisitMetaData(admin.ModelAdmin):
         return obj.visit.start_time
 
     def case_id(self, obj):
-        return obj.visit.itinerary_item.case.case_id
+        return obj.visit.itinerary_item
 
     def has_change_permission(self, request, obj=None):
         return False
