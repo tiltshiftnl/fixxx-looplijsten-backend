@@ -63,3 +63,20 @@ Running migrations:
 ```bash
 docker-compose run --rm api python manage.py migrate
 ```
+
+## Adding pre-commit hooks
+You can add pre-commit hooks for checking and cleaning up your changes:
+```
+bash install.sh
+```
+
+You can also run the following command to ensure all files adhere to coding conventions:
+```
+bash cleanup.sh
+```
+This will autoformat your code, sort your imports and fix or find overal problems.
+
+The Github actions will use the same bash script to check if the code in the pull requests follows the formatting and style conventions.
+
+## Coding conventions and style
+The project uses [Black](https://github.com/psf/black) for formatting and [Flake8](https://pypi.org/project/flake8/) for linting.
