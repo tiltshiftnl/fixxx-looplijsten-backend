@@ -13,7 +13,6 @@ from apps.cases.swagger_parameters import case_search_parameters, unplanned_para
 from apps.fraudprediction.utils import add_fraud_predictions, get_fraud_prediction
 from apps.itinerary.models import Itinerary
 from apps.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
-from apps.planner.serializers import TeamSettingsSerializer
 from apps.visits.models import Visit
 from apps.visits.serializers import VisitSerializer
 from django.http import HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
@@ -54,7 +53,9 @@ class CaseViewSet(ViewSet):
         bag_data = bag_api.get_bag_data(wng_id)
         bag_id = bag_data.get("verblijfsobjectidentificatie")
         case_instance = Case.get(case_id)
-        team_settings_serializer = TeamSettingsSerializer(case_instance.team_settings)
+        team_settings_id = (
+            case_instance.team_settings.id if case_instance.team_settings else None
+        )
 
         data = {
             "bwv_hotline_bevinding": q.get_bwv_hotline_bevinding(wng_id),
@@ -69,7 +70,7 @@ class CaseViewSet(ViewSet):
             "brk_data": brk_api.get_brk_data(bag_id),
             "related_cases": q.get_related_cases(adres_id),
             "fraud_prediction": get_fraud_prediction(case_id),
-            "team_settings": team_settings_serializer.data,
+            "team_settings_id": team_settings_id,
         }
 
         return JsonResponse(data)
