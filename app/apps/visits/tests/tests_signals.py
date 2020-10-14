@@ -33,6 +33,7 @@ class VisitsSignalsTests(TestCase):
             author=user,
             itinerary_item=itinerary_item,
             start_time=datetime(2020, 10, 6, tzinfo=UTC),
+            case_id=case,
         )
 
         return visit
