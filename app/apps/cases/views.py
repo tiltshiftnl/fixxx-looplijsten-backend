@@ -169,7 +169,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         Returns a list of cases found with the given parameters
         """
         postal_code = request.GET.get("postalCode", None)
-        street_name = request.GET.get("streetName", "")
+        street_name = request.GET.get("streetName", None)
         street_number = request.GET.get("streetNumber", None)
         suffix = request.GET.get("suffix", "")
 
@@ -178,7 +178,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
                 "Missing postal code or street name is required"
             )
         elif not street_number:
-            return HttpResponseBadRequest("Missing steet number is required")
+            return HttpResponseBadRequest("Missing street number is required")
         else:
             cases = q.get_search_results(
                 postal_code, street_number, suffix, street_name

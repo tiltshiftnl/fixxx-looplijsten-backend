@@ -173,6 +173,7 @@ class CaseViewSetTest(APITestCase):
         self.assertEqual(response.json()[1]["id"], visit_1.id)
 
 
+# TODO: tests for search with streetName
 class CaseSearchViewSetTest(APITestCase):
     """
     Tests for the API endpoint for searching cases
@@ -182,6 +183,7 @@ class CaseSearchViewSetTest(APITestCase):
         "postalCode": "FOO_POSTAL_CODE",
         "streetNumber": "FOO_STREET_NUMBER",
         "suffix": "FOO_SUFFIX",
+        "streetName": "FOO_STREET_NAME",
     }
 
     def test_unauthenticated_request(self):
@@ -196,13 +198,14 @@ class CaseSearchViewSetTest(APITestCase):
     @patch("apps.cases.views.q")
     def test_search_without_postal_code(self, mock_q):
         """
-        An authenticated search should fail if postal code is not available
+        An authenticated search should fail if postal code and street number are not available
         """
         url = reverse("search-list")
         client = get_authenticated_client()
 
         MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
         MOCK_SEARCH_QUERY_PARAMETERS.pop("postalCode")
+        MOCK_SEARCH_QUERY_PARAMETERS.pop("streetNumber")
 
         # Mock search function
         mock_q.get_search_results = Mock()
@@ -221,6 +224,7 @@ class CaseSearchViewSetTest(APITestCase):
 
         MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
         MOCK_SEARCH_QUERY_PARAMETERS.pop("postalCode")
+        MOCK_SEARCH_QUERY_PARAMETERS.pop("streetNumber")
 
         # Mock search function
         mock_q.get_search_results = Mock()
@@ -272,8 +276,10 @@ class CaseSearchViewSetTest(APITestCase):
         response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
 
         # Tests if the search function was called with all the given parameters
+        MOCK_SEARCH_QUERY_PARAMETERS_ASSERT = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
+        MOCK_SEARCH_QUERY_PARAMETERS_ASSERT["suffix"] = ""
         mock_q.get_search_results.assert_called_with(
-            *MOCK_SEARCH_QUERY_PARAMETERS.values(), ""
+            *MOCK_SEARCH_QUERY_PARAMETERS_ASSERT.values()
         )
 
         # Tests if a success response code is given

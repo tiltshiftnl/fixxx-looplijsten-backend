@@ -3,8 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from app.apps.planner.const import EXAMPLE_PLANNER_SETTINGS
-from app.settings.const import ISSUEMELDING, PROJECTS, STADIA
+from app.settings.const import EXAMPLE_PLANNER_SETTINGS, ISSUEMELDING, PROJECTS, STADIA
 from app.utils.unittest_helpers import (
     get_authenticated_client,
     get_unauthenticated_client,
