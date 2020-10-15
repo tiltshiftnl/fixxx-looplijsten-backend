@@ -54,6 +54,7 @@ class CaseViewSetTest(APITestCase):
         # The response returns a 404
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    # TODO: Add test that also includes team_settings in the case detail data
     @patch("apps.cases.views.get_fraud_prediction")
     @patch("apps.cases.views.brk_api")
     @patch("apps.cases.views.bag_api")
@@ -134,6 +135,7 @@ class CaseViewSetTest(APITestCase):
             "bag_data": FOO_BAG_DATA,
             "brk_data": FOO_BRK_DATA,
             "related_cases": FOO_RELATED_CASES,
+            "team_settings_id": None,
         }
 
         self.assertEquals(response.json(), expected_response)
