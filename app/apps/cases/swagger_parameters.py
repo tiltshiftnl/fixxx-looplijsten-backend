@@ -34,6 +34,13 @@ street_number = OpenApiParameter(
     description="Street Number",
 )
 
+street_name = OpenApiParameter(
+    name="streetName",
+    type=OpenApiTypes.STR,
+    location=OpenApiParameter.QUERY,
+    description="Street Name",
+)
+
 suffix = OpenApiParameter(
     name="suffix",
     type=OpenApiTypes.STR,
@@ -42,4 +49,4 @@ suffix = OpenApiParameter(
     description="Suffix",
 )
 
-case_search_parameters = [postal_code, street_number, suffix]
+case_search_parameters = [postal_code, street_number, street_name, suffix]
