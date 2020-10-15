@@ -80,3 +80,13 @@ The Github actions will use the same bash script to check if the code in the pul
 
 ## Coding conventions and style
 The project uses [Black](https://github.com/psf/black) for formatting and [Flake8](https://pypi.org/project/flake8/) for linting.
+
+# Testing
+## Running unit tests
+Unit tests can be run using the following command:
+```
+docker-compose run --rm api python manage.py test
+```
+
+## Unit test in pull requests
+Unit tests are part of the Github action workflows, and will be run when a pull request is made. This ensures tests are maintained and increases maintainability and dependability of automatic pull requests.
