@@ -169,6 +169,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         """
         Returns a list of cases found with the given parameters
         """
+        # TODO: Replace query parameter strings with constants
         postal_code = request.GET.get("postalCode", None)
         street_name = request.GET.get("streetName", None)
         street_number = request.GET.get("streetNumber", None)
