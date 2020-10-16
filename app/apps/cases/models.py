@@ -55,9 +55,7 @@ class Case(models.Model):
 
 
 class Project(models.Model):
-    name = models.CharField(
-        max_length=255, null=False, blank=False, unique=True
-    )
+    name = models.CharField(max_length=255, null=False, blank=False, unique=True)
 
     def get(name):
         return Project.objects.get_or_create(name=name)[0]
@@ -67,9 +65,7 @@ class Project(models.Model):
 
 
 class Stadium(models.Model):
-    name = models.CharField(
-        max_length=255, null=False, blank=False, unique=True
-    )
+    name = models.CharField(max_length=255, null=False, blank=False, unique=True)
 
     def get(name):
         return Stadium.objects.get_or_create(name=name)[0]

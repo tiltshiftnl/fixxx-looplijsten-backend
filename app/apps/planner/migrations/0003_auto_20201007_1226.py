@@ -6,19 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cases', '0016_auto_20201007_1226'),
-        ('planner', '0002_teamsettings_team_type'),
+        ("cases", "0016_auto_20201007_1226"),
+        ("planner", "0002_teamsettings_team_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='teamsettings',
-            name='project_choices',
-            field=models.ManyToManyField(blank=True, related_name='team_settings_list', to='cases.Project'),
+            model_name="teamsettings",
+            name="project_choices",
+            field=models.ManyToManyField(
+                blank=True, related_name="team_settings_list", to="cases.Project"
+            ),
         ),
         migrations.AddField(
-            model_name='teamsettings',
-            name='stadia_choices',
-            field=models.ManyToManyField(blank=True, related_name='team_settings_list', to='cases.Stadium'),
+            model_name="teamsettings",
+            name="stadia_choices",
+            field=models.ManyToManyField(
+                blank=True, related_name="team_settings_list", to="cases.Stadium"
+            ),
         ),
     ]

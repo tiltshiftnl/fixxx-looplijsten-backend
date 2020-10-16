@@ -125,14 +125,22 @@ class ItinerarySerializer(serializers.ModelSerializer):
     def __get_stadia_from_settings__(self, settings, list_name):
         """ Returns a list of Stadium objects from settings """
         stadia = settings.get(list_name, [])
-        stadia = [stadium.get("name") for stadium in stadia if stadium.get("name") in settings['team_settings']['stadia_choices']]
+        stadia = [
+            stadium.get("name")
+            for stadium in stadia
+            if stadium.get("name") in settings["team_settings"]["stadia_choices"]
+        ]
         stadia = [Stadium.get(name=stadium) for stadium in stadia]
 
         return stadia
 
     def __get_stadium_from_settings__(self, settings, name):
         """ Returns a single Stadium object from settings """
-        if settings.get(name, None) and settings.get(name, {}).get('name') in settings['team_settings']['stadia_choices']:
+        if (
+            settings.get(name, None)
+            and settings.get(name, {}).get("name")
+            in settings["team_settings"]["stadia_choices"]
+        ):
             stadium = settings.get(name).get("name")
             stadium = Stadium.get(name=stadium)
 
@@ -141,7 +149,11 @@ class ItinerarySerializer(serializers.ModelSerializer):
     def __get_projects_from_settings__(self, settings):
         """ Returns the Projects objects from settings """
         projects = settings.get("projects", [])
-        projects = [project.get("name") for project in projects if project.get("name") in settings['team_settings']['project_choices']]
+        projects = [
+            project.get("name")
+            for project in projects
+            if project.get("name") in settings["team_settings"]["project_choices"]
+        ]
         projects = [Project.get(name=project) for project in projects]
 
         return projects
