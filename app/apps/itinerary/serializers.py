@@ -124,14 +124,11 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
     def __get_stadia_from_settings__(self, settings, list_name):
         """ Returns a list of Stadium objects from settings """
-        team_settings_stadia = TEAM_TYPE_SETTINGS[
-            settings["team_settings"]["team_type"]["name"]
-        ].get("stadia_choices")
         stadia = settings.get(list_name, [])
         stadia = [
             stadium.get("name")
             for stadium in stadia
-            if stadium.get("name") in team_settings_stadia
+            if stadium.get("name") in settings["team_settings"]["stadia_choices"]
         ]
         stadia = [Stadium.get(name=stadium) for stadium in stadia]
 
@@ -139,12 +136,10 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
     def __get_stadium_from_settings__(self, settings, name):
         """ Returns a single Stadium object from settings """
-        team_settings_stadia = TEAM_TYPE_SETTINGS[
-            settings["team_settings"]["team_type"]["name"]
-        ].get("stadia_choices")
         if (
-            settings.get(name)
-            and settings.get(name, {}).get("name") in team_settings_stadia
+            settings.get(name, None)
+            and settings.get(name, {}).get("name")
+            in settings["team_settings"]["stadia_choices"]
         ):
             stadium = settings.get(name).get("name")
             stadium = Stadium.get(name=stadium)
@@ -153,14 +148,11 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
     def __get_projects_from_settings__(self, settings):
         """ Returns the Projects objects from settings """
-        team_settings_projects = TEAM_TYPE_SETTINGS[
-            settings["team_settings"]["team_type"]["name"]
-        ].get("project_choices")
         projects = settings.get("projects", [])
         projects = [
             project.get("name")
             for project in projects
-            if project.get("name") in team_settings_projects
+            if project.get("name") in settings["team_settings"]["project_choices"]
         ]
         projects = [Project.get(name=project) for project in projects]
 
@@ -185,7 +177,6 @@ class ItinerarySerializer(serializers.ModelSerializer):
             team_member.get("user").get("id") for team_member in team_members
         ]
         itinerary.add_team_members(team_members)
-        print(validated_data)
         settings = validated_data.get("settings")
         opening_date = settings.get("opening_date")
         target_length = settings.get("target_length")

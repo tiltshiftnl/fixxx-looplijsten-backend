@@ -98,6 +98,8 @@ class TeamTypeSerializer(serializers.DictField):
 class TeamSettingsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
     team_type = TeamTypeSerializer(read_only=True, required=False)
+    project_choices = serializers.StringRelatedField(read_only=True, many=True)
+    stadia_choices = serializers.StringRelatedField(read_only=True, many=True)
     settings = serializers.JSONField(required=True)
 
     class Meta:
@@ -106,15 +108,10 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "team_type",
+            "project_choices",
+            "stadia_choices",
             "settings",
         )
-
-    @property
-    def data(self):
-        data = super().data
-        data["projects"] = data.get("team_type").get("project_choices")
-        data["stadia"] = data.get("team_type").get("stadia_choices")
-        return data
 
     def validate(self, data):
         data = super().validate(data)

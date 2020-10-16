@@ -55,11 +55,7 @@ class Case(models.Model):
 
 
 class Project(models.Model):
-    CHOICES = [(project, project) for project in PROJECTS]
-
-    name = models.CharField(
-        max_length=255, null=False, blank=False, unique=True, choices=CHOICES
-    )
+    name = models.CharField(max_length=255, null=False, blank=False, unique=True)
 
     def get(name):
         return Project.objects.get_or_create(name=name)[0]
@@ -69,11 +65,7 @@ class Project(models.Model):
 
 
 class Stadium(models.Model):
-    CHOICES = [(stadium, stadium) for stadium in STADIA]
-
-    name = models.CharField(
-        max_length=255, null=False, blank=False, unique=True, choices=CHOICES
-    )
+    name = models.CharField(max_length=255, null=False, blank=False, unique=True)
 
     def get(name):
         return Stadium.objects.get_or_create(name=name)[0]
