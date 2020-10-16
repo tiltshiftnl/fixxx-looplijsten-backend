@@ -35,6 +35,9 @@ services:
     links:
       - database
       - bwv_db
+    depends_on:
+      - database
+      - bwv_db
     environment:
       - DJANGO_SETTINGS_MODULE=settings.settings
       - DJANGO_SECRET_KEY=local
