@@ -113,13 +113,6 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "settings",
         )
 
-    @property
-    def data(self):
-        data = super().data
-        data["projects"] = data.get("team_type").get("project_choices")
-        data["stadia"] = data.get("team_type").get("stadia_choices")
-        return data
-
     def validate(self, data):
         data = super().validate(data)
         settings = PlannerSettingsSerializer(data=data.get("settings"), required=True)
