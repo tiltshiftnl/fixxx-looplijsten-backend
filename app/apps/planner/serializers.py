@@ -10,9 +10,9 @@ class PlannerListSettingsSerializer(serializers.Serializer):
     length_of_list = serializers.IntegerField(
         required=False, min_value=1, max_value=20, default=8
     )
-    primary_stadium = serializers.ChoiceField(required=False, choices=STADIA)
-    secondary_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
-    exclude_stadia = serializers.MultipleChoiceField(required=False, choices=STADIA)
+    primary_stadium = serializers.CharField(required=False)
+    secondary_stadia = serializers.ListField(required=False)
+    exclude_stadia = serializers.ListField(required=False)
 
     def validate_mutual_exclusivity(self, stadia_a, stadia_b, message):
         for stadium in stadia_a:
@@ -85,7 +85,7 @@ class PlannerPostalCodeSettingsSerializer(serializers.Serializer):
 
 class PlannerSettingsSerializer(serializers.Serializer):
     opening_date = serializers.DateField(required=True)
-    projects = serializers.MultipleChoiceField(required=True, choices=PROJECTS)
+    projects = serializers.ListField(required=True)
     postal_codes = PlannerPostalCodeSettingsSerializer(required=False, many=True)
     days = PlannerWeekSettingsSerializer(required=True)
 
@@ -113,8 +113,36 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "settings",
         )
 
+    def clean_projects(self, data):
+        projects = self.instance.project_choices.values_list("name", flat=True)
+        data["settings"]["projects"] = [
+            p for p in projects if p in data["settings"]["projects"]
+        ]
+        return data
+
+    def clean_stadia(self, data):
+        stadia = self.instance.stadia_choices.values_list("name", flat=True)
+        for k, v in data["settings"]["days"].items():
+            for kk, vv in v.items():
+                for stadia_set in ["secondary_stadia", "exclude_stadia"]:
+                    if vv.get(stadia_set):
+                        vv[stadia_set] = [s for s in stadia if s in vv[stadia_set]]
+                if vv.get("primary_stadium"):
+                    vv["primary_stadium"] = (
+                        vv["primary_stadium"]
+                        if vv["primary_stadium"] in stadia
+                        else None
+                    )
+                    if not vv["primary_stadium"]:
+                        del vv["primary_stadium"]
+        return data
+
     def validate(self, data):
         data = super().validate(data)
+
+        data = self.clean_projects(data)
+        data = self.clean_stadia(data)
+
         settings = PlannerSettingsSerializer(data=data.get("settings"), required=True)
         if not settings.is_valid():
             raise serializers.ValidationError("Wrong settings format")
