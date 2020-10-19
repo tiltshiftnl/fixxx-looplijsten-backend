@@ -72,7 +72,7 @@ class ItineraryItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItineraryItem
-        fields = ("id", "position", "notes", "case", "visits", "checked")
+        fields = ("id", "position", "notes", "case", "visits")
 
 
 class ItineraryItemUpdateSerializer(serializers.ModelSerializer):
@@ -80,7 +80,7 @@ class ItineraryItemUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItineraryItem
-        fields = ("id", "position", "checked")
+        fields = ("id", "position")
 
 
 class ItineraryItemCreateSerializer(serializers.ModelSerializer):

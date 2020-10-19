@@ -135,25 +135,3 @@ class ItineraryItemViewsUpdateTest(APITestCase):
 
         itinerary_item = ItineraryItem.objects.get(id=itinerary_item.id)
         self.assertEqual(itinerary_item.position, NEW_POSITION)
-
-    def test_authenticated_update_check(self):
-        """
-        Update the item's checked status
-        """
-
-        itinerary = Itinerary.objects.create()
-        case = Case.get("FOO Case ID")
-        itinerary_item = ItineraryItem.objects.create(
-            itinerary=itinerary, case=case, checked=False
-        )
-
-        url = reverse("itinerary-item-detail", kwargs={"pk": itinerary_item.id})
-        client = get_authenticated_client()
-
-        data = {"checked": True}
-        response = client.put(url, data, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        itinerary_item = ItineraryItem.objects.get(id=itinerary_item.id)
-        self.assertEqual(itinerary_item.checked, True)

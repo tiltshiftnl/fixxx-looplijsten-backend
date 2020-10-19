@@ -294,7 +294,6 @@ class ItineraryItem(models.Model):
         Case, on_delete=models.CASCADE, null=True, blank=False, related_name="cases"
     )
     position = models.FloatField(null=False, blank=False)
-    checked = models.BooleanField(null=False, blank=False, default=False)
 
     class Meta:
         ordering = ["position"]
