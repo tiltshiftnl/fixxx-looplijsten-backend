@@ -59,7 +59,11 @@ def stadium_bwv_to_push_state(stadium):
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_case(case_id):
+def push_itinerary_item(itinerary_item):
+    """
+    Pushing the itinerary and case date is needed
+    """
+    case_id = itinerary_item.case.case_id
     logger.info(f"Pushing case {case_id}")
 
     if not settings.ZAKEN_API_URL:
@@ -79,12 +83,16 @@ def push_case(case_id):
     stadia = get_import_stadia(case_id)
     states = [stadium_bwv_to_push_state(stadium) for stadium in stadia]
 
+    team_members = itinerary_item.itinerary.team_members.all()
+    users = [team_member.user.email for team_member in team_members]
+
     data = {
         "identification": case_id,
         "case_type": case["case_reason"],
         "bag_id": get_bag_id(case),
         "start_date": start_date,
         "states": states,
+        "users": users,
     }
 
     if end_date:
