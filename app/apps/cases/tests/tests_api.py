@@ -225,8 +225,26 @@ class CaseSearchViewSetTest(APITestCase):
         client = get_authenticated_client()
 
         MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
-        MOCK_SEARCH_QUERY_PARAMETERS.pop("postalCode")
         MOCK_SEARCH_QUERY_PARAMETERS.pop("streetNumber")
+
+        # Mock search function
+        mock_q.get_search_results = Mock()
+        mock_q.get_search_results.return_value = []
+
+        response = client.get(url, MOCK_SEARCH_QUERY_PARAMETERS)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch("apps.cases.views.q")
+    def test_search_without_street_name_and_postal_code(self, mock_q):
+        """
+        An authenticated search should fail if street name and postal code are not available
+        """
+        url = reverse("search-list")
+        client = get_authenticated_client()
+
+        MOCK_SEARCH_QUERY_PARAMETERS = self.MOCK_SEARCH_QUERY_PARAMETERS.copy()
+        MOCK_SEARCH_QUERY_PARAMETERS.pop("streetName")
+        MOCK_SEARCH_QUERY_PARAMETERS.pop("postalCode")
 
         # Mock search function
         mock_q.get_search_results = Mock()

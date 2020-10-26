@@ -171,7 +171,7 @@ class CaseSearchViewSet(ViewSet, ListAPIView):
         """
         # TODO: Replace query parameter strings with constants
         postal_code = request.GET.get("postalCode", None)
-        street_name = request.GET.get("streetName", None)
+        street_name = request.GET.get("streetName", "")
         street_number = request.GET.get("streetNumber", None)
         suffix = request.GET.get("suffix", "")
 
