@@ -1,3 +1,4 @@
+from apps.cases.serializers import StadiumLabelSerializer
 from apps.planner.models import TeamSettings
 from django.conf import settings
 from rest_framework import serializers
@@ -100,6 +101,7 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
     team_type = TeamTypeSerializer(read_only=True, required=False)
     project_choices = serializers.StringRelatedField(read_only=True, many=True)
     stadia_choices = serializers.StringRelatedField(read_only=True, many=True)
+    marked_stadia = StadiumLabelSerializer(read_only=True, many=True)
     settings = serializers.JSONField(required=True)
 
     class Meta:
@@ -110,6 +112,7 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "team_type",
             "project_choices",
             "stadia_choices",
+            "marked_stadia",
             "settings",
         )
 

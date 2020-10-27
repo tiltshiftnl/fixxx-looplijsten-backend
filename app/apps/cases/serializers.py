@@ -1,4 +1,4 @@
-from apps.cases.models import Case, Project, Stadium
+from apps.cases.models import Case, Project, Stadium, StadiumLabel
 from apps.fraudprediction.serializers import FraudPredictionSerializer
 from rest_framework import serializers
 from settings.const import PROJECTS, STADIA
@@ -32,6 +32,17 @@ class StadiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stadium
         fields = ("name",)
+
+
+class StadiumLabelSerializer(serializers.ModelSerializer):
+    stadium = serializers.StringRelatedField()
+
+    class Meta:
+        model = StadiumLabel
+        fields = (
+            "stadium",
+            "label",
+        )
 
 
 class UnplannedCasesSerializer(serializers.Serializer):
