@@ -44,6 +44,7 @@ services:
       - DATABASE_NAME=looplijsten
       - DATABASE_USER=looplijsten
       - DATABASE_PASSWORD=insecure
+      - DATABASE_HOST=database
       - BWV_DB_NAME=looplijsten_bwv
       - BWV_DB_USER=looplijsten_bwv
       - BWV_DB_PASSWORD=insecure
