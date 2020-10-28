@@ -1,6 +1,12 @@
 FROM rust:1.40 as pg_anonymize
 WORKDIR /app
 COPY pg_anonymize/ .
+
+# Setup Certificates for ADP/Motiv
+COPY ./certificates/adp_rootca.crt /usr/local/share/ca-certificates/extras/adp_rootca.crt
+RUN chmod 644 /usr/local/share/ca-certificates/extras/adp_rootca.crt \
+  && update-ca-certificates --fresh
+
 RUN cargo build --release
 
 FROM ubuntu:latest
