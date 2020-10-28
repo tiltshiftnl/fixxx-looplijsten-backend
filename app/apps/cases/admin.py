@@ -1,4 +1,4 @@
-from apps.cases.models import Case, Project, Stadium
+from apps.cases.models import Case, Project, Stadium, StadiumLabel
 from django.contrib import admin
 
 
@@ -15,3 +15,8 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Stadium)
 class StadiumAdmin(admin.ModelAdmin):
     list_display = ("name",)
+
+
+@admin.register(StadiumLabel)
+class StadiumLabelAdmin(admin.ModelAdmin):
+    list_display = ("stadium", "label")

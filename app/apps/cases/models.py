@@ -72,3 +72,23 @@ class Stadium(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class StadiumLabel(models.Model):
+    stadium = models.ForeignKey(
+        to=Stadium,
+        related_name="labels",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
+    label = models.CharField(
+        default="sanctie",
+        max_length=10,
+    )
+
+    def __str__(self):
+        return "%s - %s" % (
+            self.stadium,
+            self.label,
+        )

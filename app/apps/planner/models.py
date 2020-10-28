@@ -1,4 +1,4 @@
-from apps.cases.models import Project, Stadium
+from apps.cases.models import Project, Stadium, StadiumLabel
 from django.db import models
 from settings.const import EXAMPLE_PLANNER_SETTINGS
 
@@ -22,8 +22,10 @@ class TeamSettings(models.Model):
         blank=True,
         related_name="team_settings_list",
     )
-    settings = models.JSONField(
-        default=EXAMPLE_PLANNER_SETTINGS,
+    marked_stadia = models.ManyToManyField(
+        to=StadiumLabel,
+        blank=True,
+        related_name="stadium_label_team_settings_list",
     )
     settings = models.JSONField(
         default=EXAMPLE_PLANNER_SETTINGS,
