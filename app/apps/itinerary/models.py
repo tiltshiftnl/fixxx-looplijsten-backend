@@ -201,11 +201,11 @@ class ItinerarySettings(models.Model):
     )
 
     secondary_stadia = models.ManyToManyField(
-        to=Stadium, null=True, blank=True, related_name="settings_as_secondary_stadia"
+        to=Stadium, blank=True, related_name="settings_as_secondary_stadia"
     )
 
     exclude_stadia = models.ManyToManyField(
-        to=Stadium, null=True, blank=True, related_name="settings_as_exclude_stadia"
+        to=Stadium, blank=True, related_name="settings_as_exclude_stadia"
     )
 
     start_case = models.ForeignKey(
