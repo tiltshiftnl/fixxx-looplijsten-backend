@@ -19,4 +19,4 @@ jobs:
     - name: Build Docker image
       run: docker-compose up -d
     - name: Run Tests
-      run: docker-compose exec api python manage.py test
+      run: docker-compose exec -t api python manage.py test
