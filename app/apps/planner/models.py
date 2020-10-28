@@ -27,17 +27,8 @@ class TeamSettings(models.Model):
         blank=True,
         related_name="stadium_label_team_settings_list",
     )
-    # stadia_hightlighted = models.ManyToManyField(
-    #     to=Stadium,
-    #     blank=True,
-    #     related_name="team_settings_stadia_hightlighted_list",
-    # )
-    # stadia_hightlighted_label = models.CharField(
-    #     default="sanctie",
-    #     max_length=10,
-    # )
     settings = models.JSONField(
-        default=dict(EXAMPLE_PLANNER_SETTINGS),
+        default=EXAMPLE_PLANNER_SETTINGS,
     )
 
     def __str__(self):
