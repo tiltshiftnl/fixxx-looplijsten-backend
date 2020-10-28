@@ -23,7 +23,7 @@ django-filter==2.3.0
 tenacity
 
 # Authentication
-mozilla-django-oidc==1.2.3
+mozilla-django-oidc==1.2.4
 djangorestframework-simplejwt==4.4.0
 
 # Algorithm toolbox
