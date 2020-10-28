@@ -5,6 +5,10 @@ from settings.const import EXAMPLE_PLANNER_SETTINGS
 from .const import TEAM_TYPE_CHOICES, TEAM_TYPE_VAKANTIEVERHUUR
 
 
+def team_settings_settings_default():
+    return EXAMPLE_PLANNER_SETTINGS
+
+
 class TeamSettings(models.Model):
     name = models.CharField(
         max_length=100,
@@ -28,7 +32,7 @@ class TeamSettings(models.Model):
         related_name="stadium_label_team_settings_list",
     )
     settings = models.JSONField(
-        default=EXAMPLE_PLANNER_SETTINGS,
+        default=team_settings_settings_default,
     )
 
     def __str__(self):
