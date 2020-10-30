@@ -260,3 +260,13 @@ EXAMPLE_PLANNER_SETTINGS = {
         },
     },
 }
+
+API_EXCEPTION_INFO = "INFO"
+API_EXCEPTION_WARNING = "WARNING"
+API_EXCEPTION_ERROR = "ERROR"
+
+ITINERARY_NOT_ENOUGH_CASES = {
+    "status": API_EXCEPTION_INFO,
+    "message": "Er zijn niet genoeg zaken!",
+    "detail": "Of de instellingen van je team zijn te specifiek of er zijn vandaag al een aantal looplijsten gegenereerd met de instellingen",
+}
