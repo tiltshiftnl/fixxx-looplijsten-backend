@@ -1,4 +1,5 @@
 from apps.cases.models import Project, Stadium, StadiumLabel
+from apps.visits.models import Observation, Situation, SuggestNextVisit
 from django.db import models
 from settings.const import EXAMPLE_PLANNER_SETTINGS
 
@@ -30,6 +31,21 @@ class TeamSettings(models.Model):
         to=StadiumLabel,
         blank=True,
         related_name="stadium_label_team_settings_list",
+    )
+    situation_choices = models.ManyToManyField(
+        to=Situation,
+        blank=True,
+        related_name="team_settings_list",
+    )
+    observation_choices = models.ManyToManyField(
+        to=Observation,
+        blank=True,
+        related_name="team_settings_list",
+    )
+    suggest_next_visit_choices = models.ManyToManyField(
+        to=SuggestNextVisit,
+        blank=True,
+        related_name="team_settings_list",
     )
     settings = models.JSONField(
         default=team_settings_settings_default,
