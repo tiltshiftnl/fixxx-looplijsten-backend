@@ -1,4 +1,10 @@
-from apps.visits.models import Visit, VisitMetaData
+from apps.visits.models import (
+    Observation,
+    Situation,
+    SuggestNextVisit,
+    Visit,
+    VisitMetaData,
+)
 from django.contrib import admin
 
 
@@ -25,3 +31,12 @@ class VisitMetaData(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         return False
+
+
+@admin.register(Situation)
+@admin.register(Observation)
+@admin.register(SuggestNextVisit)
+class ChoiceItemAdmin(admin.ModelAdmin):
+    list_display = ("value", "position", "verbose")
+    list_editable = ("position",)
+    ordering = ("position",)

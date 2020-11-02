@@ -17,6 +17,7 @@ class Visit(models.Model):
         (SITUATION_NO_COOPERATION, "Geen medewerking"),
         (SITUATION_ACCESS_GRANTED, "Toegang verleend"),
     )
+    SITUATIONS_DICT = dict((s[0], s[1]) for s in SITUATIONS)
 
     OBSERVATION_MALFUNCTIONING_DOORBEL = "malfunctioning_doorbell"
     OBSERVATION_INTERCOM = "intercom"
@@ -31,6 +32,7 @@ class Visit(models.Model):
         (OBSERVATION_VACANT, "Leegstaand"),
         (OBSERVATION_LIKELY_INHABITED, "Vermoedelijk bewoond"),
     )
+    OBSERVATIONS_DICT = dict((o[0], o[1]) for o in OBSERVATIONS)
 
     SUGGEST_VISIT_WEEKEND = "weekend"
     SUGGEST_VISIT_DAYTIME = "daytime"
@@ -44,12 +46,8 @@ class Visit(models.Model):
         (SUGGEST_VISIT_UNKNOWN, "Onbekend"),
     )
 
-    situation = models.CharField(
-        max_length=50, choices=SITUATIONS, null=True, blank=True
-    )
-    observations = ArrayField(
-        models.CharField(max_length=50, choices=OBSERVATIONS), blank=True, null=True
-    )
+    situation = models.CharField(max_length=50, null=True, blank=True)
+    observations = ArrayField(models.CharField(max_length=50), blank=True, null=True)
     case_id = models.ForeignKey(
         Case, on_delete=models.CASCADE, related_name="case_visits"
     )
@@ -72,9 +70,7 @@ class Visit(models.Model):
     can_next_visit_go_ahead_description = models.TextField(null=True, default=None)
 
     # suggest_visit_next_time = models.BooleanField(default=True) # TODO not sure about this one
-    suggest_next_visit = models.CharField(
-        null=True, max_length=50, choices=SUGGEST_NEXT_VISIT
-    )
+    suggest_next_visit = models.CharField(null=True, max_length=50)
     suggest_next_visit_description = models.TextField(
         null=True, blank=True, default=None
     )
@@ -84,30 +80,20 @@ class Visit(models.Model):
     personal_notes = models.TextField(blank=True, null=True, default=None)
 
     def get_observation_string(self):
-        if self.SITUATION_NOBODY_PRESENT:
-            return "Niemand aanwezig"
-        if self.SITUATION_NO_COOPERATION:
-            return "Geen medewerking"
-        if self.SITUATION_ACCESS_GRANTED:
-            return "Toegang verleend"
-        return ""
+        return (
+            Situation.objects.filter(value=self.situation)[0].verbose
+            if Situation.objects.filter(value=self.situation)
+            else ""
+        )
 
     def get_parameters(self):
-        parameters = []
-
-        if self.observations:
-            if self.OBSERVATION_MALFUNCTIONING_DOORBEL in self.observations:
-                parameters.append("Bel functioneert niet")
-            if self.OBSERVATION_INTERCOM in self.observations:
-                parameters.append("Contact via intercom")
-            if self.OBSERVATION_HOTEL_FURNISHED in self.observations:
-                parameters.append("Hotelmatig ingericht")
-            if self.OBSERVATION_VACANT in self.observations:
-                parameters.append("Leegstaand")
-            if self.OBSERVATION_LIKELY_INHABITED in self.observations:
-                parameters.append("Vermoedelijk bewoond")
-
-        return ", ".join(parameters)
+        return ", ".join(
+            [
+                Observation.objects.filter(value=o)[0].verbose
+                for o in self.observations
+                if Observation.objects.filter(value=o)
+            ]
+        )
 
 
 class VisitMetaData(models.Model):
@@ -128,3 +114,43 @@ class VisitMetaData(models.Model):
     fraud_prediction_shap_values = models.JSONField(null=True)
 
     # Expand with more meta data later (for example, planner settings)
+
+
+class ChoiceItem(models.Model):
+    value = models.CharField(
+        max_length=50,
+        unique=True,
+        blank=False,
+        null=False,
+    )
+    verbose = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=False,
+        null=False,
+    )
+    position = models.FloatField(null=False, blank=False)
+
+    def __str__(self):
+        return self.value
+
+    class Meta:
+        abstract = True
+
+
+class Situation(ChoiceItem):
+    class Meta:
+        abstract = False
+        ordering = ("position",)
+
+
+class Observation(ChoiceItem):
+    class Meta:
+        abstract = False
+        ordering = ("position",)
+
+
+class SuggestNextVisit(ChoiceItem):
+    class Meta:
+        abstract = False
+        ordering = ("position",)
