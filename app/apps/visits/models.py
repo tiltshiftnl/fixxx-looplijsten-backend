@@ -87,10 +87,11 @@ class Visit(models.Model):
         )
 
     def get_parameters(self):
+        observations = self.observations if self.observations else []
         return ", ".join(
             [
                 Observation.objects.filter(value=o)[0].verbose
-                for o in self.observations
+                for o in observations
                 if Observation.objects.filter(value=o)
             ]
         )
