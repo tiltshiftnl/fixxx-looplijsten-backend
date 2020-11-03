@@ -119,14 +119,19 @@ def push_new_visit_to_zaken_action(visit, subject, authors, parameters, notes):
         logger.info("Pushes disabled. Exit push.")
         return {}
 
-    url = f"{settings.ZAKEN_API_URL}/case-timeline-threads/add-timeline-item/"
+    url = f"{settings.ZAKEN_API_URL}/visits/create_visit_from_top/"
 
     data = {
-        "case_identification": visit.case_id.case_id,
-        "subject": subject,
-        "parameters": parameters,
-        "notes": notes,
+        "case_identification": visit.case.identification,
+        "start_time": visit.start_time,
+        "observations": parameters,
+        "situation": visit.situation,
         "authors": authors,
+        "can_next_visit_go_ahead": visit.can_next_visit_go_ahead,
+        "can_next_visit_go_ahead_description": visit.can_next_visit_go_ahead_description,
+        "suggest_next_visit": visit.suggest_next_visit,
+        "suggest_next_visit_description": visit.suggest_next_visit_description,
+        "notes": notes,
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
@@ -153,14 +158,19 @@ def push_updated_visit_to_zaken_action(visit, subject, authors, parameters, note
         logger.info("Pushes disabled. Exit push.")
         return {}
 
-    url = f"{settings.ZAKEN_API_URL}/case-timeline-threads/update-timeline-item/"
+    url = f"{settings.ZAKEN_API_URL}/visits/update_visit_from_top/"
 
     data = {
-        "subject": subject,
-        "parameters": parameters,
-        "notes": notes,
-        "thread_id": visit.thread_id,
+        "case_identification": visit.case.identification,
+        "start_time": visit.start_time,
+        "observations": visit.observations,
+        "situation": visit.situation,
         "authors": authors,
+        "can_next_visit_go_ahead": visit.can_next_visit_go_ahead,
+        "can_next_visit_go_ahead_description": visit.can_next_visit_go_ahead_description,
+        "suggest_next_visit": visit.suggest_next_visit,
+        "suggest_next_visit_description": visit.suggest_next_visit_description,
+        "notes": notes,
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
