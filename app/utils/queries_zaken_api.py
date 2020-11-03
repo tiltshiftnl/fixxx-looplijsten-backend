@@ -122,7 +122,7 @@ def push_new_visit_to_zaken_action(visit, subject, authors, parameters, notes):
     url = f"{settings.ZAKEN_API_URL}/visits/create_visit_from_top/"
 
     data = {
-        "case_identification": visit.case_id.identification,
+        "case_identification": visit.case_id.case_id,
         "start_time": visit.start_time,
         "observations": parameters,
         "situation": visit.situation,
