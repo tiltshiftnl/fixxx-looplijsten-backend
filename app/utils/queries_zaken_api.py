@@ -161,8 +161,8 @@ def push_updated_visit_to_zaken_action(visit, authors):
     url = f"{settings.ZAKEN_API_URL}/visits/update_visit_from_top/"
 
     data = {
-        "case_identification": visit.case.identification,
-        "start_time": visit.start_time,
+        "case_identification": visit.case_id.case_id,
+        "start_time": str(visit.start_time),
         "observations": visit.observations,
         "situation": visit.situation,
         "authors": authors,
