@@ -74,7 +74,6 @@ class Visit(models.Model):
     suggest_next_visit_description = models.TextField(
         null=True, blank=True, default=None
     )
-    thread_id = models.PositiveIntegerField(null=True, blank=True, default=None)
 
     # personal notes to help make report at the office/as reminders for TH.
     personal_notes = models.TextField(blank=True, null=True, default=None)
