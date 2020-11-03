@@ -1,7 +1,11 @@
 import json
 
-from apps.planner.models import TeamSettings
-from apps.planner.serializers import PlannerSettingsSerializer, TeamSettingsSerializer
+from apps.planner.models import PostalCodeRangeSet, TeamSettings
+from apps.planner.serializers import (
+    PlannerSettingsSerializer,
+    PostalCodeRangeSetSerializer,
+    TeamSettingsSerializer,
+)
 from constance.backends.database.models import Constance
 from django.conf import settings
 from django.http import HttpResponseBadRequest, JsonResponse
@@ -85,6 +89,16 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         planner_settings.save()
 
         return JsonResponse(data)
+
+
+class PostalCodeRangesViewSet(ModelViewSet):
+    """
+    A view for listing PostalCodeRangeSets
+    """
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = PostalCodeRangeSetSerializer
+    queryset = PostalCodeRangeSet.objects.all()
 
 
 class TeamSettingsViewSet(ModelViewSet):

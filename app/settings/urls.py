@@ -5,6 +5,7 @@ from apps.itinerary.views import ItineraryItemViewSet, ItineraryViewSet, NoteVie
 from apps.planner.views import (
     ConstantsProjectsViewSet,
     ConstantsStadiaViewSet,
+    PostalCodeRangesViewSet,
     SettingsPlannerViewSet,
     TeamSettingsViewSet,
 )
@@ -42,6 +43,9 @@ api_router.register(
     r"settings/planner", SettingsPlannerViewSet, basename="settings-planner"
 )
 api_router.register(r"team-settings", TeamSettingsViewSet, basename="team-settings")
+api_router.register(
+    r"postal-code-ranges", PostalCodeRangesViewSet, basename="postal-code-ranges"
+)
 api_router.register(
     r"fraud-prediction/scoring",
     FraudPredictionScoringViewSet,
