@@ -109,7 +109,7 @@ def push_itinerary_item(itinerary_item):
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_new_visit_to_zaken_action(visit, subject, authors, parameters, notes):
+def push_new_visit_to_zaken_action(visit, authors):
     logger.info(f"Pushing visit {visit.id} to zaken")
 
     if not settings.ZAKEN_API_URL:
@@ -123,15 +123,15 @@ def push_new_visit_to_zaken_action(visit, subject, authors, parameters, notes):
 
     data = {
         "case_identification": visit.case_id.case_id,
-        "start_time": visit.start_time,
-        "observations": parameters,
+        "start_time": str(visit.start_time),
+        "observations": visit.observations,
         "situation": visit.situation,
         "authors": authors,
         "can_next_visit_go_ahead": visit.can_next_visit_go_ahead,
         "can_next_visit_go_ahead_description": visit.can_next_visit_go_ahead_description,
         "suggest_next_visit": visit.suggest_next_visit,
         "suggest_next_visit_description": visit.suggest_next_visit_description,
-        "notes": notes,
+        "notes": visit.description,
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
@@ -148,7 +148,7 @@ def push_new_visit_to_zaken_action(visit, subject, authors, parameters, notes):
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_updated_visit_to_zaken_action(visit, subject, authors, parameters, notes):
+def push_updated_visit_to_zaken_action(visit, authors):
     logger.info(f"Pushing visit {visit.id} to zaken")
 
     if not settings.ZAKEN_API_URL:
@@ -170,7 +170,7 @@ def push_updated_visit_to_zaken_action(visit, subject, authors, parameters, note
         "can_next_visit_go_ahead_description": visit.can_next_visit_go_ahead_description,
         "suggest_next_visit": visit.suggest_next_visit,
         "suggest_next_visit_description": visit.suggest_next_visit_description,
-        "notes": notes,
+        "notes": visit.description,
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
