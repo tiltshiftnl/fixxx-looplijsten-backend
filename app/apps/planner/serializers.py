@@ -1,5 +1,5 @@
 from apps.cases.serializers import StadiumLabelSerializer
-from apps.planner.models import TeamSettings
+from apps.planner.models import PostalCodeRange, PostalCodeRangeSet, TeamSettings
 from apps.visits.serializers import (
     ObservationSerializer,
     SituationSerializer,
@@ -94,6 +94,27 @@ class PlannerSettingsSerializer(serializers.Serializer):
     projects = serializers.ListField(required=True)
     postal_codes = PlannerPostalCodeSettingsSerializer(required=False, many=True)
     days = PlannerWeekSettingsSerializer(required=True)
+
+
+class PostalCodeRangeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostalCodeRange
+        fields = (
+            "range_start",
+            "range_end",
+        )
+
+
+class PostalCodeRangeSetSerializer(serializers.ModelSerializer):
+    postal_code_ranges = PostalCodeRangeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = PostalCodeRangeSet
+        fields = (
+            "id",
+            "name",
+            "postal_code_ranges",
+        )
 
 
 class TeamTypeSerializer(serializers.DictField):
