@@ -293,7 +293,7 @@ BAG_API_SEARCH_URL = "https://api.data.amsterdam.nl/atlas/search/adres/"
 # TODO: Fix this later with proper environment variables
 if ENVIRONMENT == "acceptance":
     ZAKEN_API_URL = os.getenv(
-        "ZAKEN_API_URL", "https://acc.looplijst.top.amsterdam.nl/api/v1"
+        "ZAKEN_API_URL", "https://acc.api.wonen.zaken.amsterdam.nl/api/v1/"
     )
 else:
     ZAKEN_API_URL = os.getenv("ZAKEN_API_URL", None)
