@@ -5,7 +5,7 @@ from django.contrib import admin
 @admin.register(TeamSettings)
 class TeamSettingsAdmin(admin.ModelAdmin):
     list_display = ("name",)
-    readonly_fields = ("settings",)
+    # readonly_fields = ("settings",)
 
 
 class PostalCodeRangeInline(admin.TabularInline):
