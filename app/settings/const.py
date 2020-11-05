@@ -163,6 +163,7 @@ EXAMPLE_PLANNER_SETTINGS = {
     "projects": PROJECTS_WITHOUT_SAHARA,
     # Optional postal code settings
     "postal_codes": [{"range_start": 1000, "range_end": 1109}],
+    "postal_code_ranges": [{"range_start": 1000, "range_end": 1109}],
     "days": {
         "monday": {
             "day": {

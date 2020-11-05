@@ -106,14 +106,16 @@ class PostalCodeRangeSerializer(serializers.ModelSerializer):
 
 
 class PostalCodeRangeSetSerializer(serializers.ModelSerializer):
-    postal_code_ranges = PostalCodeRangeSerializer(many=True, read_only=True)
+    postal_code_ranges_presets = PostalCodeRangeSerializer(
+        many=True, read_only=True, source="postal_code_ranges"
+    )
 
     class Meta:
         model = PostalCodeRangeSet
         fields = (
             "id",
             "name",
-            "postal_code_ranges",
+            "postal_code_ranges_presets",
         )
 
 
