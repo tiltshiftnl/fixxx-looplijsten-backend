@@ -83,3 +83,12 @@ ITINERARY_NOT_ENOUGH_CASES = {
     "severity": API_EXCEPTION_SEVERITY_INFO,
     "message": "Er zijn niet genoeg zaken beschikbaar om een looplijst mee te genereren.",
 }
+
+EXAMPLE_DAY_SETTINGS = {
+    "opening_date": "2019-01-01",
+    "projects": [],
+    "postal_codes": [{"range_start": 1000, "range_end": 1109}],
+    "postal_code_ranges": [{"range_start": 1000, "range_end": 1109}],
+    "length_of_list": 6,
+    "secondary_stadia": [],
+}
