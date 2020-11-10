@@ -1,4 +1,4 @@
-from settings.const import TERUGKOPPELING_SIA
+from settings.const import EXCLUDE_STADIA
 from utils.query_helpers import do_query
 
 
@@ -27,11 +27,10 @@ def get_eligible_stadia(starting_date, stages):
             AND sta_oms NOT IN %(exclude_stadia)s
             """
 
-    exclude_stadia = (TERUGKOPPELING_SIA,)
     args = {
         "starting_date": starting_date,
         "stages": tuple(stages),
-        "exclude_stadia": exclude_stadia,
+        "exclude_stadia": EXCLUDE_STADIA,
     }
     stadia = do_query(query, args)
 

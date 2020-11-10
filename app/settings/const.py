@@ -113,6 +113,7 @@ ONDERZOEK_ADVERTENTIE = "Onderzoek advertentie"
 WEEKEND_BUITENDIENST_ONDERZOEK = "Weekend buitendienstonderzoek"
 ISSUEMELDING = "Issuemelding"
 TERUGKOPPELING_SIA = "Terugkoppeling SIA"
+VERVOLG_SIA = "Vervolg SIA"
 
 STADIA_ZL_CORPORATIE = "ZL Corporatie"
 STADIA_CRIMINEEL_GEBRUIK_WONINGEN = "Crimineel gebruik woning"
@@ -157,6 +158,11 @@ STADIA_ONDERVERHUUR = [
 ]
 
 STARTING_FROM_DATE = "2019-01-01"
+
+EXCLUDE_STADIA = (
+    TERUGKOPPELING_SIA,
+    VERVOLG_SIA,
+)
 
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
