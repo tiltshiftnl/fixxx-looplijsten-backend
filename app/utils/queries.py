@@ -1,4 +1,4 @@
-from settings.const import ISSUEMELDING, TERUGKOPPELING_SIA
+from settings.const import EXCLUDE_STADIA, ISSUEMELDING
 from utils.date_helpers import get_days_in_range
 from utils.query_helpers import do_query, return_first_or_empty
 from utils.statement_helpers import parse_statement
@@ -212,11 +212,10 @@ def get_import_stadia(case_id):
             """
 
     # Adds the _% to support the LIKE query and the exception stages to exclude
-    exclude_stadia = (TERUGKOPPELING_SIA,)
     args = {
         "case_id": case_id,
         "stadia_id": case_id + "_%",
-        "exclude_stadia": exclude_stadia,
+        "exclude_stadia": EXCLUDE_STADIA,
     }
 
     all_stadia = do_query(query, args)
@@ -259,11 +258,10 @@ def get_case(case_id):
             LIMIT 1
             """
 
-    exclude_stadia = (TERUGKOPPELING_SIA,)
     args = {
         "case_id_like": case_id + "_%",
         "case_id": case_id,
-        "exclude_stadia": exclude_stadia,
+        "exclude_stadia": EXCLUDE_STADIA,
     }
     executed_query = do_query(query, args)
 
