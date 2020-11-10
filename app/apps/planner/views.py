@@ -1,4 +1,6 @@
+import datetime
 import json
+import sys
 
 from apps.planner.models import PostalCodeRangeSet, TeamSettings
 from apps.planner.serializers import (
@@ -8,7 +10,9 @@ from apps.planner.serializers import (
 )
 from constance.backends.database.models import Constance
 from django.conf import settings
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.contrib.auth.decorators import user_passes_test
+from django.core.management import call_command
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from rest_framework.generics import CreateAPIView, GenericAPIView
@@ -123,3 +127,24 @@ class TeamSettingsViewSet(ModelViewSet):
     #     # Serialize and return data
     #     serializer = TeamSettingsSerializer(team_settings, many=False)
     #     return Response(serializer.data)
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def dumpdata(request):
+    sysout = sys.stdout
+    fname = "%s-%s.json" % ("top-planner", datetime.datetime.now().strftime("%Y-%m-%d"))
+    response = HttpResponse(content_type="application/json")
+    response["Content-Disposition"] = "attachment; filename=%s" % fname
+
+    sys.stdout = response
+    call_command(
+        "dumpdata",
+        "planner",
+        "cases.Project",
+        "cases.Stadium",
+        "cases.StadiumLabel",
+        "--indent=4",
+    )
+    sys.stdout = sysout
+
+    return response
