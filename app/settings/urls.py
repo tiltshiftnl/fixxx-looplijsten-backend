@@ -9,6 +9,7 @@ from apps.planner.views import (
     SettingsPlannerViewSet,
     TeamSettingsViewSet,
 )
+from apps.planner.views import dumpdata as planner_dumpdata
 from apps.planner.views_sandbox import AlgorithmView
 from apps.users.views import IsAuthenticatedView, ObtainAuthTokenOIDC, UserListView
 from apps.visits.views import VisitViewSet
@@ -55,6 +56,7 @@ api_router.register(
 urlpatterns = [
     # Admin environment
     path("admin/", admin.site.urls),
+    path("admin/planner/dumpdata", planner_dumpdata, name="planner-dumpdata"),
     # Algorithm sandbox environment
     path("algorithm/", AlgorithmView.as_view(), name="algorithm"),
     # Health check urls

@@ -15,7 +15,6 @@ LOCAL_DEVELOPMENT_AUTHENTICATION = (
 )
 
 INSTALLED_APPS = (
-    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -37,6 +36,8 @@ INSTALLED_APPS = (
     "apps.planner",
     "apps.fraudprediction",
     "apps.visits",
+    # Enable admin templates inheritance
+    "django.contrib.admin",
 )
 
 # https://docs.djangoproject.com/en/2.0/topics/http/middleware/
