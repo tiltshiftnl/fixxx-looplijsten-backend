@@ -7,37 +7,45 @@ from constance.backends.database.models import Constance
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.views import View
-from settings.const import (
-    AVONDRONDE,
-    DERDE_CONTROLE,
-    ONDERZOEK_BUITENDIENST,
-    PROJECTS,
-    PROJECTS_WITHOUT_SAHARA,
-    STADIA,
-    TWEEDE_CONTROLE,
-    WEEKEND_BUITENDIENST_ONDERZOEK,
-)
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from utils.queries_zaken_api import get_cases
 
+from .models import TeamSettings
 
-class AlgorithmView(LoginRequiredMixin, View):
+
+class AlgorithmListView(LoginRequiredMixin, ListView):
+    model = TeamSettings
+    template_name = "team_settings_list.html"
+
+
+class AlgorithmView(LoginRequiredMixin, DetailView):
+    model = TeamSettings
     login_url = "/admin/login/"
     template_name = "body.html"
 
-    def get_context_data(self):
+    def get_data(self, teamSettings):
+        postal_codes = [{"range_start": 1000, "range_end": 1109}]
+        weekday = "monday"
+        day_part = "day"
+        day_settings = (
+            teamSettings.settings.get("days", {}).get(weekday, {}).get(day_part, {})
+        )
         key, _ = Constance.objects.get_or_create(key=settings.CONSTANCE_MAPS_KEY)
         zaken_data = get_cases()
+
         return {
-            "projects": PROJECTS,
-            "selected_projects": PROJECTS_WITHOUT_SAHARA,
-            "stadia": STADIA,
-            "selected_stadia": [TWEEDE_CONTROLE, DERDE_CONTROLE],
-            "main_stadium": ONDERZOEK_BUITENDIENST,
-            "selected_exclude_stadia": [AVONDRONDE, WEEKEND_BUITENDIENST_ONDERZOEK],
-            "selected_opening_date": "2019-01-01",
+            "projects": teamSettings.project_choices.all().values_list(
+                "name", flat=True
+            ),
+            "selected_projects": teamSettings.settings.get("projects"),
+            "stadia": teamSettings.stadia_choices.all().values_list("name", flat=True),
+            "selected_stadia": day_settings.get("secondary_stadia"),
+            "main_stadium": day_settings.get("primary_stadium"),
+            "selected_exclude_stadia": day_settings.get("exclude_stadia"),
+            "selected_opening_date": teamSettings.settings.get("opening_date"),
             "number_of_lists": 1,
-            "length_of_list": 8,
+            "length_of_list": teamSettings.settings.get("length_of_list", 8),
             "maps_key": key.value,
             "weight_distance": SCORING_WEIGHTS.DISTANCE.value,
             "weight_fraud_probability": SCORING_WEIGHTS.FRAUD_PROBABILITY.value,
@@ -45,24 +53,35 @@ class AlgorithmView(LoginRequiredMixin, View):
             "weight_secondary_stadium": SCORING_WEIGHTS.SECONDARY_STADIUM.value,
             "weight_issuemelding": SCORING_WEIGHTS.ISSUEMELDING.value,
             "start_case_id": "",
-            "postal_code_range_start": 1000,
-            "postal_code_range_end": 1108,
+            "postal_code_range_start": teamSettings.settings.get(
+                "postal_codes", postal_codes
+            )[0].get("range_start"),
+            "postal_code_range_end": teamSettings.settings.get(
+                "postal_codes", postal_codes
+            )[0].get("range_end"),
             "zaken_data": zaken_data,
         }
 
-    def get(self, request, *args, **kwargs):
-        context_data = self.get_context_data()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        settings = SettingsMock(context_data)
-        generator = ItineraryKnapsackList(settings)
+        data = self.get_data(self.object)
+
+        context.update(data)
+
+        my_settings = SettingsMock(data)
+        generator = ItineraryKnapsackList(my_settings)
         unplanned_cases = generator.__get_eligible_cases__()
 
-        context_data["planning"] = {
-            "planned_cases": [],
-            "unplanned_cases": unplanned_cases,
-        }
-
-        return render(request, self.template_name, context_data)
+        context.update(
+            {
+                "planning": {
+                    "planned_cases": [],
+                    "unplanned_cases": unplanned_cases,
+                }
+            }
+        )
+        return context
 
     def post(self, request, *args, **kwargs):
         opening_date = request.POST.get("opening_date")
@@ -82,7 +101,7 @@ class AlgorithmView(LoginRequiredMixin, View):
         postal_code_range_start = int(request.POST.get("postal_code_range_start"))
         postal_code_range_end = int(request.POST.get("postal_code_range_end"))
 
-        context_data = self.get_context_data()
+        context_data = self.get_data(self.get_object())
         context_data["selected_opening_date"] = opening_date
         context_data["selected_projects"] = projects
         context_data["length_of_list"] = length_of_list
@@ -97,12 +116,20 @@ class AlgorithmView(LoginRequiredMixin, View):
         context_data["start_case_id"] = start_case_id
         context_data["postal_code_range_start"] = postal_code_range_start
         context_data["postal_code_range_end"] = postal_code_range_end
-
+        context_data["postal_codes"] = [
+            {
+                "range_start": postal_code_range_start,
+                "range_end": postal_code_range_end,
+            },
+        ]
         settings = SettingsMock(context_data)
         settings_weights = SettingsWeightMock(context_data)
+        settings_postal_codes = SettingsPostalCodeMock(context_data)
 
         generator = ItineraryKnapsackList(
-            settings=settings, settings_weights=settings_weights
+            settings=settings,
+            settings_weights=settings_weights,
+            postal_code_settings=settings_postal_codes.postal_codes.all(),
         )
 
         eligible_cases = generator.__get_eligible_cases__()
@@ -129,6 +156,23 @@ class SettingsWeightMock(SimpleNamespace):
         self.primary_stadium = context["weight_primary_stadium"]
         self.secondary_stadium = context["weight_secondary_stadium"]
         self.issuemelding = context["weight_issuemelding"]
+
+
+class SettingsPostalCodeMock(SimpleNamespace):
+    """
+    Creates a mock settings objects using context data. Should only be used for prototyping.
+    """
+
+    def __init__(self, context):
+        super().__init__()
+        self.postal_codes = SimpleNamespace()
+        self.postal_codes.all = lambda: [
+            SimpleNamespace(
+                range_start=postal_codes.get("range_start"),
+                range_end=postal_codes.get("range_end"),
+            )
+            for postal_codes in context["postal_codes"]
+        ]
 
 
 class SettingsMock(SimpleNamespace):

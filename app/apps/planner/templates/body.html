@@ -4,6 +4,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-3">
+            <a href="{% url 'algorithm-list' %}"><- terug</a>
+            <h2>{{ object.name }}</h2>
+            <h4>Maandag dag</h4>
             {% include 'controls.html' %}
         </div>
         <div class="col-9">
