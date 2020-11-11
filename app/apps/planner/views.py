@@ -20,31 +20,6 @@ from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateMod
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
-from settings.const import ISSUEMELDING, PROJECTS, STADIA
-
-
-class ConstantsProjectsViewSet(ViewSet):
-    """
-    Retrieve the projects constants which are used for cases
-    """
-
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request):
-        return JsonResponse({"constants": PROJECTS})
-
-
-class ConstantsStadiaViewSet(ViewSet):
-    """
-    Retrieve the stadia constants which are used for cases
-    """
-
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request):
-        constants_stadia = STADIA[:]
-        constants_stadia.remove(ISSUEMELDING)
-        return JsonResponse({"constants": constants_stadia})
 
 
 class SettingsPlannerViewSet(ViewSet, CreateAPIView):
