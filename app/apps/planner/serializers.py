@@ -127,7 +127,7 @@ class TeamTypeSerializer(serializers.DictField):
 class TeamSettingsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
     team_type = TeamTypeSerializer(read_only=True, required=False)
-    situation_choices = SituationSerializer(read_only=True, many=True)
+    situation_choices = serializers.ListField(read_only=True)
     observation_choices = ObservationSerializer(read_only=True, many=True)
     suggest_next_visit_choices = SuggestNextVisitSerializer(read_only=True, many=True)
     project_choices = serializers.StringRelatedField(read_only=True, many=True)

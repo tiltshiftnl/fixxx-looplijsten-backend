@@ -34,11 +34,6 @@ class TeamSettings(models.Model):
         blank=True,
         related_name="stadium_label_team_settings_list",
     )
-    situation_choices = models.ManyToManyField(
-        to=Situation,
-        blank=True,
-        related_name="team_settings_list",
-    )
     observation_choices = models.ManyToManyField(
         to=Observation,
         blank=True,
@@ -52,6 +47,10 @@ class TeamSettings(models.Model):
     settings = models.JSONField(
         default=team_settings_settings_default,
     )
+
+    @property
+    def situation_choices(self):
+        return list(Situation.objects.all().values_list("value", flat=True))
 
     def __str__(self):
         return self.name
