@@ -3,76 +3,11 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from app.settings.const import EXAMPLE_PLANNER_SETTINGS, ISSUEMELDING, PROJECTS, STADIA
+from app.settings.const import EXAMPLE_PLANNER_SETTINGS
 from app.utils.unittest_helpers import (
     get_authenticated_client,
     get_unauthenticated_client,
 )
-
-
-class ConstantsProjectsViewSet(APITestCase):
-    """
-    Tests for the API endpoints for retrieving project constants
-    """
-
-    def get_url(self):
-        return reverse("constants-projects-list")
-
-    def test_unauthenticated_request(self):
-        """
-        An unauthenticated request should not be possible
-        """
-
-        url = self.get_url()
-        client = get_unauthenticated_client()
-        response = client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_authenticated_requests(self):
-        """
-        An authenticated request should return the projects constants in a dictionary
-        """
-        url = self.get_url()
-        client = get_authenticated_client()
-        response = client.get(url)
-
-        expected_response = {"constants": PROJECTS}
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.json(), expected_response)
-
-
-class ConstantsStadiaViewSet(APITestCase):
-    """
-    Tests for the API endpoints for retrieving stadium constants
-    """
-
-    def get_url(self):
-        return reverse("constants-stadia-list")
-
-    def test_unauthenticated_request(self):
-        """
-        An unauthenticated request should not be possible
-        """
-
-        url = self.get_url()
-        client = get_unauthenticated_client()
-        response = client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_authenticated_requests(self):
-        """
-        An authenticated request should return the projects constants in a dictionary
-        """
-        url = self.get_url()
-        client = get_authenticated_client()
-        response = client.get(url)
-
-        stadia = STADIA[:]
-        stadia.remove(ISSUEMELDING)
-
-        expected_response = {"constants": stadia}
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.json(), expected_response)
 
 
 class SettingsPlannerViewSet(APITestCase):
