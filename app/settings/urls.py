@@ -8,7 +8,7 @@ from apps.planner.views import (
     TeamSettingsViewSet,
 )
 from apps.planner.views import dumpdata as planner_dumpdata
-from apps.planner.views_sandbox import AlgorithmListView, AlgorithmView
+from apps.planner.views_sandbox import AlgorithmListView, AlgorithmView, BWVTablesView
 from apps.users.views import IsAuthenticatedView, ObtainAuthTokenOIDC, UserListView
 from apps.visits.views import VisitViewSet
 from django.conf import settings
@@ -51,6 +51,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("admin/planner/dumpdata", planner_dumpdata, name="planner-dumpdata"),
     # Algorithm sandbox environment
+    path("admin/bwv-structure", BWVTablesView.as_view(), name="bwv-structure"),
     path("algorithm/", AlgorithmListView.as_view(), name="algorithm-list"),
     path("algorithm/<int:pk>", AlgorithmView.as_view(), name="algorithm-detail"),
     # Health check urls

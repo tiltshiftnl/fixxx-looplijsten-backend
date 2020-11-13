@@ -7,11 +7,37 @@ from constance.backends.database.models import Constance
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from utils.queries_bwv import get_bwv_columns, get_bwv_tables
 from utils.queries_zaken_api import get_cases
 
 from .models import TeamSettings
+
+
+class BWVTablesView(LoginRequiredMixin, TemplateView):
+    template_name = "bwv_table.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tables = [
+            {
+                "name": t.get("table_name"),
+                "columns": [
+                    c.get("column_name") for c in get_bwv_columns(t.get("table_name"))
+                ],
+            }
+            for t in get_bwv_tables()
+        ]
+
+        context.update(
+            {
+                "tables": tables,
+            }
+        )
+
+        return context
 
 
 class AlgorithmListView(LoginRequiredMixin, ListView):
