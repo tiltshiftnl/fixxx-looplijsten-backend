@@ -2,7 +2,6 @@ import datetime
 
 from apps.fraudprediction.models import FraudPrediction
 from django.db import models
-from settings.const import PROJECTS, STADIA
 from utils.queries import get_case
 
 
