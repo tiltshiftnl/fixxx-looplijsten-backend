@@ -10,7 +10,10 @@ from apps.planner.utils import (
     remove_cases_from_list,
 )
 from django.test import TestCase
-from settings.const import ISSUEMELDING, ONDERZOEK_BUITENDIENST, TWEEDE_CONTROLE
+from settings.const import ISSUEMELDING
+
+ONDERZOEK_BUITENDIENST = "Onderzoek buitendienst"
+TWEEDE_CONTROLE = "2de Controle"
 
 
 class UtilsTests(TestCase):
