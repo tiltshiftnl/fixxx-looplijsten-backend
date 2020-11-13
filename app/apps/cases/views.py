@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from apps.cases.models import Project
 from apps.cases.serializers import (
     DecosJoinFolderFieldsResponseSerializer,
     DecosJoinObjectFieldsResponseSerializer,
@@ -13,9 +14,11 @@ from apps.cases.swagger_parameters import case_search_parameters, unplanned_para
 from apps.fraudprediction.utils import add_fraud_predictions, get_fraud_prediction
 from apps.itinerary.models import Itinerary
 from apps.itinerary.serializers import CaseSerializer, ItineraryTeamMemberSerializer
+from apps.planner.models import TeamSettings
 from apps.visits.models import Visit
 from apps.visits.serializers import VisitSerializer
 from django.http import HttpResponseBadRequest, HttpResponseNotFound, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter, extend_schema
@@ -90,7 +93,18 @@ class CaseViewSet(ViewSet):
 
         date = request.GET.get("date")
         stadium = request.GET.get("stadium")
-        unplanned_cases = Itinerary.get_unplanned_cases(date, stadium)
+        itinerary = Itinerary.objects.filter(id=request.GET.get("itinerary_id"))
+        projects = (
+            list(
+                itinerary.first()
+                .settings.team_settings.project_choices.all()
+                .values_list("name", flat=True)
+            )
+            if itinerary
+            else list(Project.objects.all().values_list("name", flat=True))
+        )
+
+        unplanned_cases = Itinerary.get_unplanned_cases(date, stadium, projects)
         cases = add_fraud_predictions(unplanned_cases)
 
         return JsonResponse({"cases": cases})

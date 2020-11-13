@@ -13,7 +13,7 @@ from django.contrib.admin.utils import flatten
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from settings.const import PROJECTS, STARTING_FROM_DATE
+from settings.const import STARTING_FROM_DATE
 from utils.queries_planner import get_cases_from_bwv
 
 
@@ -59,14 +59,13 @@ class Itinerary(models.Model):
 
         return cases
 
-    def get_unplanned_cases(date, stadium):
+    def get_unplanned_cases(date, stadium, projects):
         """
         Returns a list of unplanned cases which
         """
         planned_cases = Itinerary.get_cases_for_date(date)
         exclude_cases = [{"case_id": case.case_id} for case in planned_cases]
-
-        all_cases = get_cases_from_bwv(STARTING_FROM_DATE, PROJECTS, [stadium])
+        all_cases = get_cases_from_bwv(STARTING_FROM_DATE, projects, [stadium])
         cases = remove_cases_from_list(all_cases, exclude_cases)
 
         return cases
