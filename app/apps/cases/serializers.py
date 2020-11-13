@@ -1,7 +1,6 @@
 from apps.cases.models import Case, Project, Stadium, StadiumLabel
 from apps.fraudprediction.serializers import FraudPredictionSerializer
 from rest_framework import serializers
-from settings.const import PROJECTS, STADIA
 
 
 class CaseSimpleSerializer(serializers.ModelSerializer):
@@ -19,7 +18,7 @@ class CaseSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    name = serializers.ChoiceField(required=True, choices=PROJECTS)
+    name = serializers.CharField(required=True)
 
     class Meta:
         model = Project
@@ -27,7 +26,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class StadiumSerializer(serializers.ModelSerializer):
-    name = serializers.ChoiceField(required=True, choices=STADIA)
+    name = serializers.CharField(required=True)
 
     class Meta:
         model = Stadium
@@ -51,7 +50,7 @@ class UnplannedCasesSerializer(serializers.Serializer):
     """
 
     date = serializers.DateField(required=True)
-    stadium = serializers.ChoiceField(required=True, choices=STADIA)
+    stadium = serializers.CharField(required=True)
 
 
 class PermitCheckmarkSerializer(serializers.Serializer):

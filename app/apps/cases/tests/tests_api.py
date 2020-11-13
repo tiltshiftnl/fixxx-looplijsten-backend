@@ -398,16 +398,6 @@ class UnplannedCasesTest(APITestCase):
         response = client.get(url, {"date": "2020-04-05"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_with_wrong_stadium(self):
-        """
-        An authenticated request should fail if unknown stadium is given
-        """
-        url = reverse("case-unplanned")
-        client = get_authenticated_client()
-
-        response = client.get(url, {"date": "2020-04-05", "stadium": "FOO"})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
     def test_with_wrong_date_format(self):
         """
         An authenticated request should fail if unknown stadium is given

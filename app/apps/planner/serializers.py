@@ -7,7 +7,6 @@ from apps.visits.serializers import (
 )
 from django.conf import settings
 from rest_framework import serializers
-from settings.const import PROJECTS, STADIA
 
 from .const import TEAM_TYPE_SETTINGS
 
