@@ -5,10 +5,11 @@ import math
 import os
 from unittest.mock import Mock
 
+from apps.cases.models import Project, Stadium
 from apps.fraudprediction.models import FraudPrediction
 from django.conf import settings
 from django.db import connections
-from settings.const import PROJECTS, STADIA, STARTING_FROM_DATE
+from settings.const import STARTING_FROM_DATE
 from utils.queries_planner import get_cases_from_bwv
 
 LOGGER = logging.getLogger(__name__)
@@ -87,11 +88,33 @@ class FraudPredict:
         }
         return config
 
+    def get_stadia_to_score(self):
+        return list(
+            dict.fromkeys(
+                Stadium.objects.filter(
+                    team_settings_list__fraud_predict=True
+                ).values_list("name", flat=True)
+            )
+        )
+
+    def get_projects_to_score(self):
+        return list(
+            dict.fromkeys(
+                Project.objects.filter(
+                    team_settings_list__fraud_predict=True
+                ).values_list("name", flat=True)
+            )
+        )
+
     def get_case_ids_to_score(self):
         """
         Returns a list of case ids which are eligible for scoring
         """
-        cases = get_cases_from_bwv(SCORE_STARTING_FROM_DATE, PROJECTS, STADIA)
+        cases = get_cases_from_bwv(
+            SCORE_STARTING_FROM_DATE,
+            self.get_projects_to_score(),
+            self.get_stadia_to_score(),
+        )
         case_ids = [case.get("case_id") for case in cases]
         return case_ids
 

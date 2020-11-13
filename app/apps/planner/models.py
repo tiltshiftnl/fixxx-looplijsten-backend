@@ -29,6 +29,9 @@ class TeamSettings(models.Model):
         blank=True,
         related_name="team_settings_list",
     )
+    fraud_predict = models.BooleanField(
+        default=True,
+    )
     marked_stadia = models.ManyToManyField(
         to=StadiumLabel,
         blank=True,
