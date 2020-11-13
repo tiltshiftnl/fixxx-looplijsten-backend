@@ -171,7 +171,7 @@ class ItineraryModelTest(TestCase):
         # Mock the results from the BWV query
         mock_get_cases_from_bwv.return_value = all_cases
 
-        cases = Itinerary.get_unplanned_cases("2019-12-25", "FOO_STADIUM")
+        cases = Itinerary.get_unplanned_cases("2019-12-25", "FOO_STADIUM", [])
         # Should only return the unplanned FOO_CASE_ID_D
         self.assertEquals(cases, [{"case_id": FOO_CASE_ID_D}])
 
@@ -202,7 +202,7 @@ class ItineraryModelTest(TestCase):
         # Mock the results from the BWV query
         mock_get_cases_from_bwv.return_value = all_cases
 
-        cases = Itinerary.get_unplanned_cases("2018-01-01", "FOO_STADIUM")
+        cases = Itinerary.get_unplanned_cases("2018-01-01", "FOO_STADIUM", [])
         self.assertEquals(cases, all_cases)
 
     def test_add_team_members(self, mock):

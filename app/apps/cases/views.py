@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from apps.cases.models import Project
 from apps.cases.serializers import (
     DecosJoinFolderFieldsResponseSerializer,
     DecosJoinObjectFieldsResponseSerializer,
@@ -92,12 +93,17 @@ class CaseViewSet(ViewSet):
 
         date = request.GET.get("date")
         stadium = request.GET.get("stadium")
-        itinerary = get_object_or_404(Itinerary, id=request.GET.get("itinerary_id"))
-        projects = list(
-            itinerary.settings.team_settings.project_choices.all().values_list(
-                "name", flat=True
+        itinerary = Itinerary.objects.filter(id=request.GET.get("itinerary_id"))
+        projects = (
+            list(
+                itinerary.first()
+                .settings.team_settings.project_choices.all()
+                .values_list("name", flat=True)
             )
+            if itinerary
+            else list(Project.objects.all().values_list("name", flat=True))
         )
+
         unplanned_cases = Itinerary.get_unplanned_cases(date, stadium, projects)
         cases = add_fraud_predictions(unplanned_cases)
 
