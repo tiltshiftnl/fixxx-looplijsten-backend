@@ -7,7 +7,6 @@ from apps.planner.utils import (
     filter_out_cases,
     remove_cases_from_list,
 )
-from settings.const import STADIA
 from utils.queries_planner import get_cases_from_bwv
 
 LOGGER = logging.getLogger(__name__)
@@ -18,7 +17,9 @@ class ItineraryGenerateAlgorithm:
 
     def __init__(self, settings, postal_code_settings=[]):
         self.opening_date = settings.opening_date
-        self.stadia = STADIA
+        self.stadia = list(
+            settings.team_settings.stadia_choices.all().values_list("name", flat=True)
+        )
         self.target_length = int(settings.target_length)
         self.postal_code_ranges = [
             vars(postal_code_setting) for postal_code_setting in postal_code_settings
@@ -47,7 +48,7 @@ class ItineraryGenerateAlgorithm:
         """
         Gets a list of filter stadia to filter on
         """
-        return STADIA
+        return self.stadia
 
     def __get_eligible_cases__(self):
         """
