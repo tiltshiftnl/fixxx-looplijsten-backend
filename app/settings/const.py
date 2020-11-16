@@ -1,3 +1,14 @@
+WEEK_DAYS = [
+    "maandag",
+    "dinsdag",
+    "woensdag",
+    "donderdag",
+    "vrijdag",
+    "zaterdag",
+    "zondag",
+]
+WEEK_DAYS_CHOICES = [[i, wd] for i, wd in enumerate(WEEK_DAYS)]
+
 ISSUEMELDING = "Issuemelding"
 TERUGKOPPELING_SIA = "Terugkoppeling SIA"
 VERVOLG_SIA = "Vervolg SIA"
