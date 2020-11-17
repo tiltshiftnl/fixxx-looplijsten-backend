@@ -12,6 +12,7 @@ from apps.visits.serializers import (
 )
 from django.conf import settings
 from rest_framework import serializers
+from rest_framework.relations import PKOnlyObject
 
 from .const import TEAM_TYPE_SETTINGS
 
@@ -128,27 +129,25 @@ class TeamTypeSerializer(serializers.DictField):
         return TEAM_TYPE_SETTINGS.get(instance)
 
 
-class StringRelatedToIdField(serializers.StringRelatedField):
-    klass = None
-
-    def __init__(self, **kwargs):
-        self.klass = kwargs.pop("klass")
-        return super().__init__(**kwargs)
-
+class StringRelatedToIdField(serializers.PrimaryKeyRelatedField):
     def to_internal_value(self, data):
-        instances = self.klass.objects.filter(name=data)
-        if instances and (len(instances)) == 1:
-            return instances.get().id
-        raise serializers.ValidationError(
-            "%s with name: %s not found" % (self.klass, data)
-        )
+        instances = self.queryset.filter(name=data)
+        if instances and len(instances) == 1:
+            return super().to_internal_value(instances.get().id)
+        else:
+            raise serializers.ValidationError("Object with name: %s not found" % data)
+
+    def to_representation(self, data):
+        if isinstance(data, PKOnlyObject):
+            return self.queryset.get(id=data.pk).name
+        return data.name
 
 
 class DaySettingsSerializer(serializers.ModelSerializer):
-    projects = StringRelatedToIdField(many=True, klass=Project)
-    primary_stadium = StringRelatedToIdField(klass=Stadium)
-    secondary_stadia = StringRelatedToIdField(many=True, klass=Stadium)
-    exclude_stadia = StringRelatedToIdField(many=True, klass=Stadium)
+    projects = StringRelatedToIdField(many=True, queryset=Project.objects.all())
+    primary_stadium = StringRelatedToIdField(queryset=Stadium.objects.all())
+    secondary_stadia = StringRelatedToIdField(many=True, queryset=Stadium.objects.all())
+    exclude_stadia = StringRelatedToIdField(many=True, queryset=Stadium.objects.all())
 
     class Meta:
         model = DaySettings
