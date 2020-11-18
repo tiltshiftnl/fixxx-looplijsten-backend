@@ -242,7 +242,8 @@ def get_case(case_id):
               import_adres.wzs_lon AS lng,
               import_adres.wzs_lat as lat,
               import_stadia.sta_oms AS stadium,
-              import_wvs.beh_oms AS case_reason
+              import_wvs.beh_oms AS case_reason,
+              import_wvs.is_sia AS is_sia
             FROM
               import_wvs
             INNER JOIN
