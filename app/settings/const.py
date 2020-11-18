@@ -1,11 +1,11 @@
 WEEK_DAYS = [
+    "zondag",
     "maandag",
     "dinsdag",
     "woensdag",
     "donderdag",
     "vrijdag",
     "zaterdag",
-    "zondag",
 ]
 WEEK_DAYS_CHOICES = [[i, wd] for i, wd in enumerate(WEEK_DAYS)]
 
@@ -19,6 +19,10 @@ EXCLUDE_STADIA = (
     TERUGKOPPELING_SIA,
     VERVOLG_SIA,
 )
+
+POSTAL_CODE_RANGES = [
+    {"range_start": 1000, "range_end": 1109},
+]
 
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",

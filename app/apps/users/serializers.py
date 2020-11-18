@@ -6,10 +6,7 @@ from rest_framework import serializers
 class TeamSettingsIdSerializer(TeamSettingsSerializer):
     class Meta:
         model = TeamSettings
-        fields = (
-            "id",
-            "team_type",
-        )
+        fields = ("id",)
 
 
 class UserIdSerializer(serializers.Serializer):
