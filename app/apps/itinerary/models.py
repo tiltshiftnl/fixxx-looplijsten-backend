@@ -167,12 +167,12 @@ class ItinerarySettings(models.Model):
     Settings for an itinerary
     """
 
-    team_settings = models.ForeignKey(
-        to="planner.TeamSettings",
+    day_settings = models.ForeignKey(
+        to="planner.DaySettings",
         null=True,
         blank=True,
         on_delete=models.CASCADE,
-        related_name="itinerary_team_settings",
+        related_name="itinerary_day_settings",
     )
 
     opening_date = models.DateField(blank=False, null=False)

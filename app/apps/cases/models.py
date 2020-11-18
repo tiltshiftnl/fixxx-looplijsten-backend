@@ -39,8 +39,8 @@ class Case(models.Model):
         return None
 
     @property
-    def team_settings(self):
-        return self.itinerary.settings.team_settings if self.itinerary else None
+    def day_settings(self):
+        return self.itinerary.settings.day_settings if self.itinerary else None
 
     @property
     def fraud_prediction(self):

@@ -56,8 +56,8 @@ class CaseViewSet(ViewSet):
         bag_data = bag_api.get_bag_data(wng_id)
         bag_id = bag_data.get("verblijfsobjectidentificatie")
         case_instance = Case.get(case_id)
-        team_settings_id = (
-            case_instance.team_settings.id if case_instance.team_settings else None
+        day_settings_id = (
+            case_instance.day_settings.id if case_instance.day_settings else None
         )
 
         data = {
@@ -73,7 +73,7 @@ class CaseViewSet(ViewSet):
             "brk_data": brk_api.get_brk_data(bag_id),
             "related_cases": q.get_related_cases(adres_id),
             "fraud_prediction": get_fraud_prediction(case_id),
-            "team_settings_id": team_settings_id,
+            "day_settings_id": day_settings_id,
             "is_sia": case_instance.bwv_data.get("is_sia"),
         }
 
@@ -98,7 +98,7 @@ class CaseViewSet(ViewSet):
         projects = (
             list(
                 itinerary.first()
-                .settings.team_settings.project_choices.all()
+                .settings.day_settings.team_settings.project_choices.all()
                 .values_list("name", flat=True)
             )
             if itinerary

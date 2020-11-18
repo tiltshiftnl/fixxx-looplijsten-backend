@@ -6,10 +6,9 @@ from django.db import models
 from settings.const import (
     EXAMPLE_DAY_SETTINGS,
     EXAMPLE_PLANNER_SETTINGS,
+    POSTAL_CODE_RANGES,
     WEEK_DAYS_CHOICES,
 )
-
-from .const import TEAM_TYPE_CHOICES, TEAM_TYPE_VAKANTIEVERHUUR
 
 
 def team_settings_settings_default():
@@ -20,12 +19,19 @@ def day_settings_default():
     return EXAMPLE_DAY_SETTINGS
 
 
+def day_settings__postal_code_ranges__default():
+    return POSTAL_CODE_RANGES
+
+
 class TeamSettings(models.Model):
     name = models.CharField(
         max_length=100,
     )
-    team_type = models.CharField(
-        max_length=100, choices=TEAM_TYPE_CHOICES, default=TEAM_TYPE_VAKANTIEVERHUUR
+    show_issuemelding = models.BooleanField(
+        default=True,
+    )
+    show_vakantieverhuur = models.BooleanField(
+        default=True,
     )
     project_choices = models.ManyToManyField(
         to=Project,
@@ -101,12 +107,18 @@ class DaySettings(models.Model):
     )
     week_day = models.PositiveSmallIntegerField(
         choices=WEEK_DAYS_CHOICES,
+        blank=True,
+        null=True,
+    )
+    start_time = models.TimeField(
+        blank=True,
+        null=True,
     )
     opening_date = models.DateField(
         default="2019-01-01",
     )
     postal_code_ranges = models.JSONField(
-        default=[{"range_start": 1000, "range_end": 1109}]
+        default=day_settings__postal_code_ranges__default,
     )
     postal_code_ranges_presets = models.ManyToManyField(
         to=PostalCodeRangeSet,
@@ -140,4 +152,10 @@ class DaySettings(models.Model):
     )
 
     class Meta:
-        ordering = ("week_day",)
+        ordering = ("week_day", "start_time")
+
+    def __str__(self):
+        return "%s - %s" % (
+            self.team_settings.name,
+            self.name,
+        )

@@ -18,7 +18,9 @@ class ItineraryGenerateAlgorithm:
     def __init__(self, settings, postal_code_settings=[]):
         self.opening_date = settings.opening_date
         self.stadia = list(
-            settings.team_settings.stadia_choices.all().values_list("name", flat=True)
+            settings.day_settings.team_settings.stadia_choices.all().values_list(
+                "name", flat=True
+            )
         )
         self.target_length = int(settings.target_length)
         self.postal_code_ranges = [
