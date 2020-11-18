@@ -10,7 +10,7 @@ from apps.planner.views import (
 from apps.planner.views import dumpdata as planner_dumpdata
 from apps.planner.views_sandbox import AlgorithmListView, AlgorithmView, BWVTablesView
 from apps.users.views import IsAuthenticatedView, ObtainAuthTokenOIDC, UserListView
-from apps.visits.views import VisitViewSet
+from apps.visits.views import ObservationViewSet, SuggestNextVisitViewSet, VisitViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -32,6 +32,10 @@ api_router.register(r"notes", NoteViewSet, basename="notes")
 api_router.register(r"permits", PermitViewSet, basename="permits")
 api_router.register(r"users", UserListView, basename="users")
 api_router.register(r"visits", VisitViewSet, basename="visits")
+api_router.register(r"observations", ObservationViewSet, basename="observations")
+api_router.register(
+    r"suggest-next-visit", SuggestNextVisitViewSet, basename="suggest-next-visit"
+)
 
 api_router.register(
     r"settings/planner", SettingsPlannerViewSet, basename="settings-planner"
