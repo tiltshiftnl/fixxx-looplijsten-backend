@@ -261,11 +261,11 @@ EXAMPLE_PLANNER_SETTINGS = {
     },
 }
 
-API_EXCEPTION_SEVERITY_INFO = "INFO"
-API_EXCEPTION_SEVERITY_WARNING = "WARNING"
 API_EXCEPTION_SEVERITY_ERROR = "ERROR"
+API_EXCEPTION_SEVERITY_WARNING = "WARNING"
+API_EXCEPTION_SEVERITY_INFO = "INFO"
 
 ITINERARY_NOT_ENOUGH_CASES = {
     "severity": API_EXCEPTION_SEVERITY_INFO,
-    "message": "Er zijn niet genoeg zaken beschikbaar om een looplijst mee te genereren."
+    "message": "Er zijn niet genoeg zaken beschikbaar om een looplijst mee te genereren.",
 }
