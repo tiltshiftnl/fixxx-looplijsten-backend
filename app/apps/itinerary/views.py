@@ -22,6 +22,7 @@ from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, UpdateMod
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
+from settings.const import ITINERARY_NOT_ENOUGH_CASES
 
 
 class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMixin):
@@ -121,9 +122,11 @@ class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMi
         try:
             itinerary = serializer.create(request.data)
             cases = itinerary.get_cases_from_settings()
-            assert len(cases), "Not enough cases available for given settings"
         except Exception as e:
             raise APIException("Could not create itinerary from settings: {}".format(e))
+
+        if not len(cases):
+            raise NotFound(ITINERARY_NOT_ENOUGH_CASES)
 
         # Populate the itinerary with cases
         for case in cases:
