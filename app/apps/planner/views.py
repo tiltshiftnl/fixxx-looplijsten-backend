@@ -112,6 +112,9 @@ def dumpdata(request):
     call_command(
         "dumpdata",
         "planner",
+        "visits.Situation",
+        "visits.Observation",
+        "visits.SuggestNextVisit",
         "cases.Project",
         "cases.Stadium",
         "cases.StadiumLabel",
