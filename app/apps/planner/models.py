@@ -65,6 +65,9 @@ class TeamSettings(models.Model):
         default=team_settings_settings_default,
     )
 
+    class Meta:
+        verbose_name_plural = "Team settings"
+
     @property
     def situation_choices(self):
         return list(Situation.objects.all().values_list("value", flat=True))
@@ -153,6 +156,7 @@ class DaySettings(models.Model):
 
     class Meta:
         ordering = ("week_day", "start_time")
+        verbose_name_plural = "Day settings"
 
     def __str__(self):
         return "%s - %s" % (
