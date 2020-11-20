@@ -19,7 +19,7 @@ class PostalCodeSettingsInline(admin.StackedInline):
 class ItinerarySettingsInline(admin.StackedInline):
     fields = (
         "opening_date",
-        "team_settings",
+        "day_settings",
         "target_length",
         "projects",
         "primary_stadium",

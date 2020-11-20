@@ -3,7 +3,8 @@ from apps.fraudprediction.views import FraudPredictionScoringViewSet
 from apps.health.views import health_bwv, health_default
 from apps.itinerary.views import ItineraryItemViewSet, ItineraryViewSet, NoteViewSet
 from apps.planner.views import (
-    PostalCodeRangesViewSet,
+    DaySettingsViewSet,
+    PostalCodeRangePresetViewSet,
     SettingsPlannerViewSet,
     TeamSettingsViewSet,
 )
@@ -41,8 +42,11 @@ api_router.register(
     r"settings/planner", SettingsPlannerViewSet, basename="settings-planner"
 )
 api_router.register(r"team-settings", TeamSettingsViewSet, basename="team-settings")
+api_router.register(r"day-settings", DaySettingsViewSet, basename="day-settings")
 api_router.register(
-    r"postal-code-ranges", PostalCodeRangesViewSet, basename="postal-code-ranges"
+    r"postal-code-ranges-presets",
+    PostalCodeRangePresetViewSet,
+    basename="postal-code-ranges-presets",
 )
 api_router.register(
     r"fraud-prediction/scoring",

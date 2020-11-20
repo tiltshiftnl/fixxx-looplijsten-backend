@@ -13,9 +13,8 @@ from apps.itinerary.models import (
     Note,
     PostalCodeSettings,
 )
-from apps.planner.const import TEAM_TYPE_SETTINGS
-from apps.planner.models import TeamSettings
-from apps.planner.serializers import TeamSettingsSerializer
+from apps.planner.models import DaySettings
+from apps.planner.serializers import DaySettingsSerializer, TeamSettingsSerializer
 from apps.users.serializers import UserIdSerializer, UserSerializer
 from apps.visits.serializers import VisitSerializer
 from rest_framework import serializers
@@ -45,7 +44,7 @@ class PostalCodeSettingsSerializer(serializers.ModelSerializer):
 
 class ItinerarySettingsSerializer(serializers.ModelSerializer):
     projects = ProjectSerializer(many=True)
-    team_settings = TeamSettingsSerializer()
+    day_settings = DaySettingsSerializer()
     primary_stadium = StadiumSerializer()
     secondary_stadia = StadiumSerializer(many=True)
     exclude_stadia = StadiumSerializer(many=True)
@@ -55,7 +54,7 @@ class ItinerarySettingsSerializer(serializers.ModelSerializer):
         model = ItinerarySettings
         fields = (
             "opening_date",
-            "team_settings",
+            "day_settings",
             "target_length",
             "projects",
             "primary_stadium",
@@ -122,42 +121,6 @@ class ItinerarySerializer(serializers.ModelSerializer):
         read_only=True, many=True, required=False
     )
 
-    def __get_stadia_from_settings__(self, settings, list_name):
-        """ Returns a list of Stadium objects from settings """
-        stadia = settings.get(list_name, [])
-        stadia = [
-            stadium.get("name")
-            for stadium in stadia
-            if stadium.get("name") in settings["team_settings"]["stadia_choices"]
-        ]
-        stadia = [Stadium.get(name=stadium) for stadium in stadia]
-
-        return stadia
-
-    def __get_stadium_from_settings__(self, settings, name):
-        """ Returns a single Stadium object from settings """
-        if (
-            settings.get(name, None)
-            and settings.get(name, {}).get("name")
-            in settings["team_settings"]["stadia_choices"]
-        ):
-            stadium = settings.get(name).get("name")
-            stadium = Stadium.get(name=stadium)
-
-            return stadium
-
-    def __get_projects_from_settings__(self, settings):
-        """ Returns the Projects objects from settings """
-        projects = settings.get("projects", [])
-        projects = [
-            project.get("name")
-            for project in projects
-            if project.get("name") in settings["team_settings"]["project_choices"]
-        ]
-        projects = [Project.get(name=project) for project in projects]
-
-        return projects
-
     def __get_start_case_from_settings__(self, settings):
         """ Returns a Case object from the settings """
         try:
@@ -170,44 +133,37 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         itinerary = Itinerary.objects.create()
-
         # Add team members to the itinerary
         team_members = validated_data.get("team_members", [])
         team_members = [
             team_member.get("user").get("id") for team_member in team_members
         ]
         itinerary.add_team_members(team_members)
-        settings = validated_data.get("settings")
-        opening_date = settings.get("opening_date")
-        target_length = settings.get("target_length")
+        day_settings = DaySettings.objects.get(id=validated_data.get("day_settings_id"))
+        opening_date = day_settings.opening_date
+        target_length = validated_data.get("target_length")
 
         # Get the projects and stadia from settings
-        projects = self.__get_projects_from_settings__(settings)
-        primary_stadium = self.__get_stadium_from_settings__(
-            settings, "primary_stadium"
-        )
-        secondary_stadia = self.__get_stadia_from_settings__(
-            settings, "secondary_stadia"
-        )
-        exclude_stadia = self.__get_stadia_from_settings__(settings, "exclude_stadia")
-        start_case = self.__get_start_case_from_settings__(settings)
+        # projects = list(day_settings.projects.values_list("name", flat=True))
+        # primary_stadium = day_settings.primary_stadium
+        # secondary_stadia = list(day_settings.secondary_stadia.values_list("name", flat=True))
+        # exclude_stadia = list(day_settings.exclude_stadia.values_list("name", flat=True))
+        start_case = self.__get_start_case_from_settings__(validated_data)
 
         # First create the settings
         itinerary_settings = ItinerarySettings.objects.create(
             opening_date=opening_date,
             itinerary=itinerary,
-            primary_stadium=primary_stadium,
+            primary_stadium=day_settings.primary_stadium,
             target_length=target_length,
             start_case=start_case,
-            team_settings=TeamSettings.objects.get(
-                id=settings.get("team_settings").get("id")
-            ),
+            day_settings=day_settings,
         )
 
         # Next, add the many-to-many relations of the itinerary_Settings
-        itinerary_settings.projects.set(projects)
-        itinerary_settings.secondary_stadia.set(secondary_stadia)
-        itinerary_settings.exclude_stadia.set(exclude_stadia)
+        itinerary_settings.projects.set(day_settings.projects.all())
+        itinerary_settings.secondary_stadia.set(day_settings.secondary_stadia.all())
+        itinerary_settings.exclude_stadia.set(day_settings.exclude_stadia.all())
 
         # Get the postal code ranges from the settings
         postal_code_settings = validated_data.get("postal_code_settings", [])

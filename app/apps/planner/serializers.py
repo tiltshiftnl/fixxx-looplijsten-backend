@@ -1,5 +1,10 @@
-from apps.cases.serializers import StadiumLabelSerializer
-from apps.planner.models import PostalCodeRange, PostalCodeRangeSet, TeamSettings
+from apps.cases.serializers import Project, Stadium, StadiumLabelSerializer
+from apps.planner.models import (
+    DaySettings,
+    PostalCodeRange,
+    PostalCodeRangeSet,
+    TeamSettings,
+)
 from apps.visits.serializers import (
     ObservationSerializer,
     SituationSerializer,
@@ -7,8 +12,7 @@ from apps.visits.serializers import (
 )
 from django.conf import settings
 from rest_framework import serializers
-
-from .const import TEAM_TYPE_SETTINGS
+from rest_framework.relations import PKOnlyObject
 
 
 class PlannerListSettingsSerializer(serializers.Serializer):
@@ -104,7 +108,7 @@ class PostalCodeRangeSerializer(serializers.ModelSerializer):
         )
 
 
-class PostalCodeRangeSetSerializer(serializers.ModelSerializer):
+class PostalCodeRangePresetSerializer(serializers.ModelSerializer):
     postal_code_ranges_presets = PostalCodeRangeSerializer(
         many=True, read_only=True, source="postal_code_ranges"
     )
@@ -118,14 +122,83 @@ class PostalCodeRangeSetSerializer(serializers.ModelSerializer):
         )
 
 
-class TeamTypeSerializer(serializers.DictField):
-    def to_representation(self, instance):
-        return TEAM_TYPE_SETTINGS.get(instance)
+class StringRelatedToIdField(serializers.PrimaryKeyRelatedField):
+    def to_internal_value(self, data):
+        instances = self.queryset.filter(name=data)
+        if instances and len(instances) == 1:
+            return super().to_internal_value(instances.get().id)
+        else:
+            raise serializers.ValidationError("Object with name: %s not found" % data)
+
+    def to_representation(self, data):
+        if isinstance(data, PKOnlyObject):
+            return self.queryset.get(id=data.pk).name
+        return data.name
+
+
+class TeamSettingsCompactSerializer(serializers.ModelSerializer):
+    marked_stadia = StadiumLabelSerializer(read_only=True, many=True)
+    situation_choices = serializers.ListField(read_only=True)
+    observation_choices = ObservationSerializer(read_only=True, many=True)
+    suggest_next_visit_choices = SuggestNextVisitSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = TeamSettings
+        fields = (
+            "name",
+            "observation_choices",
+            "situation_choices",
+            "suggest_next_visit_choices",
+            "fraud_predict",
+            "marked_stadia",
+            "show_issuemelding",
+            "show_vakantieverhuur",
+            "show_vakantieverhuur",
+        )
+
+
+class DaySettingsCompactSerializer(serializers.ModelSerializer):
+    team_settings = TeamSettingsCompactSerializer(read_only=True)
+
+    class Meta:
+        model = DaySettings
+        fields = (
+            "id",
+            "name",
+            "team_settings",
+        )
+
+
+class DaySettingsSerializer(serializers.ModelSerializer):
+    projects = StringRelatedToIdField(many=True, queryset=Project.objects.all())
+    primary_stadium = StringRelatedToIdField(
+        queryset=Stadium.objects.all(), allow_null=True
+    )
+    secondary_stadia = StringRelatedToIdField(many=True, queryset=Stadium.objects.all())
+    exclude_stadia = StringRelatedToIdField(many=True, queryset=Stadium.objects.all())
+    team_settings = TeamSettingsCompactSerializer(read_only=True)
+    week_day = serializers.IntegerField(read_only=True, allow_null=True)
+
+    class Meta:
+        model = DaySettings
+        fields = (
+            "id",
+            "name",
+            "week_day",
+            "opening_date",
+            "postal_code_ranges",
+            "postal_code_ranges_presets",
+            "length_of_list",
+            "projects",
+            "primary_stadium",
+            "secondary_stadia",
+            "exclude_stadia",
+            "team_settings",
+        )
 
 
 class TeamSettingsSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True)
-    team_type = TeamTypeSerializer(read_only=True, required=False)
     situation_choices = serializers.ListField(read_only=True)
     observation_choices = ObservationSerializer(read_only=True, many=True)
     suggest_next_visit_choices = SuggestNextVisitSerializer(read_only=True, many=True)
@@ -133,13 +206,13 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
     stadia_choices = serializers.StringRelatedField(read_only=True, many=True)
     marked_stadia = StadiumLabelSerializer(read_only=True, many=True)
     settings = serializers.JSONField(required=True)
+    day_settings_list = DaySettingsSerializer(read_only=True, many=True)
 
     class Meta:
         model = TeamSettings
         fields = (
             "id",
             "name",
-            "team_type",
             "observation_choices",
             "situation_choices",
             "suggest_next_visit_choices",
@@ -147,6 +220,7 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "stadia_choices",
             "marked_stadia",
             "settings",
+            "day_settings_list",
         )
 
     def clean_projects(self, data):

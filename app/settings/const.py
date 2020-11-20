@@ -1,3 +1,14 @@
+WEEK_DAYS = [
+    "zondag",
+    "maandag",
+    "dinsdag",
+    "woensdag",
+    "donderdag",
+    "vrijdag",
+    "zaterdag",
+]
+WEEK_DAYS_CHOICES = [[i, wd] for i, wd in enumerate(WEEK_DAYS)]
+
 ISSUEMELDING = "Issuemelding"
 TERUGKOPPELING_SIA = "Terugkoppeling SIA"
 VERVOLG_SIA = "Vervolg SIA"
@@ -8,6 +19,10 @@ EXCLUDE_STADIA = (
     TERUGKOPPELING_SIA,
     VERVOLG_SIA,
 )
+
+POSTAL_CODE_RANGES = [
+    {"range_start": 1000, "range_end": 1109},
+]
 
 EXAMPLE_PLANNER_SETTINGS = {
     "opening_date": "2019-01-01",
@@ -82,4 +97,13 @@ API_EXCEPTION_SEVERITY_INFO = "INFO"
 ITINERARY_NOT_ENOUGH_CASES = {
     "severity": API_EXCEPTION_SEVERITY_INFO,
     "message": "Er zijn niet genoeg zaken beschikbaar om een looplijst mee te genereren.",
+}
+
+EXAMPLE_DAY_SETTINGS = {
+    "opening_date": "2019-01-01",
+    "projects": [],
+    "postal_codes": [{"range_start": 1000, "range_end": 1109}],
+    "postal_code_ranges": [{"range_start": 1000, "range_end": 1109}],
+    "length_of_list": 6,
+    "secondary_stadia": [],
 }

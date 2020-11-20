@@ -2,10 +2,11 @@ import datetime
 import json
 import sys
 
-from apps.planner.models import PostalCodeRangeSet, TeamSettings
+from apps.planner.models import DaySettings, PostalCodeRangeSet, TeamSettings
 from apps.planner.serializers import (
+    DaySettingsSerializer,
     PlannerSettingsSerializer,
-    PostalCodeRangeSetSerializer,
+    PostalCodeRangePresetSerializer,
     TeamSettingsSerializer,
 )
 from constance.backends.database.models import Constance
@@ -70,13 +71,13 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
         return JsonResponse(data)
 
 
-class PostalCodeRangesViewSet(ModelViewSet):
+class PostalCodeRangePresetViewSet(ModelViewSet):
     """
     A view for listing PostalCodeRangeSets
     """
 
     permission_classes = [IsAuthenticated]
-    serializer_class = PostalCodeRangeSetSerializer
+    serializer_class = PostalCodeRangePresetSerializer
     queryset = PostalCodeRangeSet.objects.all()
 
 
@@ -89,19 +90,15 @@ class TeamSettingsViewSet(ModelViewSet):
     serializer_class = TeamSettingsSerializer
     queryset = TeamSettings.objects.all()
 
-    # def retrieve(self, request, pk=None):
-    #     team_settings = get_object_or_404(self.queryset, pk=pk)
-    #     serializer = TeamSettingsSerializer(team_settings)
-    #     return Response(serializer.data)
 
-    # TODO PlannerSettings is not defined!
-    # def create(self, request):
-    #     team_settings = PlannerSettings.objects.create(**request.data)
-    #     team_settings.save()
+class DaySettingsViewSet(ModelViewSet):
+    """
+    A view for listing/adding/updating/removing a DaySettings
+    """
 
-    #     # Serialize and return data
-    #     serializer = TeamSettingsSerializer(team_settings, many=False)
-    #     return Response(serializer.data)
+    permission_classes = [IsAuthenticated]
+    serializer_class = DaySettingsSerializer
+    queryset = DaySettings.objects.all()
 
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -115,6 +112,9 @@ def dumpdata(request):
     call_command(
         "dumpdata",
         "planner",
+        "visits.Situation",
+        "visits.Observation",
+        "visits.SuggestNextVisit",
         "cases.Project",
         "cases.Stadium",
         "cases.StadiumLabel",

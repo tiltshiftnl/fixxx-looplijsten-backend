@@ -135,7 +135,7 @@ class CaseViewSetTest(APITestCase):
             "bag_data": FOO_BAG_DATA,
             "brk_data": FOO_BRK_DATA,
             "related_cases": FOO_RELATED_CASES,
-            "team_settings_id": None,
+            "day_settings_id": None,
             "is_sia": None,
         }
 
