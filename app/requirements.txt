@@ -23,9 +23,8 @@ django-filter==2.4.0
 tenacity
 
 # Authentication
-mozilla-django-oidc==1.2.4
+git+git://github.com/petercuret/keycloak_oidc.git@master
 djangorestframework-simplejwt==4.4.0
-datapunt_keycloak_oidc
 
 # Algorithm toolbox
 geopy==2.0.0

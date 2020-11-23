@@ -166,7 +166,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
     ),
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "keycloak_oidc.drf.permissions.IsInAuthorizedRealm",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "apps.users.auth.AuthenticationClass",
@@ -220,7 +220,7 @@ OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
 OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET")
 OIDC_USERNAME_ALGO = "apps.users.utils.generate_username"
 OIDC_USE_NONCE = False
-OIDC_ALLOWED_REALM_ACCESS_GROUPS = ("wonen_top",)
+OIDC_AUTHORIZED_GROUPS = ("wonen_top",)
 OIDC_AUTHENTICATION_CALLBACK_URL = "oidc-authenticate"
 
 ACCEPTANCE_OIDC_REDIRECT_URL = "https://acc.top.amsterdam.nl/authentication/callback"

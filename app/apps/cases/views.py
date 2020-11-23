@@ -40,8 +40,6 @@ class CaseViewSet(ViewSet):
     A Viewset for showing a single Case in detail
     """
 
-    permission_classes = [IsAuthenticated]
-
     def retrieve(self, request, pk):
         case_id = pk
         related_case_ids = q.get_related_case_ids(case_id)
