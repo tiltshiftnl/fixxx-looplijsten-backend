@@ -166,7 +166,16 @@ class ItinerarySerializer(serializers.ModelSerializer):
         itinerary_settings.exclude_stadia.set(day_settings.exclude_stadia.all())
 
         # Get the postal code ranges from the settings
-        postal_code_settings = validated_data.get("postal_code_settings", [])
+        postal_code_ranges_presets = [
+            pcr
+            for pcrp in day_settings.postal_code_ranges_presets.all()
+            for pcr in pcrp.postal_code_ranges.all().values()
+        ]
+        postal_code_settings = (
+            postal_code_ranges_presets
+            if postal_code_ranges_presets
+            else day_settings.postal_code_ranges
+        )
         for postal_code_setting in postal_code_settings:
             range_start = postal_code_setting.get("range_start")
             range_end = postal_code_setting.get("range_end")
