@@ -96,7 +96,8 @@ API_EXCEPTION_SEVERITY_INFO = "INFO"
 
 ITINERARY_NOT_ENOUGH_CASES = {
     "severity": API_EXCEPTION_SEVERITY_INFO,
-    "message": "Er zijn niet genoeg zaken beschikbaar om een looplijst mee te genereren.",
+    "message": "Er zijn vandaag niet genoeg zaken die voldoen aan de ingestelde criteria. Neem contact op met je dagcoördinator of handhaver.",
+    "title": "Helaas, geen looplijst mogelijk",
 }
 
 EXAMPLE_DAY_SETTINGS = {
