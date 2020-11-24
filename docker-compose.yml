@@ -46,7 +46,7 @@ services:
       - BWV_DB_USER=looplijsten_bwv
       - BWV_DB_PASSWORD=insecure
       - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
-      - LOCAL_DEVELOPMENT_AUTHENTICATION=True
+      - LOCAL_DEVELOPMENT_AUTHENTICATION
       - ZAKEN_API_URL=http://zaak-gateway:8000/api/v1
       - PUSH_ZAKEN=False # Disabled for local development, enable to test Zaken connection
       - UWSGI_HTTP=0.0.0.0:8000
