@@ -37,7 +37,7 @@ services:
       - DJANGO_SECRET_KEY=local
       - DJANGO_DEBUG=True
       - DJANGO_ALLOWED_HOSTS=0.0.0.0,localhost
-      - CORS_ORIGIN_WHITELIST=http://0.0.0.0:3000,http://localhost:3000
+      - CORS_ORIGIN_WHITELIST=http://0.0.0.0:3000,http://localhost:3000,http://0.0.0.0:2999,http://localhost:2999
       - DATABASE_NAME=looplijsten
       - DATABASE_USER=looplijsten
       - DATABASE_PASSWORD=insecure
