@@ -24,12 +24,14 @@ class Weights:
         primary_stadium=SCORING_WEIGHTS.PRIMARY_STADIUM.value,
         secondary_stadium=SCORING_WEIGHTS.SECONDARY_STADIUM.value,
         issuemelding=SCORING_WEIGHTS.ISSUEMELDING.value,
+        is_sia=SCORING_WEIGHTS.IS_SIA.value,
     ):
         self.distance = distance
         self.fraud_probability = fraud_probability
         self.primary_stadium = primary_stadium
         self.secondary_stadium = secondary_stadium
         self.issuemelding = issuemelding
+        self.is_sia = is_sia
 
     def score(
         self,
@@ -38,6 +40,7 @@ class Weights:
         primary_stadium,
         secondary_stadium,
         issuemelding,
+        is_sia,
     ):
         values = [
             distance,
@@ -45,6 +48,7 @@ class Weights:
             primary_stadium,
             secondary_stadium,
             issuemelding,
+            is_sia,
         ]
         weights = [
             self.distance,
@@ -52,6 +56,7 @@ class Weights:
             self.primary_stadium,
             self.secondary_stadium,
             self.issuemelding,
+            self.is_sia,
         ]
 
         products = [value * weight for value, weight in zip(values, weights)]
@@ -64,6 +69,7 @@ class Weights:
             "primary_stadium": self.primary_stadium,
             "secondary_stadium": self.secondary_stadium,
             "issuemelding": self.issuemelding,
+            "is_sia": self.is_sia,
         }
         return str(settings)
 
@@ -81,6 +87,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
                 primary_stadium=settings_weights.primary_stadium,
                 secondary_stadium=settings_weights.secondary_stadium,
                 issuemelding=settings_weights.issuemelding,
+                is_sia=settings_weights.is_sia,
             )
 
     def get_score(self, case):
@@ -105,7 +112,10 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
             has_primary_stadium,
             has_secondary_stadium,
             has_issuemelding_stadium,
+            1 if case["is_sia"] == "J" else 0,
         )
+        # print(case)
+        # print(score)
 
         return score
 
