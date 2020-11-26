@@ -26,6 +26,7 @@ class ItinerarySettingsInline(admin.StackedInline):
         "secondary_stadia",
         "exclude_stadia",
         "start_case",
+        "sia_presedence",
     )
     model = ItinerarySettings
 

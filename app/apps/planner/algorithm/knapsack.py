@@ -4,74 +4,13 @@ import multiprocessing
 from apps.fraudprediction.utils import get_fraud_predictions
 from apps.planner.algorithm.base import ItineraryGenerateAlgorithm
 from apps.planner.const import MAX_SUGGESTIONS_COUNT, SCORING_WEIGHTS
+from apps.planner.models import Weights
 from apps.planner.utils import calculate_geo_distances, remove_cases_from_list
 from joblib import Parallel, delayed
 from settings.const import ISSUEMELDING
 from utils.queries import get_case
 
 LOGGER = logging.getLogger(__name__)
-
-
-class Weights:
-    """
-    A configurable weight object which is used in our scoring function
-    """
-
-    def __init__(
-        self,
-        distance=SCORING_WEIGHTS.DISTANCE.value,
-        fraud_probability=SCORING_WEIGHTS.FRAUD_PROBABILITY.value,
-        primary_stadium=SCORING_WEIGHTS.PRIMARY_STADIUM.value,
-        secondary_stadium=SCORING_WEIGHTS.SECONDARY_STADIUM.value,
-        issuemelding=SCORING_WEIGHTS.ISSUEMELDING.value,
-        is_sia=SCORING_WEIGHTS.IS_SIA.value,
-    ):
-        self.distance = distance
-        self.fraud_probability = fraud_probability
-        self.primary_stadium = primary_stadium
-        self.secondary_stadium = secondary_stadium
-        self.issuemelding = issuemelding
-        self.is_sia = is_sia
-
-    def score(
-        self,
-        distance,
-        fraud_probability,
-        primary_stadium,
-        secondary_stadium,
-        issuemelding,
-        is_sia,
-    ):
-        values = [
-            distance,
-            fraud_probability,
-            primary_stadium,
-            secondary_stadium,
-            issuemelding,
-            is_sia,
-        ]
-        weights = [
-            self.distance,
-            self.fraud_probability,
-            self.primary_stadium,
-            self.secondary_stadium,
-            self.issuemelding,
-            self.is_sia,
-        ]
-
-        products = [value * weight for value, weight in zip(values, weights)]
-        return sum(products)
-
-    def __str__(self):
-        settings = {
-            "distance": self.distance,
-            "fraud_probability": self.fraud_probability,
-            "primary_stadium": self.primary_stadium,
-            "secondary_stadium": self.secondary_stadium,
-            "issuemelding": self.issuemelding,
-            "is_sia": self.is_sia,
-        }
-        return str(settings)
 
 
 class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
@@ -112,10 +51,8 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
             has_primary_stadium,
             has_secondary_stadium,
             has_issuemelding_stadium,
-            1 if case["is_sia"] == "J" else 0,
+            bool(case["is_sia"] == "J"),
         )
-        # print(case)
-        # print(score)
 
         return score
 
