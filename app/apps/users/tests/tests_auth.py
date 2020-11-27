@@ -6,9 +6,9 @@ with the OIDC provider
 """
 from unittest.mock import Mock
 
-from apps.users.auth_grip import OIDCAuthenticationBackend
 from django.core.exceptions import SuspiciousOperation
 from django.test import TestCase
+from keycloak_oidc.auth import OIDCAuthenticationBackend
 
 from app.utils.unittest_helpers import get_test_user
 
@@ -87,11 +87,11 @@ class AuthTest(TestCase):
         )
 
         # Call the authentication
-        authenticated_result = authentication_backend.authenticate(MOCK_AUTH_REQUEST)
+        with self.assertRaises(Exception):
+            authentication_backend.authenticate(MOCK_AUTH_REQUEST)
 
         # Verify is called
         authentication_backend.verify_token.assert_called_once()
 
         # But the user creation not
         authentication_backend.get_or_create_user.assert_not_called()
-        self.assertIsNone(authenticated_result)

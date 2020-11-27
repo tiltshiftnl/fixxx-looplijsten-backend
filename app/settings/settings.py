@@ -168,10 +168,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "keycloak_oidc.drf.permissions.IsInAuthorizedRealm",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "apps.users.auth.AuthenticationClass",
-        "rest_framework.authentication.SessionAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("apps.users.auth.AuthenticationClass",),
 }
 
 # Mail
@@ -282,7 +279,7 @@ LOGGING = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=4),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
     # We don't refresh tokens yet, so we set refresh lifetime to zero
     "REFRESH_TOKEN_LIFETIME": timedelta(seconds=0),
 }

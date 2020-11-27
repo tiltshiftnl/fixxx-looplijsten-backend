@@ -23,7 +23,7 @@ django-filter==2.4.0
 tenacity
 
 # Authentication
-git+git://github.com/petercuret/keycloak_oidc.git@master
+git+https://github.com/petercuret/keycloak_oidc.git@master
 djangorestframework-simplejwt==4.4.0
 
 # Algorithm toolbox
