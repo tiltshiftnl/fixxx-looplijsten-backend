@@ -8,6 +8,7 @@ from apps.itinerary.models import (
     ItinerarySettings,
     PostalCodeSettings,
 )
+from apps.planner.models import DaySettings, TeamSettings
 from apps.users.models import User
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -307,7 +308,11 @@ class ItineraryModelTest(TestCase):
         Itinerary.itineraryAlgorithm = Mock()
         itinerary = Itinerary.objects.create()
 
-        ItinerarySettings.objects.create(opening_date="2020-04-04", itinerary=itinerary)
+        team_settings = TeamSettings.objects.create()
+        day_settings = DaySettings.objects.create(team_settings=team_settings)
+        ItinerarySettings.objects.create(
+            opening_date="2020-04-04", itinerary=itinerary, day_settings=day_settings
+        )
         PostalCodeSettings.objects.create(
             itinerary=itinerary, range_start=1000, range_end=1005
         )
