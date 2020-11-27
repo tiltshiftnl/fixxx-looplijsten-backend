@@ -28,6 +28,10 @@ INSTALLED_APPS = (
     "constance",
     "constance.backends.database",  # for dynamic configurations in admin
     "mozilla_django_oidc",  # for authentication
+    # Health checks. (Expand when more services become available)
+    "health_check",
+    "health_check.db",
+    "health_check.contrib.migrations",
     # Your apps
     "apps.users",
     "apps.itinerary",
@@ -36,6 +40,7 @@ INSTALLED_APPS = (
     "apps.planner",
     "apps.fraudprediction",
     "apps.visits",
+    "apps.health",
     # Enable admin templates inheritance
     "django.contrib.admin",
 )
