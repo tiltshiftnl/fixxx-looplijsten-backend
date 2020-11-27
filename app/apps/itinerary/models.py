@@ -25,6 +25,7 @@ class Itinerary(models.Model):
     itineraryAlgorithm = ItineraryKnapsackList
 
     created_at = models.DateField(auto_now_add=True)
+    external_state_id = models.IntegerField(null=True)
 
     def add_case(self, case_id, position=None):
         """
