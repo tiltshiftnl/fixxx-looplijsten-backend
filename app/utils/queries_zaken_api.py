@@ -103,9 +103,8 @@ def push_itinerary_item(itinerary_item):
 
     response_json = response.json()
 
-    itinerary = itinerary_item.itinerary
-    itinerary.external_state_id = response_json["state"]["id"]
-    itinerary.save()
+    itinerary_item.external_state_id = response_json["state"]["id"]
+    itinerary_item.save()
 
     # Save the itinerary
     logger.info(f"Finished pushing case {case_id}")
