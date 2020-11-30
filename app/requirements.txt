@@ -15,7 +15,7 @@ freezegun==1.0.0
 model_bakery
 
 # Settings
-django-constance[database]==2.7.0
+django-constance[database]==2.8.0
 
 # Other
 requests==2.24.0
