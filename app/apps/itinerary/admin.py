@@ -71,4 +71,9 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(ItineraryItem)
 class ItineraryItemAdmin(admin.ModelAdmin):
-    fields = ("itinerary", "case", "position")
+    fields = (
+        "itinerary",
+        "case",
+        "position",
+        "external_state_id",
+    )
