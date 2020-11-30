@@ -306,6 +306,7 @@ class ItineraryItem(models.Model):
         Case, on_delete=models.CASCADE, null=True, blank=False, related_name="cases"
     )
     position = models.FloatField(null=False, blank=False)
+    external_state_id = models.IntegerField(null=True)
 
     class Meta:
         ordering = ["position"]

@@ -21,6 +21,7 @@ django-constance[database]==2.7.0
 requests==2.24.0
 django-filter==2.4.0
 tenacity
+django-health-check
 
 # Authentication
 git+https://github.com/petercuret/keycloak_oidc.git@master

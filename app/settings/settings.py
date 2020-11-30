@@ -29,6 +29,11 @@ INSTALLED_APPS = (
     "drf_spectacular",  # for generating real OpenAPI 3.0 documentation
     "constance",
     "constance.backends.database",  # for dynamic configurations in admin
+    "mozilla_django_oidc",  # for authentication
+    # Health checks. (Expand when more services become available)
+    "health_check",
+    "health_check.db",
+    "health_check.contrib.migrations",
     # Your apps
     "apps.users",
     "apps.itinerary",
@@ -37,6 +42,7 @@ INSTALLED_APPS = (
     "apps.planner",
     "apps.fraudprediction",
     "apps.visits",
+    "apps.health",
     # Enable admin templates inheritance
     "django.contrib.admin",
 )
@@ -298,13 +304,8 @@ BRK_API_OBJECT_EXPAND_URL = os.getenv(
 BAG_API_SEARCH_URL = "https://api.data.amsterdam.nl/atlas/search/adres/"
 
 # Zaken Access request settings
-# TODO: Fix this later with proper environment variables
-if ENVIRONMENT == "acceptance":
-    ZAKEN_API_URL = os.getenv(
-        "ZAKEN_API_URL", "https://acc.looplijst.top.amsterdam.nl/api/v1"
-    )
-else:
-    ZAKEN_API_URL = os.getenv("ZAKEN_API_URL", None)
+ZAKEN_API_URL = os.getenv("ZAKEN_API_URL", None)
+ZAKEN_API_HEALTH_URL = os.getenv("ZAKEN_API_HEALTH_URL", None)
 
 # Allows pushes from Top to Zaken, defaults to True
 PUSH_ZAKEN = os.getenv("PUSH_ZAKEN", "True") == "True"

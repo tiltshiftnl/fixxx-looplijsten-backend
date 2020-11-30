@@ -65,6 +65,7 @@ urlpatterns = [
     # Health check urls
     path("looplijsten/health", health_default, name="health-default"),
     path("looplijsten/health_bwv", health_bwv, name="health-bwv"),
+    path("health/", include("health_check.urls")),
     # The API for requesting data
     path("api/v1/", include(api_router.urls), name="api"),
     # Authentication endpoint for exchanging an OIDC code for a token
