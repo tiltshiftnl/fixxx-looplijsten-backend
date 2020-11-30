@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: looplijsten_bwv
       POSTGRES_USER: looplijsten_bwv
       POSTGRES_PASSWORD: insecure
-  database:
+  database_top:
     networks:
       - looplijsten_backend
     image: amsterdam/postgres11
@@ -41,13 +41,13 @@ services:
       - DATABASE_NAME=looplijsten
       - DATABASE_USER=looplijsten
       - DATABASE_PASSWORD=insecure
-      - DATABASE_HOST=database
+      - DATABASE_HOST=database_top
       - BWV_DB_NAME=looplijsten_bwv
       - BWV_DB_USER=looplijsten_bwv
       - BWV_DB_PASSWORD=insecure
       - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
       - LOCAL_DEVELOPMENT_AUTHENTICATION=True
-      - ZAKEN_API_URL=http://zaak-gateway:8000/api/v1
+      - ZAKEN_API_URL=http://zaak-gateway:8080/api/v1
       - PUSH_ZAKEN=False # Disabled for local development, enable to test Zaken connection
       - UWSGI_HTTP=0.0.0.0:8000
       - SECRET_KEY_TOP_ZAKEN=SECRET_KEY_TOP_ZAKEN
@@ -56,7 +56,7 @@ services:
       - ./api/deploy:/deploy
     command: bash -c "/app/deploy/entrypoint.development.sh"
     depends_on:
-      - database
+      - database_top
       - bwv_db
 
 networks:
