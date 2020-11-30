@@ -64,8 +64,7 @@ class ZakenServiceCheck(APIServiceCheckBackend):
     """
 
     critical_service = True
-    api_url = settings.ZAKEN_API_URL
-    api_url_suffix = "/schema"
+    api_url = settings.ZAKEN_API_HEALTH_URL
     verbose_name = "Zaken API Endpoint"
 
 

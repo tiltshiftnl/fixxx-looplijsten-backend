@@ -304,13 +304,8 @@ BRK_API_OBJECT_EXPAND_URL = os.getenv(
 BAG_API_SEARCH_URL = "https://api.data.amsterdam.nl/atlas/search/adres/"
 
 # Zaken Access request settings
-# TODO: Fix this later with proper environment variables
-if ENVIRONMENT == "acceptance":
-    ZAKEN_API_URL = os.getenv(
-        "ZAKEN_API_URL", "https://acc.looplijst.top.amsterdam.nl/api/v1"
-    )
-else:
-    ZAKEN_API_URL = os.getenv("ZAKEN_API_URL", None)
+ZAKEN_API_URL = os.getenv("ZAKEN_API_URL", None)
+ZAKEN_API_HEALTH_URL = os.getenv("ZAKEN_API_HEALTH_URL", None)
 
 # Allows pushes from Top to Zaken, defaults to True
 PUSH_ZAKEN = os.getenv("PUSH_ZAKEN", "True") == "True"
