@@ -77,20 +77,22 @@ def get_bwv_sync_times():
     return executed_query
 
 
+BWV_TABLES = [
+    "bwv_benb_meldingen",
+    "bwv_hotline_bevinding",
+    "bwv_medewerkers",
+    "bwv_personen",
+    "bwv_personen_hist",
+    "bwv_vakantieverhuur",
+    "bwv_woningen",
+    "import_adres",
+    "import_stadia",
+    "import_wvs",
+    # 'sync_log'
+]
+
+
 def assert_bwv_health():
-    BWV_TABLES = [
-        "bwv_benb_meldingen",
-        "bwv_hotline_bevinding",
-        "bwv_medewerkers",
-        "bwv_personen",
-        "bwv_personen_hist",
-        "bwv_vakantieverhuur",
-        "bwv_woningen",
-        "import_adres",
-        "import_stadia",
-        "import_wvs",
-        # 'sync_log'
-    ]
     assert_health_generic(database_name=settings.BWV_DATABASE_NAME)
     assert_health_database_tables(
         database_name=settings.BWV_DATABASE_NAME, tables=BWV_TABLES
