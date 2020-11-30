@@ -10,7 +10,7 @@ from apps.planner.views import (
 )
 from apps.planner.views import dumpdata as planner_dumpdata
 from apps.planner.views_sandbox import AlgorithmListView, AlgorithmView, BWVTablesView
-from apps.users.views import IsAuthenticatedView, ObtainAuthTokenOIDC, UserListView
+from apps.users.views import IsAuthorizedView, ObtainAuthTokenOIDC, UserListView
 from apps.visits.views import ObservationViewSet, SuggestNextVisitViewSet, VisitViewSet
 from django.conf import settings
 from django.conf.urls.static import static
@@ -76,9 +76,9 @@ urlpatterns = [
     ),
     # Endpoint for checking if user is authenticated
     path(
-        "api/v1/is-authenticated/",
-        IsAuthenticatedView.as_view(),
-        name="is-authenticated",
+        "api/v1/is-authorized/",
+        IsAuthorizedView.as_view(),
+        name="is-authorized",
     ),
     # # Swagger/OpenAPI documentation
     path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),

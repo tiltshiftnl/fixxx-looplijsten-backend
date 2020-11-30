@@ -55,6 +55,7 @@ def get_eligible_cases(projects):
             SELECT
               DISTINCT zaak_id AS case_id,
               import_wvs.beh_oms AS case_reason,
+              import_wvs.is_sia as is_sia,
               import_adres.postcode AS postal_code,
               import_adres.sttnaam AS street_name,
               import_adres.hsnr AS street_number,

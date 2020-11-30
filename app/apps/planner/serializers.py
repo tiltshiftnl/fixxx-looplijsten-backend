@@ -194,6 +194,7 @@ class DaySettingsSerializer(serializers.ModelSerializer):
             "secondary_stadia",
             "exclude_stadia",
             "team_settings",
+            "sia_presedence",
         )
 
 

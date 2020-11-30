@@ -3,15 +3,26 @@ from apps.planner.models import (
     PostalCodeRange,
     PostalCodeRangeSet,
     TeamSettings,
+    Weights,
 )
 from django.contrib import admin
 
 
 class DaySettingsInline(admin.TabularInline):
     model = DaySettings
-    # readonly_fields = ("settings",)
     extra = 0
-    fieldsets = ((None, {"fields": ("name", "week_day", "start_time")}),)
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "name",
+                    "week_day",
+                    "start_time",
+                )
+            },
+        ),
+    )
 
 
 @admin.register(TeamSettings)
@@ -25,6 +36,13 @@ class TeamSettingsAdmin(admin.ModelAdmin):
             {
                 "classes": ("collapse",),
                 "fields": ("project_choices", "stadia_choices"),
+            },
+        ),
+        (
+            "Algoritm options",
+            {
+                "classes": ("collapse",),
+                "fields": ("default_weights", "is_sia_weights"),
             },
         ),
         (
@@ -42,7 +60,6 @@ class TeamSettingsAdmin(admin.ModelAdmin):
             },
         ),
     )
-    # readonly_fields = ("settings",)
     inlines = [DaySettingsInline]
 
 
@@ -55,3 +72,24 @@ class PostalCodeRangeInline(admin.TabularInline):
 class PostalCodeRangeSetAdmin(admin.ModelAdmin):
     list_display = ("name",)
     inlines = [PostalCodeRangeInline]
+
+
+@admin.register(Weights)
+class WeightsAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "distance",
+        "fraud_probability",
+        "primary_stadium",
+        "secondary_stadium",
+        "issuemelding",
+        "is_sia",
+    )
+    list_editable = (
+        "distance",
+        "fraud_probability",
+        "primary_stadium",
+        "secondary_stadium",
+        "issuemelding",
+        "is_sia",
+    )

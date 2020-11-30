@@ -24,7 +24,7 @@ tenacity
 django-health-check
 
 # Authentication
-mozilla-django-oidc==1.2.4
+git+https://github.com/petercuret/keycloak_oidc.git@master
 djangorestframework-simplejwt==4.4.0
 
 # Algorithm toolbox

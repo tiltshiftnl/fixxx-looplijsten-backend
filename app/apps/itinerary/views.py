@@ -30,7 +30,6 @@ class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMi
     CRUD for itineraries and teams
     """
 
-    permission_classes = [IsAuthenticated]
     serializer_class = ItinerarySerializer
     queryset = Itinerary.objects.all()
     filter_backends = [DjangoFilterBackend]
@@ -157,7 +156,6 @@ class ItineraryItemViewSet(
     A view for adding/removing an item to a user's itinerary
     """
 
-    permission_classes = [IsAuthenticated]
     queryset = ItineraryItem.objects.all()
 
     def get_serializer_class(self):
@@ -193,7 +191,6 @@ class NoteViewSet(
     A view for adding/updating/removing a note
     """
 
-    permission_classes = [IsAuthenticated]
     serializer_class = NoteCrudSerializer
     queryset = Note.objects.all()
 

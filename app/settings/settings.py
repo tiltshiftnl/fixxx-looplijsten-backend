@@ -4,6 +4,7 @@ from datetime import timedelta
 from os.path import join
 
 import sentry_sdk
+from keycloak_oidc.default_settings import *
 from sentry_sdk.integrations.django import DjangoIntegration
 from settings import const as settings_const
 
@@ -22,6 +23,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "corsheaders",
     # Third party apps
+    "keycloak_oidc",
     "rest_framework",  # utilities for rest apis
     "django_filters",  # for filtering rest endpoints,
     "drf_spectacular",  # for generating real OpenAPI 3.0 documentation
@@ -170,11 +172,9 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
     ),
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "keycloak_oidc.drf.permissions.IsInAuthorizedRealm",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("apps.users.auth.AuthenticationClass",),
 }
 
 # Mail
@@ -222,6 +222,9 @@ sentry_sdk.init(dsn=os.environ.get("SENTRY_DSN"), integrations=[DjangoIntegratio
 OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID")
 OIDC_RP_CLIENT_SECRET = os.environ.get("OIDC_RP_CLIENT_SECRET")
 OIDC_USERNAME_ALGO = "apps.users.utils.generate_username"
+OIDC_USE_NONCE = False
+OIDC_AUTHORIZED_GROUPS = ("wonen_top",)
+OIDC_AUTHENTICATION_CALLBACK_URL = "oidc-authenticate"
 
 ACCEPTANCE_OIDC_REDIRECT_URL = "https://acc.top.amsterdam.nl/authentication/callback"
 PRODUCTION_OIDC_REDIRECT_URL = "https://top.amsterdam.nl/authentication/callback"
@@ -240,20 +243,25 @@ OIDC_VERIFY_SSL = True
 # https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/openid-configuration
 OIDC_OP_AUTHORIZATION_ENDPOINT = os.getenv(
     "OIDC_OP_AUTHORIZATION_ENDPOINT",
-    "https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/authorize",
+    "https://iam.amsterdam.nl/auth/realms/datapunt-ad-acc/protocol/openid-connect/auth",
 )
 OIDC_OP_TOKEN_ENDPOINT = os.getenv(
-    "OIDC_OP_TOKEN_ENDPOINT", "https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/token"
+    "OIDC_OP_TOKEN_ENDPOINT",
+    "https://iam.amsterdam.nl/auth/realms/datapunt-ad-acc/protocol/openid-connect/token",
 )
 OIDC_OP_USER_ENDPOINT = os.getenv(
-    "OIDC_OP_USER_ENDPOINT", "https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/userinfo"
+    "OIDC_OP_USER_ENDPOINT",
+    "https://iam.amsterdam.nl/auth/realms/datapunt-ad-acc/protocol/openid-connect/userinfo",
 )
 OIDC_OP_JWKS_ENDPOINT = os.getenv(
     "OIDC_OP_JWKS_ENDPOINT",
-    "https://auth.grip-on-it.com/v2/rjsfm52t/oidc/idp/.well-known/jwks.json",
+    "https://iam.amsterdam.nl/auth/realms/datapunt-ad-acc/protocol/openid-connect/certs",
+)
+OIDC_OP_LOGOUT_ENDPOINT = os.getenv(
+    "OIDC_OP_LOGOUT_ENDPOINT",
+    "https://iam.amsterdam.nl/auth/realms/datapunt-ad-acc/protocol/openid-connect/logout",
 )
 
-OIDC_USE_NONCE = True
 
 LOGGING = {
     "version": 1,
@@ -277,7 +285,7 @@ LOGGING = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=4),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=24),
     # We don't refresh tokens yet, so we set refresh lifetime to zero
     "REFRESH_TOKEN_LIFETIME": timedelta(seconds=0),
 }

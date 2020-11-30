@@ -143,11 +143,6 @@ class ItinerarySerializer(serializers.ModelSerializer):
         opening_date = day_settings.opening_date
         target_length = validated_data.get("target_length")
 
-        # Get the projects and stadia from settings
-        # projects = list(day_settings.projects.values_list("name", flat=True))
-        # primary_stadium = day_settings.primary_stadium
-        # secondary_stadia = list(day_settings.secondary_stadia.values_list("name", flat=True))
-        # exclude_stadia = list(day_settings.exclude_stadia.values_list("name", flat=True))
         start_case = self.__get_start_case_from_settings__(validated_data)
 
         # First create the settings
@@ -158,6 +153,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
             target_length=target_length,
             start_case=start_case,
             day_settings=day_settings,
+            sia_presedence=day_settings.sia_presedence,
         )
 
         # Next, add the many-to-many relations of the itinerary_Settings

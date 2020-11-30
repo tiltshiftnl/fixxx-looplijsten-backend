@@ -4,68 +4,13 @@ import multiprocessing
 from apps.fraudprediction.utils import get_fraud_predictions
 from apps.planner.algorithm.base import ItineraryGenerateAlgorithm
 from apps.planner.const import MAX_SUGGESTIONS_COUNT, SCORING_WEIGHTS
+from apps.planner.models import Weights
 from apps.planner.utils import calculate_geo_distances, remove_cases_from_list
 from joblib import Parallel, delayed
 from settings.const import ISSUEMELDING
 from utils.queries import get_case
 
 LOGGER = logging.getLogger(__name__)
-
-
-class Weights:
-    """
-    A configurable weight object which is used in our scoring function
-    """
-
-    def __init__(
-        self,
-        distance=SCORING_WEIGHTS.DISTANCE.value,
-        fraud_probability=SCORING_WEIGHTS.FRAUD_PROBABILITY.value,
-        primary_stadium=SCORING_WEIGHTS.PRIMARY_STADIUM.value,
-        secondary_stadium=SCORING_WEIGHTS.SECONDARY_STADIUM.value,
-        issuemelding=SCORING_WEIGHTS.ISSUEMELDING.value,
-    ):
-        self.distance = distance
-        self.fraud_probability = fraud_probability
-        self.primary_stadium = primary_stadium
-        self.secondary_stadium = secondary_stadium
-        self.issuemelding = issuemelding
-
-    def score(
-        self,
-        distance,
-        fraud_probability,
-        primary_stadium,
-        secondary_stadium,
-        issuemelding,
-    ):
-        values = [
-            distance,
-            fraud_probability,
-            primary_stadium,
-            secondary_stadium,
-            issuemelding,
-        ]
-        weights = [
-            self.distance,
-            self.fraud_probability,
-            self.primary_stadium,
-            self.secondary_stadium,
-            self.issuemelding,
-        ]
-
-        products = [value * weight for value, weight in zip(values, weights)]
-        return sum(products)
-
-    def __str__(self):
-        settings = {
-            "distance": self.distance,
-            "fraud_probability": self.fraud_probability,
-            "primary_stadium": self.primary_stadium,
-            "secondary_stadium": self.secondary_stadium,
-            "issuemelding": self.issuemelding,
-        }
-        return str(settings)
 
 
 class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
@@ -81,6 +26,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
                 primary_stadium=settings_weights.primary_stadium,
                 secondary_stadium=settings_weights.secondary_stadium,
                 issuemelding=settings_weights.issuemelding,
+                is_sia=settings_weights.is_sia,
             )
 
     def get_score(self, case):
@@ -105,6 +51,7 @@ class ItineraryKnapsackSuggestions(ItineraryGenerateAlgorithm):
             has_primary_stadium,
             has_secondary_stadium,
             has_issuemelding_stadium,
+            bool(case["is_sia"] == "J"),
         )
 
         return score

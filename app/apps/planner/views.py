@@ -28,7 +28,6 @@ class SettingsPlannerViewSet(ViewSet, CreateAPIView):
     Retrieves the planner settings which are used for generating lists
     """
 
-    permission_classes = [IsAuthenticated]
     serializer_class = PlannerSettingsSerializer
 
     def list(self, request):
@@ -76,7 +75,6 @@ class PostalCodeRangePresetViewSet(ModelViewSet):
     A view for listing PostalCodeRangeSets
     """
 
-    permission_classes = [IsAuthenticated]
     serializer_class = PostalCodeRangePresetSerializer
     queryset = PostalCodeRangeSet.objects.all()
 
@@ -86,7 +84,6 @@ class TeamSettingsViewSet(ModelViewSet):
     A view for listing/adding/updating/removing a TeamSettings
     """
 
-    permission_classes = [IsAuthenticated]
     serializer_class = TeamSettingsSerializer
     queryset = TeamSettings.objects.all()
 
@@ -96,7 +93,6 @@ class DaySettingsViewSet(ModelViewSet):
     A view for listing/adding/updating/removing a DaySettings
     """
 
-    permission_classes = [IsAuthenticated]
     serializer_class = DaySettingsSerializer
     queryset = DaySettings.objects.all()
 

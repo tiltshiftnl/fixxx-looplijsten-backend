@@ -6,6 +6,7 @@ from apps.planner.algorithm.knapsack import (
     ItineraryKnapsackList,
     ItineraryKnapsackSuggestions,
 )
+from apps.planner.models import Weights
 from apps.planner.utils import remove_cases_from_list
 from apps.users.models import User
 from django.conf import settings
@@ -138,8 +139,18 @@ class Itinerary(models.Model):
         Returns a list of cases based on the settings which can be added to this itinerary
         """
         # Initialise using this itinerary's settings
+
+        weights = self.settings.day_settings.team_settings.default_weights
+        if (
+            self.settings.sia_presedence
+            and self.settings.day_settings.team_settings.is_sia_weights
+        ):
+            weights = self.settings.day_settings.team_settings.is_sia_weights
+        if not weights:
+            weights = Weights()
+
         generator = self.itineraryAlgorithm(
-            self.settings, self.postal_code_settings.all()
+            self.settings, self.postal_code_settings.all(), weights
         )
 
         # Exclude cases which are already in itineraries
@@ -210,6 +221,8 @@ class ItinerarySettings(models.Model):
     start_case = models.ForeignKey(
         Case, on_delete=models.CASCADE, null=True, blank=True
     )
+
+    sia_presedence = models.BooleanField(default=False)
 
     def __str__(self):
         return self.itinerary.__str__()

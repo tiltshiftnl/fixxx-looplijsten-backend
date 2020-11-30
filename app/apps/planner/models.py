@@ -10,6 +10,10 @@ from settings.const import (
     WEEK_DAYS_CHOICES,
 )
 
+from .const import SCORING_WEIGHTS
+
+WEIGHTS_VALIDATORS = [MinValueValidator(0), MaxValueValidator(1)]
+
 
 def team_settings_settings_default():
     return EXAMPLE_PLANNER_SETTINGS
@@ -26,6 +30,20 @@ def day_settings__postal_code_ranges__default():
 class TeamSettings(models.Model):
     name = models.CharField(
         max_length=100,
+    )
+    default_weights = models.ForeignKey(
+        to="Weights",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="team_settings_default_weights",
+    )
+    is_sia_weights = models.ForeignKey(
+        to="Weights",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="team_settings_is_sia_weights",
     )
     show_issuemelding = models.BooleanField(
         default=True,
@@ -153,6 +171,7 @@ class DaySettings(models.Model):
         blank=True,
         related_name="exclude_stadia_day_settings_list",
     )
+    sia_presedence = models.BooleanField(default=False)
 
     class Meta:
         ordering = ("week_day", "start_time")
@@ -162,4 +181,78 @@ class DaySettings(models.Model):
         return "%s - %s" % (
             self.team_settings.name,
             self.name,
+        )
+
+
+class Weights(models.Model):
+    name = models.CharField(
+        max_length=50,
+    )
+    distance = models.FloatField(
+        default=SCORING_WEIGHTS.DISTANCE.value,
+        validators=WEIGHTS_VALIDATORS,
+    )
+    fraud_probability = models.FloatField(
+        default=SCORING_WEIGHTS.FRAUD_PROBABILITY.value,
+        validators=WEIGHTS_VALIDATORS,
+    )
+    primary_stadium = models.FloatField(
+        default=SCORING_WEIGHTS.PRIMARY_STADIUM.value,
+        validators=WEIGHTS_VALIDATORS,
+    )
+    secondary_stadium = models.FloatField(
+        default=SCORING_WEIGHTS.SECONDARY_STADIUM.value,
+        validators=WEIGHTS_VALIDATORS,
+    )
+    issuemelding = models.FloatField(
+        default=SCORING_WEIGHTS.ISSUEMELDING.value,
+        validators=WEIGHTS_VALIDATORS,
+    )
+    is_sia = models.FloatField(
+        default=SCORING_WEIGHTS.IS_SIA.value,
+        validators=WEIGHTS_VALIDATORS,
+    )
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name_plural = "Weights"
+
+    def score(
+        self,
+        distance,
+        fraud_probability,
+        primary_stadium,
+        secondary_stadium,
+        issuemelding,
+        is_sia,
+    ):
+        values = [
+            distance,
+            fraud_probability,
+            primary_stadium,
+            secondary_stadium,
+            issuemelding,
+            is_sia,
+        ]
+        weights = [
+            self.distance,
+            self.fraud_probability,
+            self.primary_stadium,
+            self.secondary_stadium,
+            self.issuemelding,
+            self.is_sia,
+        ]
+
+        products = [value * weight for value, weight in zip(values, weights)]
+        return sum(products)
+
+    def __str__(self):
+        return "%s: %s-%s-%s-%s-%s-%s" % (
+            self.name,
+            self.distance,
+            self.fraud_probability,
+            self.primary_stadium,
+            self.secondary_stadium,
+            self.issuemelding,
+            self.is_sia,
         )
