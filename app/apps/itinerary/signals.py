@@ -16,7 +16,6 @@ def create_itinerary_item_signal(instance, created, **kwargs):
     if created and instance.case:
         try:
             logger.info(f"Signal for pushing itinerary item {instance}.")
-            if settings.PUSH_ZAKEN:
-                push_itinerary_item(instance)
+            push_itinerary_item(instance)
         except RetryError as e:
             logger.error(f"Pushing case failed: {str(e)}")
