@@ -55,7 +55,7 @@ def stadium_bwv_to_push_state(stadium):
 
 @retry(
     stop=stop_after_attempt(3),
-    wait=wait_random(min=0, max=0.03),
+    wait=wait_random(min=0, max=0.3),
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
@@ -99,13 +99,22 @@ def push_itinerary_item(itinerary_item):
         data["end_date"] = end_date
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    response.raise_for_status()
+
+    response_json = response.json()
+
+    itinerary_item.external_state_id = response_json["state"]["id"]
+    itinerary_item.save()
+
+    # Save the itinerary
     logger.info(f"Finished pushing case {case_id}")
+
     return response
 
 
 @retry(
     stop=stop_after_attempt(3),
-    wait=wait_random(min=0, max=0.03),
+    wait=wait_random(min=0, max=0.3),
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
@@ -141,7 +150,7 @@ def push_new_visit_to_zaken_action(visit, authors):
 
 @retry(
     stop=stop_after_attempt(3),
-    wait=wait_random(min=0, max=0.03),
+    wait=wait_random(min=0, max=0.3),
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
