@@ -16,6 +16,7 @@ class APIServiceCheckBackend(BaseHealthCheckBackend):
 
     critical_service = False
     api_url = None
+    api_url_suffix = ""
     verbose_name = None
 
     def check_status(self):
@@ -23,7 +24,7 @@ class APIServiceCheckBackend(BaseHealthCheckBackend):
         logger.debug("Checking status of API url...")
         try:
             assert self.api_url, "The given api_url should be set"
-            response = requests.get(self.api_url)
+            response = requests.get(f"{self.api_url}{self.api_url_suffix}")
             response.raise_for_status()
         except AssertionError as e:
             self.add_error(
@@ -64,6 +65,7 @@ class ZakenServiceCheck(APIServiceCheckBackend):
 
     critical_service = True
     api_url = settings.ZAKEN_API_URL
+    api_url_suffix = "/schema"
     verbose_name = "Zaken API Endpoint"
 
 
