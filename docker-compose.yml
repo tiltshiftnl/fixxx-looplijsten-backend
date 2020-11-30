@@ -1,4 +1,4 @@
-version: '3.5'
+version: "3.5"
 
 services:
   bwv_db:
@@ -15,7 +15,7 @@ services:
     networks:
       - looplijsten_backend
     image: amsterdam/postgres11
-    shm_size: '512m'
+    shm_size: "512m"
     ports:
       - "5409:5432"
     environment:
@@ -24,7 +24,8 @@ services:
       POSTGRES_PASSWORD: insecure
   api:
     networks:
-        - looplijsten_backend
+      - looplijsten_backend
+      - top_and_zaak_backend_bridge
     build:
       context: ./app
       args:
@@ -48,6 +49,7 @@ services:
       - SENTRY_DSN=https://foo@foo.data.amsterdam.nl/0
       - LOCAL_DEVELOPMENT_AUTHENTICATION=True
       - ZAKEN_API_URL=http://zaak-gateway:8000/api/v1
+      - ZAKEN_API_HEALTH_URL=http://zaak-gateway:8000/api/v1
       - PUSH_ZAKEN=False # Disabled for local development, enable to test Zaken connection
       - UWSGI_HTTP=0.0.0.0:8000
       - SECRET_KEY_TOP_ZAKEN=SECRET_KEY_TOP_ZAKEN
@@ -61,4 +63,6 @@ services:
 
 networks:
   looplijsten_backend:
-    driver: bridge
+    external: true
+  top_and_zaak_backend_bridge:
+    external: true
