@@ -53,6 +53,11 @@ def stadium_bwv_to_push_state(stadium):
     }
 
 
+def assert_allow_push():
+    assert settings.ZAKEN_API_URL, "ZAKEN_API_URL is not configured in settings."
+    assert settings.PUSH_ZAKEN, "Pushes disabled"
+
+
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_random(min=0, max=0.3),
@@ -66,12 +71,7 @@ def push_itinerary_item(itinerary_item):
     case_id = itinerary_item.case.case_id
     logger.info(f"Pushing case {case_id}")
 
-    if not settings.ZAKEN_API_URL:
-        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
-        return {}
-    elif not settings.PUSH_ZAKEN:
-        logger.info("Pushes disabled. Exit push.")
-        return {}
+    assert_allow_push()
 
     case = get_case(case_id)
     url = f"{settings.ZAKEN_API_URL}/push/"
@@ -120,12 +120,7 @@ def push_itinerary_item(itinerary_item):
 def push_new_visit_to_zaken_action(visit, authors):
     logger.info(f"Pushing visit {visit.id} to zaken")
 
-    if not settings.ZAKEN_API_URL:
-        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
-        return {}
-    elif not settings.PUSH_ZAKEN:
-        logger.info("Pushes disabled. Exit push.")
-        return {}
+    assert_allow_push()
 
     url = f"{settings.ZAKEN_API_URL}/visits/create_visit_from_top/"
 
@@ -156,12 +151,7 @@ def push_new_visit_to_zaken_action(visit, authors):
 def push_updated_visit_to_zaken_action(visit, authors):
     logger.info(f"Pushing visit {visit.id} to zaken")
 
-    if not settings.ZAKEN_API_URL:
-        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
-        return {}
-    elif not settings.PUSH_ZAKEN:
-        logger.info("Pushes disabled. Exit push.")
-        return {}
+    assert_allow_push()
 
     url = f"{settings.ZAKEN_API_URL}/visits/update_visit_from_top/"
 
@@ -193,12 +183,7 @@ def push_updated_visit_to_zaken_action(visit, authors):
 def update_external_state(state_id, team_member_emails):
     logger.info(f"Updating external state {state_id} in zaken")
 
-    if not settings.ZAKEN_API_URL:
-        logger.info("ZAKEN_API_URL is not configured in settings. Exit push.")
-        return {}
-    elif not settings.PUSH_ZAKEN:
-        logger.info("Pushes disabled. Exit push.")
-        return {}
+    assert_allow_push()
 
     url = f"{settings.ZAKEN_API_URL}/states/{state_id}/update-from-top"
     data = {"user_emails": team_member_emails}
