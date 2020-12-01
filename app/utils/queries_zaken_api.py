@@ -200,10 +200,10 @@ def update_external_state(state_id, team_member_emails):
         logger.info("Pushes disabled. Exit push.")
         return {}
 
-    url = f"{settings.ZAKEN_API_URL}/cases/{state_id}/"
-    data = {"team_members": team_member_emails}
+    url = f"{settings.ZAKEN_API_URL}/states/{state_id}/update-from-top"
+    data = {"user_emails": team_member_emails}
 
-    requests.put(url, timeout=0.5, json=data, headers=get_headers())
+    requests.post(url, timeout=0.5, json=data, headers=get_headers())
     logger.info(f"Finished updating external state {state_id}")
 
 
