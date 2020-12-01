@@ -213,4 +213,7 @@ def update_external_states(itinerary):
     for itinerary_item in itinerary_items:
         team_members = itinerary.team_members.all()
         team_member_emails = [team_member.user.email for team_member in team_members]
-        update_external_state(itinerary_item, team_member_emails)
+        state_id = itinerary_item.external_state_id
+
+        if state_id:
+            update_external_state(state_id, team_member_emails)
