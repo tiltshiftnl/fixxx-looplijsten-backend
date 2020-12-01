@@ -23,6 +23,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from settings.const import ITINERARY_NOT_ENOUGH_CASES
+from utils.queries_zaken_api import update_external_states
 
 
 class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMixin):
@@ -90,6 +91,7 @@ class ItineraryViewSet(ViewSet, GenericAPIView, DestroyModelMixin, CreateModelMi
 
         itinerary.clear_team_members()
         itinerary.add_team_members(user_ids)
+        update_external_states(itinerary)
 
     @action(detail=True, methods=["get", "put"])
     def team(self, request, pk):

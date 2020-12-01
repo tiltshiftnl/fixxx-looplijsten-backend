@@ -73,7 +73,7 @@ class Itinerary(models.Model):
 
     def add_team_members(self, user_ids):
         """
-        Addes team members to this itinerary
+        Adds team members to this itinerary
         """
         for user_id in user_ids:
             user = User.objects.get(id=user_id)
