@@ -79,9 +79,6 @@ class TeamSettings(models.Model):
         blank=True,
         related_name="team_settings_list",
     )
-    settings = models.JSONField(
-        default=team_settings_settings_default,
-    )
 
     class Meta:
         verbose_name_plural = "Team settings"
