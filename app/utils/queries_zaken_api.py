@@ -185,7 +185,7 @@ def update_external_state(state_id, team_member_emails):
 
     assert_allow_push()
 
-    url = f"{settings.ZAKEN_API_URL}/states/{state_id}/update-from-top"
+    url = f"{settings.ZAKEN_API_URL}/states/{state_id}/update-from-top/"
     data = {"user_emails": team_member_emails}
 
     requests.post(url, timeout=0.5, json=data, headers=get_headers())
