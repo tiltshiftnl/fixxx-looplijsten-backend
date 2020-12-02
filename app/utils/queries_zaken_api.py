@@ -138,6 +138,8 @@ def push_new_visit_to_zaken_action(visit, authors):
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    response.raise_for_status()
+
     logger.info(f"Finished pushing case {visit.case_id.case_id}")
     return response
 
@@ -169,6 +171,8 @@ def push_updated_visit_to_zaken_action(visit, authors):
     }
 
     response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    response.raise_for_status()
+
     logger.info(f"Finished pushing updated case {visit.case_id.case_id}")
 
     return response
@@ -185,10 +189,12 @@ def update_external_state(state_id, team_member_emails):
 
     assert_allow_push()
 
-    url = f"{settings.ZAKEN_API_URL}/states/{state_id}/update-from-top/"
+    url = f"{settings.ZAKEN_API_URL}/case-states/{state_id}/update-from-top/"
     data = {"user_emails": team_member_emails}
 
-    requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+    response.raise_for_status()
+
     logger.info(f"Finished updating external state {state_id}")
 
 
