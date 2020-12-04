@@ -174,7 +174,7 @@ class DaySettingsCompactSerializer(serializers.ModelSerializer):
 class DaySettingsSerializer(serializers.ModelSerializer):
     projects = StringRelatedToIdField(many=True, queryset=Project.objects.all())
     primary_stadium = StringRelatedToIdField(
-        queryset=Stadium.objects.all(), allow_null=True
+        queryset=Stadium.objects.all(), allow_null=True, required=False
     )
     secondary_stadia = StringRelatedToIdField(many=True, queryset=Stadium.objects.all())
     exclude_stadia = StringRelatedToIdField(many=True, queryset=Stadium.objects.all())
@@ -198,6 +198,37 @@ class DaySettingsSerializer(serializers.ModelSerializer):
             "team_settings",
             "sia_presedence",
         )
+
+    def validate(self, data):
+        data = super().validate(data)
+        # clean projects based on real team settings choices
+        data["projects"] = [
+            project
+            for project in data["projects"]
+            if project in self.instance.team_settings.project_choices.all()
+        ]
+
+        # clean all stdium options based on real team settings choices
+        data["primary_stadium"] = (
+            data.get("primary_stadium")
+            if data.get("primary_stadium")
+            in self.instance.team_settings.stadia_choices.all()
+            else None
+        )
+
+        data["secondary_stadia"] = [
+            stadium
+            for stadium in data["secondary_stadia"]
+            if stadium in self.instance.team_settings.stadia_choices.all()
+        ]
+        data["exclude_stadia"] = [
+            stadium
+            for stadium in data["exclude_stadia"]
+            if stadium in self.instance.team_settings.stadia_choices.all()
+            and stadium not in data.get("secondary_stadia", [])
+            and stadium != data.get("primary_stadium", [])
+        ]
+        return data
 
 
 class TeamSettingsSerializer(serializers.ModelSerializer):
@@ -223,38 +254,3 @@ class TeamSettingsSerializer(serializers.ModelSerializer):
             "marked_stadia",
             "day_settings_list",
         )
-
-    # def clean_projects(self, data):
-    #     projects = self.instance.project_choices.values_list("name", flat=True)
-    #     data["settings"]["projects"] = [
-    #         p for p in projects if p in data["settings"]["projects"]
-    #     ]
-    #     return data
-
-    # def clean_stadia(self, data):
-    #     stadia = self.instance.stadia_choices.values_list("name", flat=True)
-    #     for k, v in data["settings"]["days"].items():
-    #         for kk, vv in v.items():
-    #             for stadia_set in ["secondary_stadia", "exclude_stadia"]:
-    #                 if vv.get(stadia_set):
-    #                     vv[stadia_set] = [s for s in stadia if s in vv[stadia_set]]
-    #             if vv.get("primary_stadium"):
-    #                 vv["primary_stadium"] = (
-    #                     vv["primary_stadium"]
-    #                     if vv["primary_stadium"] in stadia
-    #                     else None
-    #                 )
-    #                 if not vv["primary_stadium"]:
-    #                     del vv["primary_stadium"]
-    #     return data
-
-    # def validate(self, data):
-    #     data = super().validate(data)
-
-    #     data = self.clean_projects(data)
-    #     data = self.clean_stadia(data)
-
-    #     settings = PlannerSettingsSerializer(data=data.get("settings"), required=True)
-    #     if not settings.is_valid():
-    #         raise serializers.ValidationError("Wrong settings format")
-    #     return data

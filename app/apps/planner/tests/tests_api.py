@@ -53,9 +53,6 @@ class TeamSettingsViewSet(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json().get("results")), 2)
-        self.assertEqual(
-            len(response.json().get("results")[0].get("day_settings_list")), 1
-        )
 
 
 class DaySettingsViewSet(APITestCase):
@@ -145,7 +142,26 @@ class DaySettingsUpdateTestViewSet(APITestCase):
         response = client.put(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    def test_authenticated_update(self):
+    def test_unauthenticated_put(self):
+        """
+        An unauthenticated request should not be possible
+        """
+        DAY_SETTINGS_ID = 1
+        DAY_SETTINGS_NAME = "FOO_NAME"
+        team_settings_1 = baker.make(TeamSettings)
+        baker.make(
+            DaySettings,
+            team_settings=team_settings_1,
+            id=DAY_SETTINGS_ID,
+            name=DAY_SETTINGS_NAME,
+        )
+
+        url = reverse("day-settings-detail", kwargs={"pk": DAY_SETTINGS_ID})
+        client = get_unauthenticated_client()
+        response = client.put(url, {})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_update_empty_payload(self):
         """
         An authenticated request should be possible
         """
@@ -160,10 +176,9 @@ class DaySettingsUpdateTestViewSet(APITestCase):
             name=DAY_SETTINGS_NAME,
         )
 
-        url = reverse("day-settings-detail", kwargs={"pk": 1})
+        url = reverse("day-settings-detail", kwargs={"pk": DAY_SETTINGS_ID})
 
         client = get_authenticated_client()
-        response = client.put(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get("name"), DAY_SETTINGS_NAME)
+        response = client.put(url, {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # self.assertEqual(response.json().get("name"), DAY_SETTINGS_NAME)
