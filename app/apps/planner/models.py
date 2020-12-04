@@ -3,12 +3,7 @@ from apps.visits.models import Observation, Situation, SuggestNextVisit
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from settings.const import (
-    EXAMPLE_DAY_SETTINGS,
-    EXAMPLE_PLANNER_SETTINGS,
-    POSTAL_CODE_RANGES,
-    WEEK_DAYS_CHOICES,
-)
+from settings.const import POSTAL_CODE_RANGES, WEEK_DAYS_CHOICES
 
 from .const import SCORING_WEIGHTS
 
@@ -16,11 +11,8 @@ WEIGHTS_VALIDATORS = [MinValueValidator(0), MaxValueValidator(1)]
 
 
 def team_settings_settings_default():
-    return EXAMPLE_PLANNER_SETTINGS
-
-
-def day_settings_default():
-    return EXAMPLE_DAY_SETTINGS
+    # TODO: remove this unused so fix in migrations
+    return {}
 
 
 def day_settings__postal_code_ranges__default():
@@ -78,9 +70,6 @@ class TeamSettings(models.Model):
         to=SuggestNextVisit,
         blank=True,
         related_name="team_settings_list",
-    )
-    settings = models.JSONField(
-        default=team_settings_settings_default,
     )
 
     class Meta:

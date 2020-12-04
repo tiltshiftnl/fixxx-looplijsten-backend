@@ -1,22 +1,23 @@
+from apps.planner.models import DaySettings, TeamSettings
 from constance.test import override_config
 from django.urls import reverse
+from model_bakery import baker
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from app.settings.const import EXAMPLE_PLANNER_SETTINGS
 from app.utils.unittest_helpers import (
     get_authenticated_client,
     get_unauthenticated_client,
 )
 
 
-class SettingsPlannerViewSet(APITestCase):
+class TeamSettingsViewSet(APITestCase):
     """
-    Tests for the API endpoints for retrieving planner settings
+    Tests for the API endpoints for retrieving team settings
     """
 
     def get_url(self):
-        return reverse("settings-planner-list")
+        return reverse("team-settings-list")
 
     def test_unauthenticated_request(self):
         """
@@ -28,30 +29,156 @@ class SettingsPlannerViewSet(APITestCase):
         response = client.get(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-    @override_config(PLANNER_SETTINGS='{"foo_settings": "foo"}')
-    def test_settings(self):
+    def test_authenticated_requests(self):
         """
-        Should return the PLANNER_SETTINGS value
+        An authenticated request should be possible
         """
-        url = self.get_url()
-        client = get_authenticated_client()
-        response = client.get(url)
 
-        expected_response = {"foo_settings": "foo"}
+        client = get_authenticated_client()
+        response = client.get(self.get_url())
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEquals(response.json(), expected_response)
+        self.assertEqual(len(response.json().get("results")), 0)
 
-    # TODO: rewrite for new team settings
-    # @override_config(PLANNER_SETTINGS="")
-    # def test_no_settings_saved(self):
-    #     """
-    #     Should return the default example planner settings if PLANNER_SETTINGS aren't set
-    #     """
-    #     url = self.get_url()
-    #     client = get_authenticated_client()
-    #     response = client.get(url)
+    def test_authenticated_requests_two_team_settings(self):
+        """
+        An authenticated request should be possible
+        """
 
-    #     expected_response = EXAMPLE_PLANNER_SETTINGS
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEquals(response.json(), expected_response)
+        baker.make(TeamSettings)
+        baker.make(TeamSettings)
+
+        client = get_authenticated_client()
+        response = client.get(self.get_url())
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json().get("results")), 2)
+
+
+class DaySettingsViewSet(APITestCase):
+    """
+    Tests for the API endpoints for retrieving day settings
+    """
+
+    def get_url(self):
+        return reverse("day-settings-list")
+
+    def test_unauthenticated_request(self):
+        """
+        An unauthenticated request should not be possible
+        """
+
+        url = self.get_url()
+        client = get_unauthenticated_client()
+        response = client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_requests(self):
+        """
+        An authenticated request should be possible
+        """
+
+        client = get_authenticated_client()
+        response = client.get(self.get_url())
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json().get("results")), 0)
+
+    def test_authenticated_requests_get_day_settings(self):
+        """
+        An authenticated request should be possible
+        """
+
+        DAY_SETTINGS_ID = 1
+        DAY_SETTINGS_NAME = "FOO_NAME"
+        team_settings_1 = baker.make(TeamSettings)
+        baker.make(
+            DaySettings,
+            team_settings=team_settings_1,
+            id=DAY_SETTINGS_ID,
+            name=DAY_SETTINGS_NAME,
+        )
+
+        client = get_authenticated_client()
+        response = client.get(reverse("day-settings-detail", kwargs={"pk": 1}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get("name"), DAY_SETTINGS_NAME)
+
+    def test_authenticated_requests_update_day_settings(self):
+        """
+        An authenticated request should be possible
+        """
+
+        DAY_SETTINGS_ID = 1
+        DAY_SETTINGS_NAME = "FOO_NAME"
+        team_settings_1 = baker.make(TeamSettings)
+        baker.make(
+            DaySettings,
+            team_settings=team_settings_1,
+            id=DAY_SETTINGS_ID,
+            name=DAY_SETTINGS_NAME,
+        )
+
+        client = get_authenticated_client()
+        response = client.get(reverse("day-settings-detail", kwargs={"pk": 1}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get("name"), DAY_SETTINGS_NAME)
+
+
+class DaySettingsUpdateTestViewSet(APITestCase):
+    """
+    Tests for the API endpoints for retrieving day settings
+    """
+
+    def test_unauthenticated_update(self):
+        """
+        An unauthenticated request should not be possible
+        """
+
+        url = reverse("day-settings-detail", kwargs={"pk": "foo"})
+        client = get_unauthenticated_client()
+        response = client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_unauthenticated_put(self):
+        """
+        An unauthenticated request should not be possible
+        """
+        DAY_SETTINGS_ID = 1
+        DAY_SETTINGS_NAME = "FOO_NAME"
+        team_settings_1 = baker.make(TeamSettings)
+        baker.make(
+            DaySettings,
+            team_settings=team_settings_1,
+            id=DAY_SETTINGS_ID,
+            name=DAY_SETTINGS_NAME,
+        )
+
+        url = reverse("day-settings-detail", kwargs={"pk": DAY_SETTINGS_ID})
+        client = get_unauthenticated_client()
+        response = client.put(url, {})
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authenticated_update_empty_payload(self):
+        """
+        An authenticated request should be possible
+        """
+
+        DAY_SETTINGS_ID = 1
+        DAY_SETTINGS_NAME = "FOO_NAME"
+        team_settings_1 = baker.make(TeamSettings)
+        baker.make(
+            DaySettings,
+            team_settings=team_settings_1,
+            id=DAY_SETTINGS_ID,
+            name=DAY_SETTINGS_NAME,
+        )
+
+        url = reverse("day-settings-detail", kwargs={"pk": DAY_SETTINGS_ID})
+
+        client = get_authenticated_client()
+        response = client.put(url, {})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # self.assertEqual(response.json().get("name"), DAY_SETTINGS_NAME)

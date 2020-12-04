@@ -5,7 +5,6 @@ from apps.itinerary.views import ItineraryItemViewSet, ItineraryViewSet, NoteVie
 from apps.planner.views import (
     DaySettingsViewSet,
     PostalCodeRangePresetViewSet,
-    SettingsPlannerViewSet,
     TeamSettingsViewSet,
 )
 from apps.planner.views import dumpdata as planner_dumpdata
@@ -38,9 +37,6 @@ api_router.register(
     r"suggest-next-visit", SuggestNextVisitViewSet, basename="suggest-next-visit"
 )
 
-api_router.register(
-    r"settings/planner", SettingsPlannerViewSet, basename="settings-planner"
-)
 api_router.register(r"team-settings", TeamSettingsViewSet, basename="team-settings")
 api_router.register(r"day-settings", DaySettingsViewSet, basename="day-settings")
 api_router.register(

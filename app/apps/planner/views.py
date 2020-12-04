@@ -23,53 +23,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
 
-class SettingsPlannerViewSet(ViewSet, CreateAPIView):
-    """
-    Retrieves the planner settings which are used for generating lists
-    """
-
-    serializer_class = PlannerSettingsSerializer
-
-    def list(self, request):
-        planner_settings, _ = Constance.objects.get_or_create(
-            key=settings.CONSTANCE_PLANNER_SETTINGS_KEY
-        )
-        settings_data = planner_settings.value
-
-        if settings_data:
-            # Make sure the string from constance is converted to JSON
-            settings_data = json.loads(settings_data)
-        else:
-            # Set the default value if nothing is set, and store it
-            settings_data = settings.EXAMPLE_PLANNER_SETTINGS
-            planner_settings.value = json.dumps(settings_data)
-            planner_settings.save()
-
-        return JsonResponse(settings_data)
-
-    def create(self, request):
-        data = request.data
-        serializer = PlannerSettingsSerializer(data=data)
-        is_valid = serializer.is_valid()
-
-        if not is_valid:
-            return JsonResponse(
-                {
-                    "message": "Could not validate posted data",
-                    "errors": serializer.errors,
-                },
-                status=HttpResponseBadRequest.status_code,
-            )
-
-        planner_settings, _ = Constance.objects.get_or_create(
-            key=settings.CONSTANCE_PLANNER_SETTINGS_KEY
-        )
-        planner_settings.value = json.dumps(data)
-        planner_settings.save()
-
-        return JsonResponse(data)
-
-
 class PostalCodeRangePresetViewSet(ModelViewSet):
     """
     A view for listing PostalCodeRangeSets
