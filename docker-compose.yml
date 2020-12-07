@@ -22,7 +22,7 @@ services:
       POSTGRES_DB: looplijsten
       POSTGRES_USER: looplijsten
       POSTGRES_PASSWORD: insecure
-  api:
+  api: &api
     networks:
       - looplijsten_backend
       - top_and_zaak_backend_bridge
@@ -55,6 +55,7 @@ services:
       - SECRET_KEY_TOP_ZAKEN=SECRET_KEY_TOP_ZAKEN
       - OIDC_RP_CLIENT_ID
       - OIDC_RP_CLIENT_SECRET
+      - CELERY_BROKER_URL=amqp://rabbitmq
     volumes:
       - ./app:/app
       - ./api/deploy:/deploy
@@ -62,6 +63,20 @@ services:
     depends_on:
       - database
       - bwv_db
+      - rabbitmq
+      - celery_worker
+  rabbitmq:
+    networks:
+      - looplijsten_backend
+    image: rabbitmq:latest
+  celery_worker:
+    <<: *api
+    command: celery -A settings worker  -l INFO
+    ports: []
+    depends_on:
+      - database
+      - bwv_db
+      - rabbitmq
 
 networks:
   looplijsten_backend:
