@@ -123,35 +123,3 @@ def push_updated_visit_to_zaken_action(visit, authors):
     logger.info(f"Finished pushing updated case {visit.case_id.case_id}")
 
     return response
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_random(min=0, max=0.3),
-    reraise=False,
-    after=after_log(logger, logging.ERROR),
-)
-def update_external_state(state_id, team_member_emails):
-    logger.info(f"Updating external state {state_id} in zaken")
-
-    assert_allow_push()
-
-    url = f"{settings.ZAKEN_API_URL}/case-states/{state_id}/update-from-top/"
-    data = {"user_emails": team_member_emails}
-
-    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
-    response.raise_for_status()
-
-    logger.info(f"Finished updating external state {state_id}")
-
-
-def update_external_states(itinerary):
-    itinerary_items = itinerary.items.all()
-
-    for itinerary_item in itinerary_items:
-        team_members = itinerary.team_members.all()
-        team_member_emails = [team_member.user.email for team_member in team_members]
-        state_id = itinerary_item.external_state_id
-
-        if state_id:
-            update_external_state(state_id, team_member_emails)

@@ -15,7 +15,7 @@ from utils.queries_zaken_api import (
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_RETRY_DELAY = 30 * 60
+DEFAULT_RETRY_DELAY = 10
 CONNECT_TIMEOUT = 10
 READ_TIMEOUT = 60
 
@@ -75,3 +75,34 @@ def push_itinerary_item(self, pk):
         return response
     except Exception as exception:
         self.retry(exc=exception)
+
+
+@shared_task(bind=True, default_retry_delay=DEFAULT_RETRY_DELAY)
+def update_external_state(self, state_id, team_member_emails):
+    logger.info(f"Updating external state {state_id} in zaken")
+
+    assert_allow_push()
+
+    url = f"{settings.ZAKEN_API_URL}/case-states/{state_id}/update-from-top/"
+    data = {"user_emails": team_member_emails}
+
+    try:
+        response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+        response.raise_for_status()
+
+    except Exception as exception:
+        self.retry(exc=exception)
+
+    logger.info(f"Finished updating external state {state_id}")
+
+
+def update_external_states(itinerary):
+    itinerary_items = itinerary.items.all()
+
+    for itinerary_item in itinerary_items:
+        team_members = itinerary.team_members.all()
+        team_member_emails = [team_member.user.email for team_member in team_members]
+        state_id = itinerary_item.external_state_id
+
+        if state_id:
+            update_external_state.delay(state_id, team_member_emails)
