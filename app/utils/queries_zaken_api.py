@@ -64,59 +64,6 @@ def assert_allow_push():
     reraise=False,
     after=after_log(logger, logging.ERROR),
 )
-def push_itinerary_item(itinerary_item):
-    """
-    Pushing the itinerary and case date is needed
-    """
-    case_id = itinerary_item.case.case_id
-    logger.info(f"Pushing case {case_id}")
-
-    assert_allow_push()
-
-    case = get_case(case_id)
-    url = f"{settings.ZAKEN_API_URL}/push/"
-
-    start_date = date_to_string(case.get("start_date"))
-    end_date = date_to_string(case.get("end_date", None))
-    case_id = case.get("case_id")
-
-    stadia = get_import_stadia(case_id)
-    states = [stadium_bwv_to_push_state(stadium) for stadium in stadia]
-
-    team_members = itinerary_item.itinerary.team_members.all()
-    users = [team_member.user.email for team_member in team_members]
-
-    data = {
-        "identification": case_id,
-        "case_type": case["case_reason"],
-        "bag_id": get_bag_id(case),
-        "start_date": start_date,
-        "states": states,
-        "users": users,
-    }
-
-    if end_date:
-        data["end_date"] = end_date
-
-    response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
-    response.raise_for_status()
-
-    response_json = response.json()
-
-    itinerary_item.external_state_id = response_json["state"]["id"]
-    itinerary_item.save()
-
-    logger.info(f"Finished pushing case {case_id}")
-
-    return response
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_random(min=0, max=0.3),
-    reraise=False,
-    after=after_log(logger, logging.ERROR),
-)
 def push_new_visit_to_zaken_action(visit, authors):
     logger.info(f"Pushing visit {visit.id} to zaken")
 
