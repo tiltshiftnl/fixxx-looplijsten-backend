@@ -2,6 +2,7 @@ import logging
 
 import requests
 from apps.itinerary.models import ItineraryItem
+from apps.visits.models import Visit
 from celery import shared_task
 from django.conf import settings
 from utils.queries import get_case, get_import_stadia
@@ -106,3 +107,44 @@ def update_external_states(itinerary):
 
         if state_id:
             update_external_state.delay(state_id, team_member_emails)
+
+
+@shared_task(bind=True, default_retry_delay=DEFAULT_RETRY_DELAY)
+def push_visit(self, visit_id, created=False):
+    logger.info(f"Pushing visit {visit_id} to zaken")
+
+    assert_allow_push()
+
+    visit = Visit.objects.get(id=visit_id)
+    authors = []
+
+    if visit.itinerary_item:
+        for member in visit.itinerary_item.itinerary.team_members.all():
+            authors.append(member.user.email)
+
+    if created:
+        url = f"{settings.ZAKEN_API_URL}/visits/create_visit_from_top/"
+    else:
+        url = f"{settings.ZAKEN_API_URL}/visits/update_visit_from_top/"
+
+    data = {
+        "case_identification": visit.case_id.case_id,
+        "start_time": str(visit.start_time),
+        "observations": visit.observations,
+        "situation": visit.situation,
+        "authors": authors,
+        "can_next_visit_go_ahead": visit.can_next_visit_go_ahead,
+        "can_next_visit_go_ahead_description": visit.can_next_visit_go_ahead_description,
+        "suggest_next_visit": visit.suggest_next_visit,
+        "suggest_next_visit_description": visit.suggest_next_visit_description,
+        "notes": visit.description,
+    }
+
+    try:
+        response = requests.post(url, timeout=0.5, json=data, headers=get_headers())
+        response.raise_for_status()
+    except Exception as exception:
+        self.retry(exc=exception)
+
+    logger.info(f"Finished pushing updated case {visit.case_id.case_id}")
+    return response
