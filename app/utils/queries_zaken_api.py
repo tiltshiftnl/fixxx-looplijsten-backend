@@ -11,21 +11,6 @@ from utils.queries_bag_api import get_bag_id
 logger = logging.getLogger(__name__)
 
 
-def get_cases():
-    if not settings.ZAKEN_API_URL:
-        logger.info("ZAKEN_API_URL is not configured in settings")
-        return {}
-
-    url = f"{settings.ZAKEN_API_URL}/cases"
-
-    try:
-        response = requests.get(url, timeout=1.5)
-        response.raise_for_status()
-        return response.json()
-    except Exception as e:
-        logger.error(f"Could not get cases: {e}")
-
-
 def get_headers():
     token = settings.SECRET_KEY_TOP_ZAKEN
     headers = {
